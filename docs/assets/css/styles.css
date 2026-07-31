@@ -153,7 +153,9 @@ nav.primary-nav li.current > a.nav-link{ color: var(--ink); }
   background:#fff; border:1px solid var(--line); box-shadow: 0 8px 16px rgba(0,0,0,.08);
   width: max-content; min-width: 200px; padding: 6px 0; display:none;
 }
-li.has-dropdown:hover .dropdown{ display:block; }
+li.has-dropdown:hover .dropdown,
+li.has-dropdown:focus-within .dropdown,
+li.has-dropdown.open .dropdown{ display:block; }
 .dropdown a{ display:block; padding:10px 16px; color: var(--ink); font-family: var(--font-body); font-size:.92rem; font-weight:600; text-transform:none; }
 .dropdown a:hover{ background: var(--paper-soft); color: var(--umd-red); text-decoration:none; }
 

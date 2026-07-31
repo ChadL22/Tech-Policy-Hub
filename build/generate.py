@@ -38,7 +38,7 @@ def nav_html(active):
             li_class = "has-dropdown" + (" current" if child_current else "")
             sub = "".join(f'<li><a href="{h}">{l}</a></li>' for l, h in children)
             items.append(
-                f'<li class="{li_class}"><a href="#" class="nav-link">{label}</a>'
+                f'<li class="{li_class}"><a href="#" class="nav-link" aria-haspopup="true" aria-expanded="false">{label}</a>'
                 f'<ul class="dropdown">{sub}</ul></li>'
             )
         else:

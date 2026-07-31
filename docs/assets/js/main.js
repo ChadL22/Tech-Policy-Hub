@@ -10,17 +10,45 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // Mobile dropdown toggle (tap to expand submenu instead of hover)
+  // Dropdown toggle -- click (or tap) to open/close a submenu at any
+  // screen size, not just on mouse hover. This is in addition to the
+  // CSS :hover/:focus-within reveal, so keyboard, touch, and anyone not
+  // hovering a mouse over "Topics"/"Programs" can still reach the items.
   document.querySelectorAll('.has-dropdown > .nav-link').forEach(function (link) {
     link.addEventListener('click', function (e) {
-      if (window.innerWidth <= 720) {
-        e.preventDefault();
-        var parent = link.parentElement;
-        parent.classList.toggle('mobile-open');
-        var dd = parent.querySelector('.dropdown');
-        if (dd) dd.style.display = parent.classList.contains('mobile-open') ? 'block' : 'none';
-      }
+      e.preventDefault();
+      var parent = link.parentElement;
+      var willOpen = !parent.classList.contains('open');
+      document.querySelectorAll('.has-dropdown.open').forEach(function (li) {
+        if (li !== parent) {
+          li.classList.remove('open');
+          var otherLink = li.querySelector('.nav-link');
+          if (otherLink) otherLink.setAttribute('aria-expanded', 'false');
+        }
+      });
+      parent.classList.toggle('open', willOpen);
+      link.setAttribute('aria-expanded', String(willOpen));
     });
+  });
+
+  // Close any open dropdown when clicking outside the nav, or on Escape
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('.has-dropdown')) {
+      document.querySelectorAll('.has-dropdown.open').forEach(function (li) {
+        li.classList.remove('open');
+        var link = li.querySelector('.nav-link');
+        if (link) link.setAttribute('aria-expanded', 'false');
+      });
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.has-dropdown.open').forEach(function (li) {
+        li.classList.remove('open');
+        var link = li.querySelector('.nav-link');
+        if (link) link.setAttribute('aria-expanded', 'false');
+      });
+    }
   });
 
   // Tabs (used on topic pages: Projects / Publications / People)
