@@ -11,7 +11,6 @@ import os
 ROOT = os.path.join(os.path.dirname(__file__), "..", "docs")
 
 NAV = [
-    ("Home", "index.html", None),
     ("Topics", None, [
         ("Cybersecurity", "topic-cybersecurity.html"),
         ("Consumer Privacy", "topic-privacy.html"),
@@ -64,35 +63,23 @@ def head(title, description):
 
 def header(active):
     return f"""
-<div class="umd-bar">
-  <div class="container">
-    <span>Part of <a href="https://gotech.umd.edu/" target="_blank" rel="noopener">GoTech</a> at the <a href="https://spp.umd.edu/" target="_blank" rel="noopener">University of Maryland School of Public Policy</a></span>
-    <span><a href="#">Give to the Hub</a></span>
-  </div>
-</div>
 <header class="site-header">
-  <div class="brand-band">
-    <div class="container header-inner">
-      <div class="brand-lockup">
-        <a href="https://spp.umd.edu/" target="_blank" rel="noopener" class="umd-logo-link" aria-label="University of Maryland School of Public Policy">
-          <img src="assets/img/umd-spp-logo.png" alt="University of Maryland School of Public Policy" class="umd-logo">
-        </a>
-        <span class="brand-divider" aria-hidden="true"></span>
-        <a href="index.html" class="brand">
-          <span class="brand-chip">Tech Policy Hub</span>
-        </a>
-      </div>
-      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
+  <div class="container header-inner">
+    <div class="brand-lockup">
+      <a href="https://spp.umd.edu/" target="_blank" rel="noopener" class="umd-logo-link" aria-label="University of Maryland School of Public Policy">
+        <img src="assets/img/umd-spp-logo.png" alt="University of Maryland School of Public Policy" class="umd-logo">
+      </a>
+      <span class="brand-divider" aria-hidden="true"></span>
+      <a href="index.html" class="brand">
+        <span class="brand-chip">Tech Policy Hub</span>
+      </a>
     </div>
-  </div>
-  <div class="nav-band">
-    <div class="container">
-      <nav class="primary-nav">
-        <ul>{nav_html(active)}</ul>
-      </nav>
-    </div>
+    <nav class="primary-nav">
+      <ul>{nav_html(active)}</ul>
+    </nav>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
 """
@@ -102,22 +89,18 @@ def footer():
     return """
 <footer class="site-footer">
   <div class="container">
-    <div class="footer-affiliation">
-      <img src="assets/img/umd-spp-logo.png" alt="University of Maryland School of Public Policy" class="aff-logo aff-logo-umd">
-      <span class="aff-divider" aria-hidden="true"></span>
-      <img src="assets/img/gotech-logo.svg" alt="Center for Governance of Technology and Systems (GoTech)" class="aff-logo">
-      <p class="aff-text">The Tech Policy Hub is a project of the <a href="https://gotech.umd.edu/" target="_blank" rel="noopener">Center for Governance of Technology and Systems (GoTech)</a> at the University of Maryland <a href="https://spp.umd.edu/" target="_blank" rel="noopener">School of Public Policy</a>.</p>
-    </div>
-    <hr class="rule" style="margin-bottom:40px;">
     <div class="footer-grid">
       <div>
-        <span class="brand-chip" style="padding:9px 16px; font-size:.95rem;">Tech Policy Hub</span>
-        <p style="margin-top:14px;">Building the bridge between computer science &amp; public policy at the University of Maryland School of Public Policy.</p>
         <div class="footer-social">
           <a href="#" aria-label="LinkedIn">LinkedIn</a>
           <a href="#" aria-label="Bluesky">Bluesky</a>
           <a href="#" aria-label="YouTube">YouTube</a>
         </div>
+        <ul class="footer-legal">
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Web Accessibility</a></li>
+          <li><a href="#">Notice of Non-discrimination</a></li>
+        </ul>
       </div>
       <div>
         <h4>Topics</h4>
@@ -147,11 +130,11 @@ def footer():
       </div>
     </div>
     <div class="footer-bottom">
-      <span>&copy; 2026 Tech Policy Research and Education Hub &middot; School of Public Policy, University of Maryland</span>
-      <span class="legal-links">
-        <a href="#">Privacy Policy</a>
-        <a href="#">Web Accessibility</a>
-      </span>
+      <div class="footer-bottom-brand">
+        <img src="assets/img/umd-spp-logo.png" alt="University of Maryland School of Public Policy">
+        <span>Part of GoTech, the Center for Governance of Technology and Systems</span>
+      </div>
+      <div class="footer-bottom-copyright">&copy; 2026 Tech Policy Research and Education Hub</div>
     </div>
   </div>
 </footer>
@@ -269,6 +252,30 @@ def topic_cards_html():
           <h3><a href="{t['file']}">{t['name']}</a></h3>
           <p>{t['blurb']}</p>
           <a class="text-link" href="{t['file']}">Explore</a>
+        </div>""")
+    return "".join(out)
+
+
+def topic_pills_html():
+    """White outline pill buttons linking to each topic, used in the
+    black statement band -- mirrors the Issues pill-nav on kgi.georgetown.edu."""
+    out = [f'<a class="btn btn-white" href="{t["file"]}">{t["name"]}</a>' for t in TOPICS]
+    out.append('<a class="btn btn-white" href="about.html">All Topics</a>')
+    return "".join(out)
+
+
+def news_cards_html(items, limit=None):
+    """3-column card grid with a flat media placeholder block above each
+    item -- mirrors the news/research grid on kgi.georgetown.edu."""
+    out = []
+    for it in (items[:limit] if limit else items):
+        out.append(f"""
+        <div class="card">
+          <div class="media"><span>{it['tag']}</span></div>
+          <span class="kicker">{it['tag']}</span>
+          <div class="meta">{it['date']}</div>
+          <h3><a href="{it['link']}">{it['title']}</a></h3>
+          <p>{it['summary']}</p>
         </div>""")
     return "".join(out)
 

@@ -5,93 +5,52 @@ import generate as g
 # HOME
 # ===========================================================================
 home_body = f"""
-<section class="hero">
-  <div class="container">
-    <span class="eyebrow">University of Maryland School of Public Policy &middot; Part of GoTech</span>
-    <h1>Building the bridge between computer science and public policy.</h1>
-    <p class="lede">The Tech Policy Hub studies tech policy from a socio-technical perspective &mdash; understanding how policy is designed and implemented for, by, and with tech. Our hub spans the forefront of tech policy domains, including cybersecurity, consumer privacy, information integrity, and trustworthy machine learning.</p>
-    <div class="hero-actions">
-      <a href="news.html" class="btn btn-primary">Latest Research &amp; News</a>
-      <a href="about.html" class="btn btn-ghost">Join the Hub</a>
+<section class="featured-hero">
+  <div class="container grid grid-2">
+    <div class="media"><span>Tech Policy Hub</span></div>
+    <div>
+      <div class="meta">{g.NEWS_ITEMS[0]['date']}</div>
+      <h1>{g.NEWS_ITEMS[0]['title']}</h1>
+      <p class="lede">{g.NEWS_ITEMS[0]['summary']} Read more on our <a href="news.html">news &amp; publications</a> page.</p>
     </div>
   </div>
 </section>
 
-<section class="section-tight">
-  <div class="container">
-    <div class="stats-strip">
-      <div class="stat"><div class="num">40+</div><div class="label">Publications</div></div>
-      <div class="stat"><div class="num">4</div><div class="label">Research Areas</div></div>
-      <div class="stat"><div class="num">25+</div><div class="label">Affiliated Scholars</div></div>
-      <div class="stat"><div class="num">2018</div><div class="label">Founded</div></div>
+<section class="statement-band">
+  <div class="container grid grid-2">
+    <div>
+      <h2>Building the bridge between computer science and public policy.</h2>
+      <p>The Tech Policy Hub studies tech policy from a socio-technical perspective, bringing together practitioners, scholars, and students to work on cybersecurity, consumer privacy, information integrity, and trustworthy machine learning.</p>
+    </div>
+    <div class="pill-grid">
+      {g.topic_pills_html()}
     </div>
   </div>
 </section>
 
-<section class="soft-bg">
-  <div class="container">
-    <div class="section-head">
-      <div>
-        <span class="eyebrow">Research Areas</span>
-        <h2>Where we work</h2>
-      </div>
-    </div>
-    <div class="grid grid-4">
-      {g.topic_cards_html()}
-    </div>
-  </div>
-</section>
-
-<section>
+<section class="news-grid-section">
   <div class="container">
     <div class="section-head">
       <div>
         <span class="eyebrow">Latest</span>
         <h2>Research, news &amp; commentary</h2>
       </div>
-      <a href="news.html" class="btn btn-ghost btn-arrow">All news</a>
     </div>
-    <div>
-      {g.feed_items_html(g.NEWS_ITEMS, limit=4)}
+    <div class="grid grid-3">
+      {g.news_cards_html(g.NEWS_ITEMS)}
     </div>
-  </div>
-</section>
-
-<section>
-  <div class="container with-sidebar">
-    <div>
-      <div class="section-head">
-        <div>
-          <span class="eyebrow">Upcoming</span>
-          <h2>Events</h2>
-        </div>
-        <a href="events.html" class="btn btn-ghost btn-arrow">All events</a>
-      </div>
-      {g.events_rows_html(g.EVENTS_ITEMS, limit=3)}
-    </div>
-    <div>
-      <div class="sidebar-box">
-        <h4>Get Involved</h4>
-        <p style="font-size:.9rem;">Students, scholars, practitioners, and civil society leaders are welcome to join our network.</p>
-        <a href="about.html" class="btn btn-primary" style="width:100%; justify-content:center;">Join the Hub</a>
-      </div>
-      <div class="sidebar-box">
-        <h4>Annual Event</h4>
-        <p style="font-size:.9rem;">Save the date for our flagship gathering of the tech policy community.</p>
-        <a href="annual-event.html" class="btn btn-ghost" style="width:100%; justify-content:center;">Learn More</a>
-      </div>
+    <div class="center-cta">
+      <a href="news.html" class="btn btn-ghost">See All News</a>
     </div>
   </div>
 </section>
 
 <section class="newsletter-band">
-  <div class="container" style="display:flex; justify-content:space-between; align-items:center; gap:32px; flex-wrap:wrap;">
-    <div style="max-width:420px;">
-      <h2>Stay in the loop</h2>
-      <p>Subscribe for research, event invitations, and news from the Hub -- a few times a month, never more.</p>
-    </div>
+  <div class="container inner">
+    <h2>Subscribe to our emails</h2>
+    <p>Research, event invitations, and news from the Hub &mdash; a few times a month, never more.</p>
     <form class="newsletter-form">
-      <input type="email" placeholder="you@email.com" required>
+      <input type="email" placeholder="Email Address" required>
       <button type="submit" class="btn btn-primary">Subscribe</button>
     </form>
   </div>
