@@ -23,7 +23,7 @@ home_body = f"""
       <h2>What is the Tech Policy Hub?</h2>
     </div>
     <div>
-      <p>The Tech Policy Hub is a University of Maryland initiative that studies tech policy from a socio-technical perspective &mdash; bringing together practitioners, scholars, industry leaders, and students to inform, impact, and shape the future of technology in society.</p>
+      <p>The University of Maryland&rsquo;s Tech Policy Hub studies tech policy from a socio-technical perspective, building the bridge between computer science &amp; public policy to understand how policy is designed and implemented for, by, and with tech. Our hub spans across the forefront of tech policy domains, including cybersecurity, consumer privacy, misinformation, and trustworthy machine learning (ML). We bring together DMV-based issue networks of practitioners, scholars, industry leaders, and civil activists to inform, impact, and shape the future of technology in society, applying a mix of comparative, qualitative, and computational research methods to advance our understanding and craft socially desired future paths for tech policy development.</p>
       <a class="text-link" href="about.html">More About the Hub</a>
     </div>
   </div>
