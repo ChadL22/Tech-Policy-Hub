@@ -112,9 +112,9 @@ def footer():
         <span class="brand-text"><span class="main">Tech Policy Hub</span></span>
         <p style="margin-top:10px;">Building the bridge between computer science &amp; public policy at the University of Maryland School of Public Policy.</p>
         <div class="footer-social">
-          <a href="#" aria-label="LinkedIn">in</a>
-          <a href="#" aria-label="Bluesky">bs</a>
-          <a href="#" aria-label="YouTube">yt</a>
+          <a href="#" aria-label="LinkedIn">LinkedIn</a>
+          <a href="#" aria-label="Bluesky">Bluesky</a>
+          <a href="#" aria-label="YouTube">YouTube</a>
         </div>
       </div>
       <div>
@@ -174,24 +174,17 @@ def write(name, content):
 # Reusable content fragments
 # ---------------------------------------------------------------------------
 
-ICONS = {
-    "shield": '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#E21833" stroke-width="1.6"><path d="M12 2l8 3.5v5.4c0 5-3.4 9-8 10.6C7.4 20 4 16 4 11V5.5L12 2z"/></svg>',
-    "lock": '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#E21833" stroke-width="1.6"><rect x="4" y="10" width="16" height="10" rx="1.5"/><path d="M7 10V7a5 5 0 0 1 10 0v3"/></svg>',
-    "flag": '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#E21833" stroke-width="1.6"><path d="M5 21V4"/><path d="M5 4h13l-3 4 3 4H5"/></svg>',
-    "brain": '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#E21833" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg>',
-}
-
 TOPICS = [
-    dict(key="cybersecurity", file="topic-cybersecurity.html", icon="shield",
+    dict(key="cybersecurity", file="topic-cybersecurity.html", index="01",
          name="Cybersecurity",
          blurb="Measuring attack surface, risk, and resilience across governments, critical infrastructure, and the private sector."),
-    dict(key="privacy", file="topic-privacy.html", icon="lock",
+    dict(key="privacy", file="topic-privacy.html", index="02",
          name="Consumer Privacy",
          blurb="Studying how privacy law is designed, enforced, and experienced -- from cookie-less tracking to watchdog accountability."),
-    dict(key="integrity", file="topic-integrity.html", icon="flag",
+    dict(key="integrity", file="topic-integrity.html", index="03",
          name="Information Integrity",
          blurb="Tracking misinformation, platform transparency, and the policies that shape what people see and trust online."),
-    dict(key="ml", file="topic-ml.html", icon="brain",
+    dict(key="ml", file="topic-ml.html", index="04",
          name="Trustworthy ML",
          blurb="Examining algorithmic accountability, AI governance, and the standards needed for machine learning the public can trust."),
 ]
@@ -270,10 +263,10 @@ def topic_cards_html():
     for t in TOPICS:
         out.append(f"""
         <div class="topic-card">
-          <div class="icon">{ICONS[t['icon']]}</div>
+          <span class="index">{t['index']}</span>
           <h3><a href="{t['file']}">{t['name']}</a></h3>
           <p>{t['blurb']}</p>
-          <a class="btn-arrow" href="{t['file']}" style="font-weight:600; font-size:.9rem;">Explore</a>
+          <a class="text-link" href="{t['file']}">Explore</a>
         </div>""")
     return "".join(out)
 

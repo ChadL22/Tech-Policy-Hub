@@ -6,28 +6,29 @@ import generate as g
 # ===========================================================================
 home_body = f"""
 <section class="hero">
-  <div class="container hero-grid">
-    <div>
-      <span class="eyebrow">University of Maryland School of Public Policy &middot; Part of GoTech</span>
-      <h1>An information future for the public good.</h1>
-      <p class="lede">The Tech Policy Hub builds the bridge between computer science and public policy &mdash; turning independent research on cybersecurity, privacy, information integrity, and AI into policy that works.</p>
-      <div class="hero-actions">
-        <a href="news.html" class="btn btn-primary">Latest Research &amp; News</a>
-        <a href="about.html" class="btn btn-ghost">Join the Hub</a>
-      </div>
-    </div>
-    <div class="hero-art">
-      <div class="stats-strip" style="background:#fff; border:1px solid var(--line); padding:32px 20px; border-radius:2px;">
-        <div class="stat"><div class="num">40+</div><div class="label">Publications</div></div>
-        <div class="stat"><div class="num">4</div><div class="label">Research Areas</div></div>
-        <div class="stat"><div class="num">25+</div><div class="label">Affiliated Scholars</div></div>
-        <div class="stat"><div class="num">2018</div><div class="label">Founded</div></div>
-      </div>
+  <div class="container">
+    <span class="eyebrow">University of Maryland School of Public Policy &middot; Part of GoTech</span>
+    <h1>An information future <em>for the public good.</em></h1>
+    <p class="lede">The Tech Policy Hub builds the bridge between computer science and public policy &mdash; turning independent research on cybersecurity, privacy, information integrity, and AI into policy that works.</p>
+    <div class="hero-actions">
+      <a href="news.html" class="btn btn-primary">Latest Research &amp; News</a>
+      <a href="about.html" class="btn btn-ghost">Join the Hub</a>
     </div>
   </div>
 </section>
 
-<section>
+<section class="section-tight">
+  <div class="container">
+    <div class="stats-strip">
+      <div class="stat"><div class="num">40+</div><div class="label">Publications</div></div>
+      <div class="stat"><div class="num">4</div><div class="label">Research Areas</div></div>
+      <div class="stat"><div class="num">25+</div><div class="label">Affiliated Scholars</div></div>
+      <div class="stat"><div class="num">2018</div><div class="label">Founded</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="soft-bg">
   <div class="container">
     <div class="section-head">
       <div>
@@ -41,7 +42,7 @@ home_body = f"""
   </div>
 </section>
 
-<section class="soft-bg">
+<section>
   <div class="container">
     <div class="section-head">
       <div>
