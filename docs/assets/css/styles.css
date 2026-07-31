@@ -243,12 +243,7 @@ li.has-dropdown:hover .dropdown{ display:block; }
 .newsletter-band{ background: var(--paper-soft); padding: 64px 0; text-align: center; }
 .newsletter-band .inner{ max-width: 460px; margin: 0 auto; }
 .newsletter-band h2{ margin-bottom: .3em; }
-.newsletter-form{ display:flex; gap:10px; max-width: 440px; margin: 0 auto; }
-.newsletter-form input[type=email]{
-  flex:1; min-width:200px; padding:12px 18px; border-radius: 999px;
-  border:1.5px solid var(--line); background:#fff; color:var(--ink); font-family:var(--font-body);
-}
-.newsletter-form input::placeholder{ color:#9a9d9f; }
+.newsletter-band .btn{ margin-top: 8px; }
 .newsletter-partner{ margin: 18px 0 0; font-size: .82rem; color: var(--ink-soft); }
 .newsletter-partner a{ font-weight: 600; }
 

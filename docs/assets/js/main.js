@@ -38,15 +38,4 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     });
   });
-
-  // Newsletter form (front-end only demo)
-  document.querySelectorAll('.newsletter-form').forEach(function (form) {
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var btn = form.querySelector('button');
-      var original = btn.textContent;
-      btn.textContent = 'Thanks — you\'re subscribed!';
-      setTimeout(function () { btn.textContent = original; form.reset(); }, 2500);
-    });
-  });
 });
