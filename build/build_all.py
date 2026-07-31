@@ -53,7 +53,7 @@ home_body = f"""
       <input type="email" placeholder="Email Address" required>
       <button type="submit" class="btn btn-primary">Subscribe</button>
     </form>
-    <p class="newsletter-partner">Produced in partnership with <a href="#">Phronesis Institute</a></p>
+    <p class="newsletter-partner">Produced in partnership with <a href="https://phronesisresearch.org" target="_blank" rel="noopener">The Phronesis Institute</a></p>
   </div>
 </section>
 """
