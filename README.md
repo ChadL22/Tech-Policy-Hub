@@ -17,16 +17,22 @@ docs/     Final static site — open docs/index.html in a browser to preview
 build/    Python generator that produces the pages in docs/
 ```
 
-`docs/` is a flat static site (no server or build step required to view it).
+`docs/` is a static site (no server or build step required to view it).
 Each page shares the same header, footer, and nav, assembled by the
 generator in `build/` so those stay consistent across all 12 pages. It's
 named `docs/` (not `site/`) specifically so GitHub Pages can serve it
 directly — see **Publishing** below.
 
-Pages: `index.html`, `topic-cybersecurity.html`, `topic-privacy.html`,
-`topic-integrity.html`, `topic-ml.html`, `courses.html`,
-`speaker-series.html`, `annual-event.html`, `news.html`, `events.html`,
-`people.html`, `about.html`.
+Every page except the homepage lives in its own folder as `index.html`
+(e.g. `docs/news/index.html`), so it serves at a clean, extension-less
+URL — `.../Tech-Policy-Hub/news/` instead of `.../news.html`. The
+generator (`build/generate.py`'s `write()`) handles this automatically,
+including rewriting internal links, so page content in `build/build_all.py`
+can just use plain `href="news.html"`-style references.
+
+Pages: `index.html` (home), `topic-cybersecurity/`, `topic-privacy/`,
+`topic-integrity/`, `topic-ml/`, `courses/`, `speaker-series/`,
+`annual-event/`, `news/`, `events/`, `people/`, `about/`.
 
 ## Publishing (GitHub Pages)
 
@@ -60,9 +66,8 @@ The script writes directly into `docs/`.
 
 ## Branding notes
 
-- The UMD School of Public Policy logo is in `docs/assets/img/umd-spp-logo.png`.
-- `docs/assets/img/gotech-logo.svg` is currently a placeholder wordmark —
-  swap in the official GoTech logo file under the same name once available.
+- The official GoTech (Center for Governance of Technology and Systems)
+  logo is in `docs/assets/img/gtech-main.svg`, used in the header and footer.
 - Colors and type live in `docs/assets/css/styles.css` (`:root` variables at
   the top of the file).
 

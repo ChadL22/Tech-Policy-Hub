@@ -7,8 +7,50 @@ No build step needed to VIEW the site -- just open the .html files.
 Re-run this script any time page content or the header/footer changes.
 """
 import os
+import re
 
 ROOT = os.path.join(os.path.dirname(__file__), "..", "docs")
+
+# Every generated page (other than the homepage) is written into its own
+# folder as an index.html, e.g. news.html -> news/index.html, so it serves
+# at a clean, extension-less URL (.../Tech-Policy-Hub/news/) instead of
+# .../Tech-Policy-Hub/news.html. LINK_ATTR_RE finds href/src attributes in
+# the assembled HTML so write() can rewrite them to match, without having
+# to touch every place a link is built.
+LINK_ATTR_RE = re.compile(r'(href|src)="([^"]+)"')
+
+
+def _rewrite_links(html, prefix):
+    """Rewrite internal href/src values to clean URLs. `prefix` is '' when
+    writing the homepage (root-level, links into sibling folders need no
+    prefix) or '../' when writing any other page (one level deep, needs to
+    climb back up to root first). External links, mailto:, and in-page
+    anchors (#...) are left untouched."""
+    def repl(m):
+        attr, val = m.group(1), m.group(2)
+        if val.startswith(("http://", "https://", "mailto:", "#", "//")):
+            return m.group(0)
+        if val == "index.html":
+            return f'{attr}="{prefix}"' if prefix else m.group(0)
+        if val.startswith("assets/"):
+            return f'{attr}="{prefix}{val}"'
+        m2 = re.match(r"^([\w.-]+)\.html$", val)
+        if m2:
+            return f'{attr}="{prefix}{m2.group(1)}/"'
+        return m.group(0)
+    return LINK_ATTR_RE.sub(repl, html)
+
+
+def clean_stale_pages():
+    """Remove leftover flat top-level *.html files from the previous
+    (pre-clean-URL) build -- everything but index.html now lives in its
+    own folder. Safe to call even if ROOT doesn't exist yet."""
+    if not os.path.isdir(ROOT):
+        return
+    for fname in os.listdir(ROOT):
+        if fname.endswith(".html") and fname != "index.html":
+            os.remove(os.path.join(ROOT, fname))
+            print("removed stale", fname)
 
 NAV = [
     ("Topics", None, [
@@ -151,9 +193,19 @@ def page(active, title, description, body):
 
 def write(name, content):
     os.makedirs(ROOT, exist_ok=True)
-    with open(os.path.join(ROOT, name), "w") as f:
+    if name == "index.html":
+        content = _rewrite_links(content, "")
+        out_path = os.path.join(ROOT, "index.html")
+    else:
+        assert name.endswith(".html"), f"expected a '*.html' page name, got {name!r}"
+        slug = name[:-5]
+        page_dir = os.path.join(ROOT, slug)
+        os.makedirs(page_dir, exist_ok=True)
+        content = _rewrite_links(content, "../")
+        out_path = os.path.join(page_dir, "index.html")
+    with open(out_path, "w") as f:
         f.write(content)
-    print("wrote", name)
+    print("wrote", os.path.relpath(out_path, ROOT))
 
 
 # ---------------------------------------------------------------------------
