@@ -16,9 +16,23 @@ home_body = f"""
   </div>
 </section>
 
+<section class="about-teaser">
+  <div class="container grid grid-2">
+    <div>
+      <span class="eyebrow">About</span>
+      <h2>What is the Tech Policy Hub?</h2>
+    </div>
+    <div>
+      <p>The Tech Policy Hub is a University of Maryland initiative that studies tech policy from a socio-technical perspective &mdash; bringing together practitioners, scholars, industry leaders, and students to inform, impact, and shape the future of technology in society.</p>
+      <a class="text-link" href="about.html">More About the Hub</a>
+    </div>
+  </div>
+</section>
+
 <section class="statement-band">
   <div class="container grid grid-2">
     <div>
+      <div class="accent-bar" aria-hidden="true"></div>
       <h2>Building the bridge between computer science and public policy.</h2>
       <p>The Tech Policy Hub studies tech policy from a socio-technical perspective, bringing together practitioners, scholars, and students to work on cybersecurity, consumer privacy, information integrity, and trustworthy machine learning.</p>
     </div>

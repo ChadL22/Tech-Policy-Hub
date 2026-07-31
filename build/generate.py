@@ -258,10 +258,11 @@ def topic_cards_html():
 
 
 def topic_pills_html():
-    """White outline pill buttons linking to each topic, used in the
-    black statement band -- mirrors the Issues pill-nav on kgi.georgetown.edu."""
-    out = [f'<a class="btn btn-white" href="{t["file"]}">{t["name"]}</a>' for t in TOPICS]
-    out.append('<a class="btn btn-white" href="about.html">All Topics</a>')
+    """Gold outline pill buttons linking to each topic, used in the
+    black statement band -- mirrors the Issues pill-nav on kgi.georgetown.edu,
+    and carries the university's third brand color (gold) into the section."""
+    out = [f'<a class="btn btn-gold" href="{t["file"]}">{t["name"]}</a>' for t in TOPICS]
+    out.append('<a class="btn btn-gold" href="about.html">All Topics</a>')
     return "".join(out)
 
 
