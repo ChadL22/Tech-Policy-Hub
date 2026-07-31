@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """
 Static site generator for the Tech Policy Hub redesign.
-Assembles flat HTML pages (shared header/footer) into ../site/
+Assembles flat HTML pages (shared header/footer) into ../docs/
+(named "docs" so GitHub Pages can serve it directly from main /docs).
 No build step needed to VIEW the site -- just open the .html files.
 Re-run this script any time page content or the header/footer changes.
 """
 import os
 
-ROOT = os.path.join(os.path.dirname(__file__), "..", "site")
+ROOT = os.path.join(os.path.dirname(__file__), "..", "docs")
 
 NAV = [
     ("Home", "index.html", None),
