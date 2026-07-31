@@ -8,8 +8,8 @@ home_body = f"""
 <section class="hero">
   <div class="container">
     <span class="eyebrow">University of Maryland School of Public Policy &middot; Part of GoTech</span>
-    <h1>An information future <em>for the public good.</em></h1>
-    <p class="lede">The Tech Policy Hub builds the bridge between computer science and public policy &mdash; turning independent research on cybersecurity, privacy, information integrity, and AI into policy that works.</p>
+    <h1>Building the bridge between computer science and public policy.</h1>
+    <p class="lede">The Tech Policy Hub studies tech policy from a socio-technical perspective &mdash; understanding how policy is designed and implemented for, by, and with tech. Our hub spans the forefront of tech policy domains, including cybersecurity, consumer privacy, information integrity, and trustworthy machine learning.</p>
     <div class="hero-actions">
       <a href="news.html" class="btn btn-primary">Latest Research &amp; News</a>
       <a href="about.html" class="btn btn-ghost">Join the Hub</a>

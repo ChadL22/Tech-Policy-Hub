@@ -71,26 +71,28 @@ def header(active):
   </div>
 </div>
 <header class="site-header">
-  <div class="container header-inner">
-    <div class="brand-lockup">
-      <a href="https://spp.umd.edu/" target="_blank" rel="noopener" class="umd-logo-link" aria-label="University of Maryland School of Public Policy">
-        <img src="assets/img/umd-spp-logo.png" alt="University of Maryland School of Public Policy" class="umd-logo">
-      </a>
-      <span class="brand-divider" aria-hidden="true"></span>
-      <a href="index.html" class="brand">
-        <span class="brand-mark">TP</span>
-        <span class="brand-text">
-          <span class="sub">School of Public Policy</span>
-          <span class="main">Tech Policy Hub</span>
-        </span>
-      </a>
+  <div class="brand-band">
+    <div class="container header-inner">
+      <div class="brand-lockup">
+        <a href="https://spp.umd.edu/" target="_blank" rel="noopener" class="umd-logo-link" aria-label="University of Maryland School of Public Policy">
+          <img src="assets/img/umd-spp-logo.png" alt="University of Maryland School of Public Policy" class="umd-logo">
+        </a>
+        <span class="brand-divider" aria-hidden="true"></span>
+        <a href="index.html" class="brand">
+          <span class="brand-chip">Tech Policy Hub</span>
+        </a>
+      </div>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
     </div>
-    <nav class="primary-nav">
-      <ul>{nav_html(active)}</ul>
-    </nav>
-    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
+  </div>
+  <div class="nav-band">
+    <div class="container">
+      <nav class="primary-nav">
+        <ul>{nav_html(active)}</ul>
+      </nav>
+    </div>
   </div>
 </header>
 """
@@ -109,8 +111,8 @@ def footer():
     <hr class="rule" style="margin-bottom:40px;">
     <div class="footer-grid">
       <div>
-        <span class="brand-text"><span class="main">Tech Policy Hub</span></span>
-        <p style="margin-top:10px;">Building the bridge between computer science &amp; public policy at the University of Maryland School of Public Policy.</p>
+        <span class="brand-chip" style="padding:9px 16px; font-size:.95rem;">Tech Policy Hub</span>
+        <p style="margin-top:14px;">Building the bridge between computer science &amp; public policy at the University of Maryland School of Public Policy.</p>
         <div class="footer-social">
           <a href="#" aria-label="LinkedIn">LinkedIn</a>
           <a href="#" aria-label="Bluesky">Bluesky</a>
