@@ -127,8 +127,8 @@ header.site-header{
 }
 .brand-lockup{ display:flex; align-items:center; gap:18px; }
 .umd-logo-link{ display:flex; align-items:center; flex:none; }
-.umd-logo{ height:34px; width:auto; }
-.brand-divider{ width:1px; height:32px; background:var(--line); flex:none; }
+.umd-logo{ height:52px; width:auto; }
+.brand-divider{ width:1px; height:44px; background:var(--line); flex:none; }
 .brand{ display:flex; align-items:center; gap:10px; text-decoration:none !important; }
 .brand-chip{
   color: var(--ink); font-family: var(--font-nav); font-weight:700;
@@ -163,10 +163,10 @@ li.has-dropdown.open .dropdown{ display:block; }
 .nav-toggle span{ display:block; width:22px; height:2px; background:var(--ink); margin:5px 0; }
 
 /* ---------- Featured hero (two-column: media + story, matches KGI's homepage lead) ---------- */
-.featured-hero{ padding: 48px 0 56px; border-bottom: 1px solid var(--line); }
+.featured-hero{ padding: 36px 0 40px; border-bottom: 1px solid var(--line); }
 .featured-hero .grid-2{ gap: 56px; align-items: start; }
 .featured-hero .media{
-  aspect-ratio: 4 / 3; background: var(--header-band);
+  aspect-ratio: 16 / 9; background: var(--header-band);
   display:flex; align-items:center; justify-content:center;
 }
 .featured-hero .media span{
@@ -178,7 +178,7 @@ li.has-dropdown.open .dropdown{ display:block; }
 
 /* ---------- About teaser (short "what is the Hub" block, between the
    featured story and the black statement band) ---------- */
-.about-teaser{ padding: 56px 0; border-bottom: 1px solid var(--line); }
+.about-teaser{ padding: 44px 0; border-bottom: 1px solid var(--line); }
 .about-teaser .grid-2{ gap: 56px; align-items: start; }
 .about-teaser h2{ margin-bottom: 0; }
 .about-teaser p{ font-size: 1.02rem; }
@@ -374,8 +374,8 @@ footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding
   .dropdown{ position:static; transform:none; width:auto; display:block; box-shadow:none; border:none; padding-left:12px; }
   .nav-toggle{ display:block; }
   .brand-lockup{ gap:10px; }
-  .umd-logo{ height:24px; }
-  .brand-divider{ height:24px; }
+  .umd-logo{ height:38px; }
+  .brand-divider{ height:32px; }
   .grid-2, .grid-3, .grid-4{ grid-template-columns: 1fr; }
   .grid > .card, .grid-3 > .person, .grid-4 > .topic-card{ border-left:none !important; padding-left:0 !important; border-top: 1px solid var(--line); padding-top: 24px; }
   .grid > .card:first-child, .grid-3 > .person:first-child, .grid-4 > .topic-card:first-child{ border-top:none; padding-top:0; }
