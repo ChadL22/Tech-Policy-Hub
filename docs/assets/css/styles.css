@@ -309,6 +309,19 @@ li.has-dropdown.open .dropdown{ display:block; }
 .sidebar-box ul{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:10px; }
 .sidebar-box li a{ font-size:.9rem; font-weight:600; }
 
+/* ---------- Homepage updates hub (Research / Events / Policy Tracker tabs
+   -- room for a Newsletter or Podcast tab later without adding a new
+   full-width section) ---------- */
+.updates-hub{ border-bottom: 1px solid var(--line); }
+.tracker-credit{
+  display:flex; align-items:center; justify-content:space-between; gap:32px;
+  background: var(--paper-soft); border-left: 6px solid var(--umd-gold);
+  padding: 32px 36px;
+}
+.tracker-credit h3{ margin-bottom: 8px; }
+.tracker-credit p{ margin-bottom: 0; max-width: 640px; }
+.tracker-credit .btn{ flex: none; }
+
 /* ---------- Tabs ---------- */
 .tabs{ display:flex; gap: 4px; border-bottom: 2px solid var(--ink); margin-bottom: 28px; flex-wrap:wrap; }
 .tab-btn{
@@ -379,5 +392,6 @@ footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding
   .feed-item{ grid-template-columns: 1fr; }
   .event-row{ grid-template-columns: 60px 1fr; }
   .event-row .btn{ grid-column: 1 / -1; justify-self:start; }
+  .tracker-credit{ flex-direction: column; align-items: flex-start; padding: 26px; }
   .footer-grid{ grid-template-columns: 1fr 1fr; }
 }

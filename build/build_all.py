@@ -42,19 +42,42 @@ home_body = f"""
   </div>
 </section>
 
-<section class="news-grid-section">
+<section class="updates-hub">
   <div class="container">
     <div class="section-head">
       <div>
         <span class="eyebrow">Latest</span>
-        <h2>Research, news &amp; commentary</h2>
+        <h2>What&rsquo;s Happening at the Hub</h2>
       </div>
     </div>
-    <div class="grid grid-3">
-      {g.news_cards_html(g.NEWS_ITEMS)}
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="research">Research Updates</button>
+      <button class="tab-btn" data-tab="events">Events</button>
+      <button class="tab-btn" data-tab="policy">Policy Tracker</button>
     </div>
-    <div class="center-cta">
-      <a href="news.html" class="btn btn-ghost">See All News</a>
+    <div class="tab-panel active" data-tab="research">
+      <div class="grid grid-3">
+        {g.news_cards_html(g.NEWS_ITEMS, limit=3)}
+      </div>
+      <div class="center-cta">
+        <a href="news.html" class="btn btn-ghost">See All News</a>
+      </div>
+    </div>
+    <div class="tab-panel" data-tab="events">
+      {g.events_rows_html(g.EVENTS_ITEMS, limit=3)}
+      <div class="center-cta">
+        <a href="events.html" class="btn btn-ghost">See All Events</a>
+      </div>
+    </div>
+    <div class="tab-panel" data-tab="policy">
+      <div class="tracker-credit">
+        <div>
+          <span class="eyebrow">In Partnership With Tech Policy Press</span>
+          <h3>Policy Tracker</h3>
+          <p>Track federal and state legislation, litigation, and government investigations shaping accountability for tech companies &mdash; maintained by Tech Policy Press.</p>
+        </div>
+        <a class="btn btn-primary" href="https://www.techpolicy.press/tracker" target="_blank" rel="noopener">View the Policy Tracker</a>
+      </div>
     </div>
   </div>
 </section>

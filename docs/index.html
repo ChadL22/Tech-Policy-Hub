@@ -66,16 +66,22 @@
   </div>
 </section>
 
-<section class="news-grid-section">
+<section class="updates-hub">
   <div class="container">
     <div class="section-head">
       <div>
         <span class="eyebrow">Latest</span>
-        <h2>Research, news &amp; commentary</h2>
+        <h2>What&rsquo;s Happening at the Hub</h2>
       </div>
     </div>
-    <div class="grid grid-3">
-      
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="research">Research Updates</button>
+      <button class="tab-btn" data-tab="events">Events</button>
+      <button class="tab-btn" data-tab="policy">Policy Tracker</button>
+    </div>
+    <div class="tab-panel active" data-tab="research">
+      <div class="grid grid-3">
+        
         <div class="card">
           <div class="media"><span>Publication</span></div>
           <span class="kicker">Publication</span>
@@ -97,30 +103,41 @@
           <h3><a href="annual-event.html">2026 Annual Event Draws Record Turnout</a></h3>
           <p>Practitioners, scholars, and students gathered for a full day of tech policy programming -- recap and photos now live.</p>
         </div>
-        <div class="card">
-          <div class="media"><span>Media</span></div>
-          <span class="kicker">Media</span>
-          <div class="meta">Mar 2, 2026</div>
-          <h3><a href="news.html">Hub Cybersecurity Research Featured in Newsweek</a></h3>
-          <p>The county-level cyber risk mapping project was highlighted for its national policy relevance.</p>
-        </div>
-        <div class="card">
-          <div class="media"><span>Publication</span></div>
-          <span class="kicker">Publication</span>
-          <div class="meta">Mar 2, 2026</div>
-          <h3><a href="news.html">Contextual Integrity for Measuring Web Privacy</a></h3>
-          <p>New research applies the Contextual Integrity framework to evaluate privacy on the modern web, now on arXiv.</p>
-        </div>
-        <div class="card">
-          <div class="media"><span>Speaker Series</span></div>
-          <span class="kicker">Speaker Series</span>
-          <div class="meta">Feb 26, 2026</div>
-          <h3><a href="speaker-series.html">DeepSeek and the Future of AI Governance</a></h3>
-          <p>An academic and a practitioner joined the Spring Speaker Series to unpack what DeepSeek means for global AI policy.</p>
-        </div>
+      </div>
+      <div class="center-cta">
+        <a href="news.html" class="btn btn-ghost">See All News</a>
+      </div>
     </div>
-    <div class="center-cta">
-      <a href="news.html" class="btn btn-ghost">See All News</a>
+    <div class="tab-panel" data-tab="events">
+      
+        <div class="event-row">
+          <div class="event-date"><div class="d">09</div><div class="m">SEP</div></div>
+          <div><h3><a href="speaker-series.html">Speaker Series: Platform Design & the Law</a></h3><div class="meta">4:00 PM · College Park, MD & Zoom</div></div>
+          <a class="btn btn-ghost" href="speaker-series.html" style="padding:8px 16px; font-size:.82rem;">Details</a>
+        </div>
+        <div class="event-row">
+          <div class="event-date"><div class="d">14</div><div class="m">OCT</div></div>
+          <div><h3><a href="events.html">Workshop: Measuring Algorithmic Harm</a></h3><div class="meta">1:00 PM · Iribe Center, Room 3137</div></div>
+          <a class="btn btn-ghost" href="events.html" style="padding:8px 16px; font-size:.82rem;">Details</a>
+        </div>
+        <div class="event-row">
+          <div class="event-date"><div class="d">18</div><div class="m">NOV</div></div>
+          <div><h3><a href="events.html">Roundtable: AI Policy in the States</a></h3><div class="meta">10:00 AM · Virtual</div></div>
+          <a class="btn btn-ghost" href="events.html" style="padding:8px 16px; font-size:.82rem;">Details</a>
+        </div>
+      <div class="center-cta">
+        <a href="events.html" class="btn btn-ghost">See All Events</a>
+      </div>
+    </div>
+    <div class="tab-panel" data-tab="policy">
+      <div class="tracker-credit">
+        <div>
+          <span class="eyebrow">In Partnership With Tech Policy Press</span>
+          <h3>Policy Tracker</h3>
+          <p>Track federal and state legislation, litigation, and government investigations shaping accountability for tech companies &mdash; maintained by Tech Policy Press.</p>
+        </div>
+        <a class="btn btn-primary" href="https://www.techpolicy.press/tracker" target="_blank" rel="noopener">View the Policy Tracker</a>
+      </div>
     </div>
   </div>
 </section>
