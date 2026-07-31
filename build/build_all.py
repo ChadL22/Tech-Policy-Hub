@@ -49,7 +49,10 @@ home_body = f"""
   <div class="container inner">
     <h2>Subscribe to our emails</h2>
     <p>Research, event invitations, and news from the Hub &mdash; a few times a month, never more.</p>
-    <a href="https://phronesisresearch.org/subscribe" target="_blank" rel="noopener" class="btn btn-primary">Subscribe</a>
+    <form class="newsletter-form">
+      <input type="email" placeholder="Email Address" required>
+      <button type="submit" class="btn btn-primary">Subscribe</button>
+    </form>
     <p class="newsletter-partner">Produced in partnership with <a href="https://phronesisresearch.org" target="_blank" rel="noopener">The Phronesis Institute</a></p>
   </div>
 </section>

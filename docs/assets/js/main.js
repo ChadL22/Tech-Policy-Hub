@@ -38,4 +38,64 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     });
   });
+
+  // Newsletter signup -- submits to The Phronesis Institute's live subscribe
+  // API (same endpoint their own site uses: POST /api/subscribe on
+  // phronesisresearch.org, which is CORS-open and also syncs to their
+  // Substack). This duplicates their real subscribe functionality here
+  // rather than just linking out.
+  var PHRONESIS_SUBSCRIBE_URL = 'https://phronesisresearch.org/api/subscribe';
+
+  document.querySelectorAll('.newsletter-form').forEach(function (form) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      var input = form.querySelector('input[type="email"]');
+      var button = form.querySelector('button');
+      var email = input.value.trim();
+
+      var existing = form.parentElement.querySelector('.newsletter-message');
+      if (existing) existing.remove();
+
+      function showMessage(text, type) {
+        var msg = document.createElement('p');
+        msg.className = 'newsletter-message newsletter-message--' + type;
+        msg.textContent = text;
+        form.insertAdjacentElement('afterend', msg);
+      }
+
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showMessage('Please enter a valid email address.', 'error');
+        return;
+      }
+
+      var originalText = button.textContent;
+      button.disabled = true;
+      button.textContent = 'Subscribing…';
+
+      fetch(PHRONESIS_SUBSCRIBE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email })
+      })
+        .then(function (res) {
+          return res.json().then(function (data) { return { ok: res.ok, data: data }; });
+        })
+        .then(function (result) {
+          if (result.ok && result.data.success) {
+            showMessage(result.data.message || 'Successfully subscribed!', 'success');
+            form.reset();
+          } else {
+            showMessage(result.data.error || 'Subscription failed. Please try again.', 'error');
+          }
+        })
+        .catch(function () {
+          showMessage('Network error. Please try again.', 'error');
+        })
+        .finally(function () {
+          button.disabled = false;
+          button.textContent = originalText;
+        });
+    });
+  });
 });
