@@ -249,6 +249,8 @@ li.has-dropdown:hover .dropdown{ display:block; }
   border:1.5px solid var(--line); background:#fff; color:var(--ink); font-family:var(--font-body);
 }
 .newsletter-form input::placeholder{ color:#9a9d9f; }
+.newsletter-partner{ margin: 18px 0 0; font-size: .82rem; color: var(--ink-soft); }
+.newsletter-partner a{ font-weight: 600; }
 
 /* ---------- Events ---------- */
 .event-row{
@@ -324,6 +326,8 @@ footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding
 .footer-bottom-brand{ display:flex; align-items:center; gap:12px; }
 .footer-bottom-brand img{ height:26px; width:auto; }
 .footer-bottom-brand span{ font-family: var(--font-accent); font-style: italic; font-size: .95rem; color: var(--ink-soft); }
+.footer-bottom-partner{ font-size: .82rem; color: var(--ink-soft); }
+.footer-bottom-partner a{ font-weight: 600; }
 .footer-bottom-copyright{ font-size:.8rem; color: var(--ink-soft); }
 
 /* ---------- Responsive ---------- */
