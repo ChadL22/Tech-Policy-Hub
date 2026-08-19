@@ -10,18 +10,32 @@ g.clean_stale_pages()
 # shows the full set of six.
 QUESTIONS_HOME = [g.QUESTIONS[0], g.QUESTIONS[2], g.QUESTIONS[3], g.QUESTIONS[4]]
 
+# Rail entries for the hero and Recent News side panels -- CNBC/Bloomberg-
+# style compact headline lists (tag + linked title, no imagery) so those
+# sections read as a lead story + rail instead of one massive full-width
+# block. NEWS_ITEMS already has tag/title/link keys; EVENTS_ITEMS needs its
+# month/day fields folded into a single "tag" for the rail.
+HERO_RAIL = g.NEWS_ITEMS[1:4]
+EVENTS_RAIL = [dict(tag=f"{e['m']} {e['d']}", title=e['title'], link=e['link']) for e in g.EVENTS_ITEMS[:4]]
+
 home_body = f"""
 <section class="featured-hero">
-  <div class="container grid grid-2">
-    <div class="media"><span>Tech Policy Hub &mdash; Research Visual</span></div>
-    <div>
-      <div class="meta">Featured Publication &middot; {g.NEWS_ITEMS[0]['date']}</div>
-      <h1><a href="{g.NEWS_ITEMS[0]['link']}">{g.NEWS_ITEMS[0]['title']}</a></h1>
-      <p class="lede">{g.NEWS_ITEMS[0]['summary']}</p>
-      <div class="hero-actions">
-        <a href="{g.NEWS_ITEMS[0]['link']}" class="btn btn-primary btn-arrow">Read the Research</a>
-        <a href="topic-privacy.html" class="btn btn-ghost">Explore Consumer Privacy</a>
+  <div class="container with-sidebar rail-wrap">
+    <div class="grid grid-2">
+      <div class="media"><span>Tech Policy Hub &mdash; Research Visual</span></div>
+      <div>
+        <div class="meta">Featured Publication &middot; {g.NEWS_ITEMS[0]['date']}</div>
+        <h1><a href="{g.NEWS_ITEMS[0]['link']}">{g.NEWS_ITEMS[0]['title']}</a></h1>
+        <p class="lede">{g.NEWS_ITEMS[0]['summary']}</p>
+        <div class="hero-actions">
+          <a href="{g.NEWS_ITEMS[0]['link']}" class="btn btn-primary btn-arrow">Read the Research</a>
+          <a href="topic-privacy.html" class="btn btn-ghost">Explore Consumer Privacy</a>
+        </div>
       </div>
+    </div>
+    <div class="rail-panel">
+      <div class="rail-head">Also Today</div>
+      {g.rail_html(HERO_RAIL)}
     </div>
   </div>
 </section>
@@ -100,8 +114,15 @@ home_body = f"""
       </div>
       <a href="news.html" class="text-link">See All News</a>
     </div>
-    <div class="grid grid-3">
-      {g.news_cards_html(g.NEWS_ITEMS[1:], limit=3)}
+    <div class="with-sidebar rail-wrap">
+      <div class="grid grid-2">
+        {g.news_cards_html(g.NEWS_ITEMS[1:], limit=2)}
+      </div>
+      <div class="rail-panel">
+        <div class="rail-head">Upcoming Events</div>
+        {g.rail_html(EVENTS_RAIL)}
+        <a href="events.html" class="text-link rail-more">See All Events</a>
+      </div>
     </div>
   </div>
 </section>

@@ -11,6 +11,13 @@ import re
 
 ROOT = os.path.join(os.path.dirname(__file__), "..", "docs")
 
+# Bumped by hand whenever styles.css / main.js change, and appended as a
+# query string to their <link>/<script> tags below. Without this, browsers
+# (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
+# against a freshly-deployed HTML file -- which is what produced the
+# broken/unstyled ticker a user saw right after a previous deploy.
+ASSET_VERSION = "2026081902"
+
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
 # at a clean, extension-less URL (.../Tech-Policy-Hub/news/) instead of
@@ -113,7 +120,7 @@ def head(title, description):
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{title} | Tech Policy Hub</title>
 <meta name="description" content="{description}">
-<link rel="stylesheet" href="assets/css/styles.css">
+<link rel="stylesheet" href="assets/css/styles.css?v={ASSET_VERSION}">
 </head>
 <body>
 """
@@ -184,7 +191,7 @@ def ticker_section():
 
 
 def footer():
-    return """
+    return f"""
 <footer class="site-footer">
   <div class="container">
     <div class="footer-grid">
@@ -237,7 +244,7 @@ def footer():
     </div>
   </div>
 </footer>
-<script src="assets/js/main.js"></script>
+<script src="assets/js/main.js?v={ASSET_VERSION}"></script>
 </body>
 </html>
 """
@@ -464,6 +471,16 @@ def reading_cards_html(items):
           <span class="read-meta">{r['meta']}</span>
         </div>""")
     return "".join(out)
+
+
+def rail_html(entries):
+    """Compact CNBC/Bloomberg-style headline rail: a tag/date plus a linked
+    title, hairline-divided, no imagery. Used for the side rails next to
+    the homepage hero and the Recent News section, so those sections don't
+    have to be one massive full-width block to feel substantial -- entries
+    need 'tag', 'title', and 'link' keys."""
+    return "".join(f"""
+        <a class="rail-item" href="{e['link']}"><span class="tag">{e['tag']}</span><h4>{e['title']}</h4></a>""" for e in entries)
 
 
 def feed_items_html(items, limit=None):
