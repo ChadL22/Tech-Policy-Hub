@@ -16,7 +16,7 @@ ROOT = os.path.join(os.path.dirname(__file__), "..", "docs")
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026081907"
+ASSET_VERSION = "2026081908"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -456,6 +456,21 @@ def question_cards_html(items):
         <a class="question-card" href="{q['link']}">
           <h3>{q['text']}</h3>
           <span class="qtag">{q['tag']}</span>
+        </a>""")
+    return "".join(out)
+
+
+def question_list_html(items):
+    """Compact text-list treatment for the full 6-question set on About --
+    deliberately NOT the same big card component the homepage uses for its
+    curated 4, so About reads as the complete reference rather than a
+    repeat of the homepage section at a larger size."""
+    out = []
+    for q in items:
+        out.append(f"""
+        <a class="question-row" href="{q['link']}">
+          <span class="qtag">{q['tag']}</span>
+          <span class="qtext">{q['text']}</span>
         </a>""")
     return "".join(out)
 

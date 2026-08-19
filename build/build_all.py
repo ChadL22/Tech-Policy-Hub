@@ -10,33 +10,42 @@ g.clean_stale_pages()
 # shows the full set of six.
 QUESTIONS_HOME = [g.QUESTIONS[0], g.QUESTIONS[2], g.QUESTIONS[3], g.QUESTIONS[4]]
 
-# Rail entries for the hero and Recent News side panels -- CNBC/Bloomberg-
-# style compact headline lists (tag + linked title, no imagery) so those
-# sections read as a lead story + rail instead of one massive full-width
-# block. NEWS_ITEMS already has tag/title/link keys; EVENTS_ITEMS needs its
-# month/day fields folded into a single "tag" for the rail.
-HERO_RAIL = g.NEWS_ITEMS[1:4]
+# The homepage's "what we do" lead grid uses NEWS_ITEMS[0:4] (lead story +
+# 2 secondary + 1 in the Hub Updates rail); Recent News further down uses
+# NEWS_ITEMS[4:6] -- every item appears exactly once on the homepage, no
+# story shows up twice the way the old hero-rail + Recent News grid did.
+LEAD_SECONDARY = g.NEWS_ITEMS[1:3]
+HUB_UPDATES_RAIL = g.NEWS_ITEMS[3:4] + [
+    dict(tag=f"{e['m']} {e['d']}", title=e['title'], link=e['link']) for e in g.EVENTS_ITEMS[:2]
+]
 EVENTS_RAIL = [dict(tag=f"{e['m']} {e['d']}", title=e['title'], link=e['link']) for e in g.EVENTS_ITEMS[:4]]
 
 home_body = f"""
-<section class="featured-hero">
-  <div class="container with-sidebar rail-wrap">
-    <div class="grid grid-2">
-      <div class="media"><span>Tech Policy Hub &mdash; Research Visual</span></div>
-      <div>
-        <div class="meta">Featured Publication &middot; {g.NEWS_ITEMS[0]['date']}</div>
-        <h1><a href="{g.NEWS_ITEMS[0]['link']}">{g.NEWS_ITEMS[0]['title']}</a></h1>
-        <p class="lede">{g.NEWS_ITEMS[0]['summary']}</p>
-        <div class="hero-actions">
-          <a href="{g.NEWS_ITEMS[0]['link']}" class="btn btn-primary btn-arrow">Read the Research</a>
-          <a href="topic-privacy.html" class="btn btn-ghost">Explore Consumer Privacy</a>
-        </div>
+<section class="lead-section">
+  <div class="container lead-grid">
+    <div class="lead-secondary">
+      <div class="rail-head">More From the Hub</div>
+      {g.rail_html(LEAD_SECONDARY)}
+    </div>
+    <div class="lead-story">
+      <div class="meta">Featured Publication &middot; {g.NEWS_ITEMS[0]['date']}</div>
+      <h1><a href="{g.NEWS_ITEMS[0]['link']}">{g.NEWS_ITEMS[0]['title']}</a></h1>
+      <p class="lede">{g.NEWS_ITEMS[0]['summary']}</p>
+      <div class="hero-actions">
+        <a href="{g.NEWS_ITEMS[0]['link']}" class="btn btn-primary btn-arrow">Read the Research</a>
+        <a href="topic-privacy.html" class="btn btn-ghost">Explore Consumer Privacy</a>
       </div>
     </div>
-    <div class="rail-panel">
-      <div class="rail-head">Also Today</div>
-      {g.rail_html(HERO_RAIL)}
+    <div class="lead-rail">
+      <div class="rail-head">Hub Updates</div>
+      {g.rail_html(HUB_UPDATES_RAIL)}
     </div>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="container">
+    <div class="pill-row">{g.topic_pills_plain_html()}</div>
   </div>
 </section>
 
@@ -49,58 +58,8 @@ home_body = f"""
       </div>
       <a href="about.html#questions" class="text-link">Explore All Questions</a>
     </div>
-    <div class="questions-grid">
+    <div class="questions-grid questions-grid--compact">
       {g.question_cards_html(QUESTIONS_HOME)}
-    </div>
-  </div>
-</section>
-
-<section class="soft-bg">
-  <div class="container">
-    <div class="section-head">
-      <div>
-        <span class="eyebrow">Get Involved</span>
-        <h2>Research &middot; People &middot; Events</h2>
-      </div>
-    </div>
-    <div class="pathways-grid">
-      <a class="pathway-card" href="research.html">
-        <span class="index">01</span>
-        <h3>Research</h3>
-        <p>Cybersecurity, consumer privacy, information integrity, and trustworthy ML &mdash; studied through comparative, qualitative, and computational methods.</p>
-        <span class="text-link">Browse Research</span>
-      </a>
-      <a class="pathway-card" href="people.html">
-        <span class="index">02</span>
-        <h3>People</h3>
-        <p>Faculty, affiliates, and graduate fellows building the bridge between computer science and public policy.</p>
-        <span class="text-link">Meet the Team</span>
-      </a>
-      <a class="pathway-card" href="events.html">
-        <span class="index">03</span>
-        <h3>Events</h3>
-        <p>Speaker Series sessions, workshops, roundtables, and our flagship Annual Event.</p>
-        <span class="text-link">See What's Coming Up</span>
-      </a>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="container carousel-wrap">
-    <div class="carousel-head">
-      <div>
-        <span class="eyebrow">Curated, Not Ours</span>
-        <h2>Ideas We're Reading</h2>
-        <p class="label-note">Outside reading from Phronesis and Tech Policy Press &mdash; not Hub-authored scholarship.</p>
-      </div>
-      <div class="carousel-arrows">
-        <button type="button" data-dir="-1" aria-label="Scroll left">&lsaquo;</button>
-        <button type="button" data-dir="1" aria-label="Scroll right">&rsaquo;</button>
-      </div>
-    </div>
-    <div class="carousel-track">
-      {g.reading_cards_html(g.READING_ITEMS)}
     </div>
   </div>
 </section>
@@ -115,14 +74,31 @@ home_body = f"""
       <a href="news.html" class="text-link">See All News</a>
     </div>
     <div class="with-sidebar rail-wrap">
-      <div class="grid grid-2">
-        {g.news_cards_html(g.NEWS_ITEMS[1:], limit=2)}
-      </div>
+      <div>{g.feed_items_html(g.NEWS_ITEMS[4:6])}</div>
       <div class="rail-panel">
         <div class="rail-head">Upcoming Events</div>
         {g.rail_html(EVENTS_RAIL)}
         <a href="events.html" class="text-link rail-more">See All Events</a>
       </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container carousel-wrap">
+    <div class="carousel-head">
+      <div>
+        <span class="eyebrow">Field Pulse</span>
+        <h2>What we're reading</h2>
+        <p class="label-note">Outside reading from Phronesis and Tech Policy Press &mdash; not Hub-authored scholarship.</p>
+      </div>
+      <div class="carousel-arrows">
+        <button type="button" data-dir="-1" aria-label="Scroll left">&lsaquo;</button>
+        <button type="button" data-dir="1" aria-label="Scroll right">&rsaquo;</button>
+      </div>
+    </div>
+    <div class="carousel-track">
+      {g.reading_cards_html(g.READING_ITEMS[:4])}
     </div>
   </div>
 </section>
@@ -134,6 +110,7 @@ home_body = f"""
       <h2>What is the Tech Policy Hub?</h2>
       <p>The University of Maryland&rsquo;s Tech Policy Hub studies tech policy from a socio-technical perspective &mdash; building the bridge between computer science and public policy. We bring together a DMV-based network of practitioners, scholars, industry leaders, and civil activists to inform, impact, and shape the future of technology in society.</p>
       <a class="text-link about-hub-link" href="about.html">More About the Hub</a>
+      <p class="explore-links">Explore: <a href="research.html">Research</a> &middot; <a href="people.html">People</a> &middot; <a href="events.html">Events</a></p>
     </div>
     <div class="pillars">
       <div class="pillar">
@@ -500,8 +477,8 @@ about_body = f"""
         <h2>The questions driving our research</h2>
       </div>
     </div>
-    <div class="questions-grid">
-      {g.question_cards_html(g.QUESTIONS)}
+    <div class="question-list">
+      {g.question_list_html(g.QUESTIONS)}
     </div>
   </div>
 </section>

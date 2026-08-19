@@ -224,21 +224,26 @@ li.has-dropdown.open .dropdown{ display:block; }
 .signal-card:hover .datum{ text-decoration: underline; }
 @media (prefers-reduced-motion: reduce){ .ticker-track-inner{ animation:none; } .ticker-viewport{ overflow-x:auto; } }
 
-/* ---------- Featured hero (two-column: media + story) ---------- */
-.featured-hero{ padding: 36px 0 40px; border-bottom: 1px solid var(--line); }
-.featured-hero .grid-2{ gap: 56px; align-items: start; }
-.featured-hero .media{
-  aspect-ratio: 16 / 9; background: linear-gradient(135deg, var(--header-band), #2b2f36);
-  display:flex; align-items:center; justify-content:center;
+/* ---------- Lead section: SCOTUSblog-style compact 3-column grid --
+   secondary headlines / lead story / Hub-updates rail, no oversized
+   placeholder art. Replaces the old single-story "featured-hero" block. ---------- */
+.lead-section{ padding: 28px 0 32px; border-bottom: 1px solid var(--line); }
+.lead-grid{ display:grid; grid-template-columns: 240px 1fr 280px; gap: 40px; align-items: start; }
+.lead-secondary{ grid-column: 1; border-right: 1px solid var(--line); padding-right: 28px; }
+.lead-story{ grid-column: 2; }
+.lead-rail{ grid-column: 3; border-left: 1px solid var(--line); padding-left: 28px; }
+.lead-story .meta{ font-family: var(--font-nav); font-size:.8rem; letter-spacing:.04em; color: var(--ink-soft); text-transform: uppercase; margin-bottom: 14px; }
+.lead-story h1{ margin-bottom: .4em; font-size: clamp(1.6rem, 2.6vw, 2.2rem); }
+.lead-story h1 a{ color: var(--ink); }
+.lead-story h1 a:hover{ color: var(--umd-red); text-decoration: none; }
+.lead-story .lede{ font-size: 1.02rem; max-width: 52ch; }
+@media (max-width: 1150px){
+  .lead-grid{ grid-template-columns: 1fr; }
+  .lead-secondary, .lead-story, .lead-rail{ grid-column: 1; }
+  .lead-secondary{ border-right:none; padding-right:0; }
+  .lead-secondary, .lead-rail{ border-left:none; padding-left:0; border-top: 2px solid var(--ink); padding-top: 24px; }
+  .lead-story{ order: -1; }
 }
-.featured-hero .media span{
-  font-family: var(--font-nav); color: #9a9ea3; text-transform: uppercase; letter-spacing: .06em; font-size: .8rem;
-}
-.featured-hero .meta{ font-family: var(--font-nav); font-size:.8rem; letter-spacing:.04em; color: var(--ink-soft); text-transform: uppercase; margin-bottom: 14px; }
-.featured-hero h1{ margin-bottom: .4em; }
-.featured-hero h1 a{ color: var(--ink); }
-.featured-hero h1 a:hover{ color: var(--umd-red); text-decoration: none; }
-.featured-hero .lede{ font-size: 1.08rem; max-width: 52ch; }
 
 /* ---------- Questions We Answer ---------- */
 .questions-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--line); }
@@ -257,16 +262,32 @@ li.has-dropdown.open .dropdown{ display:block; }
 }
 .question-card .qtag::after{ content:'→'; transition: transform .15s ease; }
 .question-card:hover .qtag::after{ transform: translateX(3px); }
+/* Homepage's curated 4-of-6 preview: tighter than the base card so this
+   section doesn't compete for the same visual weight as the lead grid
+   above it -- it's elaboration, not the opening pitch. */
+.questions-grid--compact .question-card{ padding: 24px 22px; min-height: 150px; gap: 14px; }
+.questions-grid--compact .question-card h3{ font-size: clamp(1.05rem, 1.6vw, 1.25rem); }
 
-/* ---------- Core pathways (Research / People / Events) ---------- */
-.pathways-grid{ display:grid; grid-template-columns: repeat(3,1fr); gap: 0; }
-.pathway-card{ padding: 0 32px 0 0; border-left: 1px solid var(--line); padding-left: 32px; text-decoration: none !important; }
-.pathways-grid > .pathway-card:first-child{ border-left:none; padding-left:0; }
-.pathway-card .index{ font-family: var(--font-nav); font-weight: 700; font-size: 1rem; color: var(--umd-red); display:block; margin-bottom: 18px; }
-.pathway-card h3{ color: var(--ink); margin-bottom: 10px; }
-.pathway-card:hover h3{ color: var(--umd-red); }
-.pathway-card p{ font-size:.95rem; margin-bottom: 14px; }
-.pathway-card .text-link{ pointer-events:none; }
+/* Compact text-list treatment for About's full 6-question set --
+   deliberately distinct from the homepage's card treatment above so the
+   same content doesn't read as "the same section, twice." */
+.question-list{ border-top: 1px solid var(--ink); }
+.question-row{
+  display:grid; grid-template-columns: 180px 1fr; gap: 22px; align-items:baseline;
+  padding: 18px 0; border-bottom: 1px solid var(--line); text-decoration: none !important;
+}
+.question-row .qtag{
+  font-family: var(--font-nav); font-size:.76rem; font-weight:700; letter-spacing:.03em; text-transform:uppercase; color: var(--umd-red);
+}
+.question-row .qtext{ color: var(--ink); font-size:.98rem; }
+.question-row:hover .qtext{ color: var(--umd-red); }
+@media (max-width: 640px){ .question-row{ grid-template-columns: 1fr; gap: 6px; } }
+
+/* Slim "Explore: Research · People · Events" link row -- replaces the old
+   3-card "Get Involved" section, which just re-linked the same 3 pages
+   already in the top nav. */
+.explore-links{ margin-top: 18px; font-size:.92rem; color: var(--ink-soft); }
+.explore-links a{ font-weight: 600; }
 
 /* ---------- Ideas We're Reading carousel ---------- */
 .carousel-wrap{ position: relative; }
@@ -500,9 +521,6 @@ footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding
   .rail-wrap .rail-panel{ border-left:none; padding-left:0; border-top: 2px solid var(--ink); padding-top: 24px; }
 }
 @media (max-width: 1000px){
-  .pathways-grid{ grid-template-columns: 1fr; gap: 28px; }
-  .pathway-card{ border-left:none !important; padding-left:0 !important; border-top:1px solid var(--line); padding-top:26px; }
-  .pathways-grid > .pathway-card:first-child{ border-top:none; padding-top:0; }
   .about-hub .grid-2{ grid-template-columns: 1fr; gap: 36px; }
   .pillars-light{ grid-template-columns: 1fr; }
 }
@@ -529,7 +547,6 @@ footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding
   .grid-4{ grid-template-columns: repeat(2,1fr); }
   .grid-3{ grid-template-columns: repeat(2,1fr); }
   .news-grid-section .grid-3 > .card:nth-child(n+3){ border-top: 1px solid var(--line); padding-top: 32px; margin-top: 8px; }
-  .featured-hero .grid-2{ grid-template-columns: 1fr; }
   .questions-grid{ grid-template-columns: 1fr; }
   .grid-4 > .topic-card:nth-child(2n+1){ border-left:none; padding-left:0; }
   .with-sidebar{ grid-template-columns: 1fr; }
