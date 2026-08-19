@@ -48,7 +48,14 @@ home_body = f"""
 
 <section class="section-tight">
   <div class="container">
-    <div class="pill-row">{g.topic_pills_plain_html()}</div>
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Research Areas</span>
+        <h2>What we study</h2>
+      </div>
+      <a href="research.html" class="text-link">All Research</a>
+    </div>
+    <div class="research-matrix">{g.research_matrix_html()}</div>
   </div>
 </section>
 

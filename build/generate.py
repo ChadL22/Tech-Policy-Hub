@@ -17,7 +17,7 @@ ROOT = os.path.join(os.path.dirname(__file__), "..", "docs")
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026081916"
+ASSET_VERSION = "2026081917"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -156,10 +156,11 @@ def header(active):
 
 def affiliation_strip():
     """Thin band under the header -- was institutional affiliation text
-    (University of Maryland / School of Public Policy / GoTech), swapped
-    per follow-up 11 for quick links to the Hub's 4 research areas, so a
-    visitor sees what the Hub actually studies immediately below the
-    header on every page."""
+    (University of Maryland / School of Public Policy / GoTech), then
+    (follow-up 11) quick links to the Hub's 4 research areas. As of
+    follow-up 16, no longer called from page() -- removed per request,
+    replaced by the homepage's research_matrix_html() section. Left
+    defined here in case it's wanted again."""
     links = "".join(
         f'<a href="{t["file"]}">{t["name"]}</a><span class="dot" aria-hidden="true">&middot;</span>'
         for t in TOPICS
@@ -261,7 +262,7 @@ def footer():
 
 
 def page(active, title, description, body, ticker=False):
-    out = head(title, description) + header(active) + affiliation_strip()
+    out = head(title, description) + header(active)
     if ticker:
         out += ticker_section()
     out += body + footer()
@@ -631,6 +632,20 @@ def topic_pills_plain_html():
     backgrounds (e.g. the Research hub page) where the gold-on-black
     treatment of topic_pills_html() wouldn't have contrast."""
     return "".join(f'<a class="btn btn-ghost" href="{t["file"]}">{t["name"]}</a>' for t in TOPICS)
+
+
+def research_matrix_html():
+    """Miniature 2x2 grid of the Hub's 4 research areas -- homepage only,
+    sits directly under the lead grid's Hub News rail (follow-up 16).
+    Assumes exactly 4 TOPICS (a true 2x2); if that count ever changes
+    this needs a different layout, not just more/fewer cells."""
+    assert len(TOPICS) == 4, "research_matrix_html() is hard-coded for a 2x2 (4 topics)"
+    return "".join(f"""
+        <a class="matrix-cell" href="{t['file']}">
+          <span class="index">{t['index']}</span>
+          <h3>{t['name']}</h3>
+          <p>{t['blurb']}</p>
+        </a>""" for t in TOPICS)
 
 
 def news_cards_html(items, limit=None):

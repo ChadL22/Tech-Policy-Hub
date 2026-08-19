@@ -372,6 +372,24 @@ li.has-dropdown.open .dropdown{ display:block; }
 .pill-row{ display:flex; flex-wrap:wrap; gap:10px; }
 .teaching-cta{ text-align: right; }
 
+/* Homepage-only miniature "Research Areas" matrix -- a real 2x2 grid
+   (hard-coded for exactly 4 TOPICS, see research_matrix_html()) with
+   ruled dividers between cells, like a small table, rather than a card
+   grid or pill row. Sits directly under the lead grid's Hub News rail. */
+.research-matrix{
+  display:grid; grid-template-columns: 1fr 1fr;
+  border-top: 1px solid var(--line); border-left: 1px solid var(--line);
+}
+.matrix-cell{
+  padding: 24px 28px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  text-decoration: none !important; transition: background .15s ease;
+}
+.matrix-cell:hover{ background: var(--nav-band); }
+.matrix-cell .index{ font-family: var(--font-nav); font-weight: 700; font-size: .9rem; color: var(--umd-red); display:block; margin-bottom: 8px; }
+.matrix-cell h3{ color: var(--ink); margin-bottom: 6px; }
+.matrix-cell:hover h3{ color: var(--umd-red); }
+.matrix-cell p{ color: var(--ink-soft); font-size: .92rem; margin:0; }
+
 .feed-item{
   display:grid; grid-template-columns: 130px 1fr; gap: 22px;
   padding: 22px 0; border-top: 1px solid var(--line);
@@ -622,6 +640,8 @@ footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding
   .grid-2, .grid-3, .grid-4{ grid-template-columns: 1fr; }
   .grid > .card, .grid-3 > .person, .grid-4 > .topic-card{ border-left:none !important; padding-left:0 !important; border-top: 1px solid var(--line); padding-top: 24px; }
   .grid > .card:first-child, .grid-3 > .person:first-child, .grid-4 > .topic-card:first-child{ border-top:none; padding-top:0; }
+  .research-matrix{ grid-template-columns: 1fr; }
+  .matrix-cell{ border-right:none; }
   .news-grid-section .grid-3 > .card{ border-top: 1px solid var(--line); padding-top: 24px; margin-top: 0; }
   .news-grid-section .grid-3 > .card:first-child{ border-top:none; padding-top:0; }
   .feed-item{ grid-template-columns: 1fr; }
