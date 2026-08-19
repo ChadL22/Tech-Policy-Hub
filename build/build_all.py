@@ -10,12 +10,13 @@ g.clean_stale_pages()
 # shows the full set of six.
 QUESTIONS_HOME = [g.QUESTIONS[0], g.QUESTIONS[2], g.QUESTIONS[3], g.QUESTIONS[4]]
 
-# The homepage's "what we do" lead grid uses NEWS_ITEMS[0:4] (lead story +
-# 2 secondary + 1 in the Hub Updates rail); Recent News further down uses
-# NEWS_ITEMS[4:6] -- every item appears exactly once on the homepage, no
-# story shows up twice the way the old hero-rail + Recent News grid did.
-LEAD_SECONDARY = g.NEWS_ITEMS[1:3]
-HUB_UPDATES_RAIL = g.NEWS_ITEMS[3:4] + [
+# The homepage's "what we do" lead grid uses NEWS_ITEMS[0] as the lead
+# story, with 1-3 folded into the Hub Updates rail (see below); Recent
+# News further down uses NEWS_ITEMS[4:6] -- every item appears exactly
+# once on the homepage, no story shows up twice the way the old
+# hero-rail + Recent News grid did. The lead grid's left column is now
+# the Guiding Questions list rather than a news rail (see follow-up 9).
+HUB_UPDATES_RAIL = g.NEWS_ITEMS[1:4] + [
     dict(tag=f"{e['m']} {e['d']}", title=e['title'], link=e['link']) for e in g.EVENTS_ITEMS[:2]
 ]
 EVENTS_RAIL = [dict(tag=f"{e['m']} {e['d']}", title=e['title'], link=e['link']) for e in g.EVENTS_ITEMS[:4]]
@@ -24,8 +25,8 @@ home_body = f"""
 <section class="lead-section">
   <div class="container lead-grid">
     <div class="lead-secondary">
-      <div class="rail-head">More From the Hub</div>
-      {g.rail_html(LEAD_SECONDARY)}
+      <div class="rail-head">Guiding Questions</div>
+      {g.guiding_questions_html(g.QUESTIONS)}
     </div>
     <div class="lead-story">
       <div class="meta">Featured Publication &middot; {g.NEWS_ITEMS[0]['date']}</div>
@@ -108,7 +109,7 @@ home_body = f"""
     <div>
       <span class="eyebrow">About</span>
       <h2>What is the Tech Policy Hub?</h2>
-      <p>The University of Maryland&rsquo;s Tech Policy Hub studies tech policy from a socio-technical perspective &mdash; building the bridge between computer science and public policy. We bring together a DMV-based network of practitioners, scholars, industry leaders, and civil activists to inform, impact, and shape the future of technology in society.</p>
+      <p>The University of Maryland&rsquo;s Tech Policy Hub studies tech policy from a socio-technical perspective, building the bridge between computer science &amp; public policy to understand how policy is designed and implemented for, by, and with tech. Our hub spans across the forefront of tech policy domains, including cybersecurity, consumer privacy, misinformation, and trustworthy machine learning (ML). We bring together DMV-based issue networks of practitioners, scholars, industry leaders, and civil activists to inform, impact, and shape the future of technology in society, applying a mix of comparative, qualitative, and computational research methods to advance our understanding and craft socially desired future paths for tech policy development.</p>
       <a class="text-link about-hub-link" href="about.html">More About the Hub</a>
       <p class="explore-links">Explore: <a href="research.html">Research</a> &middot; <a href="people.html">People</a> &middot; <a href="events.html">Events</a></p>
     </div>
@@ -440,14 +441,14 @@ about_body = f"""
     <div class="breadcrumb"><a href="index.html">Home</a> / About</div>
     <span class="eyebrow">About</span>
     <h1>About the Hub</h1>
-    <p class="lede">The University of Maryland's Tech Policy Hub studies tech policy from a socio-technical perspective, building the bridge between computer science and public policy.</p>
+    <p class="lede">Who we are, what we study, and how to get involved with the Hub.</p>
   </div>
 </section>
 <section>
   <div class="container with-sidebar">
     <div>
       <h2>Our mission</h2>
-      <p>We bring together DMV-based issue networks of practitioners, scholars, industry leaders, and civil activists to inform, impact, and shape the future of technology in society -- applying comparative, qualitative, and computational research methods to craft socially desired paths for tech policy development.</p>
+      <p>The University of Maryland&rsquo;s Tech Policy Hub studies tech policy from a socio-technical perspective, building the bridge between computer science &amp; public policy to understand how policy is designed and implemented for, by, and with tech. Our hub spans across the forefront of tech policy domains, including cybersecurity, consumer privacy, misinformation, and trustworthy machine learning (ML). We bring together DMV-based issue networks of practitioners, scholars, industry leaders, and civil activists to inform, impact, and shape the future of technology in society, applying a mix of comparative, qualitative, and computational research methods to advance our understanding and craft socially desired future paths for tech policy development.</p>
       <h2 style="margin-top:36px;">Our approach</h2>
       <div class="pillars pillars-light">
         <div class="pillar"><h4>Computing</h4><p>Attack-surface measurement, algorithmic accountability, and privacy-enhancing technology.</p></div>

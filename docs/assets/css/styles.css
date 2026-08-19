@@ -467,6 +467,15 @@ li.has-dropdown.open .dropdown{ display:block; }
 .rail-item:hover h4{ color: var(--umd-red); }
 .rail-more{ display:inline-block; margin-top: 14px; }
 
+/* Guiding Questions -- compact numbered list for the lead grid's narrow
+   left column (see .lead-secondary), denser than .rail-item since a full
+   tag+headline treatment for 8 items would run very long in ~240px. */
+.guide-q{ display:flex; gap: 10px; padding: 11px 0; border-top: 1px solid var(--line); text-decoration: none !important; }
+.guide-q:first-of-type{ border-top:none; padding-top:0; }
+.guide-q .num{ font-family: var(--font-nav); font-weight:700; font-size:.74rem; color: var(--umd-red); flex:none; padding-top: 1px; }
+.guide-q .qtext{ font-size:.86rem; line-height:1.4; color: var(--ink); }
+.guide-q:hover .qtext{ color: var(--umd-red); }
+
 /* ---------- Two column with sidebar ---------- */
 .with-sidebar{ display:grid; grid-template-columns: 1fr 280px; gap: 48px; }
 .rail-wrap{ align-items: start; }

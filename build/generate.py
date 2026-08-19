@@ -365,16 +365,20 @@ TICKER_ITEMS = [
 # as intellectual navigation, not just mission-statement copy. Homepage
 # shows a curated subset (see build_all.py); About shows all six.
 QUESTIONS = [
-    dict(text="How do we address the social problems of computing through top-down and bottom-up policymaking?",
+    dict(text="How do we deal with the social problems of computing through top-down and bottom-up policymaking & implementation?",
          tag="Trustworthy ML", link="topic-ml.html"),
     dict(text="What can we learn from the history of policymaking across technology issues?",
          tag="Information Integrity", link="topic-integrity.html"),
-    dict(text="What does tech policy look like from a comparative perspective -- across sectors and jurisdictions?",
+    dict(text="What can we learn about tech policy from a comparative perspective? Across sectors? Across jurisdictions?",
          tag="Consumer Privacy", link="topic-privacy.html"),
-    dict(text="How and by whom do tech policy issues enter the political agenda?",
+    dict(text="How and by whom tech policy issues enter the political agenda?",
          tag="Information Integrity", link="topic-integrity.html"),
-    dict(text="How can the efficacy of tech policy be assessed and evaluated?",
+    dict(text="How does the efficacy of tech policies can be assessed and evaluated?",
          tag="Cybersecurity", link="topic-cybersecurity.html"),
+    dict(text="What are the politics of tech policy design?",
+         tag="Policy Design", link="research.html"),
+    dict(text="How can we use crowdsourcing to improve tech policies?",
+         tag="Practice", link="about.html"),
     dict(text="How can we teach tech policy through an experiential learning perspective?",
          tag="Teaching", link="courses.html"),
 ]
@@ -470,6 +474,20 @@ def question_list_html(items):
         out.append(f"""
         <a class="question-row" href="{q['link']}">
           <span class="qtag">{q['tag']}</span>
+          <span class="qtext">{q['text']}</span>
+        </a>""")
+    return "".join(out)
+
+
+def guiding_questions_html(items):
+    """Compact numbered list for the homepage lead grid's left column --
+    denser than question_list_html() (About's full-width list), since this
+    one lives in a narrow ~240px rail column alongside the lead story."""
+    out = []
+    for i, q in enumerate(items, start=1):
+        out.append(f"""
+        <a class="guide-q" href="{q['link']}">
+          <span class="num">{i:02d}</span>
           <span class="qtext">{q['text']}</span>
         </a>""")
     return "".join(out)
