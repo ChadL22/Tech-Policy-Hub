@@ -18,6 +18,7 @@
   --umd-red: #E21833;
   --umd-red-dark: #A6081F;
   --umd-gold: #FFD200;
+  --accent-teal: #0B7285;
   --ink: #212529;
   --header-band: #272727;
   --nav-band: #F8F9FA;
@@ -176,15 +177,19 @@ li.has-dropdown.open .dropdown{ display:block; }
 /* ---------- Affiliation strip ---------- */
 .affiliation-strip{ background: var(--nav-band); border-bottom: 1px solid var(--line); }
 .affiliation-strip .container{ padding-top:8px; padding-bottom:8px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-.affiliation-strip span{
+.affiliation-strip span, .affiliation-strip a{
   font-family: var(--font-nav); font-size:.74rem; letter-spacing:.03em; text-transform:uppercase; color: var(--ink-soft);
 }
+.affiliation-strip a{ text-decoration: none !important; transition: color .15s ease; }
+.affiliation-strip a:hover{ color: var(--umd-red); }
 .affiliation-strip .dot{ color: var(--line); }
 
-/* ---------- Signal ticker (Bloomberg/CNBC-style scrolling rail, gold
-   top/bottom rule, small-caps labels). Single track, no channel tabs --
+/* ---------- Signal ticker (Bloomberg/CNBC-style rail, gold top/bottom
+   rule, small-caps labels). One lane, no channel tabs, no auto-scroll --
    scope is DMV + federal tech policy tracking only; each card is badged
-   with its jurisdiction via .signal-card .jurisdiction. ---------- */
+   with its jurisdiction via .signal-card .jurisdiction. User scrubs
+   through it by click-and-drag (main.js) or native touch/trackpad
+   scroll -- .ticker-viewport is a plain horizontally-scrolling lane. ---------- */
 .signal-ticker{
   background: var(--header-band); position: relative;
   border-top: 3px solid var(--umd-gold); border-bottom: 3px solid var(--umd-gold);
@@ -199,12 +204,13 @@ li.has-dropdown.open .dropdown{ display:block; }
 }
 .ticker-live .dot{ width:7px; height:7px; border-radius:50%; background:#E0292F; flex:none; animation: ticker-live-pulse 1.6s ease-in-out infinite; }
 @keyframes ticker-live-pulse{ 0%,100%{ opacity:1; } 50%{ opacity:.35; } }
-.ticker-viewport{ overflow: hidden; }
-.ticker-track{ display:none; }
-.ticker-track.active{ display:block; }
-.ticker-track-inner{ display:flex; width:max-content; animation: ticker-scroll 38s linear infinite; }
-.signal-ticker:hover .ticker-track-inner{ animation-play-state: paused; }
-@keyframes ticker-scroll{ from{ transform: translateX(0); } to{ transform: translateX(-50%); } }
+.ticker-viewport{
+  overflow-x:auto; overflow-y:hidden; scrollbar-width:none; cursor: grab;
+  -webkit-overflow-scrolling: touch;
+}
+.ticker-viewport::-webkit-scrollbar{ display:none; }
+.ticker-viewport.dragging{ cursor: grabbing; scroll-snap-type: none; user-select: none; }
+.ticker-track-inner{ display:flex; width:max-content; }
 .signal-card{
   display:flex; align-items:center; gap:12px; padding: 13px 28px; border-right: 1px solid rgba(255,255,255,.12);
   flex: none; text-decoration: none !important;
@@ -215,7 +221,6 @@ li.has-dropdown.open .dropdown{ display:block; }
 }
 .signal-card .datum{ font-size:.86rem; color:#fff; font-weight:600; white-space:nowrap; }
 .signal-card:hover .datum{ text-decoration: underline; }
-@media (prefers-reduced-motion: reduce){ .ticker-track-inner{ animation:none; } .ticker-viewport{ overflow-x:auto; } }
 
 /* ---------- Lead section: SCOTUSblog-style compact 3-column grid --
    secondary headlines / lead story / Hub-updates rail, no oversized
@@ -484,6 +489,49 @@ li.has-dropdown.open .dropdown{ display:block; }
 /* ---------- Two column with sidebar ---------- */
 .with-sidebar{ display:grid; grid-template-columns: 1fr 280px; gap: 48px; }
 .rail-wrap{ align-items: start; }
+
+/* ---------- Homepage calendar (replaces the old Recent News feed) --
+   real month-grid, Sun-Sat, correct weekday math from the stdlib
+   calendar module (see calendar_widget_html() in generate.py). Legend
+   + dark nav band + borderless day grid with color-coded event dots,
+   paired with the existing Upcoming Events rail. ---------- */
+.cal-legend{ display:flex; flex-wrap:wrap; gap: 8px 22px; margin-bottom: 24px; }
+.cal-legend-item{
+  display:inline-flex; align-items:center; gap:7px; font-family: var(--font-nav); font-size:.78rem;
+  color: var(--ink-soft);
+}
+.cal-legend-item .sw{ width:11px; height:11px; flex:none; }
+.cal-widget{ min-width:0; }
+.cal-head{
+  display:flex; align-items:center; justify-content:space-between; background: var(--header-band);
+  padding: 12px 18px; border-top: 3px solid var(--umd-gold);
+}
+.cal-title{
+  font-family: var(--font-nav); font-weight:700; font-size:.86rem; letter-spacing:.06em; text-transform:uppercase;
+  color:#fff;
+}
+.cal-nav{
+  background:none; border:1px solid rgba(255,255,255,.3); color:#fff; width:30px; height:30px; line-height:1;
+  cursor:pointer; font-size:1.05rem; flex:none; transition: border-color .15s ease, color .15s ease;
+}
+.cal-nav:hover{ border-color: var(--umd-gold); color: var(--umd-gold); }
+.cal-month{ display:none; border: 1px solid var(--line); border-top:none; }
+.cal-month.active{ display:block; }
+.cal-weekdays{ display:grid; grid-template-columns: repeat(7,1fr); border-bottom:1px solid var(--line); }
+.cal-weekdays span{
+  text-align:center; padding: 8px 2px; font-family: var(--font-nav); font-size:.66rem; font-weight:700;
+  letter-spacing:.04em; color: var(--ink-soft); text-transform:uppercase;
+}
+.cal-days{ display:grid; grid-template-columns: repeat(7,1fr); }
+.cal-day{
+  min-height: 68px; padding: 6px 4px; text-align:center; border-bottom:1px solid var(--line);
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+}
+.cal-day.empty{ background: var(--paper-soft); }
+.cal-day .daynum{ font-size:.8rem; color: var(--ink-soft); }
+.cal-day.has-event .daynum{ color: var(--ink); font-weight:700; }
+.cal-day .dots{ display:flex; gap:3px; justify-content:center; flex-wrap:wrap; }
+.cal-day .dot{ width:9px; height:9px; flex:none; }
 .sidebar-box{
   border-top: 10px solid var(--umd-red);
   background: var(--sidebar-band);
@@ -564,6 +612,7 @@ footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding
   .questions-grid{ grid-template-columns: 1fr; }
   .grid-4 > .topic-card:nth-child(2n+1){ border-left:none; padding-left:0; }
   .with-sidebar{ grid-template-columns: 1fr; }
+  .cal-day{ min-height: 46px; }
   .footer-grid{ grid-template-columns: 1fr 1fr; gap: 28px; }
   .read-card{ flex-basis: 70vw; }
   .teaching-cta{ text-align:left; margin-top:16px; }
@@ -592,7 +641,7 @@ footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding
   .brand-divider{ height:24px; }
   .header-actions{ gap:6px; }
   .header-actions .btn{ padding:9px 14px; font-size:.72rem; }
-  .affiliation-strip span{ font-size:.68rem; }
+  .affiliation-strip span, .affiliation-strip a{ font-size:.68rem; }
   .signal-card{ padding:13px 20px; }
   .ticker-live{ padding:8px 10px; }
 }

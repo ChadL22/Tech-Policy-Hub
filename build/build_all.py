@@ -56,41 +56,6 @@ home_body = f"""
   </div>
 </section>
 
-<section id="questions">
-  <div class="container">
-    <div class="section-head">
-      <div>
-        <span class="eyebrow">Questions We Answer</span>
-        <h2>The questions driving our research</h2>
-      </div>
-      <a href="about.html#questions" class="text-link">Explore All Questions</a>
-    </div>
-    <div class="questions-grid questions-grid--compact">
-      {g.question_cards_html(QUESTIONS_HOME)}
-    </div>
-  </div>
-</section>
-
-<section class="soft-bg news-grid-section">
-  <div class="container">
-    <div class="section-head">
-      <div>
-        <span class="eyebrow">Latest</span>
-        <h2>Recent News</h2>
-      </div>
-      <a href="news.html" class="text-link">See All News</a>
-    </div>
-    <div class="with-sidebar rail-wrap">
-      <div>{g.feed_items_html(g.NEWS_ITEMS[4:8])}</div>
-      <div class="rail-panel">
-        <div class="rail-head">Upcoming Events</div>
-        {g.rail_html(EVENTS_RAIL)}
-        <a href="events.html" class="text-link rail-more">See All Events</a>
-      </div>
-    </div>
-  </div>
-</section>
-
 <section>
   <div class="container carousel-wrap">
     <div class="carousel-head">
@@ -106,6 +71,42 @@ home_body = f"""
     </div>
     <div class="carousel-track">
       {g.reading_cards_html(g.READING_ITEMS[:4])}
+    </div>
+  </div>
+</section>
+
+<section class="soft-bg calendar-section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Calendar</span>
+        <h2>Upcoming</h2>
+      </div>
+      <a href="events.html" class="btn btn-ghost btn-arrow">Full Calendar</a>
+    </div>
+    <div class="cal-legend">{g.calendar_legend_html(g.EVENT_CATEGORIES)}</div>
+    <div class="with-sidebar rail-wrap cal-wrap">
+      {g.calendar_widget_html(g.EVENTS_ITEMS, g.EVENT_CATEGORIES)}
+      <div class="rail-panel">
+        <div class="rail-head">Upcoming Events</div>
+        {g.rail_html(EVENTS_RAIL)}
+        <a href="events.html" class="text-link rail-more">See All Events</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="questions">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Questions We Answer</span>
+        <h2>The questions driving our research</h2>
+      </div>
+      <a href="about.html#questions" class="text-link">Explore All Questions</a>
+    </div>
+    <div class="questions-grid questions-grid--compact">
+      {g.question_cards_html(QUESTIONS_HOME)}
     </div>
   </div>
 </section>

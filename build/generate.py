@@ -6,6 +6,7 @@ Assembles flat HTML pages (shared header/footer) into ../docs/
 No build step needed to VIEW the site -- just open the .html files.
 Re-run this script any time page content or the header/footer changes.
 """
+import calendar
 import os
 import re
 
@@ -16,7 +17,7 @@ ROOT = os.path.join(os.path.dirname(__file__), "..", "docs")
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026081910"
+ASSET_VERSION = "2026081912"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -155,32 +156,40 @@ def header(active):
 
 
 def affiliation_strip():
-    """Thin band under the header naming the Hub's institutional home --
-    subordinate to the Hub logo/name, per the brief's note that
-    partner-school affiliation should establish provenance without
-    competing with the Hub identity."""
-    return """
+    """Thin band under the header -- was institutional affiliation text
+    (University of Maryland / School of Public Policy / GoTech), swapped
+    per follow-up 11 for quick links to the Hub's 4 research areas, so a
+    visitor sees what the Hub actually studies immediately below the
+    header on every page."""
+    links = "".join(
+        f'<a href="{t["file"]}">{t["name"]}</a><span class="dot" aria-hidden="true">&middot;</span>'
+        for t in TOPICS
+    )
+    # strip the trailing separator after the last link
+    links = links.rsplit('<span class="dot" aria-hidden="true">&middot;</span>', 1)[0]
+    return f"""
 <div class="affiliation-strip">
   <div class="container">
-    <span>University of Maryland</span><span class="dot" aria-hidden="true">&middot;</span>
-    <span>School of Public Policy</span><span class="dot" aria-hidden="true">&middot;</span>
-    <span>Center for Governance of Technology and Systems (GoTech)</span>
+    {links}
   </div>
 </div>
 """
 
 
 def ticker_section():
-    """Bloomberg/CNBC-style signal rail, homepage only. Single scrolling
-    track, no channel tabs -- scope is deliberately narrow: real, tracked
-    tech policy activity in the DMV (DC/MD/VA) and at the federal level
-    only, each item badged with its jurisdiction (see TICKER_ITEMS
-    below). Not a live feed -- sourced by hand from the Integrity
-    Institute's Tech Policy Tracker (us-federal./us-state.techpolicytracker.com)
-    and needs a periodic manual refresh, same caveat as the rest of the
-    site's editorial content."""
+    """Bloomberg/CNBC-style signal rail, homepage only. A single lane,
+    no channel tabs, no auto-scrolling marquee -- scope is deliberately
+    narrow: real, tracked tech policy activity in the DMV (DC/MD/VA) and
+    at the federal level only, each item badged with its jurisdiction
+    (see TICKER_ITEMS below). User-scrubbable: main.js wires up
+    click-and-drag on .ticker-viewport, and it's natively swipeable/
+    scrollable on touch and trackpad. Not a live feed -- sourced by hand
+    from the Integrity Institute's Tech Policy Tracker
+    (us-federal./us-state.techpolicytracker.com) and needs a periodic
+    manual refresh, same caveat as the rest of the site's editorial
+    content."""
     return f"""
-<div class="signal-ticker" aria-label="Latest DMV and federal tech policy updates">
+<div class="signal-ticker" aria-label="Latest DMV and federal tech policy updates -- drag to scrub">
   <div class="ticker-head">
     <span class="ticker-live"><span class="dot" aria-hidden="true"></span>Updates</span>
   </div>
@@ -354,14 +363,25 @@ NEWS_ITEMS = [
          link="https://ischool.umd.edu/centers-and-labs/vcai/"),
 ]
 
+# Category -> color for the homepage calendar's legend/dots (see
+# calendar_widget_html() / calendar_legend_html()). Kept in Hub brand
+# colors (red/gold/ink) plus one added teal accent for a 4th category,
+# since the site otherwise only defines red/gold/ink.
+EVENT_CATEGORIES = {
+    "Speaker Series": "var(--umd-red)",
+    "Workshop": "var(--umd-gold)",
+    "Roundtable": "var(--accent-teal)",
+    "Annual Event": "var(--ink)",
+}
+
 EVENTS_ITEMS = [
-    dict(m="SEP", d="09", title="Speaker Series: Platform Design & the Law",
+    dict(y=2026, m="SEP", d="09", cat="Speaker Series", title="Speaker Series: Platform Design & the Law",
          meta="4:00 PM · College Park, MD & Zoom", link="speaker-series.html"),
-    dict(m="OCT", d="14", title="Workshop: Measuring Algorithmic Harm",
+    dict(y=2026, m="OCT", d="14", cat="Workshop", title="Workshop: Measuring Algorithmic Harm",
          meta="1:00 PM · Iribe Center, Room 3137", link="events.html"),
-    dict(m="NOV", d="18", title="Roundtable: AI Policy in the States",
+    dict(y=2026, m="NOV", d="18", cat="Roundtable", title="Roundtable: AI Policy in the States",
          meta="10:00 AM · Virtual", link="events.html"),
-    dict(m="APR", d="09", title="Tech Policy Hub Annual Event 2027",
+    dict(y=2027, m="APR", d="09", cat="Annual Event", title="Tech Policy Hub Annual Event 2027",
          meta="All day · University of Maryland", link="annual-event.html"),
 ]
 
@@ -466,11 +486,12 @@ def ticker_html(items):
 
 
 def ticker_track_html(items):
-    """Single scrolling track -- no channel tabs (see ticker_section()).
-    Items are duplicated back-to-back so the CSS marquee animation loops
-    seamlessly."""
-    cards = ticker_html(items)
-    return f'<div class="ticker-track active"><div class="ticker-track-inner">{cards}{cards}</div></div>'
+    """Single, non-looping lane -- no channel tabs, no auto-scroll (see
+    ticker_section()). One pass through the items, since the user
+    scrubs through them manually rather than watching an infinite
+    marquee -- duplicating the list would just mean scrubbing past the
+    end lands back on items already seen."""
+    return f'<div class="ticker-track"><div class="ticker-track-inner">{ticker_html(items)}</div></div>'
 
 
 def question_cards_html(items):
@@ -613,6 +634,76 @@ def news_cards_html(items, limit=None):
           <p>{it['summary']}</p>
         </div>""")
     return "".join(out)
+
+
+_MONTH_NUM = {abbr.upper(): i for i, abbr in enumerate(calendar.month_abbr) if abbr}
+
+
+def calendar_legend_html(categories):
+    """Colored-square legend above the homepage calendar, one entry per
+    EVENT_CATEGORIES key."""
+    return "".join(
+        f'<span class="cal-legend-item"><span class="sw" style="background:{color}" aria-hidden="true"></span>{name}</span>'
+        for name, color in categories.items()
+    )
+
+
+def calendar_widget_html(events, categories):
+    """Real month-grid calendar (Sun-Sat, correct weekday math via the
+    stdlib calendar module) -- replaces the homepage's old Recent News
+    feed. One panel per (year, month) that actually has an event, in
+    the order those months first appear in `events`; main.js pages
+    between panels with prev/next. Event days show a small dot per
+    event, color-coded by category and linked to the event."""
+    month_keys = []
+    by_month = {}
+    for e in events:
+        key = (e["y"], _MONTH_NUM[e["m"]])
+        if key not in by_month:
+            by_month[key] = []
+            month_keys.append(key)
+        by_month[key].append(e)
+
+    cal = calendar.Calendar(firstweekday=6)  # weeks start Sunday
+    panels = []
+    for i, (y, mnum) in enumerate(month_keys):
+        events_by_day = {}
+        for e in by_month[(y, mnum)]:
+            events_by_day.setdefault(int(e["d"]), []).append(e)
+        label = f"{calendar.month_name[mnum]} {y}"
+        day_cells = []
+        for week in cal.monthdayscalendar(y, mnum):
+            for day in week:
+                if day == 0:
+                    day_cells.append('<div class="cal-day empty"></div>')
+                    continue
+                evs = events_by_day.get(day)
+                if evs:
+                    dots = "".join(
+                        f'<a class="dot" style="background:{categories[e["cat"]]}" '
+                        f'href="{e["link"]}"{link_attrs(e["link"])} title="{e["title"]}" aria-label="{e["title"]}"></a>'
+                        for e in evs
+                    )
+                    day_cells.append(f'<div class="cal-day has-event"><span class="daynum">{day}</span><span class="dots">{dots}</span></div>')
+                else:
+                    day_cells.append(f'<div class="cal-day"><span class="daynum">{day}</span></div>')
+        active = " active" if i == 0 else ""
+        panels.append(f"""
+        <div class="cal-month{active}" data-label="{label}">
+          <div class="cal-weekdays"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
+          <div class="cal-days">{''.join(day_cells)}</div>
+        </div>""")
+
+    first_label = f"{calendar.month_name[month_keys[0][1]]} {month_keys[0][0]}" if month_keys else ""
+    return f"""
+        <div class="cal-widget">
+          <div class="cal-head">
+            <button type="button" class="cal-nav" data-dir="-1" aria-label="Previous month">&lsaquo;</button>
+            <span class="cal-title">{first_label}</span>
+            <button type="button" class="cal-nav" data-dir="1" aria-label="Next month">&rsaquo;</button>
+          </div>
+          <div class="cal-panels">{''.join(panels)}</div>
+        </div>"""
 
 
 def events_rows_html(items, limit=None, with_btn=True):
