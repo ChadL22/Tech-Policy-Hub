@@ -10,12 +10,15 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // Dropdown toggle -- click (or tap) to open/close a submenu at any
-  // screen size, not just on mouse hover. This is in addition to the
-  // CSS :hover/:focus-within reveal, so keyboard, touch, and anyone not
-  // hovering a mouse over "Topics"/"Programs" can still reach the items.
+  // Dropdown toggle -- on mobile (where the CSS collapses nav into a full
+  // panel, see the 720px breakpoint in styles.css), tapping "Research" or
+  // "Events" opens the submenu instead of navigating, since there's no
+  // hover to reveal it any other way. On desktop the dropdown already
+  // opens on hover/focus via CSS, so a click there follows the link
+  // normally -- Research and Events are real pages, not just menu labels.
   document.querySelectorAll('.has-dropdown > .nav-link').forEach(function (link) {
     link.addEventListener('click', function (e) {
+      if (window.innerWidth > 720) return;
       e.preventDefault();
       var parent = link.parentElement;
       var willOpen = !parent.classList.contains('open');
@@ -63,6 +66,19 @@ document.addEventListener('DOMContentLoaded', function () {
         btn.classList.add('active');
         var panel = panelGroup.querySelector('.tab-panel[data-tab="' + target + '"]');
         if (panel) panel.classList.add('active');
+      });
+    });
+  });
+
+  // "Ideas We're Reading" carousel arrows
+  document.querySelectorAll('.carousel-wrap').forEach(function (wrap) {
+    var track = wrap.querySelector('.carousel-track');
+    if (!track) return;
+    wrap.querySelectorAll('.carousel-arrows button').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var card = track.querySelector('.read-card');
+        var step = card ? card.getBoundingClientRect().width + 24 : 300;
+        track.scrollBy({ left: step * parseInt(btn.dataset.dir, 10), behavior: 'smooth' });
       });
     });
   });

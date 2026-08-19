@@ -1,16 +1,15 @@
 /* ===========================================================
    Tech Policy Hub — design system
-   Fonts/colors/content: techpolicy.info.umd.edu (verified via
-     computed styles) — Source Sans Pro body/headings, Roboto
-     Condensed bold-uppercase nav/labels, Crimson Text accent,
-     #E21833 red, #272727 dark band, #F8F9FA nav band, #F8F8F8
-     sidebar fill.
-   Page layout: mirrors kgi.georgetown.edu section-for-section
-     (verified via live measurement) — single header row, two-col
-     featured hero, black statement band with pill topic nav, 3-col
-     hairline card grid, newsletter band, minimal footer with a
-     bottom wordmark + copyright bar. No stats row / sidebar-events
-     section, since KGI's homepage doesn't have one.
+   Fonts/colors: Source Sans Pro body/headings, Roboto Condensed
+     bold-uppercase nav/labels, Crimson Text accent, #E21833 red,
+     #272727 dark band, #F8F9FA nav band, #F8F8F8 sidebar fill.
+   Structure: implements the redesign brief's content architecture
+     -- shallow Research/People/Events/News/About nav, affiliation
+     strip, Bloomberg-style signal ticker, featured research hero,
+     Questions We Answer, Research/People/Events pathways, an
+     external reading carousel (Phronesis + Tech Policy Press),
+     card-based research/news/people grids, dark About band, and a
+     minimal footer with a bottom wordmark + copyright bar.
    =========================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Roboto+Condensed:wght@400;700&family=Crimson+Text:ital@0;1&display=swap');
@@ -78,6 +77,7 @@ section{ padding: 56px 0; }
 .ink-bg{ background: var(--header-band); color: #fff; }
 .ink-bg h1, .ink-bg h2, .ink-bg h3{ color: #fff; }
 .ink-bg p{ color: #C7CACD; }
+.label-note{ font-size: .92rem; color: var(--ink-soft); margin-top: 6px; max-width: 46ch; }
 
 /* ---------- Buttons ---------- */
 .btn{
@@ -97,6 +97,7 @@ section{ padding: 56px 0; }
   cursor: pointer;
   text-decoration: none !important;
   transition: background .15s ease, color .15s ease, border-color .15s ease;
+  white-space: nowrap;
 }
 .btn:hover{ background: var(--ink); color: #fff; }
 .btn-primary{ background: var(--umd-red); color: #fff; border-color: var(--umd-red); }
@@ -110,30 +111,31 @@ section{ padding: 56px 0; }
 .btn-arrow:hover::after{ transform: translateX(3px); }
 .text-link{
   font-family: var(--font-nav); font-weight: 700; font-size: .9rem; text-transform: uppercase; letter-spacing: .02em;
-  color: var(--ink); border-bottom: 1px solid var(--ink); padding-bottom: 2px;
+  color: var(--ink); border-bottom: 1px solid var(--ink); padding-bottom: 2px; display: inline-block;
 }
 .text-link:hover{ color: var(--umd-red); border-color: var(--umd-red); text-decoration: none; }
 .center-cta{ text-align: center; padding-top: 12px; }
 
-/* ---------- Header: single row (matches kgi.georgetown.edu) ---------- */
+/* ---------- Header: single row, brand | nav | actions ---------- */
 header.site-header{
-  position: sticky; top: 0; z-index: 100;
+  position: sticky; top: 0; z-index: 200;
   background: #fff;
   border-bottom: 1px solid var(--line);
 }
 .header-inner{
   display:flex; align-items:center; justify-content:space-between;
-  padding: 20px 0;
+  padding: 18px 0; gap: 20px;
 }
-.brand-lockup{ display:flex; align-items:center; gap:18px; }
+.brand-lockup{ display:flex; align-items:center; gap:18px; min-width:0; flex:1 1 auto; overflow:hidden; }
 .umd-logo-link{ display:flex; align-items:center; flex:none; }
 .umd-logo{ height:52px; width:auto; }
 .brand-divider{ width:1px; height:44px; background:var(--line); flex:none; }
-.brand{ display:flex; align-items:center; gap:10px; text-decoration:none !important; }
+.brand{ display:flex; align-items:center; gap:10px; text-decoration:none !important; min-width:0; }
 .brand-chip{
   color: var(--ink); font-family: var(--font-nav); font-weight:700;
   font-size: 1.35rem; text-transform: uppercase; letter-spacing: .01em;
-  display:inline-block; transition: color .15s ease;
+  display:block; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  transition: color .15s ease;
 }
 .brand:hover .brand-chip{ color: var(--umd-red); }
 
@@ -141,18 +143,20 @@ nav.primary-nav{ display:flex; align-items:center; gap: 4px; }
 nav.primary-nav > ul{ display:flex; align-items:center; gap: 2px; list-style:none; margin:0; padding:0; }
 nav.primary-nav > ul > li{ position: relative; }
 nav.primary-nav a.nav-link{
-  display:block; padding: 10px 15px; font-family: var(--font-nav); font-weight:700; font-size:.92rem;
+  display:flex; align-items:center; gap:5px; padding: 10px 15px; font-family: var(--font-nav); font-weight:700; font-size:.92rem;
   text-transform: uppercase; letter-spacing: .01em;
   color: var(--umd-red);
 }
 nav.primary-nav a.nav-link:hover{ color: var(--ink); text-decoration:none; }
 nav.primary-nav li.current > a.nav-link{ color: var(--ink); }
+.caret{ font-size:.62em; transition: transform .15s ease; }
+li.has-dropdown.open .caret{ transform: rotate(180deg); }
 
 .dropdown{
-  position:absolute; top: 100%; left: 50%; transform: translateX(-50%);
+  position:absolute; top: 100%; left: 0; transform:none;
   background:#fff; border:1px solid var(--line); box-shadow: 0 8px 16px rgba(0,0,0,.08);
-  width: max-content; min-width: 200px; padding: 6px 0; margin: 0; display:none;
-  list-style: none;
+  width: max-content; min-width: 220px; padding: 6px 0; margin: 6px 0 0; display:none;
+  list-style: none; z-index: 50;
 }
 .dropdown li{ margin:0; padding:0; list-style:none; }
 li.has-dropdown:hover .dropdown,
@@ -161,38 +165,104 @@ li.has-dropdown.open .dropdown{ display:block; }
 .dropdown a{ display:block; padding:10px 16px; color: var(--ink); font-family: var(--font-body); font-size:.92rem; font-weight:600; text-transform:none; }
 .dropdown a:hover{ background: var(--paper-soft); color: var(--umd-red); text-decoration:none; }
 
+.header-actions{ display:flex; align-items:center; gap:12px; flex:none; }
 .nav-toggle{ display:none; background:none; border:none; cursor:pointer; padding:8px; }
 .nav-toggle span{ display:block; width:22px; height:2px; background:var(--ink); margin:5px 0; }
 
-/* ---------- Featured hero (two-column: media + story, matches KGI's homepage lead) ---------- */
+/* ---------- Affiliation strip ---------- */
+.affiliation-strip{ background: var(--nav-band); border-bottom: 1px solid var(--line); }
+.affiliation-strip .container{ padding-top:8px; padding-bottom:8px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.affiliation-strip span{
+  font-family: var(--font-nav); font-size:.74rem; letter-spacing:.03em; text-transform:uppercase; color: var(--ink-soft);
+}
+.affiliation-strip .dot{ color: var(--line); }
+
+/* ---------- Signal ticker ---------- */
+.signal-ticker{ background: var(--header-band); overflow: hidden; position: relative; border-bottom: 1px solid #000; }
+.ticker-track{ display:flex; width:max-content; animation: ticker-scroll 38s linear infinite; }
+.signal-ticker:hover .ticker-track{ animation-play-state: paused; }
+@keyframes ticker-scroll{ from{ transform: translateX(0); } to{ transform: translateX(-50%); } }
+.signal-card{
+  display:flex; align-items:center; gap:12px; padding: 15px 30px; border-right: 1px solid rgba(255,255,255,.12);
+  flex: none; text-decoration: none !important;
+}
+.signal-card .label{
+  font-family: var(--font-nav); font-size:.72rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
+  color: var(--umd-gold);
+}
+.signal-card .datum{ font-size:.88rem; color:#fff; font-weight:600; white-space:nowrap; }
+.signal-card:hover .datum{ text-decoration: underline; }
+@media (prefers-reduced-motion: reduce){ .ticker-track{ animation:none; overflow-x:auto; } }
+
+/* ---------- Featured hero (two-column: media + story) ---------- */
 .featured-hero{ padding: 36px 0 40px; border-bottom: 1px solid var(--line); }
 .featured-hero .grid-2{ gap: 56px; align-items: start; }
 .featured-hero .media{
-  aspect-ratio: 16 / 9; background: var(--header-band);
+  aspect-ratio: 16 / 9; background: linear-gradient(135deg, var(--header-band), #2b2f36);
   display:flex; align-items:center; justify-content:center;
 }
 .featured-hero .media span{
-  font-family: var(--font-nav); color: #6b6e70; text-transform: uppercase; letter-spacing: .06em; font-size: .8rem;
+  font-family: var(--font-nav); color: #9a9ea3; text-transform: uppercase; letter-spacing: .06em; font-size: .8rem;
 }
 .featured-hero .meta{ font-family: var(--font-nav); font-size:.8rem; letter-spacing:.04em; color: var(--ink-soft); text-transform: uppercase; margin-bottom: 14px; }
 .featured-hero h1{ margin-bottom: .4em; }
-.featured-hero .lede{ font-size: 1.08rem; }
+.featured-hero h1 a{ color: var(--ink); }
+.featured-hero h1 a:hover{ color: var(--umd-red); text-decoration: none; }
+.featured-hero .lede{ font-size: 1.08rem; max-width: 52ch; }
 
-/* ---------- About teaser (short "what is the Hub" block, between the
-   featured story and the black statement band) ---------- */
-.about-teaser{ padding: 44px 0; border-bottom: 1px solid var(--line); }
-.about-teaser .grid-2{ gap: 56px; align-items: start; }
-.about-teaser h2{ margin-bottom: 0; }
-.about-teaser p{ font-size: 1.02rem; }
+/* ---------- Questions We Answer ---------- */
+.questions-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--line); }
+.question-card{
+  background:#fff; padding: 38px 34px; display:flex; flex-direction:column; justify-content:space-between; gap: 22px;
+  min-height: 210px; text-decoration: none !important; transition: background .15s ease;
+}
+.question-card:hover{ background: var(--paper-soft); }
+.question-card h3{
+  font-family: var(--font-accent); font-style: italic; font-weight: 400; font-size: clamp(1.2rem, 2vw, 1.5rem);
+  color: var(--ink); line-height: 1.3; margin: 0;
+}
+.question-card .qtag{
+  font-family: var(--font-nav); font-size:.76rem; font-weight:700; letter-spacing:.03em; text-transform:uppercase;
+  color: var(--umd-red); display:inline-flex; align-items:center; gap:6px;
+}
+.question-card .qtag::after{ content:'→'; transition: transform .15s ease; }
+.question-card:hover .qtag::after{ transform: translateX(3px); }
 
-/* ---------- Statement band (black, full-bleed, matches KGI) ---------- */
-.statement-band{ background: var(--header-band); color:#fff; padding: 64px 0; }
-.statement-band .grid-2{ gap: 56px; align-items:center; }
-.statement-band .accent-bar{ width: 56px; height: 4px; background: var(--umd-gold); margin-bottom: 22px; }
-.statement-band h2{ color:#fff; font-size: clamp(2rem, 3.6vw, 2.8rem); margin-bottom: .3em; }
-.statement-band p{ color:#C7CACD; font-size: 1.05rem; }
-.pill-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
-.pill-grid .btn{ justify-content: center; width: 100%; }
+/* ---------- Core pathways (Research / People / Events) ---------- */
+.pathways-grid{ display:grid; grid-template-columns: repeat(3,1fr); gap: 0; }
+.pathway-card{ padding: 0 32px 0 0; border-left: 1px solid var(--line); padding-left: 32px; text-decoration: none !important; }
+.pathways-grid > .pathway-card:first-child{ border-left:none; padding-left:0; }
+.pathway-card .index{ font-family: var(--font-nav); font-weight: 700; font-size: 1rem; color: var(--umd-red); display:block; margin-bottom: 18px; }
+.pathway-card h3{ color: var(--ink); margin-bottom: 10px; }
+.pathway-card:hover h3{ color: var(--umd-red); }
+.pathway-card p{ font-size:.95rem; margin-bottom: 14px; }
+.pathway-card .text-link{ pointer-events:none; }
+
+/* ---------- Ideas We're Reading carousel ---------- */
+.carousel-wrap{ position: relative; }
+.carousel-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom: 28px; }
+.carousel-arrows{ display:flex; gap:8px; }
+.carousel-arrows button{
+  width:38px; height:38px; border-radius:999px; border:1.5px solid var(--ink); background:#fff; cursor:pointer;
+  font-size:1rem; line-height:1; color: var(--ink);
+}
+.carousel-arrows button:hover{ background: var(--ink); color:#fff; }
+.carousel-track{ display:flex; gap:24px; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:6px; scrollbar-width:none; }
+.carousel-track::-webkit-scrollbar{ display:none; }
+.read-card{
+  flex: 0 0 clamp(260px, 27vw, 320px); scroll-snap-align:start; border:1px solid var(--line); padding: 26px;
+  display:flex; flex-direction:column; gap:10px; background:#fff;
+}
+.read-card .source{ font-family: var(--font-nav); font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color: var(--ink-soft); }
+.read-card .topic-tag{
+  font-family: var(--font-nav); font-size:.72rem; font-weight:700; letter-spacing:.02em; text-transform:uppercase;
+  color: var(--umd-red); border:1px solid var(--umd-red); border-radius:999px; padding:3px 10px; width:fit-content;
+}
+.read-card h3{ font-size:1.05rem; margin: 2px 0 0; }
+.read-card h3 a{ color: var(--ink); }
+.read-card h3 a:hover{ color: var(--umd-red); text-decoration:none; }
+.read-card p{ font-size:.92rem; margin-bottom:0; }
+.read-card .read-meta{ font-size:.8rem; color: var(--ink-soft); margin-top:auto; }
 
 /* ---------- Cards / feed — flat, hairline-divided, no shadows ---------- */
 .grid{ display:grid; gap: 0; }
@@ -211,8 +281,9 @@ li.has-dropdown.open .dropdown{ display:block; }
 .grid-3 > .card:nth-child(3n+1),
 .grid-4 > .card:nth-child(4n+1){ border-left: none; padding-left: 0; }
 .card .media{
-  aspect-ratio: 4/3; background: var(--paper-soft); margin-bottom: 4px;
+  aspect-ratio: 4/3; background: var(--paper-soft); border: 1px solid var(--line); margin-bottom: 4px;
 }
+.soft-bg .card .media{ background: #ECEAE4; }
 .card .kicker{ font-family: var(--font-nav); font-size:.78rem; font-weight:700; letter-spacing:.03em; text-transform:uppercase; color: var(--umd-red); border: 1px solid var(--umd-red); border-radius: 999px; padding: 3px 10px; display:inline-block; width: fit-content; }
 .card .meta{ font-size:.8rem; color: var(--ink-soft); }
 .card h3{ margin-bottom: 4px; }
@@ -235,6 +306,9 @@ li.has-dropdown.open .dropdown{ display:block; }
 .topic-card h3 a{ color: var(--ink); }
 .topic-card h3 a:hover{ color: var(--umd-red); text-decoration: none; }
 
+.pill-row{ display:flex; flex-wrap:wrap; gap:10px; }
+.teaching-cta{ text-align: right; }
+
 .feed-item{
   display:grid; grid-template-columns: 130px 1fr; gap: 22px;
   padding: 22px 0; border-top: 1px solid var(--line);
@@ -253,7 +327,24 @@ li.has-dropdown.open .dropdown{ display:block; }
 .section-head{ display:flex; align-items:flex-end; justify-content:space-between; margin-bottom: 28px; gap: 16px; flex-wrap:wrap; padding-bottom: 16px; border-bottom: 2px solid var(--ink); }
 .section-head h2{ margin-bottom:0; }
 
-/* ---------- Newsletter band ---------- */
+/* ---------- About the Hub (dark band, homepage) ---------- */
+.about-hub{ background: var(--header-band); color:#fff; }
+.about-hub h2{ color:#fff; }
+.about-hub .eyebrow{ color: var(--umd-gold); }
+.about-hub p{ color:#C7CACD; }
+.about-hub .grid-2{ align-items:start; gap:64px; }
+.about-hub .text-link{ color:#fff; border-color:#fff; }
+.about-hub .text-link:hover{ color: var(--umd-gold); border-color: var(--umd-gold); }
+
+.pillars{ display:flex; flex-direction:column; gap:26px; }
+.pillar{ border-left: 2px solid var(--umd-gold); padding-left: 20px; }
+.pillar h4{ font-family: var(--font-nav); text-transform:uppercase; letter-spacing:.03em; font-size:.95rem; margin-bottom:6px; }
+.about-hub .pillar h4{ color:#fff; }
+.pillar p{ font-size:.92rem; margin-bottom:0; }
+.pillars-light{ display:grid; grid-template-columns: repeat(3,1fr); gap:24px; margin-top:18px; }
+.pillars-light .pillar{ border-left-color: var(--umd-red); }
+
+/* ---------- Newsletter / subscribe band ---------- */
 .newsletter-band{ background: var(--paper-soft); padding: 64px 0; text-align: center; }
 .newsletter-band .inner{ max-width: 460px; margin: 0 auto; }
 .newsletter-band h2{ margin-bottom: .3em; }
@@ -300,7 +391,7 @@ li.has-dropdown.open .dropdown{ display:block; }
 .page-hero p.lede{ max-width: 68ch; font-size: 1.05rem; }
 .page-hero .hero-actions{ display:flex; gap:14px; margin-top: 24px; flex-wrap:wrap; }
 
-/* ---------- Two column with sidebar (sidebar box matches .widget-container on techpolicy.info.umd.edu) ---------- */
+/* ---------- Two column with sidebar ---------- */
 .with-sidebar{ display:grid; grid-template-columns: 1fr 280px; gap: 48px; }
 .sidebar-box{
   border-top: 10px solid var(--umd-red);
@@ -311,12 +402,7 @@ li.has-dropdown.open .dropdown{ display:block; }
 .sidebar-box ul{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:10px; }
 .sidebar-box li a{ font-size:.9rem; font-weight:600; }
 
-/* ---------- Homepage updates hub (Research / Events tabs -- room for a
-   Newsletter or Podcast tab later without adding a new full-width
-   section) ---------- */
-.updates-hub{ border-bottom: 1px solid var(--line); }
-
-/* ---------- Tabs ---------- */
+/* ---------- Tabs (topic pages: Projects / Publications / People) ---------- */
 .tabs{ display:flex; gap: 4px; border-bottom: 2px solid var(--ink); margin-bottom: 28px; flex-wrap:wrap; }
 .tab-btn{
   background:none; border:none; padding: 10px 16px 10px 0; margin-right: 22px; font-family: var(--font-nav);
@@ -327,7 +413,7 @@ li.has-dropdown.open .dropdown{ display:block; }
 .tab-panel{ display:none; }
 .tab-panel.active{ display:block; }
 
-/* ---------- Footer (matches KGI: minimal columns + bottom wordmark/copyright bar) ---------- */
+/* ---------- Footer ---------- */
 footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding-top: 48px; }
 .footer-grid{ display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 32px; padding-bottom: 44px; }
 .footer-grid h4{ font-family: var(--font-nav); font-size:.82rem; text-transform:uppercase; letter-spacing:.04em; margin-bottom:14px; color: var(--ink); }
@@ -353,27 +439,36 @@ footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding
 .footer-bottom-copyright{ font-size:.8rem; color: var(--ink-soft); }
 
 /* ---------- Responsive ---------- */
+@media (max-width: 1000px){
+  .pathways-grid{ grid-template-columns: 1fr; gap: 28px; }
+  .pathway-card{ border-left:none !important; padding-left:0 !important; border-top:1px solid var(--line); padding-top:26px; }
+  .pathways-grid > .pathway-card:first-child{ border-top:none; padding-top:0; }
+  .about-hub .grid-2{ grid-template-columns: 1fr; gap: 36px; }
+  .pillars-light{ grid-template-columns: 1fr; }
+}
 @media (max-width: 900px){
   .grid-4{ grid-template-columns: repeat(2,1fr); }
   .grid-3{ grid-template-columns: repeat(2,1fr); }
   .news-grid-section .grid-3 > .card:nth-child(n+3){ border-top: 1px solid var(--line); padding-top: 32px; margin-top: 8px; }
-  .featured-hero .grid-2, .statement-band .grid-2, .about-teaser .grid-2{ grid-template-columns: 1fr; }
-  .pill-grid{ max-width: none; }
+  .featured-hero .grid-2{ grid-template-columns: 1fr; }
+  .questions-grid{ grid-template-columns: 1fr; }
   .grid-4 > .topic-card:nth-child(2n+1){ border-left:none; padding-left:0; }
   .with-sidebar{ grid-template-columns: 1fr; }
   .footer-grid{ grid-template-columns: 1fr 1fr; gap: 28px; }
+  .read-card{ flex-basis: 70vw; }
+  .teaching-cta{ text-align:left; margin-top:16px; }
 }
 @media (max-width: 720px){
   nav.primary-nav{
     position: fixed; top: 0; left:0; right:0; bottom:0;
     background:#fff; flex-direction:column; align-items:stretch;
-    padding: 78px 20px 20px; transform: translateX(100%); transition: transform .2s ease;
-    overflow-y:auto;
+    padding: 84px 20px 20px; transform: translateX(100%); transition: transform .2s ease;
+    overflow-y:auto; z-index: 150;
   }
   nav.primary-nav.open{ transform: translateX(0); }
   nav.primary-nav > ul{ flex-direction:column; align-items:stretch; gap:0; }
-  nav.primary-nav a.nav-link{ color: var(--ink); }
-  .dropdown{ position:static; transform:none; width:auto; display:block; box-shadow:none; border:none; padding-left:12px; }
+  nav.primary-nav a.nav-link{ color: var(--ink); padding:14px 4px; border-bottom:1px solid var(--line); justify-content:space-between; }
+  .dropdown{ position:static; transform:none; width:auto; display:block; box-shadow:none; border:none; padding-left:12px; margin:0; }
   .nav-toggle{ display:block; }
   .brand-lockup{ gap:10px; }
   .umd-logo{ height:38px; }
@@ -387,4 +482,16 @@ footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding
   .event-row{ grid-template-columns: 60px 1fr; }
   .event-row .btn{ grid-column: 1 / -1; justify-self:start; }
   .footer-grid{ grid-template-columns: 1fr 1fr; }
+  .read-card{ flex-basis: 78vw; }
+}
+@media (max-width: 480px){
+  .header-inner{ gap:10px; }
+  .brand-lockup{ gap:8px; }
+  .umd-logo{ height:30px; }
+  .brand-divider{ height:24px; }
+  .brand-chip{ font-size:.98rem; max-width:32vw; }
+  .header-actions{ gap:6px; }
+  .header-actions .btn{ padding:9px 14px; font-size:.72rem; }
+  .affiliation-strip span{ font-size:.68rem; }
+  .signal-card{ padding:13px 20px; }
 }

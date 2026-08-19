@@ -25,18 +25,24 @@ def _rewrite_links(html, prefix):
     writing the homepage (root-level, links into sibling folders need no
     prefix) or '../' when writing any other page (one level deep, needs to
     climb back up to root first). External links, mailto:, and in-page
-    anchors (#...) are left untouched."""
+    anchors (#...) are left untouched. Also handles an in-page anchor on
+    the homepage itself, e.g. href="index.html#subscribe" (used by the
+    header's persistent Subscribe button so it works from any page)."""
     def repl(m):
         attr, val = m.group(1), m.group(2)
         if val.startswith(("http://", "https://", "mailto:", "#", "//")):
             return m.group(0)
-        if val == "index.html":
-            return f'{attr}="{prefix}"' if prefix else m.group(0)
+        if val == "index.html" or val.startswith("index.html#"):
+            frag = val[len("index.html"):]  # '' or '#subscribe'
+            if prefix:
+                return f'{attr}="{prefix}{frag}"'
+            return f'{attr}="{frag}"' if frag else m.group(0)
         if val.startswith("assets/"):
             return f'{attr}="{prefix}{val}"'
-        m2 = re.match(r"^([\w.-]+)\.html$", val)
+        m2 = re.match(r"^([\w.-]+)\.html(#.*)?$", val)
         if m2:
-            return f'{attr}="{prefix}{m2.group(1)}/"'
+            frag = m2.group(2) or ""
+            return f'{attr}="{prefix}{m2.group(1)}/{frag}"'
         return m.group(0)
     return LINK_ATTR_RE.sub(repl, html)
 
@@ -52,21 +58,31 @@ def clean_stale_pages():
             os.remove(os.path.join(ROOT, fname))
             print("removed stale", fname)
 
+# NAV -- shallow, per the redesign brief: Research / People / Events /
+# News / About, with Publications and Teaching folded into Research
+# rather than kept as their own top-level items. Each entry is
+# (label, href, children); children is None for a plain link, or a list
+# of (label, href) for a dropdown. The parent href is a real page (not
+# "#"), so clicking "Research" or "Events" itself navigates to that
+# section's index -- the dropdown is an additional hover/tap affordance,
+# not the only way in.
 NAV = [
-    ("Topics", None, [
+    ("Research", "research.html", [
+        ("All Research", "research.html"),
         ("Cybersecurity", "topic-cybersecurity.html"),
         ("Consumer Privacy", "topic-privacy.html"),
         ("Information Integrity", "topic-integrity.html"),
         ("Trustworthy ML", "topic-ml.html"),
+        ("Publications", "research.html#publications"),
+        ("Teaching", "courses.html"),
     ]),
-    ("Programs", None, [
-        ("Courses", "courses.html"),
+    ("People", "people.html", None),
+    ("Events", "events.html", [
+        ("All Events", "events.html"),
         ("Speaker Series", "speaker-series.html"),
         ("Annual Event", "annual-event.html"),
     ]),
     ("News", "news.html", None),
-    ("Events", "events.html", None),
-    ("People", "people.html", None),
     ("About", "about.html", None),
 ]
 
@@ -76,11 +92,11 @@ def nav_html(active):
     for label, href, children in NAV:
         is_current = href == active
         if children:
-            child_current = any(c[1] == active for c in children)
-            li_class = "has-dropdown" + (" current" if child_current else "")
+            child_current = any(c[1].split("#")[0] == active for c in children)
+            li_class = "has-dropdown" + (" current" if (is_current or child_current) else "")
             sub = "".join(f'<li><a href="{h}">{l}</a></li>' for l, h in children)
             items.append(
-                f'<li class="{li_class}"><a href="#" class="nav-link" aria-haspopup="true" aria-expanded="false">{label}</a>'
+                f'<li class="{li_class}"><a href="{href}" class="nav-link" aria-haspopup="true" aria-expanded="false">{label} <span class="caret" aria-hidden="true">&#9662;</span></a>'
                 f'<ul class="dropdown">{sub}</ul></li>'
             )
         else:
@@ -116,14 +132,46 @@ def header(active):
         <span class="brand-chip">Tech Policy Hub</span>
       </a>
     </div>
-    <nav class="primary-nav">
+    <nav class="primary-nav" aria-label="Primary">
       <ul>{nav_html(active)}</ul>
     </nav>
-    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
+    <div class="header-actions">
+      <a href="index.html#subscribe" class="btn btn-primary">Subscribe</a>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </div>
 </header>
+"""
+
+
+def affiliation_strip():
+    """Thin band under the header naming the Hub's institutional home --
+    subordinate to the Hub logo/name, per the brief's note that
+    partner-school affiliation should establish provenance without
+    competing with the Hub identity."""
+    return """
+<div class="affiliation-strip">
+  <div class="container">
+    <span>University of Maryland</span><span class="dot" aria-hidden="true">&middot;</span>
+    <span>School of Public Policy</span><span class="dot" aria-hidden="true">&middot;</span>
+    <span>Center for Governance of Technology and Systems (GoTech)</span>
+  </div>
+</div>
+"""
+
+
+def ticker_section():
+    """Bloomberg-style signal rail, homepage only. Content is editorial
+    (TICKER_ITEMS below), not a live feed -- per the brief's own guidance
+    to use editorial signals rather than faux-live metrics unless the
+    data can be reliably kept current."""
+    cards = ticker_html(TICKER_ITEMS)
+    return f"""
+<div class="signal-ticker" aria-label="Latest signals from the Hub">
+  <div class="ticker-track">{cards}{cards}</div>
+</div>
 """
 
 
@@ -145,18 +193,18 @@ def footer():
         </ul>
       </div>
       <div>
-        <h4>Topics</h4>
+        <h4>Research</h4>
         <ul>
           <li><a href="topic-cybersecurity.html">Cybersecurity</a></li>
           <li><a href="topic-privacy.html">Consumer Privacy</a></li>
           <li><a href="topic-integrity.html">Information Integrity</a></li>
           <li><a href="topic-ml.html">Trustworthy ML</a></li>
+          <li><a href="courses.html">Teaching</a></li>
         </ul>
       </div>
       <div>
-        <h4>Programs</h4>
+        <h4>Events</h4>
         <ul>
-          <li><a href="courses.html">Courses</a></li>
           <li><a href="speaker-series.html">Speaker Series</a></li>
           <li><a href="annual-event.html">Annual Event</a></li>
         </ul>
@@ -187,8 +235,12 @@ def footer():
 """
 
 
-def page(active, title, description, body):
-    return head(title, description) + header(active) + body + footer()
+def page(active, title, description, body, ticker=False):
+    out = head(title, description) + header(active) + affiliation_strip()
+    if ticker:
+        out += ticker_section()
+    out += body + footer()
+    return out
 
 
 def write(name, content):
@@ -280,6 +332,89 @@ PEOPLE_ITEMS = [
          focus="Consumer privacy, algorithmic accountability"),
 ]
 
+# Homepage signal ticker -- editorial, manually maintained (see
+# ticker_section() docstring). Two entries are computed from NEWS_ITEMS /
+# EVENTS_ITEMS so they can't silently drift out of sync with the actual
+# latest publication/event; the rest are hand-picked highlights.
+TICKER_ITEMS = [
+    dict(label="Research", datum="4 active focus areas &mdash; cybersecurity, privacy, integrity, ML", link="research.html"),
+    dict(label="Publications", datum=f"Latest: &ldquo;{NEWS_ITEMS[0]['title']}&rdquo; &mdash; {NEWS_ITEMS[0]['date']}", link="news.html"),
+    dict(label="Events", datum=f"Next up: {EVENTS_ITEMS[0]['m']} {EVENTS_ITEMS[0]['d']} &mdash; {EVENTS_ITEMS[0]['title']}", link="events.html"),
+    dict(label="People", datum="Lee Tiedrich joins the Hub as AI Fellow", link="people.html"),
+    dict(label="Policy Watch", datum="Tracking AI governance in the states", link="about.html#questions"),
+]
+
+# Questions We Answer -- same six questions as the Hub's mission ("Questions
+# we ask"), each tagged to the research area it connects to so they double
+# as intellectual navigation, not just mission-statement copy. Homepage
+# shows a curated subset (see build_all.py); About shows all six.
+QUESTIONS = [
+    dict(text="How do we address the social problems of computing through top-down and bottom-up policymaking?",
+         tag="Trustworthy ML", link="topic-ml.html"),
+    dict(text="What can we learn from the history of policymaking across technology issues?",
+         tag="Information Integrity", link="topic-integrity.html"),
+    dict(text="What does tech policy look like from a comparative perspective -- across sectors and jurisdictions?",
+         tag="Consumer Privacy", link="topic-privacy.html"),
+    dict(text="How and by whom do tech policy issues enter the political agenda?",
+         tag="Information Integrity", link="topic-integrity.html"),
+    dict(text="How can the efficacy of tech policy be assessed and evaluated?",
+         tag="Cybersecurity", link="topic-cybersecurity.html"),
+    dict(text="How can we teach tech policy through an experiential learning perspective?",
+         tag="Teaching", link="courses.html"),
+]
+
+# Ideas We're Reading -- placeholder examples for the Phronesis + Tech
+# Policy Press carousel. NOT real published articles; swap for the Hub's
+# actual picks before launch (see README "Known placeholders").
+READING_ITEMS = [
+    dict(source="Tech Policy Press", topic="Information Integrity",
+         title="Why Platform Transparency Reports Still Fall Short",
+         summary="A look at what current disclosure requirements do and don't reveal about content moderation at scale.",
+         meta="6 min read", link="#"),
+    dict(source="The Phronesis Institute", topic="Trustworthy ML",
+         title="The State of AI Governance, Three Years In",
+         summary="A field scan of regulatory approaches emerging across the U.S., EU, and Asia.",
+         meta="8 min read", link="#"),
+    dict(source="Tech Policy Press", topic="Consumer Privacy",
+         title="Cookies Are Dying. What Comes Next for Ad Tracking?",
+         summary="An explainer on the identification methods rushing to fill the gap.",
+         meta="5 min read", link="#"),
+    dict(source="The Phronesis Institute", topic="Cybersecurity",
+         title="County Governments Are the New Cybersecurity Frontline",
+         summary="Why local governments face outsized cyber risk with the fewest resources to manage it.",
+         meta="7 min read", link="#"),
+]
+
+
+def ticker_html(items):
+    return "".join(f"""
+        <a class="signal-card" href="{it['link']}"><span class="label">{it['label']}</span><span class="datum">{it['datum']}</span></a>""" for it in items)
+
+
+def question_cards_html(items):
+    out = []
+    for q in items:
+        out.append(f"""
+        <a class="question-card" href="{q['link']}">
+          <h3>{q['text']}</h3>
+          <span class="qtag">{q['tag']}</span>
+        </a>""")
+    return "".join(out)
+
+
+def reading_cards_html(items):
+    out = []
+    for r in items:
+        out.append(f"""
+        <div class="read-card">
+          <span class="source">{r['source']}</span>
+          <span class="topic-tag">{r['topic']}</span>
+          <h3><a href="{r['link']}">{r['title']}</a></h3>
+          <p>{r['summary']}</p>
+          <span class="read-meta">{r['meta']}</span>
+        </div>""")
+    return "".join(out)
+
 
 def feed_items_html(items, limit=None):
     out = []
@@ -316,6 +451,13 @@ def topic_pills_html():
     out = [f'<a class="btn btn-gold" href="{t["file"]}">{t["name"]}</a>' for t in TOPICS]
     out.append('<a class="btn btn-gold" href="about.html">All Topics</a>')
     return "".join(out)
+
+
+def topic_pills_plain_html():
+    """Plain outline pills linking to each topic, for use on light
+    backgrounds (e.g. the Research hub page) where the gold-on-black
+    treatment of topic_pills_html() wouldn't have contrast."""
+    return "".join(f'<a class="btn btn-ghost" href="{t["file"]}">{t["name"]}</a>' for t in TOPICS)
 
 
 def news_cards_html(items, limit=None):

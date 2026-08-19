@@ -20,74 +20,175 @@
         <span class="brand-chip">Tech Policy Hub</span>
       </a>
     </div>
-    <nav class="primary-nav">
-      <ul><li class="has-dropdown"><a href="#" class="nav-link" aria-haspopup="true" aria-expanded="false">Topics</a><ul class="dropdown"><li><a href="topic-cybersecurity/">Cybersecurity</a></li><li><a href="topic-privacy/">Consumer Privacy</a></li><li><a href="topic-integrity/">Information Integrity</a></li><li><a href="topic-ml/">Trustworthy ML</a></li></ul></li><li class="has-dropdown"><a href="#" class="nav-link" aria-haspopup="true" aria-expanded="false">Programs</a><ul class="dropdown"><li><a href="courses/">Courses</a></li><li><a href="speaker-series/">Speaker Series</a></li><li><a href="annual-event/">Annual Event</a></li></ul></li><li class=""><a href="news/" class="nav-link">News</a></li><li class=""><a href="events/" class="nav-link">Events</a></li><li class=""><a href="people/" class="nav-link">People</a></li><li class=""><a href="about/" class="nav-link">About</a></li></ul>
+    <nav class="primary-nav" aria-label="Primary">
+      <ul><li class="has-dropdown"><a href="research/" class="nav-link" aria-haspopup="true" aria-expanded="false">Research <span class="caret" aria-hidden="true">&#9662;</span></a><ul class="dropdown"><li><a href="research/">All Research</a></li><li><a href="topic-cybersecurity/">Cybersecurity</a></li><li><a href="topic-privacy/">Consumer Privacy</a></li><li><a href="topic-integrity/">Information Integrity</a></li><li><a href="topic-ml/">Trustworthy ML</a></li><li><a href="research/#publications">Publications</a></li><li><a href="courses/">Teaching</a></li></ul></li><li class=""><a href="people/" class="nav-link">People</a></li><li class="has-dropdown"><a href="events/" class="nav-link" aria-haspopup="true" aria-expanded="false">Events <span class="caret" aria-hidden="true">&#9662;</span></a><ul class="dropdown"><li><a href="events/">All Events</a></li><li><a href="speaker-series/">Speaker Series</a></li><li><a href="annual-event/">Annual Event</a></li></ul></li><li class=""><a href="news/" class="nav-link">News</a></li><li class=""><a href="about/" class="nav-link">About</a></li></ul>
     </nav>
-    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
+    <div class="header-actions">
+      <a href="#subscribe" class="btn btn-primary">Subscribe</a>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </div>
 </header>
 
+<div class="affiliation-strip">
+  <div class="container">
+    <span>University of Maryland</span><span class="dot" aria-hidden="true">&middot;</span>
+    <span>School of Public Policy</span><span class="dot" aria-hidden="true">&middot;</span>
+    <span>Center for Governance of Technology and Systems (GoTech)</span>
+  </div>
+</div>
+
+<div class="signal-ticker" aria-label="Latest signals from the Hub">
+  <div class="ticker-track">
+        <a class="signal-card" href="research/"><span class="label">Research</span><span class="datum">4 active focus areas &mdash; cybersecurity, privacy, integrity, ML</span></a>
+        <a class="signal-card" href="news/"><span class="label">Publications</span><span class="datum">Latest: &ldquo;Cookie-less Identification: For and Against Privacy&rdquo; &mdash; Jul 22, 2026</span></a>
+        <a class="signal-card" href="events/"><span class="label">Events</span><span class="datum">Next up: SEP 09 &mdash; Speaker Series: Platform Design & the Law</span></a>
+        <a class="signal-card" href="people/"><span class="label">People</span><span class="datum">Lee Tiedrich joins the Hub as AI Fellow</span></a>
+        <a class="signal-card" href="about/#questions"><span class="label">Policy Watch</span><span class="datum">Tracking AI governance in the states</span></a>
+        <a class="signal-card" href="research/"><span class="label">Research</span><span class="datum">4 active focus areas &mdash; cybersecurity, privacy, integrity, ML</span></a>
+        <a class="signal-card" href="news/"><span class="label">Publications</span><span class="datum">Latest: &ldquo;Cookie-less Identification: For and Against Privacy&rdquo; &mdash; Jul 22, 2026</span></a>
+        <a class="signal-card" href="events/"><span class="label">Events</span><span class="datum">Next up: SEP 09 &mdash; Speaker Series: Platform Design & the Law</span></a>
+        <a class="signal-card" href="people/"><span class="label">People</span><span class="datum">Lee Tiedrich joins the Hub as AI Fellow</span></a>
+        <a class="signal-card" href="about/#questions"><span class="label">Policy Watch</span><span class="datum">Tracking AI governance in the states</span></a></div>
+</div>
+
 <section class="featured-hero">
   <div class="container grid grid-2">
-    <div class="media"><span>Tech Policy Hub</span></div>
+    <div class="media"><span>Tech Policy Hub &mdash; Research Visual</span></div>
     <div>
-      <div class="meta">Jul 22, 2026</div>
-      <h1>Cookie-less Identification: For and Against Privacy</h1>
-      <p class="lede">New work from the privacy team examines the tradeoffs of emerging identification methods as third-party cookies phase out. Read more on our <a href="news/">news &amp; publications</a> page.</p>
+      <div class="meta">Featured Publication &middot; Jul 22, 2026</div>
+      <h1><a href="news/">Cookie-less Identification: For and Against Privacy</a></h1>
+      <p class="lede">New work from the privacy team examines the tradeoffs of emerging identification methods as third-party cookies phase out.</p>
+      <div class="hero-actions">
+        <a href="news/" class="btn btn-primary btn-arrow">Read the Research</a>
+        <a href="topic-privacy/" class="btn btn-ghost">Explore Consumer Privacy</a>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="about-teaser">
-  <div class="container grid grid-2">
-    <div>
-      <span class="eyebrow">About</span>
-      <h2>What is the Tech Policy Hub?</h2>
+<section id="questions">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Questions We Answer</span>
+        <h2>The questions driving our research</h2>
+      </div>
+      <a href="about/#questions" class="text-link">Explore All Questions</a>
     </div>
-    <div>
-      <p>The University of Maryland&rsquo;s Tech Policy Hub studies tech policy from a socio-technical perspective, building the bridge between computer science &amp; public policy to understand how policy is designed and implemented for, by, and with tech. Our hub spans across the forefront of tech policy domains, including cybersecurity, consumer privacy, misinformation, and trustworthy machine learning (ML). We bring together DMV-based issue networks of practitioners, scholars, industry leaders, and civil activists to inform, impact, and shape the future of technology in society, applying a mix of comparative, qualitative, and computational research methods to advance our understanding and craft socially desired future paths for tech policy development.</p>
-      <a class="text-link" href="about/">More About the Hub</a>
+    <div class="questions-grid">
+      
+        <a class="question-card" href="topic-ml/">
+          <h3>How do we address the social problems of computing through top-down and bottom-up policymaking?</h3>
+          <span class="qtag">Trustworthy ML</span>
+        </a>
+        <a class="question-card" href="topic-privacy/">
+          <h3>What does tech policy look like from a comparative perspective -- across sectors and jurisdictions?</h3>
+          <span class="qtag">Consumer Privacy</span>
+        </a>
+        <a class="question-card" href="topic-integrity/">
+          <h3>How and by whom do tech policy issues enter the political agenda?</h3>
+          <span class="qtag">Information Integrity</span>
+        </a>
+        <a class="question-card" href="topic-cybersecurity/">
+          <h3>How can the efficacy of tech policy be assessed and evaluated?</h3>
+          <span class="qtag">Cybersecurity</span>
+        </a>
     </div>
   </div>
 </section>
 
-<section class="statement-band">
-  <div class="container grid grid-2">
-    <div>
-      <div class="accent-bar" aria-hidden="true"></div>
-      <h2>Building the bridge between computer science and public policy.</h2>
-      <p>The Tech Policy Hub studies tech policy from a socio-technical perspective, bringing together practitioners, scholars, and students to work on cybersecurity, consumer privacy, information integrity, and trustworthy machine learning.</p>
+<section class="soft-bg">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Get Involved</span>
+        <h2>Research &middot; People &middot; Events</h2>
+      </div>
     </div>
-    <div class="pill-grid">
-      <a class="btn btn-gold" href="topic-cybersecurity/">Cybersecurity</a><a class="btn btn-gold" href="topic-privacy/">Consumer Privacy</a><a class="btn btn-gold" href="topic-integrity/">Information Integrity</a><a class="btn btn-gold" href="topic-ml/">Trustworthy ML</a><a class="btn btn-gold" href="about/">All Topics</a>
+    <div class="pathways-grid">
+      <a class="pathway-card" href="research/">
+        <span class="index">01</span>
+        <h3>Research</h3>
+        <p>Cybersecurity, consumer privacy, information integrity, and trustworthy ML &mdash; studied through comparative, qualitative, and computational methods.</p>
+        <span class="text-link">Browse Research</span>
+      </a>
+      <a class="pathway-card" href="people/">
+        <span class="index">02</span>
+        <h3>People</h3>
+        <p>Faculty, affiliates, and graduate fellows building the bridge between computer science and public policy.</p>
+        <span class="text-link">Meet the Team</span>
+      </a>
+      <a class="pathway-card" href="events/">
+        <span class="index">03</span>
+        <h3>Events</h3>
+        <p>Speaker Series sessions, workshops, roundtables, and our flagship Annual Event.</p>
+        <span class="text-link">See What's Coming Up</span>
+      </a>
     </div>
   </div>
 </section>
 
-<section class="updates-hub">
+<section>
+  <div class="container carousel-wrap">
+    <div class="carousel-head">
+      <div>
+        <span class="eyebrow">Curated, Not Ours</span>
+        <h2>Ideas We're Reading</h2>
+        <p class="label-note">Outside reading from Phronesis and Tech Policy Press &mdash; not Hub-authored scholarship.</p>
+      </div>
+      <div class="carousel-arrows">
+        <button type="button" data-dir="-1" aria-label="Scroll left">&lsaquo;</button>
+        <button type="button" data-dir="1" aria-label="Scroll right">&rsaquo;</button>
+      </div>
+    </div>
+    <div class="carousel-track">
+      
+        <div class="read-card">
+          <span class="source">Tech Policy Press</span>
+          <span class="topic-tag">Information Integrity</span>
+          <h3><a href="#">Why Platform Transparency Reports Still Fall Short</a></h3>
+          <p>A look at what current disclosure requirements do and don't reveal about content moderation at scale.</p>
+          <span class="read-meta">6 min read</span>
+        </div>
+        <div class="read-card">
+          <span class="source">The Phronesis Institute</span>
+          <span class="topic-tag">Trustworthy ML</span>
+          <h3><a href="#">The State of AI Governance, Three Years In</a></h3>
+          <p>A field scan of regulatory approaches emerging across the U.S., EU, and Asia.</p>
+          <span class="read-meta">8 min read</span>
+        </div>
+        <div class="read-card">
+          <span class="source">Tech Policy Press</span>
+          <span class="topic-tag">Consumer Privacy</span>
+          <h3><a href="#">Cookies Are Dying. What Comes Next for Ad Tracking?</a></h3>
+          <p>An explainer on the identification methods rushing to fill the gap.</p>
+          <span class="read-meta">5 min read</span>
+        </div>
+        <div class="read-card">
+          <span class="source">The Phronesis Institute</span>
+          <span class="topic-tag">Cybersecurity</span>
+          <h3><a href="#">County Governments Are the New Cybersecurity Frontline</a></h3>
+          <p>Why local governments face outsized cyber risk with the fewest resources to manage it.</p>
+          <span class="read-meta">7 min read</span>
+        </div>
+    </div>
+  </div>
+</section>
+
+<section class="soft-bg news-grid-section">
   <div class="container">
     <div class="section-head">
       <div>
         <span class="eyebrow">Latest</span>
-        <h2>What&rsquo;s Happening at the Hub</h2>
+        <h2>Recent News</h2>
       </div>
+      <a href="news/" class="text-link">See All News</a>
     </div>
-    <div class="tabs">
-      <button class="tab-btn active" data-tab="research">Research Updates</button>
-      <button class="tab-btn" data-tab="events">Events</button>
-    </div>
-    <div class="tab-panel active" data-tab="research">
-      <div class="grid grid-3">
-        
-        <div class="card">
-          <div class="media"><span>Publication</span></div>
-          <span class="kicker">Publication</span>
-          <div class="meta">Jul 22, 2026</div>
-          <h3><a href="news/">Cookie-less Identification: For and Against Privacy</a></h3>
-          <p>New work from the privacy team examines the tradeoffs of emerging identification methods as third-party cookies phase out.</p>
-        </div>
+    <div class="grid grid-3">
+      
         <div class="card">
           <div class="media"><span>Award</span></div>
           <span class="kicker">Award</span>
@@ -102,37 +203,45 @@
           <h3><a href="annual-event/">2026 Annual Event Draws Record Turnout</a></h3>
           <p>Practitioners, scholars, and students gathered for a full day of tech policy programming -- recap and photos now live.</p>
         </div>
-      </div>
-      <div class="center-cta">
-        <a href="news/" class="btn btn-ghost">See All News</a>
-      </div>
+        <div class="card">
+          <div class="media"><span>Media</span></div>
+          <span class="kicker">Media</span>
+          <div class="meta">Mar 2, 2026</div>
+          <h3><a href="news/">Hub Cybersecurity Research Featured in Newsweek</a></h3>
+          <p>The county-level cyber risk mapping project was highlighted for its national policy relevance.</p>
+        </div>
     </div>
-    <div class="tab-panel" data-tab="events">
-      
-        <div class="event-row">
-          <div class="event-date"><div class="d">09</div><div class="m">SEP</div></div>
-          <div><h3><a href="speaker-series/">Speaker Series: Platform Design & the Law</a></h3><div class="meta">4:00 PM · College Park, MD & Zoom</div></div>
-          <a class="btn btn-ghost" href="speaker-series/" style="padding:8px 16px; font-size:.82rem;">Details</a>
-        </div>
-        <div class="event-row">
-          <div class="event-date"><div class="d">14</div><div class="m">OCT</div></div>
-          <div><h3><a href="events/">Workshop: Measuring Algorithmic Harm</a></h3><div class="meta">1:00 PM · Iribe Center, Room 3137</div></div>
-          <a class="btn btn-ghost" href="events/" style="padding:8px 16px; font-size:.82rem;">Details</a>
-        </div>
-        <div class="event-row">
-          <div class="event-date"><div class="d">18</div><div class="m">NOV</div></div>
-          <div><h3><a href="events/">Roundtable: AI Policy in the States</a></h3><div class="meta">10:00 AM · Virtual</div></div>
-          <a class="btn btn-ghost" href="events/" style="padding:8px 16px; font-size:.82rem;">Details</a>
-        </div>
-      <div class="center-cta">
-        <a href="events/" class="btn btn-ghost">See All Events</a>
+  </div>
+</section>
+
+<section class="about-hub">
+  <div class="container grid grid-2">
+    <div>
+      <span class="eyebrow">About</span>
+      <h2>What is the Tech Policy Hub?</h2>
+      <p>The University of Maryland&rsquo;s Tech Policy Hub studies tech policy from a socio-technical perspective &mdash; building the bridge between computer science and public policy. We bring together a DMV-based network of practitioners, scholars, industry leaders, and civil activists to inform, impact, and shape the future of technology in society.</p>
+      <a class="text-link about-hub-link" href="about/">More About the Hub</a>
+    </div>
+    <div class="pillars">
+      <div class="pillar">
+        <h4>Computing</h4>
+        <p>Attack-surface measurement, algorithmic accountability, and privacy-enhancing technology.</p>
+      </div>
+      <div class="pillar">
+        <h4>Policy</h4>
+        <p>Comparative, qualitative, and computational research into how tech policy is designed, adopted, and enforced.</p>
+      </div>
+      <div class="pillar">
+        <h4>Practice</h4>
+        <p>A DMV-based issue network of scholars, practitioners, industry leaders, and civil society.</p>
       </div>
     </div>
   </div>
 </section>
 
-<section class="newsletter-band">
+<section id="subscribe" class="newsletter-band">
   <div class="container inner">
+    <span class="eyebrow">Stay in the Loop</span>
     <h2>Subscribe to our emails</h2>
     <p>Research, event invitations, and news from the Hub &mdash; a few times a month, never more.</p>
     <form class="newsletter-form">
@@ -159,18 +268,18 @@
         </ul>
       </div>
       <div>
-        <h4>Topics</h4>
+        <h4>Research</h4>
         <ul>
           <li><a href="topic-cybersecurity/">Cybersecurity</a></li>
           <li><a href="topic-privacy/">Consumer Privacy</a></li>
           <li><a href="topic-integrity/">Information Integrity</a></li>
           <li><a href="topic-ml/">Trustworthy ML</a></li>
+          <li><a href="courses/">Teaching</a></li>
         </ul>
       </div>
       <div>
-        <h4>Programs</h4>
+        <h4>Events</h4>
         <ul>
-          <li><a href="courses/">Courses</a></li>
           <li><a href="speaker-series/">Speaker Series</a></li>
           <li><a href="annual-event/">Annual Event</a></li>
         </ul>
