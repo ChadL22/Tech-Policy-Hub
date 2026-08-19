@@ -125,20 +125,22 @@ header.site-header{
 .header-inner{
   display:flex; align-items:center; justify-content:space-between;
   padding: 18px 0; gap: 20px;
+  --brand-mark-h: 40px; /* shared height for .tph-icon + .tph-wordmark, see below */
 }
 .brand-lockup{ display:flex; align-items:center; gap:18px; min-width:0; flex:1 1 auto; overflow:hidden; }
 .umd-logo-link{ display:flex; align-items:center; flex:none; }
 .umd-logo{ height:52px; width:auto; }
 .brand-divider{ width:1px; height:44px; background:var(--line); flex:none; }
-.brand{ display:flex; align-items:center; gap:12px; text-decoration:none !important; min-width:0; }
-.tph-icon{ height:40px; width:40px; border-radius: var(--radius); flex:none; }
+.brand{ display:flex; align-items:flex-end; gap:12px; text-decoration:none !important; min-width:0; }
 
-/* Wordmark: the user's own tight, blocky "Tech Policy Hub" logotype
-   artwork (custom-set condensed black, letters nearly touching --
-   heavier/tighter than any live-text CSS approximation could match), used
-   as-is rather than rebuilt in CSS. Transparent PNG, so it sits directly
-   on the header without its own background. */
-.tph-wordmark{ height:42px; width:auto; flex:none; transition: opacity .15s ease; }
+/* Icon + wordmark: both sized off the same --brand-mark-h custom property
+   (set on .header-inner, overridden per breakpoint below) so the icon and
+   the wordmark image are always identical in size, and aligned to a
+   common bottom edge (align-items:flex-end on .brand) so they are always
+   flush with one another regardless of either asset's exact proportions. */
+.tph-icon, .tph-wordmark{ height: var(--brand-mark-h); flex:none; }
+.tph-icon{ width: var(--brand-mark-h); border-radius: var(--radius); }
+.tph-wordmark{ width:auto; transition: opacity .15s ease; }
 .brand:hover .tph-wordmark{ opacity:.72; }
 
 nav.primary-nav{ display:flex; align-items:center; gap: 4px; }
@@ -323,6 +325,12 @@ li.has-dropdown.open .dropdown{ display:block; }
 .news-grid-section .grid-3{ row-gap: 40px; }
 .news-grid-section .grid-3 > .card:nth-child(n+4){ border-top: 1px solid var(--line); padding-top: 32px; margin-top: 8px; }
 .news-grid-section .grid-3 > .card:nth-child(3n+1):nth-child(n+4){ border-left: none; padding-left: 0; }
+/* The homepage's Recent News grid pairs just 2 wide cards next to the
+   Upcoming Events rail, so each card's column is much wider than in the
+   3/4-up grids above -- a 4:3 media placeholder there stretched into a
+   huge, mostly-empty grey block. Cap it to a shallower ratio so the
+   placeholder reads as a thumbnail, not dead space. */
+.news-grid-section .grid-2 > .card .media{ aspect-ratio: 16/7; }
 
 .topic-card{
   padding: 28px 28px 28px 0;
@@ -528,15 +536,13 @@ footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding
   .footer-grid{ grid-template-columns: 1fr 1fr; gap: 28px; }
   .read-card{ flex-basis: 70vw; }
   .teaching-cta{ text-align:left; margin-top:16px; }
-  .tph-icon{ height:34px; width:34px; }
-  .tph-wordmark{ height:36px; }
+  .header-inner{ --brand-mark-h: 34px; }
 }
 @media (max-width: 720px){
   .brand-lockup{ gap:10px; }
   .umd-logo{ height:38px; }
   .brand-divider{ height:32px; }
-  .tph-icon{ height:30px; width:30px; }
-  .tph-wordmark{ height:32px; }
+  .header-inner{ --brand-mark-h: 30px; }
   .grid-2, .grid-3, .grid-4{ grid-template-columns: 1fr; }
   .grid > .card, .grid-3 > .person, .grid-4 > .topic-card{ border-left:none !important; padding-left:0 !important; border-top: 1px solid var(--line); padding-top: 24px; }
   .grid > .card:first-child, .grid-3 > .person:first-child, .grid-4 > .topic-card:first-child{ border-top:none; padding-top:0; }
@@ -549,12 +555,10 @@ footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding
   .read-card{ flex-basis: 78vw; }
 }
 @media (max-width: 480px){
-  .header-inner{ gap:10px; }
+  .header-inner{ gap:10px; --brand-mark-h: 24px; }
   .brand-lockup{ gap:8px; }
   .umd-logo{ height:30px; }
   .brand-divider{ height:24px; }
-  .tph-icon{ height:24px; width:24px; }
-  .tph-wordmark{ height:24px; }
   .header-actions{ gap:6px; }
   .header-actions .btn{ padding:9px 14px; font-size:.72rem; }
   .affiliation-strip span{ font-size:.68rem; }
