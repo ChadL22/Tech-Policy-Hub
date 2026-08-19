@@ -70,24 +70,57 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  // Signal ticker -- one lane, no auto-scroll; user scrubs through the
-  // DMV/federal policy items by click-and-drag (touch/trackpad already
-  // scroll it natively via .ticker-viewport's overflow-x). Suppresses
-  // the click on a card if the drag actually moved the lane, so
-  // dragging past a bill link doesn't accidentally navigate to it.
+  // Signal ticker -- NYSE-tape style: streams continuously to the left,
+  // stops the instant the pointer enters the lane (hover-to-pause), and
+  // is click-and-drag scrubbable in either direction while paused.
+  // ticker_track_html() in generate.py renders the item list twice back
+  // to back; auto-scroll and drag both wrap at the halfway point of the
+  // doubled track so the loop has no visible seam.
   document.querySelectorAll('.ticker-viewport').forEach(function (vp) {
-    var isDown = false, moved = false, startX, scrollLeft;
+    var track = vp.querySelector('.ticker-track-inner');
+    if (!track) return;
+
+    var half = 0;
+    function measure() { half = track.scrollWidth / 2; }
+    measure();
+    window.addEventListener('resize', measure);
+
+    var hovered = false, isDown = false, moved = false, startX, scrollLeft;
+    var SPEED = 0.5; // px/frame -- a slow, readable tape, not a marquee blur
+
+    function wrap(x) {
+      if (half <= 0) return x;
+      return ((x % half) + half) % half;
+    }
+
+    function frame() {
+      if (!hovered && !isDown && half > 0) {
+        vp.scrollLeft = wrap(vp.scrollLeft + SPEED);
+      }
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+
+    function pause() { hovered = true; }
+    function resume() {
+      hovered = false;
+      isDown = false;
+      vp.classList.remove('dragging');
+    }
+    vp.addEventListener('mouseenter', pause);
+    vp.addEventListener('mouseleave', resume);
+    vp.addEventListener('touchstart', pause, { passive: true });
+    vp.addEventListener('touchend', resume);
+
     vp.addEventListener('mousedown', function (e) {
       isDown = true; moved = false;
       vp.classList.add('dragging');
       startX = e.pageX - vp.offsetLeft;
       scrollLeft = vp.scrollLeft;
     });
-    ['mouseleave', 'mouseup'].forEach(function (evt) {
-      vp.addEventListener(evt, function () {
-        isDown = false;
-        vp.classList.remove('dragging');
-      });
+    vp.addEventListener('mouseup', function () {
+      isDown = false;
+      vp.classList.remove('dragging');
     });
     vp.addEventListener('mousemove', function (e) {
       if (!isDown) return;
@@ -95,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var x = e.pageX - vp.offsetLeft;
       var walk = x - startX;
       if (Math.abs(walk) > 5) moved = true;
-      vp.scrollLeft = scrollLeft - walk;
+      vp.scrollLeft = wrap(scrollLeft - walk);
     });
     vp.addEventListener('click', function (e) {
       if (moved) { e.preventDefault(); e.stopPropagation(); }

@@ -17,7 +17,7 @@ ROOT = os.path.join(os.path.dirname(__file__), "..", "docs")
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026081913"
+ASSET_VERSION = "2026081914"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -177,22 +177,23 @@ def affiliation_strip():
 
 
 def ticker_section():
-    """Bloomberg/CNBC-style signal rail, homepage only. A single lane,
-    no channel tabs, no auto-scrolling marquee -- scope is deliberately
-    narrow: real, tracked tech policy activity in the DMV (DC/MD/VA) and
-    at the federal level only, each item badged with its jurisdiction
-    (see TICKER_ITEMS below). User-scrubbable: main.js wires up
-    click-and-drag on .ticker-viewport, and it's natively swipeable/
-    scrollable on touch and trackpad. Not a live feed -- sourced by hand
-    from the Integrity Institute's Tech Policy Tracker
-    (us-federal./us-state.techpolicytracker.com) and needs a periodic
-    manual refresh, same caveat as the rest of the site's editorial
-    content."""
+    """NYSE-tape-style signal rail, homepage only, one line tall: the
+    "Policy Updates" label and the scrolling lane sit in the same flex
+    row (see .signal-ticker in styles.css). Scope is deliberately narrow
+    -- real, tracked tech policy activity in the DMV (DC/MD/VA) and at
+    the federal level only, each item badged with its jurisdiction (see
+    TICKER_ITEMS below). Streams continuously (main.js drives a
+    requestAnimationFrame loop over .ticker-viewport's scrollLeft, with
+    ticker_track_html() below duplicating the item list so the loop is
+    seamless), pauses the moment the pointer enters the lane, and is
+    click-and-drag scrubbable in either direction while paused/hovering.
+    Not a live feed -- sourced by hand from the Integrity Institute's
+    Tech Policy Tracker (us-federal./us-state.techpolicytracker.com) and
+    needs a periodic manual refresh, same caveat as the rest of the
+    site's editorial content."""
     return f"""
-<div class="signal-ticker" aria-label="Latest DMV and federal tech policy updates -- drag to scrub">
-  <div class="ticker-head">
-    <span class="ticker-live"><span class="dot" aria-hidden="true"></span>Updates</span>
-  </div>
+<div class="signal-ticker" aria-label="Latest DMV and federal policy updates -- hover to pause, drag to scrub">
+  <span class="ticker-live"><span class="dot" aria-hidden="true"></span><span class="label">Policy Updates</span></span>
   <div class="ticker-viewport">
     {ticker_track_html(TICKER_ITEMS)}
   </div>
@@ -403,23 +404,34 @@ PEOPLE_ITEMS = [
 # Homepage signal ticker -- real, tracked tech policy activity in the DMV
 # (DC/MD/VA) and at the federal level only (see ticker_section()
 # docstring), each item badged with its jurisdiction rather than grouped
-# into channel tabs. Hand-pulled from the Integrity Institute's Tech
-# Policy Tracker (us-federal.techpolicytracker.com and
-# us-state.techpolicytracker.com) as of Aug 2026 -- not a live feed, so
-# this needs a periodic manual refresh to stay current as bills move.
+# into channel tabs. NYSE-tape style: short "BILL NO. -- short title"
+# strings, not full descriptions -- the full citation lives at the link.
+# Hand-pulled from the Integrity Institute's Tech Policy Tracker
+# (us-federal.techpolicytracker.com and us-state.techpolicytracker.com)
+# and Congress.gov/state legislature sites as of Aug 2026 -- not a live
+# feed, so this needs a periodic manual refresh to stay current as bills
+# move.
 TICKER_ITEMS = [
-    dict(jurisdiction="FED",
-         datum="Sen. Warner's Guaranteeing Universal Access to Cybersecurity Act (S.4699), introduced Aug 6, 2026",
+    dict(jurisdiction="FED", datum="S.4699 — Guaranteeing Universal Access to Cybersecurity Act",
          link="https://www.congress.gov/bill/119th-congress/senate-bill/4699/all-info"),
-    dict(jurisdiction="DC",
-         datum="D.C. Council's Government Data Privacy and Protection Act of 2026 (B26-0670), introduced Apr 27, 2026",
+    dict(jurisdiction="FED", datum="H.R.7696 — AI Cyber Grid Protection Resilient Development Act",
+         link="https://www.congress.gov/bill/119th-congress/house-bill/7696"),
+    dict(jurisdiction="FED", datum="S.4199 — Youth AI Privacy Act",
+         link="https://www.congress.gov/bill/119th-congress/senate-bill/4199/text"),
+    dict(jurisdiction="FED", datum="H.R.8094 — AI Foundation Model Transparency Act",
+         link="https://www.congress.gov/bill/119th-congress/house-bill/8094/text/ih"),
+    dict(jurisdiction="FED", datum="S.3952 — Future of Artificial Intelligence Innovation Act",
+         link="https://www.congress.gov/bill/119th-congress/senate-bill/3952/text"),
+    dict(jurisdiction="DC", datum="B26-0670 — Government Data Privacy and Protection Act",
          link="https://lims.dccouncil.gov/Legislation/B26-0670"),
-    dict(jurisdiction="MD",
-         datum="Maryland's Kids Online Protection and Antigrooming Act (HB1638), introduced Feb 25, 2026",
+    dict(jurisdiction="MD", datum="HB1638 — Kids Online Protection and Antigrooming Act",
          link="https://mgaleg.maryland.gov/mgawebsite/Legislation/Details/HB1638?ys=2026RS"),
-    dict(jurisdiction="VA",
-         datum="Virginia's AI Companion Chatbots and Minors Act (SB796), introduced Jan 23, 2026",
+    dict(jurisdiction="MD", datum="HB264 — Maryland Data Privacy and Protection Act",
+         link="https://mgaleg.maryland.gov/mgawebsite/Legislation/Details/hb0264?ys=2026RS"),
+    dict(jurisdiction="VA", datum="SB796 — AI Companion Chatbots and Minors Act",
          link="https://lis.virginia.gov/bill-details/20261/SB796"),
+    dict(jurisdiction="VA", datum="SB338 — Bars Sale of Precise Geolocation Data",
+         link="https://lis.virginia.gov/bill-details/20261/SB338"),
 ]
 
 # Questions We Answer -- same six questions as the Hub's mission ("Questions
@@ -486,12 +498,14 @@ def ticker_html(items):
 
 
 def ticker_track_html(items):
-    """Single, non-looping lane -- no channel tabs, no auto-scroll (see
-    ticker_section()). One pass through the items, since the user
-    scrubs through them manually rather than watching an infinite
-    marquee -- duplicating the list would just mean scrubbing past the
-    end lands back on items already seen."""
-    return f'<div class="ticker-track"><div class="ticker-track-inner">{ticker_html(items)}</div></div>'
+    """Renders the item list twice back-to-back inside one
+    .ticker-track-inner. main.js auto-scrolls .ticker-viewport's
+    scrollLeft continuously and jumps back by exactly half of
+    .ticker-track-inner's width once it's scrolled past the first copy
+    -- with two identical copies that jump is invisible, so the tape
+    loops seamlessly instead of hitting a hard edge. Drag-scrubbing
+    wraps the same way in either direction."""
+    return f'<div class="ticker-track"><div class="ticker-track-inner">{ticker_html(items)}{ticker_html(items)}</div></div>'
 
 
 def question_cards_html(items):

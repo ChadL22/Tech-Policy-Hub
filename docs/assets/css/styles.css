@@ -184,42 +184,42 @@ li.has-dropdown.open .dropdown{ display:block; }
 .affiliation-strip a:hover{ color: var(--umd-red); }
 .affiliation-strip .dot{ color: var(--line); }
 
-/* ---------- Signal ticker (Bloomberg/CNBC-style rail, gold top/bottom
-   rule, small-caps labels). One lane, no channel tabs, no auto-scroll --
-   scope is DMV + federal tech policy tracking only; each card is badged
-   with its jurisdiction via .signal-card .jurisdiction. User scrubs
-   through it by click-and-drag (main.js) or native touch/trackpad
-   scroll -- .ticker-viewport is a plain horizontally-scrolling lane. ---------- */
+/* ---------- Signal ticker (NYSE-tape style: one short line, label and
+   scrolling lane share a single flex row, dark bg, gold top/bottom
+   rule). Scope is DMV + federal tech policy tracking only; each card is
+   badged with its jurisdiction via .signal-card .jurisdiction. Streams
+   continuously (main.js drives .ticker-viewport's scrollLeft via
+   requestAnimationFrame -- see ticker_track_html() in generate.py for
+   why the item list is duplicated), pauses on hover, and is
+   click-and-drag scrubbable in either direction while paused. ---------- */
 .signal-ticker{
-  background: var(--header-band); position: relative;
+  display:flex; align-items:stretch; background:#1a1a1a; height:36px;
   border-top: 3px solid var(--umd-gold); border-bottom: 3px solid var(--umd-gold);
 }
-.ticker-head{
-  display:flex; align-items:center; background:#1a1a1a; border-bottom:2px solid var(--umd-gold);
-}
 .ticker-live{
-  display:flex; align-items:center; gap:6px; padding: 8px 16px; font-family: var(--font-nav); font-size:.7rem;
+  display:flex; align-items:center; gap:6px; padding: 0 14px; font-family: var(--font-nav); font-size:.68rem;
   font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#9a9ea3;
-  flex:none;
+  flex:none; border-right: 1px solid rgba(255,255,255,.14); white-space:nowrap;
 }
-.ticker-live .dot{ width:7px; height:7px; border-radius:50%; background:#E0292F; flex:none; animation: ticker-live-pulse 1.6s ease-in-out infinite; }
+.ticker-live .dot{ width:6px; height:6px; border-radius:50%; background:#E0292F; flex:none; animation: ticker-live-pulse 1.6s ease-in-out infinite; }
 @keyframes ticker-live-pulse{ 0%,100%{ opacity:1; } 50%{ opacity:.35; } }
 .ticker-viewport{
+  flex: 1 1 auto; min-width:0;
   overflow-x:auto; overflow-y:hidden; scrollbar-width:none; cursor: grab;
   -webkit-overflow-scrolling: touch;
 }
 .ticker-viewport::-webkit-scrollbar{ display:none; }
 .ticker-viewport.dragging{ cursor: grabbing; scroll-snap-type: none; user-select: none; }
-.ticker-track-inner{ display:flex; width:max-content; }
+.ticker-track-inner{ display:flex; width:max-content; height:100%; }
 .signal-card{
-  display:flex; align-items:center; gap:12px; padding: 13px 28px; border-right: 1px solid rgba(255,255,255,.12);
+  display:flex; align-items:center; gap:8px; padding: 0 18px; border-right: 1px solid rgba(255,255,255,.12);
   flex: none; text-decoration: none !important;
 }
 .signal-card .jurisdiction{
-  font-family: var(--font-nav); font-size:.66rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
-  color:#1a1a1a; background: var(--umd-gold); border-radius:3px; padding:2px 7px; flex:none;
+  font-family: var(--font-nav); font-size:.6rem; font-weight:700; letter-spacing:.03em; text-transform:uppercase;
+  color:#1a1a1a; background: var(--umd-gold); border-radius:3px; padding:1px 6px; flex:none;
 }
-.signal-card .datum{ font-size:.86rem; color:#fff; font-weight:600; white-space:nowrap; }
+.signal-card .datum{ font-size:.78rem; color:#fff; font-weight:600; white-space:nowrap; }
 .signal-card:hover .datum{ text-decoration: underline; }
 
 /* ---------- Lead section: SCOTUSblog-style compact 3-column grid --
@@ -642,6 +642,7 @@ footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding
   .header-actions{ gap:6px; }
   .header-actions .btn{ padding:9px 14px; font-size:.72rem; }
   .affiliation-strip span, .affiliation-strip a{ font-size:.68rem; }
-  .signal-card{ padding:13px 20px; }
-  .ticker-live{ padding:8px 10px; }
+  .signal-card{ padding:0 14px; }
+  .ticker-live{ padding:0 10px; }
+  .ticker-live .label{ display:none; }
 }
