@@ -16,7 +16,7 @@ ROOT = os.path.join(os.path.dirname(__file__), "..", "docs")
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026081908"
+ASSET_VERSION = "2026081910"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -171,21 +171,21 @@ def affiliation_strip():
 
 
 def ticker_section():
-    """Bloomberg/CNBC-style signal rail, homepage only. Tabs switch between
-    channels (the Hub's own signals vs. curated Phronesis / Tech Policy
-    Press picks) the way CNBC's US/ASIA/EUR/BONDS row swaps which index
-    strip is showing. Content is editorial (TICKER_CHANNELS below), not a
-    live feed -- per the brief's own guidance to use editorial signals
-    rather than faux-live metrics unless the data can be reliably kept
-    current."""
+    """Bloomberg/CNBC-style signal rail, homepage only. Single scrolling
+    track, no channel tabs -- scope is deliberately narrow: real, tracked
+    tech policy activity in the DMV (DC/MD/VA) and at the federal level
+    only, each item badged with its jurisdiction (see TICKER_ITEMS
+    below). Not a live feed -- sourced by hand from the Integrity
+    Institute's Tech Policy Tracker (us-federal./us-state.techpolicytracker.com)
+    and needs a periodic manual refresh, same caveat as the rest of the
+    site's editorial content."""
     return f"""
-<div class="signal-ticker" aria-label="Latest signals from the Hub">
-  <div class="ticker-tabs" role="tablist">
+<div class="signal-ticker" aria-label="Latest DMV and federal tech policy updates">
+  <div class="ticker-head">
     <span class="ticker-live"><span class="dot" aria-hidden="true"></span>Updates</span>
-    {ticker_tabs_html(TICKER_CHANNELS)}
   </div>
   <div class="ticker-viewport">
-    {ticker_tracks_html(TICKER_CHANNELS)}
+    {ticker_track_html(TICKER_ITEMS)}
   </div>
 </div>
 """
@@ -296,30 +296,62 @@ TOPICS = [
 ]
 
 NEWS_ITEMS = [
-    dict(tag="Publication", date="Jul 22, 2026",
+    dict(tag="Publication", date="Jul 2025",
          title="Cookie-less Identification: For and Against Privacy",
-         summary="New work from the privacy team examines the tradeoffs of emerging identification methods as third-party cookies phase out.",
-         link="news.html"),
-    dict(tag="Award", date="Jun 24, 2026",
+         summary="Work from the privacy team on the privacy implications of cookie-less identification on the Web was published in the Internet Policy Review.",
+         link="https://policyreview.info/articles/analysis/cookie-less-identification-foragainst-privacy"),
+    dict(tag="Publication", date="Jul 2025",
+         title="Classifying Trustworthy Content via Third-Party Web Structure",
+         summary="New work classifying trustworthy content on the Web based on the third-party structure of websites was published through the FOCI workshop at PETs.",
+         link="https://www.petsymposium.org/foci/2025/foci-2025-0017.pdf"),
+    dict(tag="Award", date="Jun 24, 2025",
          title="Lee Tiedrich Joins the Hub as AI Fellow",
-         summary="Tiedrich joins as a co-leader and AI Fellow under the Hub's affiliates, expanding our work on AI governance.",
+         summary="Lee Tiedrich is joining the Tech Policy Hub as a co-leader and AI Fellow, under an award to Hub affiliates Charlie Harry and Katie Shilton.",
+         link="https://gotech.spp.umd.edu/news/aim-seed-grants-support-22-ai-research-projects"),
+    dict(tag="Event Recap", date="Jun 10, 2025",
+         title="A Remarkable Annual Event",
+         summary="The Hub's annual event brought together the community for a full day of tech policy programming -- a summary and photos are now available.",
+         link="https://techpolicy.ischool.umd.edu/annual-event/"),
+    dict(tag="Event", date="Jun 6, 2025",
+         title="Join Us for the Tech Policy Hub Annual Event",
+         summary="Details and registration for the in-person Tech Policy Hub Annual Event -- subscribe to our mailing list to stay informed.",
+         link="https://drive.google.com/file/d/1j9EOplAzhqQ79f1RMfmoBkCWT-U1ytp2/view?usp=sharing"),
+    dict(tag="Speaker Series", date="Mar 12, 2025",
+         title="Spring 2025 Speaker Series: Privacy Research and Regulation",
+         summary="An online Spring 2025 Speaker Series event on how privacy research can inform privacy regulation.",
+         link="https://umd.zoom.us/meeting/register/HbxWvfXnSBWxFfr1a7vnQA"),
+    dict(tag="Publication", date="Mar 2, 2025",
+         title="Applying Contextual Integrity to Measure Web Privacy",
+         summary="New work from Hub researchers applying Contextual Integrity to measure Web privacy is now available on arXiv.",
+         link="https://arxiv.org/abs/2412.16246"),
+    dict(tag="Media", date="Mar 2, 2025",
+         title="Hub Cybersecurity Work Highlighted by Newsweek",
+         summary="Research from the Hub's Cybersecurity group on county-level cyber risk was highlighted by Newsweek.",
+         link="https://www.newsweek.com/cybersecurity-risk-map-usa-counties-2026762"),
+    dict(tag="Speaker Series", date="Feb 26, 2025",
+         title="Speaker Series: DeepSeek and AI Governance",
+         summary="The first event in the Spring 2025 Speaker Series brought together an academic and a practitioner to discuss DeepSeek and what it means for AI governance.",
+         link="https://umd.zoom.us/meeting/register/xRjQo5cHQPmW71fDVjoApw"),
+    dict(tag="Recognition", date="Feb 24, 2025",
+         title="Privacy Watchdog Accountability Work Accepted at PLSC",
+         summary="Work by the Hub's researchers on the accountability powers of formal and informal U.S. privacy watchdogs has been accepted for the Privacy Law Scholars Conference (PLSC).",
          link="news.html"),
-    dict(tag="Event Recap", date="Jun 10, 2026",
-         title="2026 Annual Event Draws Record Turnout",
-         summary="Practitioners, scholars, and students gathered for a full day of tech policy programming -- recap and photos now live.",
-         link="annual-event.html"),
-    dict(tag="Media", date="Mar 2, 2026",
-         title="Hub Cybersecurity Research Featured in Newsweek",
-         summary="The county-level cyber risk mapping project was highlighted for its national policy relevance.",
-         link="news.html"),
-    dict(tag="Publication", date="Mar 2, 2026",
-         title="Contextual Integrity for Measuring Web Privacy",
-         summary="New research applies the Contextual Integrity framework to evaluate privacy on the modern web, now on arXiv.",
-         link="news.html"),
-    dict(tag="Speaker Series", date="Feb 26, 2026",
-         title="DeepSeek and the Future of AI Governance",
-         summary="An academic and a practitioner joined the Spring Speaker Series to unpack what DeepSeek means for global AI policy.",
-         link="speaker-series.html"),
+    dict(tag="Media", date="Feb 4, 2025",
+         title="County Cyberattack Risk Work Highlighted by Maryland Today",
+         summary="The Hub's work assessing attack surface across U.S. counties was highlighted by Maryland Today.",
+         link="https://today.umd.edu/umd-researchers-calculate-cyberattack-risk-for-all-50-states"),
+    dict(tag="Publication", date="Jan 17, 2025",
+         title="Attack Surface Across U.S. County Governments Published in Journal of Cybersecurity",
+         summary="Research on the size, diversity, and severity of exposed attack surface across U.S. county governments is officially published by the Journal of Cybersecurity.",
+         link="https://academic.oup.com/cybersecurity/article/11/1/tyae032/7959399"),
+    dict(tag="Recognition", date="Dec 6, 2024",
+         title="Attack Surface Research Highlighted by the iSchool",
+         summary="Research on measuring the integrated attack surface exposed across U.S. county governments was highlighted by the department; the project has since been accepted for publication in the Journal of Cybersecurity.",
+         link="https://ischool.umd.edu/news/breaking-new-ground-a-strategic-approach-to-cyber-defense/"),
+    dict(tag="Event Recap", date="Nov 21, 2024",
+         title="Tech Policy Hub & VCAI AI Policy Round-Table",
+         summary="The Hub and VCAI held a round-table on AI policy at the CS Department, with more AI-related round-tables from the Hub to follow.",
+         link="https://ischool.umd.edu/centers-and-labs/vcai/"),
 ]
 
 EVENTS_ITEMS = [
@@ -348,16 +380,26 @@ PEOPLE_ITEMS = [
          focus="Consumer privacy, algorithmic accountability"),
 ]
 
-# Homepage signal ticker -- editorial, manually maintained (see
-# ticker_section() docstring). Two entries are computed from NEWS_ITEMS /
-# EVENTS_ITEMS so they can't silently drift out of sync with the actual
-# latest publication/event; the rest are hand-picked highlights.
+# Homepage signal ticker -- real, tracked tech policy activity in the DMV
+# (DC/MD/VA) and at the federal level only (see ticker_section()
+# docstring), each item badged with its jurisdiction rather than grouped
+# into channel tabs. Hand-pulled from the Integrity Institute's Tech
+# Policy Tracker (us-federal.techpolicytracker.com and
+# us-state.techpolicytracker.com) as of Aug 2026 -- not a live feed, so
+# this needs a periodic manual refresh to stay current as bills move.
 TICKER_ITEMS = [
-    dict(label="Research", datum="4 active focus areas &mdash; cybersecurity, privacy, integrity, ML", link="research.html"),
-    dict(label="Publications", datum=f"Latest: &ldquo;{NEWS_ITEMS[0]['title']}&rdquo; &mdash; {NEWS_ITEMS[0]['date']}", link="news.html"),
-    dict(label="Events", datum=f"Next up: {EVENTS_ITEMS[0]['m']} {EVENTS_ITEMS[0]['d']} &mdash; {EVENTS_ITEMS[0]['title']}", link="events.html"),
-    dict(label="People", datum="Lee Tiedrich joins the Hub as AI Fellow", link="people.html"),
-    dict(label="Policy Watch", datum="Tracking AI governance in the states", link="about.html#questions"),
+    dict(jurisdiction="FED",
+         datum="Sen. Warner's Guaranteeing Universal Access to Cybersecurity Act (S.4699), introduced Aug 6, 2026",
+         link="https://www.congress.gov/bill/119th-congress/senate-bill/4699/all-info"),
+    dict(jurisdiction="DC",
+         datum="D.C. Council's Government Data Privacy and Protection Act of 2026 (B26-0670), introduced Apr 27, 2026",
+         link="https://lims.dccouncil.gov/Legislation/B26-0670"),
+    dict(jurisdiction="MD",
+         datum="Maryland's Kids Online Protection and Antigrooming Act (HB1638), introduced Feb 25, 2026",
+         link="https://mgaleg.maryland.gov/mgawebsite/Legislation/Details/HB1638?ys=2026RS"),
+    dict(jurisdiction="VA",
+         datum="Virginia's AI Companion Chatbots and Minors Act (SB796), introduced Jan 23, 2026",
+         link="https://lis.virginia.gov/bill-details/20261/SB796"),
 ]
 
 # Questions We Answer -- same six questions as the Hub's mission ("Questions
@@ -384,9 +426,10 @@ QUESTIONS = [
 ]
 
 # Ideas We're Reading -- placeholder examples for the Phronesis + Tech
-# Policy Press carousel (and, in condensed form, the ticker's Phronesis /
-# Tech Policy Press tabs below). NOT real published articles; swap for
-# the Hub's actual picks before launch (see README "Known placeholders").
+# Policy Press carousel ("Field Pulse" on the homepage). NOT real
+# published articles; swap for the Hub's actual picks before launch (see
+# README "Known placeholders"). No longer feeds the signal ticker, which
+# is now DMV/federal policy tracking only (see TICKER_ITEMS above).
 READING_ITEMS = [
     dict(source="Tech Policy Press", topic="Information Integrity",
          title="Why Platform Transparency Reports Still Fall Short",
@@ -414,43 +457,20 @@ READING_ITEMS = [
          meta="6 min read", link="#"),
 ]
 
-# Ticker channels -- "Tech Policy Hub" is the Hub's own editorial signals
-# (TICKER_ITEMS above); "Phronesis" and "Tech Policy Press" are condensed
-# from the same READING_ITEMS that power the homepage carousel, so the two
-# stay in sync automatically. Each entry is (key, tab label, items).
-TICKER_CHANNELS = [
-    ("hub", "Tech Policy Hub", TICKER_ITEMS),
-    ("phronesis", "Phronesis", [
-        dict(label=r["topic"], datum=r["title"], link=r["link"])
-        for r in READING_ITEMS if r["source"] == "The Phronesis Institute"
-    ]),
-    ("press", "Tech Policy Press", [
-        dict(label=r["topic"], datum=r["title"], link=r["link"])
-        for r in READING_ITEMS if r["source"] == "Tech Policy Press"
-    ]),
-]
-
-
 def ticker_html(items):
+    """Each item is badged with its jurisdiction (DC/MD/VA/FED) instead of
+    a free-text category label, since the ticker's whole scope is now
+    DMV + federal tech policy tracking -- see TICKER_ITEMS."""
     return "".join(f"""
-        <a class="signal-card" href="{it['link']}"><span class="label">{it['label']}</span><span class="datum">{it['datum']}</span></a>""" for it in items)
+        <a class="signal-card" href="{it['link']}"{link_attrs(it['link'])}><span class="jurisdiction">{it['jurisdiction']}</span><span class="datum">{it['datum']}</span></a>""" for it in items)
 
 
-def ticker_tabs_html(channels):
-    out = []
-    for i, (key, label, _items) in enumerate(channels):
-        active = " active" if i == 0 else ""
-        out.append(f'<button type="button" class="ticker-tab{active}" data-channel="{key}" role="tab" aria-selected="{"true" if i == 0 else "false"}">{label}</button>')
-    return "".join(out)
-
-
-def ticker_tracks_html(channels):
-    out = []
-    for i, (key, _label, items) in enumerate(channels):
-        active = " active" if i == 0 else ""
-        cards = ticker_html(items)
-        out.append(f'<div class="ticker-track{active}" data-channel="{key}"><div class="ticker-track-inner">{cards}{cards}</div></div>')
-    return "".join(out)
+def ticker_track_html(items):
+    """Single scrolling track -- no channel tabs (see ticker_section()).
+    Items are duplicated back-to-back so the CSS marquee animation loops
+    seamlessly."""
+    cards = ticker_html(items)
+    return f'<div class="ticker-track active"><div class="ticker-track-inner">{cards}{cards}</div></div>'
 
 
 def question_cards_html(items):
@@ -493,6 +513,16 @@ def guiding_questions_html(items):
     return "".join(out)
 
 
+def lead_media_html(topic_label):
+    """Abstract editorial graphic (brand diagonal + topic label) for the
+    homepage's Featured Publication -- deliberately not a photo, since we
+    don't have real photography for these articles/events on file yet
+    (see follow-up 11). Swap for a real image per-article later if the
+    Hub supplies one."""
+    return f"""
+        <div class="lead-media"><span class="topic-mark">{topic_label}</span></div>"""
+
+
 def reading_cards_html(items):
     out = []
     for r in items:
@@ -507,6 +537,14 @@ def reading_cards_html(items):
     return "".join(out)
 
 
+def link_attrs(url):
+    """Real news/press links point off-site (journals, arXiv, Zoom
+    registration, Newsweek, etc.) -- open those in a new tab so a click
+    doesn't navigate a visitor away from the Hub's own site. Internal
+    .html links behave normally."""
+    return ' target="_blank" rel="noopener"' if url.startswith("http") else ""
+
+
 def rail_html(entries):
     """Compact CNBC/Bloomberg-style headline rail: a tag/date plus a linked
     title, hairline-divided, no imagery. Used for the side rails next to
@@ -514,7 +552,7 @@ def rail_html(entries):
     have to be one massive full-width block to feel substantial -- entries
     need 'tag', 'title', and 'link' keys."""
     return "".join(f"""
-        <a class="rail-item" href="{e['link']}"><span class="tag">{e['tag']}</span><h4>{e['title']}</h4></a>""" for e in entries)
+        <a class="rail-item" href="{e['link']}"{link_attrs(e['link'])}><span class="tag">{e['tag']}</span><h4>{e['title']}</h4></a>""" for e in entries)
 
 
 def feed_items_html(items, limit=None):
@@ -525,7 +563,7 @@ def feed_items_html(items, limit=None):
           <span class="tag">{it['tag']}</span>
           <div>
             <div class="meta" style="margin-bottom:6px;">{it['date']}</div>
-            <h3><a href="{it['link']}">{it['title']}</a></h3>
+            <h3><a href="{it['link']}"{link_attrs(it['link'])}>{it['title']}</a></h3>
             <p>{it['summary']}</p>
           </div>
         </div>""")
@@ -571,7 +609,7 @@ def news_cards_html(items, limit=None):
           <div class="media"><span>{it['tag']}</span></div>
           <span class="kicker">{it['tag']}</span>
           <div class="meta">{it['date']}</div>
-          <h3><a href="{it['link']}">{it['title']}</a></h3>
+          <h3><a href="{it['link']}"{link_attrs(it['link'])}>{it['title']}</a></h3>
           <p>{it['summary']}</p>
         </div>""")
     return "".join(out)

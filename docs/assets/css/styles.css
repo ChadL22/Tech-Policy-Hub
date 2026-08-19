@@ -181,31 +181,24 @@ li.has-dropdown.open .dropdown{ display:block; }
 }
 .affiliation-strip .dot{ color: var(--line); }
 
-/* ---------- Signal ticker (Bloomberg/CNBC-style: tabbed channels over a
-   scrolling rail, gold top/bottom rule, small-caps labels) ---------- */
+/* ---------- Signal ticker (Bloomberg/CNBC-style scrolling rail, gold
+   top/bottom rule, small-caps labels). Single track, no channel tabs --
+   scope is DMV + federal tech policy tracking only; each card is badged
+   with its jurisdiction via .signal-card .jurisdiction. ---------- */
 .signal-ticker{
   background: var(--header-band); position: relative;
   border-top: 3px solid var(--umd-gold); border-bottom: 3px solid var(--umd-gold);
 }
-.ticker-tabs{
+.ticker-head{
   display:flex; align-items:center; background:#1a1a1a; border-bottom:2px solid var(--umd-gold);
-  overflow-x:auto; scrollbar-width:none;
 }
-.ticker-tabs::-webkit-scrollbar{ display:none; }
 .ticker-live{
   display:flex; align-items:center; gap:6px; padding: 8px 16px; font-family: var(--font-nav); font-size:.7rem;
-  font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#9a9ea3; border-right:1px solid rgba(255,255,255,.1);
+  font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#9a9ea3;
   flex:none;
 }
 .ticker-live .dot{ width:7px; height:7px; border-radius:50%; background:#E0292F; flex:none; animation: ticker-live-pulse 1.6s ease-in-out infinite; }
 @keyframes ticker-live-pulse{ 0%,100%{ opacity:1; } 50%{ opacity:.35; } }
-.ticker-tab{
-  background:none; border:none; color:#9a9ea3; font-family: var(--font-nav); font-weight:700; font-size:.72rem;
-  letter-spacing:.05em; text-transform:uppercase; padding: 9px 18px; cursor:pointer; flex:none;
-  border-right:1px solid rgba(255,255,255,.08); transition: color .15s ease, background .15s ease;
-}
-.ticker-tab:hover{ color:#fff; }
-.ticker-tab.active{ color: var(--umd-gold); background: rgba(255,210,0,.08); }
 .ticker-viewport{ overflow: hidden; }
 .ticker-track{ display:none; }
 .ticker-track.active{ display:block; }
@@ -216,9 +209,9 @@ li.has-dropdown.open .dropdown{ display:block; }
   display:flex; align-items:center; gap:12px; padding: 13px 28px; border-right: 1px solid rgba(255,255,255,.12);
   flex: none; text-decoration: none !important;
 }
-.signal-card .label{
-  font-family: var(--font-nav); font-size:.7rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
-  color: var(--umd-gold);
+.signal-card .jurisdiction{
+  font-family: var(--font-nav); font-size:.66rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+  color:#1a1a1a; background: var(--umd-gold); border-radius:3px; padding:2px 7px; flex:none;
 }
 .signal-card .datum{ font-size:.86rem; color:#fff; font-weight:600; white-space:nowrap; }
 .signal-card:hover .datum{ text-decoration: underline; }
@@ -232,6 +225,18 @@ li.has-dropdown.open .dropdown{ display:block; }
 .lead-secondary{ grid-column: 1; border-right: 1px solid var(--line); padding-right: 28px; }
 .lead-story{ grid-column: 2; }
 .lead-rail{ grid-column: 3; border-left: 1px solid var(--line); padding-left: 28px; }
+.lead-media{
+  aspect-ratio: 16/7; margin-bottom: 18px; position: relative; overflow: hidden;
+  background: linear-gradient(135deg, var(--ink) 0%, var(--ink) 42%, var(--umd-red) 42%, var(--umd-red) 100%);
+}
+.lead-media::before{
+  content:''; position:absolute; inset:0;
+  background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.07) 0 2px, transparent 2px 16px);
+}
+.lead-media .topic-mark{
+  position:absolute; left:18px; bottom:14px; font-family: var(--font-nav); font-size:.76rem; font-weight:700;
+  letter-spacing:.06em; text-transform:uppercase; color:#fff;
+}
 .lead-story .meta{ font-family: var(--font-nav); font-size:.8rem; letter-spacing:.04em; color: var(--ink-soft); text-transform: uppercase; margin-bottom: 14px; }
 .lead-story h1{ margin-bottom: .4em; font-size: clamp(1.6rem, 2.6vw, 2.2rem); }
 .lead-story h1 a{ color: var(--ink); }
@@ -589,6 +594,5 @@ footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding
   .header-actions .btn{ padding:9px 14px; font-size:.72rem; }
   .affiliation-strip span{ font-size:.68rem; }
   .signal-card{ padding:13px 20px; }
-  .ticker-tab{ padding:8px 12px; font-size:.66rem; }
   .ticker-live{ padding:8px 10px; }
 }

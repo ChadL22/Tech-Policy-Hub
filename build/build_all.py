@@ -11,14 +11,18 @@ g.clean_stale_pages()
 QUESTIONS_HOME = [g.QUESTIONS[0], g.QUESTIONS[2], g.QUESTIONS[3], g.QUESTIONS[4]]
 
 # The homepage's "what we do" lead grid uses NEWS_ITEMS[0] as the lead
-# story, with 1-3 folded into the Hub Updates rail (see below); Recent
-# News further down uses NEWS_ITEMS[4:6] -- every item appears exactly
-# once on the homepage, no story shows up twice the way the old
-# hero-rail + Recent News grid did. The lead grid's left column is now
-# the Guiding Questions list rather than a news rail (see follow-up 9).
-HUB_UPDATES_RAIL = g.NEWS_ITEMS[1:4] + [
-    dict(tag=f"{e['m']} {e['d']}", title=e['title'], link=e['link']) for e in g.EVENTS_ITEMS[:2]
-]
+# story, with 1-3 shown (3 items, default) in the "Hub News" rail
+# (RECENT_NEWS_RAIL, below) with a "More News" link to news.html; the
+# "Recent News" section further down uses NEWS_ITEMS[4:8] -- every item
+# appears at most once on the homepage, no story shows up twice the way
+# the old hero-rail + Recent News grid did. The remaining items (8-13)
+# are real news/press but only appear on news.html, which lists the full
+# NEWS_ITEMS set. The lead grid's left column is the Guiding Questions
+# list rather than a news rail (see follow-up 9). As of follow-up 10,
+# RECENT_NEWS_RAIL is pure Hub news again -- events are no longer folded
+# in here now that it's real, dated press coverage; the "Upcoming
+# Events" rail in the "Recent News" section below still covers events.
+RECENT_NEWS_RAIL = g.NEWS_ITEMS[1:4]
 EVENTS_RAIL = [dict(tag=f"{e['m']} {e['d']}", title=e['title'], link=e['link']) for e in g.EVENTS_ITEMS[:4]]
 
 home_body = f"""
@@ -29,17 +33,19 @@ home_body = f"""
       {g.guiding_questions_html(g.QUESTIONS)}
     </div>
     <div class="lead-story">
+      {g.lead_media_html("Consumer Privacy")}
       <div class="meta">Featured Publication &middot; {g.NEWS_ITEMS[0]['date']}</div>
-      <h1><a href="{g.NEWS_ITEMS[0]['link']}">{g.NEWS_ITEMS[0]['title']}</a></h1>
+      <h1><a href="{g.NEWS_ITEMS[0]['link']}"{g.link_attrs(g.NEWS_ITEMS[0]['link'])}>{g.NEWS_ITEMS[0]['title']}</a></h1>
       <p class="lede">{g.NEWS_ITEMS[0]['summary']}</p>
       <div class="hero-actions">
-        <a href="{g.NEWS_ITEMS[0]['link']}" class="btn btn-primary btn-arrow">Read the Research</a>
+        <a href="{g.NEWS_ITEMS[0]['link']}"{g.link_attrs(g.NEWS_ITEMS[0]['link'])} class="btn btn-primary btn-arrow">Read the Research</a>
         <a href="topic-privacy.html" class="btn btn-ghost">Explore Consumer Privacy</a>
       </div>
     </div>
     <div class="lead-rail">
-      <div class="rail-head">Hub Updates</div>
-      {g.rail_html(HUB_UPDATES_RAIL)}
+      <div class="rail-head">Hub News</div>
+      {g.rail_html(RECENT_NEWS_RAIL)}
+      <a href="news.html" class="text-link rail-more">More News</a>
     </div>
   </div>
 </section>
@@ -75,7 +81,7 @@ home_body = f"""
       <a href="news.html" class="text-link">See All News</a>
     </div>
     <div class="with-sidebar rail-wrap">
-      <div>{g.feed_items_html(g.NEWS_ITEMS[4:6])}</div>
+      <div>{g.feed_items_html(g.NEWS_ITEMS[4:8])}</div>
       <div class="rail-panel">
         <div class="rail-head">Upcoming Events</div>
         {g.rail_html(EVENTS_RAIL)}
