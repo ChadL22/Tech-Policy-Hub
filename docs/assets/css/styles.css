@@ -133,30 +133,13 @@ header.site-header{
 .brand{ display:flex; align-items:center; gap:12px; text-decoration:none !important; min-width:0; }
 .tph-icon{ height:40px; width:40px; border-radius: var(--radius); flex:none; }
 
-/* Wordmark lockup: a tight, blocky logotype (H&R Block / Taco Bell
-   wordmark territory) -- "Tech" over "Policy" in a left column, "Hub"
-   filling a right column exactly as tall as those two lines combined, so
-   the whole mark reads as one solid rectangle rather than loose text.
-   CSS Grid (not manually-tuned font-sizes) is what guarantees the flush
-   top/bottom edges: "Hub" spans both rows, so its box is always exactly
-   as tall as "Tech" + "Policy" stacked, at any screen size. */
-.brand-hub-lockup{
-  display:grid; grid-template-columns: auto auto; grid-template-rows: 1fr 1fr;
-  column-gap: 6px; row-gap: 0; align-items:stretch; min-width:0;
-}
-.brand-hub-lockup .word-tech,
-.brand-hub-lockup .word-policy,
-.brand-hub-lockup .hub-word{
-  font-family: var(--font-nav); font-weight:700; text-transform:uppercase;
-  color: var(--ink); line-height:1; transition: color .15s ease;
-  display:flex; align-items:center;
-}
-.brand-hub-lockup .word-tech{ grid-column:1; grid-row:1; font-size:.86rem; letter-spacing:.01em; align-items:flex-end; }
-.brand-hub-lockup .word-policy{ grid-column:1; grid-row:2; font-size:.86rem; letter-spacing:.01em; align-items:flex-start; }
-.brand-hub-lockup .hub-word{ grid-column:2; grid-row: 1 / 3; font-size:1.95rem; letter-spacing:0; justify-content:flex-start; }
-.brand:hover .brand-hub-lockup .word-tech,
-.brand:hover .brand-hub-lockup .word-policy,
-.brand:hover .brand-hub-lockup .hub-word{ color: var(--umd-red); }
+/* Wordmark: the user's own tight, blocky "Tech Policy Hub" logotype
+   artwork (custom-set condensed black, letters nearly touching --
+   heavier/tighter than any live-text CSS approximation could match), used
+   as-is rather than rebuilt in CSS. Transparent PNG, so it sits directly
+   on the header without its own background. */
+.tph-wordmark{ height:42px; width:auto; flex:none; transition: opacity .15s ease; }
+.brand:hover .tph-wordmark{ opacity:.72; }
 
 nav.primary-nav{ display:flex; align-items:center; gap: 4px; }
 nav.primary-nav > ul{ display:flex; align-items:center; gap: 2px; list-style:none; margin:0; padding:0; }
@@ -546,17 +529,14 @@ footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding
   .read-card{ flex-basis: 70vw; }
   .teaching-cta{ text-align:left; margin-top:16px; }
   .tph-icon{ height:34px; width:34px; }
-  .brand-hub-lockup .word-tech, .brand-hub-lockup .word-policy{ font-size:.74rem; }
-  .brand-hub-lockup .hub-word{ font-size:1.65rem; }
+  .tph-wordmark{ height:36px; }
 }
 @media (max-width: 720px){
   .brand-lockup{ gap:10px; }
   .umd-logo{ height:38px; }
   .brand-divider{ height:32px; }
   .tph-icon{ height:30px; width:30px; }
-  .brand-hub-lockup{ gap:5px; column-gap:5px; }
-  .brand-hub-lockup .word-tech, .brand-hub-lockup .word-policy{ font-size:.64rem; }
-  .brand-hub-lockup .hub-word{ font-size:1.42rem; }
+  .tph-wordmark{ height:32px; }
   .grid-2, .grid-3, .grid-4{ grid-template-columns: 1fr; }
   .grid > .card, .grid-3 > .person, .grid-4 > .topic-card{ border-left:none !important; padding-left:0 !important; border-top: 1px solid var(--line); padding-top: 24px; }
   .grid > .card:first-child, .grid-3 > .person:first-child, .grid-4 > .topic-card:first-child{ border-top:none; padding-top:0; }
@@ -574,9 +554,7 @@ footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding
   .umd-logo{ height:30px; }
   .brand-divider{ height:24px; }
   .tph-icon{ height:24px; width:24px; }
-  .brand-hub-lockup{ column-gap:4px; }
-  .brand-hub-lockup .word-tech, .brand-hub-lockup .word-policy{ font-size:.5rem; }
-  .brand-hub-lockup .hub-word{ font-size:1.1rem; }
+  .tph-wordmark{ height:24px; }
   .header-actions{ gap:6px; }
   .header-actions .btn{ padding:9px 14px; font-size:.72rem; }
   .affiliation-strip span{ font-size:.68rem; }

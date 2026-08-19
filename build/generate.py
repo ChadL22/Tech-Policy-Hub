@@ -16,7 +16,7 @@ ROOT = os.path.join(os.path.dirname(__file__), "..", "docs")
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026081904"
+ASSET_VERSION = "2026081905"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -137,11 +137,7 @@ def header(active):
       <span class="brand-divider" aria-hidden="true"></span>
       <a href="index.html" class="brand">
         <img src="assets/img/tph-icon.png" alt="" class="tph-icon">
-        <span class="brand-hub-lockup">
-          <span class="word-tech">Tech</span>
-          <span class="word-policy">Policy</span>
-          <span class="hub-word">Hub</span>
-        </span>
+        <img src="assets/img/tph-wordmark.png" alt="Tech Policy Hub" class="tph-wordmark">
       </a>
     </div>
     <nav class="primary-nav" aria-label="Primary">
