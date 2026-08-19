@@ -41,7 +41,12 @@
 </div>
 
 <div class="signal-ticker" aria-label="Latest signals from the Hub">
-  <div class="ticker-track">
+  <div class="ticker-tabs" role="tablist">
+    <span class="ticker-live"><span class="dot" aria-hidden="true"></span>Live</span>
+    <button type="button" class="ticker-tab active" data-channel="hub" role="tab" aria-selected="true">Tech Policy Hub</button><button type="button" class="ticker-tab" data-channel="phronesis" role="tab" aria-selected="false">Phronesis</button><button type="button" class="ticker-tab" data-channel="press" role="tab" aria-selected="false">Tech Policy Press</button>
+  </div>
+  <div class="ticker-viewport">
+    <div class="ticker-track active" data-channel="hub"><div class="ticker-track-inner">
         <a class="signal-card" href="research/"><span class="label">Research</span><span class="datum">4 active focus areas &mdash; cybersecurity, privacy, integrity, ML</span></a>
         <a class="signal-card" href="news/"><span class="label">Publications</span><span class="datum">Latest: &ldquo;Cookie-less Identification: For and Against Privacy&rdquo; &mdash; Jul 22, 2026</span></a>
         <a class="signal-card" href="events/"><span class="label">Events</span><span class="datum">Next up: SEP 09 &mdash; Speaker Series: Platform Design & the Law</span></a>
@@ -51,7 +56,20 @@
         <a class="signal-card" href="news/"><span class="label">Publications</span><span class="datum">Latest: &ldquo;Cookie-less Identification: For and Against Privacy&rdquo; &mdash; Jul 22, 2026</span></a>
         <a class="signal-card" href="events/"><span class="label">Events</span><span class="datum">Next up: SEP 09 &mdash; Speaker Series: Platform Design & the Law</span></a>
         <a class="signal-card" href="people/"><span class="label">People</span><span class="datum">Lee Tiedrich joins the Hub as AI Fellow</span></a>
-        <a class="signal-card" href="about/#questions"><span class="label">Policy Watch</span><span class="datum">Tracking AI governance in the states</span></a></div>
+        <a class="signal-card" href="about/#questions"><span class="label">Policy Watch</span><span class="datum">Tracking AI governance in the states</span></a></div></div><div class="ticker-track" data-channel="phronesis"><div class="ticker-track-inner">
+        <a class="signal-card" href="#"><span class="label">Trustworthy ML</span><span class="datum">The State of AI Governance, Three Years In</span></a>
+        <a class="signal-card" href="#"><span class="label">Cybersecurity</span><span class="datum">County Governments Are the New Cybersecurity Frontline</span></a>
+        <a class="signal-card" href="#"><span class="label">Information Integrity</span><span class="datum">Congress Weighs a Federal Preemption Standard for AI</span></a>
+        <a class="signal-card" href="#"><span class="label">Trustworthy ML</span><span class="datum">The State of AI Governance, Three Years In</span></a>
+        <a class="signal-card" href="#"><span class="label">Cybersecurity</span><span class="datum">County Governments Are the New Cybersecurity Frontline</span></a>
+        <a class="signal-card" href="#"><span class="label">Information Integrity</span><span class="datum">Congress Weighs a Federal Preemption Standard for AI</span></a></div></div><div class="ticker-track" data-channel="press"><div class="ticker-track-inner">
+        <a class="signal-card" href="#"><span class="label">Information Integrity</span><span class="datum">Why Platform Transparency Reports Still Fall Short</span></a>
+        <a class="signal-card" href="#"><span class="label">Consumer Privacy</span><span class="datum">Cookies Are Dying. What Comes Next for Ad Tracking?</span></a>
+        <a class="signal-card" href="#"><span class="label">Trustworthy ML</span><span class="datum">How the EU's AI Act Is Reshaping Global Compliance</span></a>
+        <a class="signal-card" href="#"><span class="label">Information Integrity</span><span class="datum">Why Platform Transparency Reports Still Fall Short</span></a>
+        <a class="signal-card" href="#"><span class="label">Consumer Privacy</span><span class="datum">Cookies Are Dying. What Comes Next for Ad Tracking?</span></a>
+        <a class="signal-card" href="#"><span class="label">Trustworthy ML</span><span class="datum">How the EU's AI Act Is Reshaping Global Compliance</span></a></div></div>
+  </div>
 </div>
 
 <section class="featured-hero">
@@ -173,6 +191,20 @@
           <h3><a href="#">County Governments Are the New Cybersecurity Frontline</a></h3>
           <p>Why local governments face outsized cyber risk with the fewest resources to manage it.</p>
           <span class="read-meta">7 min read</span>
+        </div>
+        <div class="read-card">
+          <span class="source">Tech Policy Press</span>
+          <span class="topic-tag">Trustworthy ML</span>
+          <h3><a href="#">How the EU's AI Act Is Reshaping Global Compliance</a></h3>
+          <p>What multinational platforms are actually changing in response to Brussels' risk-tiered rules.</p>
+          <span class="read-meta">9 min read</span>
+        </div>
+        <div class="read-card">
+          <span class="source">The Phronesis Institute</span>
+          <span class="topic-tag">Information Integrity</span>
+          <h3><a href="#">Congress Weighs a Federal Preemption Standard for AI</a></h3>
+          <p>A rundown of the competing proposals to override the current patchwork of state AI laws.</p>
+          <span class="read-meta">6 min read</span>
         </div>
     </div>
   </div>

@@ -163,14 +163,22 @@ def affiliation_strip():
 
 
 def ticker_section():
-    """Bloomberg-style signal rail, homepage only. Content is editorial
-    (TICKER_ITEMS below), not a live feed -- per the brief's own guidance
-    to use editorial signals rather than faux-live metrics unless the
-    data can be reliably kept current."""
-    cards = ticker_html(TICKER_ITEMS)
+    """Bloomberg/CNBC-style signal rail, homepage only. Tabs switch between
+    channels (the Hub's own signals vs. curated Phronesis / Tech Policy
+    Press picks) the way CNBC's US/ASIA/EUR/BONDS row swaps which index
+    strip is showing. Content is editorial (TICKER_CHANNELS below), not a
+    live feed -- per the brief's own guidance to use editorial signals
+    rather than faux-live metrics unless the data can be reliably kept
+    current."""
     return f"""
 <div class="signal-ticker" aria-label="Latest signals from the Hub">
-  <div class="ticker-track">{cards}{cards}</div>
+  <div class="ticker-tabs" role="tablist">
+    <span class="ticker-live"><span class="dot" aria-hidden="true"></span>Live</span>
+    {ticker_tabs_html(TICKER_CHANNELS)}
+  </div>
+  <div class="ticker-viewport">
+    {ticker_tracks_html(TICKER_CHANNELS)}
+  </div>
 </div>
 """
 
@@ -364,8 +372,9 @@ QUESTIONS = [
 ]
 
 # Ideas We're Reading -- placeholder examples for the Phronesis + Tech
-# Policy Press carousel. NOT real published articles; swap for the Hub's
-# actual picks before launch (see README "Known placeholders").
+# Policy Press carousel (and, in condensed form, the ticker's Phronesis /
+# Tech Policy Press tabs below). NOT real published articles; swap for
+# the Hub's actual picks before launch (see README "Known placeholders").
 READING_ITEMS = [
     dict(source="Tech Policy Press", topic="Information Integrity",
          title="Why Platform Transparency Reports Still Fall Short",
@@ -383,12 +392,53 @@ READING_ITEMS = [
          title="County Governments Are the New Cybersecurity Frontline",
          summary="Why local governments face outsized cyber risk with the fewest resources to manage it.",
          meta="7 min read", link="#"),
+    dict(source="Tech Policy Press", topic="Trustworthy ML",
+         title="How the EU's AI Act Is Reshaping Global Compliance",
+         summary="What multinational platforms are actually changing in response to Brussels' risk-tiered rules.",
+         meta="9 min read", link="#"),
+    dict(source="The Phronesis Institute", topic="Information Integrity",
+         title="Congress Weighs a Federal Preemption Standard for AI",
+         summary="A rundown of the competing proposals to override the current patchwork of state AI laws.",
+         meta="6 min read", link="#"),
+]
+
+# Ticker channels -- "Tech Policy Hub" is the Hub's own editorial signals
+# (TICKER_ITEMS above); "Phronesis" and "Tech Policy Press" are condensed
+# from the same READING_ITEMS that power the homepage carousel, so the two
+# stay in sync automatically. Each entry is (key, tab label, items).
+TICKER_CHANNELS = [
+    ("hub", "Tech Policy Hub", TICKER_ITEMS),
+    ("phronesis", "Phronesis", [
+        dict(label=r["topic"], datum=r["title"], link=r["link"])
+        for r in READING_ITEMS if r["source"] == "The Phronesis Institute"
+    ]),
+    ("press", "Tech Policy Press", [
+        dict(label=r["topic"], datum=r["title"], link=r["link"])
+        for r in READING_ITEMS if r["source"] == "Tech Policy Press"
+    ]),
 ]
 
 
 def ticker_html(items):
     return "".join(f"""
         <a class="signal-card" href="{it['link']}"><span class="label">{it['label']}</span><span class="datum">{it['datum']}</span></a>""" for it in items)
+
+
+def ticker_tabs_html(channels):
+    out = []
+    for i, (key, label, _items) in enumerate(channels):
+        active = " active" if i == 0 else ""
+        out.append(f'<button type="button" class="ticker-tab{active}" data-channel="{key}" role="tab" aria-selected="{"true" if i == 0 else "false"}">{label}</button>')
+    return "".join(out)
+
+
+def ticker_tracks_html(channels):
+    out = []
+    for i, (key, _label, items) in enumerate(channels):
+        active = " active" if i == 0 else ""
+        cards = ticker_html(items)
+        out.append(f'<div class="ticker-track{active}" data-channel="{key}"><div class="ticker-track-inner">{cards}{cards}</div></div>')
+    return "".join(out)
 
 
 def question_cards_html(items):

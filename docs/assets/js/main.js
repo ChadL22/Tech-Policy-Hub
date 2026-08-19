@@ -70,6 +70,27 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
+  // Signal ticker channel tabs (Tech Policy Hub / Phronesis / Tech Policy
+  // Press) -- all channels are pre-rendered in the page, so switching is
+  // just a show/hide, no re-fetch.
+  document.querySelectorAll('.ticker-tabs').forEach(function (tabs) {
+    var wrap = tabs.closest('.signal-ticker');
+    if (!wrap) return;
+    tabs.querySelectorAll('.ticker-tab').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var channel = btn.dataset.channel;
+        tabs.querySelectorAll('.ticker-tab').forEach(function (b) {
+          var isActive = b === btn;
+          b.classList.toggle('active', isActive);
+          b.setAttribute('aria-selected', String(isActive));
+        });
+        wrap.querySelectorAll('.ticker-track').forEach(function (track) {
+          track.classList.toggle('active', track.dataset.channel === channel);
+        });
+      });
+    });
+  });
+
   // "Ideas We're Reading" carousel arrows
   document.querySelectorAll('.carousel-wrap').forEach(function (wrap) {
     var track = wrap.querySelector('.carousel-track');
