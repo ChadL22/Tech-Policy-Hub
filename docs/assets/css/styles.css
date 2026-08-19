@@ -130,14 +130,25 @@ header.site-header{
 .umd-logo-link{ display:flex; align-items:center; flex:none; }
 .umd-logo{ height:52px; width:auto; }
 .brand-divider{ width:1px; height:44px; background:var(--line); flex:none; }
-.brand{ display:flex; align-items:center; gap:10px; text-decoration:none !important; min-width:0; }
-.brand-chip{
-  color: var(--ink); font-family: var(--font-nav); font-weight:700;
-  font-size: 1.35rem; text-transform: uppercase; letter-spacing: .01em;
-  display:block; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+.brand{ display:flex; align-items:center; gap:12px; text-decoration:none !important; min-width:0; }
+.tph-icon{ height:40px; width:40px; border-radius: var(--radius); flex:none; }
+
+/* Wordmark lockup: "Tech / Policy" stacked small, "Hub" large beside it,
+   the large word's block height tuned to match the two-line stack. */
+.brand-hub-lockup{ display:flex; align-items:flex-start; gap:10px; min-width:0; }
+.brand-hub-lockup .tp-stack{
+  display:flex; flex-direction:column; justify-content:center; gap:2px;
+  font-family: var(--font-nav); font-weight:700; text-transform:uppercase; letter-spacing:.05em;
+  line-height:1.15; color: var(--ink); border-left:2px solid var(--umd-red); padding-left:9px; flex:none;
   transition: color .15s ease;
 }
-.brand:hover .brand-chip{ color: var(--umd-red); }
+.brand-hub-lockup .tp-stack span{ font-size:.8rem; }
+.brand-hub-lockup .hub-word{
+  font-family: var(--font-nav); font-weight:700; text-transform:uppercase; letter-spacing:.01em;
+  font-size:1.85rem; line-height:.86; color: var(--ink); transition: color .15s ease;
+}
+.brand:hover .brand-hub-lockup .tp-stack,
+.brand:hover .brand-hub-lockup .hub-word{ color: var(--umd-red); }
 
 nav.primary-nav{ display:flex; align-items:center; gap: 4px; }
 nav.primary-nav > ul{ display:flex; align-items:center; gap: 2px; list-style:none; margin:0; padding:0; }
@@ -496,19 +507,13 @@ footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding
   .about-hub .grid-2{ grid-template-columns: 1fr; gap: 36px; }
   .pillars-light{ grid-template-columns: 1fr; }
 }
-@media (max-width: 900px){
-  .grid-4{ grid-template-columns: repeat(2,1fr); }
-  .grid-3{ grid-template-columns: repeat(2,1fr); }
-  .news-grid-section .grid-3 > .card:nth-child(n+3){ border-top: 1px solid var(--line); padding-top: 32px; margin-top: 8px; }
-  .featured-hero .grid-2{ grid-template-columns: 1fr; }
-  .questions-grid{ grid-template-columns: 1fr; }
-  .grid-4 > .topic-card:nth-child(2n+1){ border-left:none; padding-left:0; }
-  .with-sidebar{ grid-template-columns: 1fr; }
-  .footer-grid{ grid-template-columns: 1fr 1fr; gap: 28px; }
-  .read-card{ flex-basis: 70vw; }
-  .teaching-cta{ text-align:left; margin-top:16px; }
-}
-@media (max-width: 720px){
+/* Nav collapses to the off-canvas hamburger menu starting here -- five nav
+   items plus dropdowns don't leave enough room next to the GoTech logo +
+   Hub lockup + Subscribe button above this width. (This used to kick in
+   only at 720px, which left a squeezed 720-1080px zone where the brand
+   lockup -- and before it, the plain text wordmark -- could get clipped
+   by .brand-lockup's overflow:hidden.) */
+@media (max-width: 1080px){
   nav.primary-nav{
     position: fixed; top: 0; left:0; right:0; bottom:0;
     background:#fff; flex-direction:column; align-items:stretch;
@@ -520,9 +525,31 @@ footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding
   nav.primary-nav a.nav-link{ color: var(--ink); padding:14px 4px; border-bottom:1px solid var(--line); justify-content:space-between; }
   .dropdown{ position:static; transform:none; width:auto; display:block; box-shadow:none; border:none; padding-left:12px; margin:0; }
   .nav-toggle{ display:block; }
+}
+@media (max-width: 900px){
+  .grid-4{ grid-template-columns: repeat(2,1fr); }
+  .grid-3{ grid-template-columns: repeat(2,1fr); }
+  .news-grid-section .grid-3 > .card:nth-child(n+3){ border-top: 1px solid var(--line); padding-top: 32px; margin-top: 8px; }
+  .featured-hero .grid-2{ grid-template-columns: 1fr; }
+  .questions-grid{ grid-template-columns: 1fr; }
+  .grid-4 > .topic-card:nth-child(2n+1){ border-left:none; padding-left:0; }
+  .with-sidebar{ grid-template-columns: 1fr; }
+  .footer-grid{ grid-template-columns: 1fr 1fr; gap: 28px; }
+  .read-card{ flex-basis: 70vw; }
+  .teaching-cta{ text-align:left; margin-top:16px; }
+  .tph-icon{ height:34px; width:34px; }
+  .brand-hub-lockup .hub-word{ font-size:1.55rem; }
+  .brand-hub-lockup .tp-stack span{ font-size:.7rem; }
+}
+@media (max-width: 720px){
   .brand-lockup{ gap:10px; }
   .umd-logo{ height:38px; }
   .brand-divider{ height:32px; }
+  .tph-icon{ height:30px; width:30px; }
+  .brand-hub-lockup{ gap:8px; }
+  .brand-hub-lockup .hub-word{ font-size:1.32rem; }
+  .brand-hub-lockup .tp-stack{ padding-left:7px; }
+  .brand-hub-lockup .tp-stack span{ font-size:.62rem; }
   .grid-2, .grid-3, .grid-4{ grid-template-columns: 1fr; }
   .grid > .card, .grid-3 > .person, .grid-4 > .topic-card{ border-left:none !important; padding-left:0 !important; border-top: 1px solid var(--line); padding-top: 24px; }
   .grid > .card:first-child, .grid-3 > .person:first-child, .grid-4 > .topic-card:first-child{ border-top:none; padding-top:0; }
@@ -539,7 +566,11 @@ footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding
   .brand-lockup{ gap:8px; }
   .umd-logo{ height:30px; }
   .brand-divider{ height:24px; }
-  .brand-chip{ font-size:.98rem; max-width:32vw; }
+  .tph-icon{ height:24px; width:24px; }
+  .brand-hub-lockup{ gap:6px; }
+  .brand-hub-lockup .hub-word{ font-size:1.02rem; }
+  .brand-hub-lockup .tp-stack{ padding-left:5px; border-width:1.5px; }
+  .brand-hub-lockup .tp-stack span{ font-size:.48rem; }
   .header-actions{ gap:6px; }
   .header-actions .btn{ padding:9px 14px; font-size:.72rem; }
   .affiliation-strip span{ font-size:.68rem; }
