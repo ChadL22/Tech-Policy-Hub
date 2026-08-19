@@ -6,10 +6,6 @@ g.clean_stale_pages()
 # ===========================================================================
 # HOME
 # ===========================================================================
-# Curated subset of QUESTIONS for the homepage (4, per the brief); About
-# shows the full set of six.
-QUESTIONS_HOME = [g.QUESTIONS[0], g.QUESTIONS[2], g.QUESTIONS[3], g.QUESTIONS[4]]
-
 # The homepage's "what we do" lead grid uses NEWS_ITEMS[0] as the lead
 # story, with 1-3 shown (3 items, default) in the "Hub News" rail
 # (RECENT_NEWS_RAIL, below) with a "More News" link to news.html; the
@@ -92,21 +88,6 @@ home_body = f"""
         {g.rail_html(EVENTS_RAIL)}
         <a href="events.html" class="text-link rail-more">See All Events</a>
       </div>
-    </div>
-  </div>
-</section>
-
-<section id="questions">
-  <div class="container">
-    <div class="section-head">
-      <div>
-        <span class="eyebrow">Questions We Answer</span>
-        <h2>The questions driving our research</h2>
-      </div>
-      <a href="about.html#questions" class="text-link">Explore All Questions</a>
-    </div>
-    <div class="questions-grid questions-grid--compact">
-      {g.question_cards_html(QUESTIONS_HOME)}
     </div>
   </div>
 </section>
