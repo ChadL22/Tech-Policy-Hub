@@ -16,7 +16,7 @@ ROOT = os.path.join(os.path.dirname(__file__), "..", "docs")
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026081906"
+ASSET_VERSION = "2026081907"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -181,7 +181,7 @@ def ticker_section():
     return f"""
 <div class="signal-ticker" aria-label="Latest signals from the Hub">
   <div class="ticker-tabs" role="tablist">
-    <span class="ticker-live"><span class="dot" aria-hidden="true"></span>Live</span>
+    <span class="ticker-live"><span class="dot" aria-hidden="true"></span>Updates</span>
     {ticker_tabs_html(TICKER_CHANNELS)}
   </div>
   <div class="ticker-viewport">

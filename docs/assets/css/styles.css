@@ -188,7 +188,7 @@ li.has-dropdown.open .dropdown{ display:block; }
   border-top: 3px solid var(--umd-gold); border-bottom: 3px solid var(--umd-gold);
 }
 .ticker-tabs{
-  display:flex; align-items:center; background:#1a1a1a; border-bottom:1px solid rgba(255,255,255,.1);
+  display:flex; align-items:center; background:#1a1a1a; border-bottom:2px solid var(--umd-gold);
   overflow-x:auto; scrollbar-width:none;
 }
 .ticker-tabs::-webkit-scrollbar{ display:none; }
