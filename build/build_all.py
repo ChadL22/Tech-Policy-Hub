@@ -438,12 +438,8 @@ about_body = f"""
     <div>
       <div class="sidebar-box">
         <h4>Join the Hub</h4>
-        <p style="font-size:.9rem;">Interested in becoming affiliated with us? Email our founder, Dr. Sivan-Sevilla, to discuss further.</p>
-        <a href="#" class="btn btn-primary" style="width:100%; justify-content:center;">Contact Us</a>
-      </div>
-      <div class="sidebar-box">
-        <h4>Mailing List</h4>
-        <p style="font-size:.9rem;">Subscribe to stay up to date with research outputs and events.</p>
+        <p style="font-size:.9rem;">If all this sounds relevant and interesting for you &ndash; feel free to join our hub! We are bringing together a network of students, scholars, practitioners, civil activists, and industry leaders to discuss tech policy on a regular basis. Feel free to subscribe and join our mailing list and be up-to-date with our research outputs &amp; events. Interested in becoming affiliated with us? Please email our founder, Dr. Sivan-Sevilla, to discuss further.</p>
+        <a href="mailto:sevilla@umd.edu" class="btn btn-primary" style="width:100%; justify-content:center; margin-bottom:10px;">Email Dr. Sivan-Sevilla</a>
         <a href="index.html#subscribe" class="btn btn-ghost" style="width:100%; justify-content:center;">Subscribe</a>
       </div>
     </div>

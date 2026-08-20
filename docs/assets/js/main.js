@@ -76,6 +76,17 @@ document.addEventListener('DOMContentLoaded', function () {
   // ticker_track_html() in generate.py renders the item list twice back
   // to back; auto-scroll and drag both wrap at the halfway point of the
   // doubled track so the loop has no visible seam.
+  //
+  // Driven by a CSS `transform: translateX()` on .ticker-track-inner, NOT
+  // .ticker-viewport.scrollLeft. An earlier version used scrollLeft with
+  // overflow-x:auto, which read as fully static on real mobile Safari --
+  // iOS hands scrollLeft-driven elements to its native momentum-scroll
+  // compositor, which can silently ignore programmatic scrollLeft writes
+  // until the user has physically touched the element. transform sidesteps
+  // that whole class of bug: .ticker-viewport is overflow:hidden (no native
+  // scroll at all) and dragging/auto-advance both just move the track via
+  // its own `offset` state, so there's nothing for the browser's scroll
+  // compositor to intercept.
   document.querySelectorAll('.ticker-viewport').forEach(function (vp) {
     var track = vp.querySelector('.ticker-track-inner');
     if (!track) return;
@@ -85,17 +96,22 @@ document.addEventListener('DOMContentLoaded', function () {
     measure();
     window.addEventListener('resize', measure);
 
-    var hovered = false, isDown = false, moved = false, startX, scrollLeft;
+    var offset = 0; // px the track has moved left, wraps at `half`
+    var hovered = false, isDown = false, moved = false, startX, startOffset;
     var SPEED = 0.5; // px/frame -- a slow, readable tape, not a marquee blur
 
     function wrap(x) {
       if (half <= 0) return x;
       return ((x % half) + half) % half;
     }
+    function render() {
+      track.style.transform = 'translateX(' + (-offset) + 'px)';
+    }
 
     function frame() {
       if (!hovered && !isDown && half > 0) {
-        vp.scrollLeft = wrap(vp.scrollLeft + SPEED);
+        offset = wrap(offset + SPEED);
+        render();
       }
       requestAnimationFrame(frame);
     }
@@ -107,22 +123,27 @@ document.addEventListener('DOMContentLoaded', function () {
       isDown = false;
       vp.classList.remove('dragging');
     }
-    vp.addEventListener('mouseenter', pause);
-    vp.addEventListener('mouseleave', resume);
-    vp.addEventListener('touchstart', pause, { passive: true });
-    vp.addEventListener('touchend', resume);
-    // touchcancel fires (INSTEAD of touchend) whenever a touch that started
-    // on the ticker turns into a page-level scroll -- easy to trigger by
-    // accident since the ticker sits right under the header. Without this,
-    // "hovered" gets stuck true forever after the first such touch and the
-    // tape never resumes -- this was the actual "ticker doesn't run" bug.
-    vp.addEventListener('touchcancel', resume);
+    // Only wire up hover-to-pause on devices with a REAL pointing device
+    // (mouse/trackpad). This turned out to be the actual "ticker static on
+    // mobile" bug: touching the ticker fires touchstart/touchend as
+    // expected, but mobile browsers then dispatch synthetic compatibility
+    // mouseover/mouseenter events afterward (for sites that only listen for
+    // mouse events) -- with no matching mouseleave to follow, since there's
+    // no real mouse to move away. That leaves `hovered` stuck true forever
+    // after the FIRST tap, permanently freezing the tape. matchMedia
+    // '(hover: hover)' is false on touch-only devices, so this skips
+    // binding mouse hover-pause there entirely and leaves pause/resume to
+    // the touchstart/touchend/touchcancel handlers below instead.
+    if (window.matchMedia && window.matchMedia('(hover: hover)').matches) {
+      vp.addEventListener('mouseenter', pause);
+      vp.addEventListener('mouseleave', resume);
+    }
 
     vp.addEventListener('mousedown', function (e) {
       isDown = true; moved = false;
       vp.classList.add('dragging');
-      startX = e.pageX - vp.offsetLeft;
-      scrollLeft = vp.scrollLeft;
+      startX = e.pageX;
+      startOffset = offset;
     });
     vp.addEventListener('mouseup', function () {
       isDown = false;
@@ -131,11 +152,33 @@ document.addEventListener('DOMContentLoaded', function () {
     vp.addEventListener('mousemove', function (e) {
       if (!isDown) return;
       e.preventDefault();
-      var x = e.pageX - vp.offsetLeft;
-      var walk = x - startX;
+      var walk = e.pageX - startX;
       if (Math.abs(walk) > 5) moved = true;
-      vp.scrollLeft = wrap(scrollLeft - walk);
+      offset = wrap(startOffset - walk);
+      render();
     });
+
+    // Touch: pause+drag-scrub in one set of handlers (there's no native
+    // touch-scroll to fall back on anymore now that .ticker-viewport is
+    // overflow:hidden, so this replaces what the browser used to provide
+    // for free). No separate touchcancel quirk to handle here either --
+    // that was specifically a scrollLeft/momentum-scroll interaction.
+    vp.addEventListener('touchstart', function (e) {
+      hovered = true; isDown = true; moved = false;
+      startX = e.touches[0].pageX;
+      startOffset = offset;
+    }, { passive: true });
+    vp.addEventListener('touchmove', function (e) {
+      if (!isDown) return;
+      var walk = e.touches[0].pageX - startX;
+      if (Math.abs(walk) > 5) moved = true;
+      offset = wrap(startOffset - walk);
+      render();
+    }, { passive: true });
+    function touchEnd() { hovered = false; isDown = false; }
+    vp.addEventListener('touchend', touchEnd);
+    vp.addEventListener('touchcancel', touchEnd);
+
     vp.addEventListener('click', function (e) {
       if (moved) { e.preventDefault(); e.stopPropagation(); }
     }, true);
