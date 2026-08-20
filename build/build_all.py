@@ -67,7 +67,7 @@ home_body = f"""
     <div class="section-head">
       <div>
         <span class="eyebrow">Calendar</span>
-        <h2>Upcoming</h2>
+        <h2>Events</h2>
       </div>
       <a href="events.html" class="btn btn-ghost btn-arrow">Full Calendar</a>
     </div>
