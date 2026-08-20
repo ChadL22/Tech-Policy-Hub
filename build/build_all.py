@@ -42,20 +42,9 @@ home_body = f"""
       <div class="rail-head">Hub News</div>
       {g.rail_html(RECENT_NEWS_RAIL)}
       <a href="news.html" class="text-link rail-more">More News</a>
+      <div class="rail-head rail-head--stacked">Research Areas</div>
+      <div class="research-matrix research-matrix--rail">{g.research_matrix_html()}</div>
     </div>
-  </div>
-</section>
-
-<section class="section-tight">
-  <div class="container">
-    <div class="section-head">
-      <div>
-        <span class="eyebrow">Research Areas</span>
-        <h2>What we study</h2>
-      </div>
-      <a href="research.html" class="text-link">All Research</a>
-    </div>
-    <div class="research-matrix">{g.research_matrix_html()}</div>
   </div>
 </section>
 
