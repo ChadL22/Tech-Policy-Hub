@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var dots = Array.prototype.slice.call(widget.querySelectorAll('.spotlight-dot'));
     if (slides.length < 2) return; // nothing to slide between
 
-    var AUTO_MS = 7000;
+    var AUTO_MS = 5000;
     var current = 0;
     var timer = null;
 
