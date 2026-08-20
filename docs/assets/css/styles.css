@@ -538,7 +538,11 @@ li.has-dropdown.open .dropdown{ display:block; }
 }
 .rail-item h4{ font-size:.92rem; margin:0; line-height:1.35; color: var(--ink); font-weight:700; }
 .rail-item:hover h4{ color: var(--umd-red); }
-.rail-more{ display:inline-block; margin-top: 14px; }
+.rail-more{
+  display:block; width:fit-content; margin-left:auto; margin-top: 14px;
+  color: var(--umd-red); border-color: var(--umd-red);
+}
+.rail-more:hover{ color: var(--umd-red-dark); border-color: var(--umd-red-dark); }
 
 /* Guiding Questions -- compact numbered list for the lead grid's narrow
    left column (see .lead-secondary), denser than .rail-item since a full
