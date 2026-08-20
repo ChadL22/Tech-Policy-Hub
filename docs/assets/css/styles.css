@@ -328,13 +328,15 @@ li.has-dropdown.open .dropdown{ display:block; }
 .read-card .read-meta{ font-size:.8rem; color: var(--ink-soft); margin-top:auto; }
 
 /* Field Pulse: the section itself stays the normal off-white (.soft-bg);
-   only the carousel entries sit inside a black rectangle (.carousel-panel)
-   wrapping just the card row, like a black mat around the cards. The
-   cards themselves stay their original white -- no color override here,
-   the black panel is just the frame showing through the gap/padding. Gold
-   outline matches the signal ticker's gold top/bottom border for a
-   consistent accent treatment across the two "banner" elements. */
-.carousel-panel{ background:#000; border: 3px solid var(--umd-gold); padding: 28px 28px 22px; }
+   only the carousel entries sit inside a dark rectangle (.carousel-panel)
+   wrapping just the card row, like a mat around the cards. The cards
+   themselves stay their original white -- no color override here, the
+   dark panel is just the frame showing through the gap/padding. Uses
+   --header-band (not pure #000) to match the dark shade already used
+   elsewhere on the page (About section, Calendar's month-header bar) --
+   gold outline matches the signal ticker's gold top/bottom border for a
+   consistent accent treatment across the site's "banner" elements. */
+.carousel-panel{ background: var(--header-band); border: 3px solid var(--umd-gold); padding: 28px 28px 22px; }
 .carousel-panel .carousel-track{ padding-bottom:0; }
 
 /* ---------- Cards / feed — flat, hairline-divided, no shadows ---------- */
