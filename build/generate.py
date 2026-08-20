@@ -7,17 +7,23 @@ No build step needed to VIEW the site -- just open the .html files.
 Re-run this script any time page content or the header/footer changes.
 """
 import calendar
+import datetime
 import os
 import re
 
 ROOT = os.path.join(os.path.dirname(__file__), "..", "docs")
+
+# Absolute site URL -- used for the .ics feed's UIDs/event links (which need
+# to be absolute regardless of what page linked to the feed) and for the
+# webcal:// subscribe link on events.html (same URL, scheme swapped).
+SITE_URL = "https://chadl22.github.io/Tech-Policy-Hub/"
 
 # Bumped by hand whenever styles.css / main.js change, and appended as a
 # query string to their <link>/<script> tags below. Without this, browsers
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026082033"
+ASSET_VERSION = "2026082034"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -292,6 +298,17 @@ def write(name, content):
     print("wrote", os.path.relpath(out_path, ROOT))
 
 
+def write_raw(name, content):
+    """Write a non-HTML file straight into ROOT (docs/) with no link
+    rewriting -- used for events.ics, which lives at the site root
+    alongside index.html regardless of clean-URL page routing."""
+    os.makedirs(ROOT, exist_ok=True)
+    out_path = os.path.join(ROOT, name)
+    with open(out_path, "w", newline="") as f:
+        f.write(content)
+    print("wrote", os.path.relpath(out_path, ROOT))
+
+
 # ---------------------------------------------------------------------------
 # Reusable content fragments
 # ---------------------------------------------------------------------------
@@ -429,6 +446,30 @@ EVENTS_ITEMS = [
          meta="10:00 AM · Virtual", link="events.html"),
     dict(y=2027, m="APR", d="09", cat="Annual Event", title="Tech Policy Hub Annual Event 2027",
          meta="All day · University of Maryland", link="annual-event.html"),
+]
+
+# Past events -- same fields as EVENTS_ITEMS so both can share
+# events_rows_html()/filter_pills_html(). The three Speaker Series/Roundtable
+# entries and the Annual Event recap already existed as illustrative cards
+# on speaker-series.html and annual-event.html (see build_all.py); pulled
+# out here as one shared source of truth so events.html's new "Past Events"
+# section, the Speaker Series page's "Past sessions," and the Annual
+# Event page's "2026 Recap" all read from the same data instead of drifting.
+# Same caveat as those existing entries: illustrative placeholder content,
+# not verified real dates -- see "Known placeholders" in the README.
+PAST_EVENTS_ITEMS = [
+    dict(y=2026, m="APR", cat="Annual Event", title="A Record Turnout",
+         summary="Our most recent event drew practitioners, scholars, and students for a full day of programming -- summary and photos in the news archive.",
+         link="annual-event.html"),
+    dict(y=2026, m="FEB", cat="Speaker Series", title="DeepSeek and AI Governance",
+         summary="An academic and a practitioner unpack what DeepSeek means for global AI policy.",
+         link="speaker-series.html"),
+    dict(y=2025, m="MAR", cat="Speaker Series", title="Privacy Research to Regulation",
+         summary="How academic privacy research can inform real-world privacy regulation.",
+         link="speaker-series.html"),
+    dict(y=2024, m="NOV", cat="Roundtable", title="AI Policy Roundtable",
+         summary="A joint session with VCAI on the state of AI policy debates.",
+         link="speaker-series.html"),
 ]
 
 PEOPLE_ITEMS = [
@@ -856,6 +897,91 @@ def events_rows_html(items, limit=None, with_btn=True):
           {btn}
         </div>""")
     return "".join(out)
+
+
+def past_events_html(items, limit=None):
+    """Compact rows for PAST_EVENTS_ITEMS -- month/year instead of a day
+    number (that data was never day-precise, see PAST_EVENTS_ITEMS'
+    docstring) and a one-line summary instead of a logistics meta line,
+    since past events don't need "4:00 PM, Room 3137"-style detail. Shares
+    .event-row's layout/CSS and the same data-filter-target mechanism as
+    events_rows_html() so one filter bar on events.html covers both."""
+    out = []
+    for e in (items[:limit] if limit else items):
+        out.append(f"""
+        <div class="event-row event-row--past" data-filter-target="{e['cat']}">
+          <div class="event-date"><div class="d">{e['y']}</div><div class="m">{e['m']}</div></div>
+          <div><h3><a href="{e['link']}">{e['title']}</a></h3><div class="meta">{e['summary']}</div></div>
+        </div>""")
+    return "".join(out)
+
+
+def _ics_escape(text):
+    """Escape TEXT-type field values per RFC 5545 4.3.11."""
+    return text.replace("\\", "\\\\").replace(";", "\\;").replace(",", "\\,").replace("\n", "\\n")
+
+
+def _absolute_clean_url(link):
+    """Turn a page-content-style link like 'speaker-series.html' into its
+    real deployed clean-URL address (SITE_URL + 'speaker-series/'),
+    mirroring write()'s own _rewrite_links() folder convention. The site
+    only ever writes docs/<slug>/index.html (plus docs/index.html) -- a
+    flat '.../speaker-series.html' URL 404s on the live (GitHub Pages)
+    site, so events_ics()'s URL field needs this same rewrite, not just a
+    naive SITE_URL + link concatenation."""
+    if link.startswith(("http://", "https://", "mailto:")):
+        return link
+    if link == "index.html":
+        return SITE_URL
+    m = re.match(r"^([\w.-]+)\.html(#.*)?$", link)
+    if m:
+        return f"{SITE_URL}{m.group(1)}/{m.group(2) or ''}"
+    return SITE_URL + link
+
+
+def events_ics(events):
+    """Static iCalendar (.ics) feed built from EVENTS_ITEMS at build time.
+    All-day VEVENTs -- the site's per-event start times live inside the
+    free-text `meta` field in varying formats ("4:00 PM · ...", "All day
+    · ..."), not a structured time field, so all-day is the only
+    representation we can build without inventing precise start/end times
+    or a timezone. Written once to docs/events.ics (site root, alongside
+    index.html) by build_all.py; events.html links to it both as a plain
+    download and as a webcal:// URL so calendar apps (Google/Apple/Outlook)
+    can subscribe and automatically pick up whatever's current next time
+    the site rebuilds and redeploys -- this file is regenerated by every
+    `python3 build_all.py` run, not hand-maintained."""
+    stamp = datetime.datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
+    lines = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//UMD Tech Policy Hub//Events//EN",
+        "CALSCALE:GREGORIAN",
+        "METHOD:PUBLISH",
+        "X-WR-CALNAME:Tech Policy Hub Events",
+    ]
+    for e in events:
+        mnum = _MONTH_NUM[e["m"]]
+        day = int(e["d"])
+        start = datetime.date(e["y"], mnum, day)
+        end = start + datetime.timedelta(days=1)  # DTEND is exclusive for an all-day VEVENT
+        slug = re.sub(r"[^a-z0-9]+", "-", e["title"].lower()).strip("-")
+        uid = f'{start.strftime("%Y%m%d")}-{slug}@techpolicyhub.umd.edu'
+        url = _absolute_clean_url(e["link"])
+        lines += [
+            "BEGIN:VEVENT",
+            f"UID:{uid}",
+            f"DTSTAMP:{stamp}",
+            f"DTSTART;VALUE=DATE:{start.strftime('%Y%m%d')}",
+            f"DTEND;VALUE=DATE:{end.strftime('%Y%m%d')}",
+            f"SUMMARY:{_ics_escape(e['title'])}",
+            f"DESCRIPTION:{_ics_escape(e['meta'])}",
+            f"CATEGORIES:{_ics_escape(e['cat'])}",
+            f"URL:{url}",
+            "END:VEVENT",
+        ]
+    lines.append("END:VCALENDAR")
+    return "\r\n".join(lines) + "\r\n"
 
 
 def people_grid_html(items):

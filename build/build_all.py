@@ -315,17 +315,14 @@ speaker_body = f"""
     <div class="section-head">
       <div><span class="eyebrow">Past sessions</span><h2>Recordings &amp; recaps</h2></div>
     </div>
-    <div class="grid grid-3">
-      <div class="card"><span class="kicker">Feb 2026</span><h3>DeepSeek and AI Governance</h3><p>An academic and a practitioner unpack what DeepSeek means for global AI policy.</p></div>
-      <div class="card"><span class="kicker">Mar 2025</span><h3>Privacy Research to Regulation</h3><p>How academic privacy research can inform real-world privacy regulation.</p></div>
-      <div class="card"><span class="kicker">Nov 2024</span><h3>AI Policy Roundtable</h3><p>A joint session with VCAI on the state of AI policy debates.</p></div>
-    </div>
+    <div class="grid grid-3">{"".join(f'<div class="card"><span class="kicker">{e["m"].title()} {e["y"]}</span><h3>{e["title"]}</h3><p>{e["summary"]}</p></div>' for e in g.PAST_EVENTS_ITEMS if e["cat"] in ("Speaker Series", "Roundtable"))}</div>
   </div>
 </section>
 """
 g.write("speaker-series.html", g.page("speaker-series.html", "Speaker Series", "The Tech Policy Hub Speaker Series pairs academics and practitioners.", speaker_body))
 
-annual_body = """
+_annual_recap = next(e for e in g.PAST_EVENTS_ITEMS if e["cat"] == "Annual Event")
+annual_body = f"""
 <section class="page-hero">
   <div class="container">
     <div class="breadcrumb"><a href="index.html">Home</a> / <a href="events.html">Events</a> / Annual Event</div>
@@ -339,7 +336,7 @@ annual_body = """
   <div class="container">
     <div class="grid grid-2">
       <div class="card"><span class="kicker">2027</span><h3>Save the Date</h3><p>Planning is underway for our next Annual Event -- details and registration will be posted here.</p></div>
-      <div class="card"><span class="kicker">2026 Recap</span><h3>A Record Turnout</h3><p>Our most recent event drew practitioners, scholars, and students for a full day of programming -- summary and photos in the news archive.</p></div>
+      <div class="card"><span class="kicker">{_annual_recap['y']} Recap</span><h3>{_annual_recap['title']}</h3><p>{_annual_recap['summary']}</p></div>
     </div>
   </div>
 </section>
@@ -369,6 +366,13 @@ g.write("news.html", g.page("news.html", "News", "News, publications, and media 
 # ===========================================================================
 # EVENTS
 # ===========================================================================
+# Absolute (not page-relative) so this works identically regardless of the
+# fact that events.html itself lives one folder deep (docs/events/index.html)
+# while events.ics lives at the site root (docs/events.ics) -- see
+# events_ics()'s docstring for why the feed itself is all-day/no-timezone.
+_ics_url = g.SITE_URL + "events.ics"
+_ics_webcal_url = _ics_url.replace("https://", "webcal://")
+
 events_body = f"""
 <section class="page-hero">
   <div class="container">
@@ -379,13 +383,26 @@ events_body = f"""
   </div>
 </section>
 <section>
-  <div class="container">
-    {g.filter_pills_html(list(g.EVENT_CATEGORIES.keys()), 'events')}
-    <div style="margin-top:28px;">{g.events_rows_html(g.EVENTS_ITEMS)}</div>
+  <div class="container with-sidebar">
+    <div>
+      {g.filter_pills_html(list(g.EVENT_CATEGORIES.keys()), 'events')}
+      <div class="section-head" style="margin-top:28px;"><div><span class="eyebrow">Upcoming</span><h2>Upcoming Events</h2></div></div>
+      {g.events_rows_html(g.EVENTS_ITEMS)}
+      <div class="section-head" style="margin-top:48px;"><div><span class="eyebrow">Past</span><h2>Past Events</h2></div></div>
+      {g.past_events_html(g.PAST_EVENTS_ITEMS)}
+    </div>
+    <div>
+      <h4 style="font-family:var(--font-body); font-size:.95rem; font-weight:700; margin-bottom:14px;">Calendar</h4>
+      <div class="cal-legend">{g.calendar_legend_html(g.EVENT_CATEGORIES)}</div>
+      {g.calendar_widget_html(g.EVENTS_ITEMS, g.EVENT_CATEGORIES)}
+      <a href="{_ics_webcal_url}" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:18px;">Subscribe to Calendar</a>
+      <a href="{_ics_url}" class="btn btn-ghost" style="width:100%; justify-content:center; margin-top:10px; font-size:.82rem;">Download .ics file</a>
+    </div>
   </div>
 </section>
 """
 g.write("events.html", g.page("events.html", "Events", "Upcoming events from the Tech Policy Hub.", events_body))
+g.write_raw("events.ics", g.events_ics(g.EVENTS_ITEMS))
 
 # ===========================================================================
 # PEOPLE
