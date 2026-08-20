@@ -54,15 +54,17 @@ home_body = f"""
       <div>
         <span class="eyebrow">Field Pulse</span>
         <h2>What we're reading</h2>
-        <p class="label-note">Outside reading from Phronesis and Tech Policy Press &mdash; not Hub-authored scholarship.</p>
+        <p class="label-note">An array of papers, essays, analyses, and articles that we have recently come across in the last 30 days or so and care to share. For previous readings visit our sister site <a href="https://phronesisresearch.org">phronesisresearch.org</a>.</p>
       </div>
       <div class="carousel-arrows">
         <button type="button" data-dir="-1" aria-label="Scroll left">&lsaquo;</button>
         <button type="button" data-dir="1" aria-label="Scroll right">&rsaquo;</button>
       </div>
     </div>
-    <div class="carousel-track">
-      {g.reading_cards_html(g.READING_ITEMS[:4])}
+    <div class="carousel-panel">
+      <div class="carousel-track">
+        {g.reading_cards_html(g.READING_ITEMS[:4])}
+      </div>
     </div>
   </div>
 </section>

@@ -327,6 +327,20 @@ li.has-dropdown.open .dropdown{ display:block; }
 .read-card p{ font-size:.92rem; margin-bottom:0; }
 .read-card .read-meta{ font-size:.8rem; color: var(--ink-soft); margin-top:auto; }
 
+/* Field Pulse: the section itself stays the normal off-white (.soft-bg);
+   only the carousel entries sit inside a black rectangle (.carousel-panel)
+   wrapping just the card row. Cards get a near-black fill with a faint
+   white hairline so they read as distinct cards against the panel, and
+   their text flips to light-on-dark to stay legible. */
+.carousel-panel{ background:#000; padding: 28px 28px 22px; }
+.carousel-panel .carousel-track{ padding-bottom:0; }
+.carousel-panel .read-card{ background:#141414; border-color:#333; }
+.carousel-panel .read-card .source{ color:#9A9EA3; }
+.carousel-panel .read-card h3 a{ color:#fff; }
+.carousel-panel .read-card h3 a:hover{ color: var(--umd-gold); }
+.carousel-panel .read-card p{ color:#C7CACD; }
+.carousel-panel .read-card .read-meta{ color:#9A9EA3; }
+
 /* ---------- Cards / feed — flat, hairline-divided, no shadows ---------- */
 .grid{ display:grid; gap: 0; }
 .grid-2{ grid-template-columns: repeat(2, 1fr); }
