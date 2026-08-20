@@ -17,7 +17,7 @@ ROOT = os.path.join(os.path.dirname(__file__), "..", "docs")
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026082021"
+ASSET_VERSION = "2026082026"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -305,6 +305,45 @@ TOPICS = [
          blurb="Examining algorithmic accountability, AI governance, and the standards needed for machine learning the public can trust."),
 ]
 
+# Homepage "Research Spotlight" slideshow -- 3-5 real Hub outputs across
+# formats (papers, media appearances, presentations), not just papers, so
+# "primary_label" varies per item ("Read the Paper" / "Read the Coverage" /
+# "Event Details") instead of a single "Read the Research" for everything.
+# Content is pulled from the same real, verified NEWS_ITEMS entries used
+# elsewhere on the site -- see follow-up 26.
+SPOTLIGHT_ITEMS = [
+    dict(tag="Publication", topic="Consumer Privacy", topic_file="topic-privacy.html",
+         date="Jul 2025",
+         title="Cookie-less Identification: For and Against Privacy",
+         summary="Work from the privacy team on the privacy implications of cookie-less identification on the Web was published in the Internet Policy Review.",
+         primary_label="Read the Research",
+         link="https://policyreview.info/articles/analysis/cookie-less-identification-foragainst-privacy"),
+    dict(tag="Publication", topic="Information Integrity", topic_file="topic-integrity.html",
+         date="Jul 2025",
+         title="Classifying Trustworthy Content via Third-Party Web Structure",
+         summary="New work classifying trustworthy content on the Web based on the third-party structure of websites was published through the FOCI workshop at PETs.",
+         primary_label="Read the Paper",
+         link="https://www.petsymposium.org/foci/2025/foci-2025-0017.pdf"),
+    dict(tag="Media", topic="Cybersecurity", topic_file="topic-cybersecurity.html",
+         date="Mar 2, 2025",
+         title="Hub Cybersecurity Work Highlighted by Newsweek",
+         summary="Research from the Hub's Cybersecurity group on county-level cyber risk was highlighted by Newsweek.",
+         primary_label="Read the Coverage",
+         link="https://www.newsweek.com/cybersecurity-risk-map-usa-counties-2026762"),
+    dict(tag="Speaker Series", topic="Consumer Privacy", topic_file="topic-privacy.html",
+         date="Mar 12, 2025",
+         title="Spring 2025 Speaker Series: Privacy Research and Regulation",
+         summary="An online Spring 2025 Speaker Series event on how privacy research can inform privacy regulation.",
+         primary_label="Event Details",
+         link="https://umd.zoom.us/meeting/register/HbxWvfXnSBWxFfr1a7vnQA"),
+    dict(tag="Publication", topic="Cybersecurity", topic_file="topic-cybersecurity.html",
+         date="Jan 17, 2025",
+         title="Attack Surface Across U.S. County Governments Published in Journal of Cybersecurity",
+         summary="Research on the size, diversity, and severity of exposed attack surface across U.S. county governments is officially published by the Journal of Cybersecurity.",
+         primary_label="Read the Paper",
+         link="https://academic.oup.com/cybersecurity/article/11/1/tyae032/7959399"),
+]
+
 NEWS_ITEMS = [
     dict(tag="Publication", date="Jul 2025",
          title="Cookie-less Identification: For and Against Privacy",
@@ -556,6 +595,47 @@ def lead_media_html(topic_label):
     Hub supplies one."""
     return f"""
         <div class="lead-media"><span class="topic-mark">{topic_label}</span></div>"""
+
+
+def spotlight_html(items):
+    """Homepage "Research Spotlight" -- a small slideshow (one slide visible
+    at a time, NOT a free-scroll carousel like Field Pulse) of 3-5 Hub
+    outputs: papers, media appearances, presentations, etc. "Research
+    Spotlight" is a single persistent header (.rail-head, matching the
+    "Guiding Questions"/"Hub News" headers on the other two lead-grid
+    columns) -- it does NOT repeat per slide and never changes. Each
+    slide's own .meta line (tag + date) sits next to the summary instead,
+    since THAT changes per item. Reuses the .lead-media/h1/.lede/
+    .hero-actions markup and CSS already defined for the single-item
+    version this replaces. main.js finds every [data-spotlight],
+    auto-advances through .spotlight-slide via an .is-active class, pauses
+    on hover, and wires the .spotlight-dot buttons below the actions for
+    manual navigation -- see follow-ups 26-27."""
+    slides = []
+    for i, it in enumerate(items):
+        active = " is-active" if i == 0 else ""
+        slides.append(f"""
+        <div class="spotlight-slide{active}" data-slide="{i}">
+          {lead_media_html(it['topic'])}
+          <h1><a href="{it['link']}"{link_attrs(it['link'])}>{it['title']}</a></h1>
+          <div class="meta">{it['tag']} &middot; {it['date']}</div>
+          <p class="lede">{it['summary']}</p>
+          <div class="hero-actions">
+            <a href="{it['link']}"{link_attrs(it['link'])} class="btn btn-primary btn-arrow">{it['primary_label']}</a>
+            <a href="{it['topic_file']}" class="btn btn-ghost">Explore {it['topic']}</a>
+          </div>
+        </div>""")
+    dots = "".join(
+        f'<button type="button" class="spotlight-dot{" is-active" if i == 0 else ""}" data-index="{i}" aria-label="Show spotlight item {i + 1} of {len(items)}"></button>'
+        for i in range(len(items))
+    )
+    return f"""
+      <div class="rail-head">Research Spotlight</div>
+      <div class="spotlight" data-spotlight>
+        <div class="spotlight-track">{''.join(slides)}
+        </div>
+        <div class="spotlight-dots">{dots}</div>
+      </div>"""
 
 
 def reading_cards_html(items):

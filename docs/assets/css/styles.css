@@ -249,6 +249,23 @@ li.has-dropdown.open .dropdown{ display:block; }
 .lead-story h1 a{ color: var(--ink); }
 .lead-story h1 a:hover{ color: var(--umd-red); text-decoration: none; }
 .lead-story .lede{ font-size: 1.02rem; max-width: 52ch; }
+/* Research Spotlight slideshow -- one .spotlight-slide visible at a time
+   (display:none on the rest), advanced by main.js on a timer or via the
+   .spotlight-dot buttons below. Slide content reuses the .meta/.lead-media/
+   h1/.lede/.hero-actions rules above unchanged (they're descendant
+   selectors under .lead-story, which still wraps this), except the lede's
+   52ch cap is dropped here so the summary fills the full column width
+   below the image/title instead of wrapping narrow. */
+.spotlight-slide{ display:none; }
+.spotlight-slide.is-active{ display:block; }
+.spotlight-slide .lede{ max-width: none; }
+.spotlight-dots{ display:flex; gap:8px; margin-top: 22px; justify-content:center; }
+.spotlight-dot{
+  width:9px; height:9px; padding:0; border-radius:50%; border:1.5px solid var(--ink-soft);
+  background: transparent; cursor:pointer; transition: background .15s ease, border-color .15s ease;
+}
+.spotlight-dot:hover{ border-color: var(--umd-red); }
+.spotlight-dot.is-active{ background: var(--umd-red); border-color: var(--umd-red); }
 @media (max-width: 1150px){
   .lead-grid{ grid-template-columns: 1fr; }
   .lead-secondary, .lead-story, .lead-rail{ grid-column: 1; }

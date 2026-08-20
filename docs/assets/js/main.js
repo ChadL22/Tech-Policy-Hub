@@ -141,6 +141,41 @@ document.addEventListener('DOMContentLoaded', function () {
     }, true);
   });
 
+  // Homepage "Research Spotlight" -- one .spotlight-slide visible at a
+  // time (spotlight_html() in generate.py renders all of them, hidden via
+  // CSS except .is-active). Auto-advances on a timer, pauses on hover so
+  // it doesn't flip out from under someone reading, and the .spotlight-dot
+  // buttons jump straight to a slide (and reset the timer so it doesn't
+  // immediately auto-advance away from the one just picked).
+  document.querySelectorAll('[data-spotlight]').forEach(function (widget) {
+    var slides = Array.prototype.slice.call(widget.querySelectorAll('.spotlight-slide'));
+    var dots = Array.prototype.slice.call(widget.querySelectorAll('.spotlight-dot'));
+    if (slides.length < 2) return; // nothing to slide between
+
+    var AUTO_MS = 7000;
+    var current = 0;
+    var timer = null;
+
+    function show(i) {
+      current = (i % slides.length + slides.length) % slides.length;
+      slides.forEach(function (s, idx) { s.classList.toggle('is-active', idx === current); });
+      dots.forEach(function (d, idx) { d.classList.toggle('is-active', idx === current); });
+    }
+    function stopAuto() { if (timer) clearInterval(timer); }
+    function startAuto() {
+      stopAuto();
+      timer = setInterval(function () { show(current + 1); }, AUTO_MS);
+    }
+
+    dots.forEach(function (d, idx) {
+      d.addEventListener('click', function () { show(idx); startAuto(); });
+    });
+    widget.addEventListener('mouseenter', stopAuto);
+    widget.addEventListener('mouseleave', startAuto);
+
+    startAuto();
+  });
+
   // Homepage calendar -- pages between pre-rendered month panels (one
   // per month that actually has an event; see calendar_widget_html() in
   // generate.py) with prev/next, wrapping around at either end.

@@ -29,14 +29,7 @@ home_body = f"""
       {g.guiding_questions_html(g.QUESTIONS)}
     </div>
     <div class="lead-story">
-      <div class="meta">Research Spotlight &middot; {g.NEWS_ITEMS[0]['date']}</div>
-      {g.lead_media_html("Consumer Privacy")}
-      <h1><a href="{g.NEWS_ITEMS[0]['link']}"{g.link_attrs(g.NEWS_ITEMS[0]['link'])}>{g.NEWS_ITEMS[0]['title']}</a></h1>
-      <p class="lede">{g.NEWS_ITEMS[0]['summary']}</p>
-      <div class="hero-actions">
-        <a href="{g.NEWS_ITEMS[0]['link']}"{g.link_attrs(g.NEWS_ITEMS[0]['link'])} class="btn btn-primary btn-arrow">Read the Research</a>
-        <a href="topic-privacy.html" class="btn btn-ghost">Explore Consumer Privacy</a>
-      </div>
+      {g.spotlight_html(g.SPOTLIGHT_ITEMS)}
     </div>
     <div class="lead-rail">
       <div class="rail-head">Hub News</div>
