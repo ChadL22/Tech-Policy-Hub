@@ -153,13 +153,34 @@ document.addEventListener('DOMContentLoaded', function () {
     if (slides.length < 2) return; // nothing to slide between
 
     var AUTO_MS = 5000;
+    var FADE_MS = 320; // must match .spotlight-slide's transition-duration in styles.css
     var current = 0;
     var timer = null;
+    var transitioning = false;
 
+    // Crossfades rather than hard-cutting: fade the current slide out,
+    // THEN (once that finishes) swap which slide is .is-active and fade
+    // the new one in. Sequential rather than a true overlapping crossfade
+    // so we don't need to give .spotlight-track a fixed height to hold two
+    // different-length slides on screen at once.
     function show(i) {
-      current = (i % slides.length + slides.length) % slides.length;
-      slides.forEach(function (s, idx) { s.classList.toggle('is-active', idx === current); });
-      dots.forEach(function (d, idx) { d.classList.toggle('is-active', idx === current); });
+      var next = (i % slides.length + slides.length) % slides.length;
+      if (next === current || transitioning) return;
+      transitioning = true;
+
+      var oldSlide = slides[current];
+      var newSlide = slides[next];
+
+      oldSlide.classList.remove('is-visible');
+      setTimeout(function () {
+        oldSlide.classList.remove('is-active');
+        newSlide.classList.add('is-active');
+        void newSlide.offsetWidth; // force layout so the opacity transition below actually runs
+        newSlide.classList.add('is-visible');
+        current = next;
+        dots.forEach(function (d, idx) { d.classList.toggle('is-active', idx === current); });
+        setTimeout(function () { transitioning = false; }, FADE_MS);
+      }, FADE_MS);
     }
     function stopAuto() { if (timer) clearInterval(timer); }
     function startAuto() {

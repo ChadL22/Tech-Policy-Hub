@@ -208,7 +208,14 @@ li.has-dropdown.open .dropdown{ display:block; }
 .ticker-viewport{
   flex: 1 1 auto; min-width:0; display:flex; align-items:center;
   overflow-x:auto; overflow-y:hidden; scrollbar-width:none; cursor: grab;
-  -webkit-overflow-scrolling: touch;
+  /* NOTE: deliberately no -webkit-overflow-scrolling:touch here. That
+     legacy property hands the element to iOS Safari's native momentum-
+     scroll compositor layer, which is well documented to ignore or
+     silently drop JS writes to .scrollLeft (like main.js's rAF-driven
+     auto-scroll) until the user has physically touched the element --
+     which reads as "the ticker never moves on mobile." Modern iOS Safari
+     has momentum scrolling on overflow-x:auto by default without this
+     property, so dropping it costs nothing and unblocks the auto-scroll. */
 }
 .ticker-viewport::-webkit-scrollbar{ display:none; }
 .ticker-viewport.dragging{ cursor: grabbing; scroll-snap-type: none; user-select: none; }
@@ -256,8 +263,13 @@ li.has-dropdown.open .dropdown{ display:block; }
    selectors under .lead-story, which still wraps this), except the lede's
    52ch cap is dropped here so the summary fills the full column width
    below the image/title instead of wrapping narrow. */
-.spotlight-slide{ display:none; }
+/* Fade (not a hard cut) -- main.js's show() removes .is-visible first
+   (opacity 1->0 over FADE_MS), waits for that to finish, THEN swaps
+   .is-active to the next slide and adds .is-visible back (opacity
+   0->1). FADE_MS here must match the JS constant of the same name. */
+.spotlight-slide{ display:none; opacity:0; transition: opacity .32s ease; }
 .spotlight-slide.is-active{ display:block; }
+.spotlight-slide.is-active.is-visible{ opacity:1; }
 .spotlight-slide .lede{ max-width: none; }
 .spotlight-dots{ display:flex; gap:8px; margin-top: 22px; justify-content:center; }
 .spotlight-dot{

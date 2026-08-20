@@ -17,7 +17,7 @@ ROOT = os.path.join(os.path.dirname(__file__), "..", "docs")
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026082028"
+ASSET_VERSION = "2026082029"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -613,7 +613,7 @@ def spotlight_html(items):
     manual navigation -- see follow-ups 26-27."""
     slides = []
     for i, it in enumerate(items):
-        active = " is-active" if i == 0 else ""
+        active = " is-active is-visible" if i == 0 else ""
         slides.append(f"""
         <div class="spotlight-slide{active}" data-slide="{i}">
           {lead_media_html(it['topic'])}
