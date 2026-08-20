@@ -29,8 +29,8 @@ home_body = f"""
       {g.guiding_questions_html(g.QUESTIONS)}
     </div>
     <div class="lead-story">
+      <div class="meta">Research Spotlight &middot; {g.NEWS_ITEMS[0]['date']}</div>
       {g.lead_media_html("Consumer Privacy")}
-      <div class="meta">Featured Publication &middot; {g.NEWS_ITEMS[0]['date']}</div>
       <h1><a href="{g.NEWS_ITEMS[0]['link']}"{g.link_attrs(g.NEWS_ITEMS[0]['link'])}>{g.NEWS_ITEMS[0]['title']}</a></h1>
       <p class="lede">{g.NEWS_ITEMS[0]['summary']}</p>
       <div class="hero-actions">
