@@ -17,7 +17,7 @@ ROOT = os.path.join(os.path.dirname(__file__), "..", "docs")
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026082032"
+ASSET_VERSION = "2026082033"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -79,7 +79,11 @@ def clean_stale_pages():
 NAV = [
     ("Home", "index.html", None),
     ("Research", "research.html", [
-        ("All Research", "research.html"),
+        # No "All Research" entry -- clicking the "Research" label itself
+        # (the <a href="research.html"> the dropdown is attached to) already
+        # goes there, so a duplicate first child was pure redundancy. That
+        # page is now filterable in-place (see filter_pills_html()) instead
+        # of needing a nav entry to reach the unfiltered view.
         ("Cybersecurity", "topic-cybersecurity.html"),
         ("Consumer Privacy", "topic-privacy.html"),
         ("Information Integrity", "topic-integrity.html"),
@@ -88,7 +92,8 @@ NAV = [
         ("Teaching", "courses.html"),
     ]),
     ("Events", "events.html", [
-        ("All Events", "events.html"),
+        # Same reasoning as Research above -- "Events" itself already links
+        # to events.html; that page is now filterable in-place.
         ("Speaker Series", "speaker-series.html"),
         ("Annual Event", "annual-event.html"),
     ]),
@@ -714,9 +719,26 @@ def topic_pills_html():
 
 def topic_pills_plain_html():
     """Plain outline pills linking to each topic, for use on light
-    backgrounds (e.g. the Research hub page) where the gold-on-black
-    treatment of topic_pills_html() wouldn't have contrast."""
+    backgrounds. No longer used by the Research hub page itself (see
+    filter_pills_html() -- research.html's old topic pill-row was pure
+    navigation duplicating the Focus Areas cards right below it, so it was
+    replaced with an in-page filter instead), but left defined in case a
+    future page wants a plain nav-only pill row."""
     return "".join(f'<a class="btn btn-ghost" href="{t["file"]}">{t["name"]}</a>' for t in TOPICS)
+
+
+def filter_pills_html(values, group):
+    """Pill-button filter control: "All" plus one pill per string in
+    `values`. Wired up by main.js's generic [data-filter-group] handler,
+    which shows/hides every [data-filter-target] element on the page
+    whose value matches the active pill (or shows everything for "All").
+    `group` is just a stable label for the data attribute -- there's one
+    filter bar per page today, so no scoping between multiple bars on the
+    same page is needed. Used on research.html (filtering by topic name)
+    and events.html (filtering by event category)."""
+    pills = ['<button type="button" class="filter-pill active" data-filter="all">All</button>']
+    pills += [f'<button type="button" class="filter-pill" data-filter="{v}">{v}</button>' for v in values]
+    return f'<div class="filter-bar" data-filter-group="{group}">{"".join(pills)}</div>'
 
 
 def research_matrix_html():
@@ -820,11 +842,15 @@ def calendar_widget_html(events, categories):
 
 
 def events_rows_html(items, limit=None, with_btn=True):
+    """Each row carries data-filter-target="{category}" so events.html's
+    filter_pills_html() bar can show/hide rows by category client-side --
+    harmless on the other call sites (speaker-series.html, annual-event.html)
+    that render a subset of events without a filter bar present."""
     out = []
     for e in (items[:limit] if limit else items):
         btn = f'<a class="btn btn-ghost" href="{e["link"]}" style="padding:8px 16px; font-size:.82rem;">Details</a>' if with_btn else ""
         out.append(f"""
-        <div class="event-row">
+        <div class="event-row" data-filter-target="{e['cat']}">
           <div class="event-date"><div class="d">{e['d']}</div><div class="m">{e['m']}</div></div>
           <div><h3><a href="{e['link']}">{e['title']}</a></h3><div class="meta">{e['meta']}</div></div>
           {btn}

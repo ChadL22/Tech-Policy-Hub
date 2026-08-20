@@ -178,14 +178,14 @@ project_cards = []
 for t in g.TOPICS:
     d = TOPIC_DETAIL[t["key"]]
     for name, desc in d["projects"]:
-        project_cards.append(f'<div class="card"><span class="kicker">{t["name"]}</span><h3>{name}</h3><p>{desc}</p></div>')
+        project_cards.append(f'<div class="card" data-filter-target="{t["name"]}"><span class="kicker">{t["name"]}</span><h3>{name}</h3><p>{desc}</p></div>')
 
 pub_feed = []
 for t in g.TOPICS:
     d = TOPIC_DETAIL[t["key"]]
     for venue, desc in d["pubs"]:
         pub_feed.append(f"""
-        <div class="feed-item">
+        <div class="feed-item" data-filter-target="{t['name']}">
           <span class="tag">{t['name']}</span>
           <div><div class="meta" style="margin-bottom:6px;">{venue}</div><h3><a href="{t['file']}">{desc}</a></h3></div>
         </div>""")
@@ -199,11 +199,6 @@ research_body = f"""
     <p class="lede">Cybersecurity, consumer privacy, information integrity, and trustworthy machine learning &mdash; studied through comparative, qualitative, and computational methods.</p>
   </div>
 </section>
-<section class="section-tight">
-  <div class="container">
-    <div class="pill-row">{g.topic_pills_plain_html()}</div>
-  </div>
-</section>
 <section>
   <div class="container">
     <div class="section-head"><div><span class="eyebrow">Focus Areas</span><h2>Where we work</h2></div></div>
@@ -213,7 +208,9 @@ research_body = f"""
 <section class="soft-bg">
   <div class="container">
     <div class="section-head"><div><span class="eyebrow">Featured</span><h2>Current projects</h2></div></div>
-    <div class="grid grid-2">{"".join(project_cards)}</div>
+    <p style="color:var(--ink-soft); font-size:.92rem; margin-bottom:16px;">Filter projects and publications below by focus area.</p>
+    {g.filter_pills_html([t['name'] for t in g.TOPICS], 'research')}
+    <div class="grid grid-2" style="margin-top:28px;">{"".join(project_cards)}</div>
   </div>
 </section>
 <section id="publications">
@@ -383,7 +380,8 @@ events_body = f"""
 </section>
 <section>
   <div class="container">
-    {g.events_rows_html(g.EVENTS_ITEMS)}
+    {g.filter_pills_html(list(g.EVENT_CATEGORIES.keys()), 'events')}
+    <div style="margin-top:28px;">{g.events_rows_html(g.EVENTS_ITEMS)}</div>
   </div>
 </section>
 """

@@ -645,6 +645,20 @@ li.has-dropdown.open .dropdown{ display:block; }
 .tab-panel{ display:none; }
 .tab-panel.active{ display:block; }
 
+/* ---------- Filter pills (Research: by focus area / Events: by category)
+   -- see filter_pills_html() in generate.py. Distinct look from the
+   underline .tab-btn style above since these toggle visibility of content
+   further down the same page rather than switching between panels. ---------- */
+.filter-bar{ display:flex; flex-wrap:wrap; gap:10px; }
+.filter-pill{
+  font-family: var(--font-nav); font-weight:700; font-size:.8rem; letter-spacing:.03em; text-transform:uppercase;
+  padding: 9px 18px; border: 1.5px solid var(--ink-soft); border-radius: var(--radius);
+  color: var(--ink-soft); background: transparent; cursor:pointer;
+  transition: color .15s ease, border-color .15s ease, background .15s ease;
+}
+.filter-pill:hover{ border-color: var(--ink); color: var(--ink); }
+.filter-pill.active{ background: var(--umd-red); border-color: var(--umd-red); color:#fff; }
+
 /* ---------- Footer ---------- */
 footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding-top: 48px; }
 .footer-grid{ display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 32px; padding-bottom: 44px; }

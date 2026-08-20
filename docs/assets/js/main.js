@@ -70,6 +70,27 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
+  // Filter pills (Research: by focus area / Events: by category) -- see
+  // filter_pills_html() in generate.py. One filter bar per page today, so
+  // this doesn't scope items to a specific bar; it just shows/hides every
+  // [data-filter-target] element on the page against whichever pill in
+  // [data-filter-group] is active ("all" always shows everything).
+  document.querySelectorAll('[data-filter-group]').forEach(function (bar) {
+    var buttons = Array.prototype.slice.call(bar.querySelectorAll('.filter-pill'));
+    var items = document.querySelectorAll('[data-filter-target]');
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        buttons.forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        var val = btn.getAttribute('data-filter');
+        items.forEach(function (item) {
+          var show = (val === 'all' || item.getAttribute('data-filter-target') === val);
+          item.style.display = show ? '' : 'none';
+        });
+      });
+    });
+  });
+
   // Signal ticker -- NYSE-tape style: streams continuously to the left,
   // stops the instant the pointer enters the lane (hover-to-pause), and
   // is click-and-drag scrubbable in either direction while paused.
