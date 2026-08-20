@@ -196,16 +196,19 @@ document.addEventListener('DOMContentLoaded', function () {
     if (slides.length < 2) return; // nothing to slide between
 
     var AUTO_MS = 5000;
-    var FADE_MS = 320; // must match .spotlight-slide's transition-duration in styles.css
+    var FADE_MS = 600; // must match .spotlight-slide's transition-duration in styles.css
     var current = 0;
     var timer = null;
     var transitioning = false;
 
     // Crossfades rather than hard-cutting: fade the current slide out,
     // THEN (once that finishes) swap which slide is .is-active and fade
-    // the new one in. Sequential rather than a true overlapping crossfade
-    // so we don't need to give .spotlight-track a fixed height to hold two
-    // different-length slides on screen at once.
+    // the new one in. Sequential rather than a true overlapping crossfade,
+    // so the two slides never visually double-expose mid-transition.
+    // .spotlight-track now holds every slide stacked in the same CSS Grid
+    // area (see styles.css), so the track's height is always the tallest
+    // slide's height regardless of which one is active/visible -- that's
+    // what keeps this from resizing the whole lead grid on every swap.
     function show(i) {
       var next = (i % slides.length + slides.length) % slides.length;
       if (next === current || transitioning) return;
@@ -234,8 +237,15 @@ document.addEventListener('DOMContentLoaded', function () {
     dots.forEach(function (d, idx) {
       d.addEventListener('click', function () { show(idx); startAuto(); });
     });
-    widget.addEventListener('mouseenter', stopAuto);
-    widget.addEventListener('mouseleave', startAuto);
+    // Only pause-on-hover for a real pointing device. On touch-only devices,
+    // mobile browsers fire a synthetic mouseenter (with no matching
+    // mouseleave) after ANY tap in the widget -- binding this unconditionally
+    // permanently freezes the slideshow after the very first touch, same bug
+    // class as the signal ticker (see ticker section above / project notes).
+    if (window.matchMedia && window.matchMedia('(hover: hover)').matches) {
+      widget.addEventListener('mouseenter', stopAuto);
+      widget.addEventListener('mouseleave', startAuto);
+    }
 
     startAuto();
   });
