@@ -37,11 +37,17 @@ can just use plain `href="news.html"`-style references.
 Pages: `index.html` (home), `research/` (research hub — projects,
 publications, teaching), `topic-cybersecurity/`, `topic-privacy/`,
 `topic-integrity/`, `topic-ml/`, `courses/`, `speaker-series/`,
-`annual-event/`, `news/`, `events/`, `people/`, `about/`.
+`annual-event/`, `news/`, `events/`, `people/`, `about/`. Alongside those
+13 HTML pages, the build also writes one non-HTML file to the site
+root — `docs/events.ics`, a generated calendar feed (see **Site
+capabilities** below).
 
 The primary nav is **Home / Research (dropdown) / Events (dropdown) /
-People**. News and About aren't in the top-level nav, but both stay
-reachable via the footer's "Connect" column.
+People**. Each dropdown's parent label is itself a real link to that
+page's index (Research/Events), so there's no separate "All Research"/"All
+Events" entry — the page itself is the "view everything" destination, and
+both are filterable in place (see below). News and About aren't in the
+top-level nav, but both stay reachable via the footer's "Connect" column.
 
 ## Publishing (GitHub Pages)
 
@@ -69,14 +75,18 @@ python3 build_all.py
 
 - `build/generate.py` — shared header, footer, nav, and reusable content
   helpers (feed items, event rows, topic cards, people grid, the signal
-  ticker, the Research Spotlight slideshow, the events calendar, etc.), plus
-  the real content arrays (`NEWS_ITEMS`, `EVENTS_ITEMS`, `TICKER_ITEMS`,
-  `SPOTLIGHT_ITEMS`, `PEOPLE_ITEMS`, `TOPICS`, `QUESTIONS`)
+  ticker, the Research Spotlight slideshow, the events calendar, the
+  filter-pill bar, the `.ics` calendar feed builder, etc.), plus the real
+  content arrays (`NEWS_ITEMS`, `EVENTS_ITEMS`, `PAST_EVENTS_ITEMS`,
+  `TICKER_ITEMS`, `SPOTLIGHT_ITEMS`, `PEOPLE_ITEMS`, `TOPICS`, `QUESTIONS`)
 - `build/build_all.py` — per-page content and the list of pages to write
 
-The script writes directly into `docs/`. Any change to shared assets
-(`build/generate.py`'s CSS/JS, header, or footer) bumps `ASSET_VERSION` in
-`generate.py` so browsers pick up the new files instead of a stale cache.
+The script writes directly into `docs/` — HTML pages via `write()` (which
+also rewrites internal links to the clean-URL folder scheme), and the
+non-HTML `docs/events.ics` calendar feed via `write_raw()`. Any change to
+shared assets (`build/generate.py`'s CSS/JS, header, or footer) bumps
+`ASSET_VERSION` in `generate.py` so browsers pick up the new files instead
+of a stale cache.
 
 ## Site capabilities
 
@@ -91,8 +101,12 @@ CSS/JS (no framework, no build step) in `docs/assets/css/styles.css` and
   which fire synthetic hover events after a tap, aren't left permanently
   frozen), and can be scrubbed by dragging with a mouse or a finger.
 - **Research Spotlight** — a 5-slide auto-advancing slideshow of curated
-  Hub outputs (`SPOTLIGHT_ITEMS`) in the homepage lead grid, crossfading
-  between slides, with dot navigation and pause-on-hover.
+  Hub outputs (`SPOTLIGHT_ITEMS`) in the homepage lead grid. Slides are
+  stacked in one CSS Grid area so the slideshow's footprint stays fixed
+  regardless of which slide is showing — a slide change never resizes or
+  reflows the rest of the page. Crossfades smoothly between slides, with
+  dot navigation and pause-on-hover (same touch-safe `matchMedia` gating
+  as the ticker, below).
 - **Hub News rail + Research Areas matrix** — a compact side rail on the
   homepage surfacing recent news (`NEWS_ITEMS`) and the Hub's four research
   focus areas (`TOPICS`) as a 2×2 index.
@@ -102,8 +116,22 @@ CSS/JS (no framework, no build step) in `docs/assets/css/styles.css` and
   essays, articles) the Hub has recently come across, framed as
   supplementary context rather than Hub output, with a pointer to the
   Hub-affiliated sister site phronesisresearch.org for older reading.
-- **Events calendar** — a real month-grid calendar (Python's `calendar`
-  module) driven by `EVENTS_ITEMS`, with a category legend.
+- **Filterable Research & Events pages** — both `research.html` (by
+  research focus area) and `events.html` (by event category) have a pill
+  filter bar (`filter_pills_html()`) that shows/hides matching content
+  client-side, via a small generic `[data-filter-group]`/
+  `[data-filter-target]` mechanism in `main.js` — reusable for any future
+  filterable list on the site.
+- **Events page: upcoming + past lists, calendar, and a real "Subscribe to
+  Calendar" feature** — `events.html` pairs a filterable Upcoming Events
+  list with a Past Events list (`PAST_EVENTS_ITEMS`; the same filter bar
+  narrows both together) against a sidebar carrying the month-grid
+  calendar (Python's `calendar` module, `EVENTS_ITEMS`, category legend)
+  and calendar subscribe options. `events_ics()` builds a genuine RFC-5545
+  `.ics` feed from `EVENTS_ITEMS` on every build (written to
+  `docs/events.ics`), linked as both a `webcal://` URL (subscribes live in
+  Google/Apple/Outlook and picks up future rebuilds automatically) and a
+  plain download link.
 - **Newsletter signup** — a homepage section (`#subscribe`) for subscribing
   to the Hub's newsletter.
 - **Join the Hub** — an outreach section on the About page inviting new
@@ -133,9 +161,16 @@ replaced with real material before launch:
 - `PEOPLE_ITEMS` in `build/generate.py` — the founder's entry is real;
   several other bios/roles are placeholder names standing in for the
   Hub's actual affiliates and fellows.
+- `PAST_EVENTS_ITEMS` in `build/generate.py` — illustrative past-event
+  copy (shared by the Events page's Past Events section, the Speaker
+  Series page's "Past sessions," and the Annual Event page's recap card),
+  not yet confirmed real dates/details.
 - Fictional/forward-dated project and event content on `research.html`,
   `speaker-series.html`, and `annual-event.html`.
 - `SPOTLIGHT_ITEMS`' visual — an abstract topic-accent graphic stands in
   for real per-article photography.
-- `TICKER_ITEMS` needs periodic manual refresh as tracked bills move
-  through committee/floor votes.
+- `TICKER_ITEMS` and `EVENTS_ITEMS`/`PAST_EVENTS_ITEMS` need periodic
+  manual refresh as tracked bills move and events are scheduled/occur —
+  `events.ics` regenerates automatically from `EVENTS_ITEMS` on every
+  build, so keeping that array current is what keeps the calendar
+  subscription accurate.
