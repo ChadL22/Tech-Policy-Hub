@@ -257,7 +257,8 @@ li.has-dropdown.open .dropdown{ display:block; }
 .lead-story h1 a:hover{ color: var(--umd-red); text-decoration: none; }
 .lead-story .lede{ font-size: 1.02rem; max-width: 52ch; }
 /* Research Spotlight slideshow -- one .spotlight-slide visible at a time,
-   advanced by main.js on a timer or via the .spotlight-dot buttons below.
+   advanced by main.js on a timer, the .spotlight-dot buttons, the
+   prev/next .spotlight-arrow buttons, or paused via .spotlight-pause.
    Slide content reuses the .meta/.lead-media/h1/.lede/.hero-actions rules
    above unchanged (they're descendant selectors under .lead-story, which
    still wraps this), except the lede's 52ch cap is dropped here so the
@@ -271,7 +272,13 @@ li.has-dropdown.open .dropdown{ display:block; }
    slide's height, fixed no matter which slide is showing. That's what
    keeps the slideshow's footprint constant as slides of different length
    cycle through, instead of the whole lead grid (and everything below it
-   on the page) growing/shrinking and reflowing on every transition. */
+   on the page) growing/shrinking and reflowing on every transition.
+   The title and summary ALSO reserve a fixed line-clamped height each (see
+   below), so even within one constant-height slide the "Explore" button
+   row lands at the identical vertical position on every slide -- without
+   that, a short title/summary would leave the button row sitting higher
+   up than on a slide with a long title/summary. */
+.spotlight{ position: relative; }
 .spotlight-track{ position: relative; display: grid; grid-template-areas: "slide"; }
 /* Fade (not a hard cut) -- main.js's show() removes .is-visible first
    (opacity 1->0 over FADE_MS), waits for that to finish, THEN swaps
@@ -284,14 +291,79 @@ li.has-dropdown.open .dropdown{ display:block; }
   transition: opacity .6s ease-in-out;
 }
 .spotlight-slide.is-active.is-visible{ opacity:1; pointer-events:auto; }
-.spotlight-slide .lede{ max-width: none; }
-.spotlight-dots{ display:flex; gap:8px; margin-top: 22px; justify-content:center; }
+/* Fixed-height title/summary: clamp to a set number of lines and reserve
+   that many lines' worth of height via min-height in em units (relative to
+   each element's OWN font-size, so it stays proportional as h1's font-size
+   itself is a fluid clamp()). line-height is pinned explicitly here so the
+   min-height math (lines * line-height) stays exact -- relying on the
+   inherited value would silently break this if that ever changed
+   elsewhere. Line counts were chosen against the longest real title/summary
+   in SPOTLIGHT_ITEMS and verified with Playwright to never truncate real
+   copy, only reserve extra blank space under shorter items. */
+.spotlight-slide h1{
+  line-height: 1.2; min-height: 4.8em;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden;
+}
+.spotlight-slide .lede{
+  max-width: none; line-height: 1.5; min-height: 6em;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden;
+}
+/* Prev/next carousel arrows -- centered vertically on the whole widget
+   (roughly over the lead image, the tallest single element in the stack),
+   inset INSIDE the box edges (not overflowing outward) so they can never
+   trigger horizontal overflow at narrow widths. CSS-drawn chevrons (a
+   rotated two-sided border corner), matching the project's no-icon-font
+   convention already used by .spotlight-dot/.spotlight-pause. */
+.spotlight-arrow{
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 5;
+  width: 34px; height: 34px; padding: 0; border-radius: 50%;
+  border: 1.5px solid var(--ink-soft); background: rgba(255,255,255,.85);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: border-color .15s ease, background .15s ease;
+}
+.spotlight-arrow:hover{ border-color: var(--umd-red); background: #fff; }
+.spotlight-arrow::before{
+  content: ''; width: 8px; height: 8px;
+  border-right: 2px solid var(--ink-soft); border-top: 2px solid var(--ink-soft);
+  transition: border-color .15s ease;
+}
+.spotlight-arrow:hover::before{ border-color: var(--umd-red); }
+.spotlight-prev{ left: 6px; }
+.spotlight-prev::before{ transform: rotate(-135deg); margin-left: 4px; }
+.spotlight-next{ right: 6px; }
+.spotlight-next::before{ transform: rotate(45deg); margin-right: 4px; }
+/* Dots + pause share one centered row. The pause button is pinned to the
+   row's right edge via absolute positioning within a relative parent, so
+   its presence never nudges the dots off center. */
+.spotlight-controls{ display:flex; align-items:center; justify-content:center; gap:14px; margin-top: 22px; position: relative; }
+.spotlight-dots{ display:flex; gap:8px; }
 .spotlight-dot{
   width:9px; height:9px; padding:0; border-radius:50%; border:1.5px solid var(--ink-soft);
   background: transparent; cursor:pointer; transition: background .15s ease, border-color .15s ease;
 }
 .spotlight-dot:hover{ border-color: var(--umd-red); }
 .spotlight-dot.is-active{ background: var(--umd-red); border-color: var(--umd-red); }
+/* Pause/play toggle -- CSS-drawn icon (two bars = "playing, click to
+   pause"; a triangle = "paused, click to play"), swapped via .is-paused,
+   rather than a Unicode/emoji glyph. */
+.spotlight-pause{
+  position: absolute; right: 0;
+  width: 26px; height: 26px; padding: 0; border-radius: 50%;
+  border: 1.5px solid var(--ink-soft); background: transparent; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color .15s ease;
+}
+.spotlight-pause:hover{ border-color: var(--umd-red); }
+.spotlight-pause .bar{ display:block; width:2.5px; height:9px; background: var(--ink-soft); border-radius:1px; }
+.spotlight-pause .bar + .bar{ margin-left: 3px; }
+.spotlight-pause .tri{
+  display: none; width:0; height:0; margin-left: 2px;
+  border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 8px solid var(--ink-soft);
+}
+.spotlight-pause:hover .bar{ background: var(--umd-red); }
+.spotlight-pause:hover .tri{ border-left-color: var(--umd-red); }
+.spotlight-pause.is-paused .bar{ display:none; }
+.spotlight-pause.is-paused .tri{ display:block; }
 @media (max-width: 1150px){
   .lead-grid{ grid-template-columns: 1fr; }
   .lead-secondary, .lead-story, .lead-rail{ grid-column: 1; }

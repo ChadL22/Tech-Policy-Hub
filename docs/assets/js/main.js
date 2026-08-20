@@ -208,9 +208,11 @@ document.addEventListener('DOMContentLoaded', function () {
   // Homepage "Research Spotlight" -- one .spotlight-slide visible at a
   // time (spotlight_html() in generate.py renders all of them, hidden via
   // CSS except .is-active). Auto-advances on a timer, pauses on hover so
-  // it doesn't flip out from under someone reading, and the .spotlight-dot
-  // buttons jump straight to a slide (and reset the timer so it doesn't
-  // immediately auto-advance away from the one just picked).
+  // it doesn't flip out from under someone reading, the .spotlight-dot
+  // buttons jump straight to a slide, the .spotlight-prev/.spotlight-next
+  // arrows step one at a time, and .spotlight-pause is a manual pause/play
+  // toggle -- a manual pause sticks (auto-advance stays off) through
+  // hover-unhover and further dot/arrow clicks, until the user un-pauses.
   document.querySelectorAll('[data-spotlight]').forEach(function (widget) {
     var slides = Array.prototype.slice.call(widget.querySelectorAll('.spotlight-slide'));
     var dots = Array.prototype.slice.call(widget.querySelectorAll('.spotlight-dot'));
@@ -221,6 +223,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var current = 0;
     var timer = null;
     var transitioning = false;
+    var userPaused = false;
 
     // Crossfades rather than hard-cutting: fade the current slide out,
     // THEN (once that finishes) swap which slide is .is-active and fade
@@ -250,22 +253,71 @@ document.addEventListener('DOMContentLoaded', function () {
       }, FADE_MS);
     }
     function stopAuto() { if (timer) clearInterval(timer); }
+    // startAuto() is the single gate for "should the timer be running" --
+    // it refuses to (re)start the timer while userPaused is true, so every
+    // caller (dot click, arrow click, hover-unhover) can call it
+    // unconditionally without needing to know about pause state itself.
     function startAuto() {
       stopAuto();
+      if (userPaused) return;
       timer = setInterval(function () { show(current + 1); }, AUTO_MS);
     }
 
     dots.forEach(function (d, idx) {
       d.addEventListener('click', function () { show(idx); startAuto(); });
     });
+
+    var prevBtn = widget.querySelector('[data-spotlight-prev]');
+    var nextBtn = widget.querySelector('[data-spotlight-next]');
+    if (prevBtn) prevBtn.addEventListener('click', function () { show(current - 1); startAuto(); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { show(current + 1); startAuto(); });
+
+    // Vertically align the arrows with the lead image, not the whole
+    // widget's midpoint -- the widget's overall height includes the
+    // fixed-space title/summary/button area below the image, so centering
+    // on the whole box would land the arrows across the title text instead
+    // of flanking the image. .lead-media's height comes from a fixed
+    // aspect-ratio, so it's the same for every slide at a given viewport
+    // width -- read it off whichever slide is currently active and convert
+    // to a plain pixel offset (CSS `top` can't be expressed as a
+    // percentage of the track's own width, only its height, so this can't
+    // be done in CSS alone). Re-run on resize since the aspect-ratio'd
+    // image's rendered height changes with viewport width.
+    function positionArrows() {
+      if (!prevBtn && !nextBtn) return;
+      var media = slides[current].querySelector('.lead-media');
+      if (!media) return;
+      var mediaRect = media.getBoundingClientRect();
+      var widgetRect = widget.getBoundingClientRect();
+      var top = Math.round(mediaRect.top - widgetRect.top + mediaRect.height / 2);
+      if (prevBtn) prevBtn.style.top = top + 'px';
+      if (nextBtn) nextBtn.style.top = top + 'px';
+    }
+    positionArrows();
+    window.addEventListener('resize', positionArrows);
+
+    var pauseBtn = widget.querySelector('[data-spotlight-pause]');
+    function setPaused(p) {
+      userPaused = p;
+      if (pauseBtn) {
+        pauseBtn.classList.toggle('is-paused', p);
+        pauseBtn.setAttribute('aria-pressed', p ? 'true' : 'false');
+        pauseBtn.setAttribute('aria-label', p ? 'Resume slideshow' : 'Pause slideshow');
+      }
+      if (p) { stopAuto(); } else { startAuto(); }
+    }
+    if (pauseBtn) pauseBtn.addEventListener('click', function () { setPaused(!userPaused); });
+
     // Only pause-on-hover for a real pointing device. On touch-only devices,
     // mobile browsers fire a synthetic mouseenter (with no matching
     // mouseleave) after ANY tap in the widget -- binding this unconditionally
     // permanently freezes the slideshow after the very first touch, same bug
     // class as the signal ticker (see ticker section above / project notes).
+    // mouseleave only restarts the timer if the user hasn't manually paused
+    // -- otherwise hovering-then-unhovering would silently cancel a pause.
     if (window.matchMedia && window.matchMedia('(hover: hover)').matches) {
       widget.addEventListener('mouseenter', stopAuto);
-      widget.addEventListener('mouseleave', startAuto);
+      widget.addEventListener('mouseleave', function () { if (!userPaused) startAuto(); });
     }
 
     startAuto();
