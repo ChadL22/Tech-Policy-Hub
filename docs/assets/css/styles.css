@@ -391,13 +391,17 @@ li.has-dropdown.open .dropdown{ display:block; }
 
 /* Compact variant for the lead grid's ~280px-wide side pane (.lead-rail,
    beneath the Hub News rail) -- same ruled 2x2 grid, but each cell is
-   too narrow there for a full blurb, so it's index + name only, in a
-   much smaller footprint. */
-.rail-head--stacked{ margin-top: 28px; }
+   too narrow there for a full blurb, so it's index + name only. A
+   ruled divider + extra top space sets it off as its own block rather
+   than reading as a continuation of the Hub News list above it. */
+.rail-head--stacked{ margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--line); }
 .research-matrix--rail{ border-color: var(--line); }
-.research-matrix--rail .matrix-cell{ padding: 12px 14px; }
-.research-matrix--rail .matrix-cell .index{ font-size:.7rem; margin-bottom: 4px; }
-.research-matrix--rail .matrix-cell h3{ font-size:.82rem; line-height:1.3; margin-bottom:0; }
+.research-matrix--rail .matrix-cell{
+  padding: 22px 16px; min-height: 104px;
+  display:flex; flex-direction:column; justify-content:center;
+}
+.research-matrix--rail .matrix-cell .index{ font-size:.76rem; margin-bottom: 6px; }
+.research-matrix--rail .matrix-cell h3{ font-size:.96rem; line-height:1.32; margin-bottom:0; }
 .research-matrix--rail .matrix-cell p{ display:none; }
 
 .feed-item{
