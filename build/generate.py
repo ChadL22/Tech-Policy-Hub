@@ -66,15 +66,18 @@ def clean_stale_pages():
             os.remove(os.path.join(ROOT, fname))
             print("removed stale", fname)
 
-# NAV -- shallow, per the redesign brief: Research / People / Events /
-# News / About, with Publications and Teaching folded into Research
-# rather than kept as their own top-level items. Each entry is
-# (label, href, children); children is None for a plain link, or a list
-# of (label, href) for a dropdown. The parent href is a real page (not
-# "#"), so clicking "Research" or "Events" itself navigates to that
-# section's index -- the dropdown is an additional hover/tap affordance,
-# not the only way in.
+# NAV -- top-level tabs per follow-up 33: Home / Research / Events /
+# People (News and About dropped from the primary nav -- both are still
+# reachable via the footer's link list, see footer() below, so nothing
+# is orphaned). Publications and Teaching stay folded into Research as
+# dropdown children (unchanged from the original redesign brief). Each
+# entry is (label, href, children); children is None for a plain link,
+# or a list of (label, href) for a dropdown. The parent href is a real
+# page (not "#"), so clicking "Research" or "Events" itself navigates to
+# that section's index -- the dropdown is an additional hover/tap
+# affordance, not the only way in.
 NAV = [
+    ("Home", "index.html", None),
     ("Research", "research.html", [
         ("All Research", "research.html"),
         ("Cybersecurity", "topic-cybersecurity.html"),
@@ -84,14 +87,12 @@ NAV = [
         ("Publications", "research.html#publications"),
         ("Teaching", "courses.html"),
     ]),
-    ("People", "people.html", None),
     ("Events", "events.html", [
         ("All Events", "events.html"),
         ("Speaker Series", "speaker-series.html"),
         ("Annual Event", "annual-event.html"),
     ]),
-    ("News", "news.html", None),
-    ("About", "about.html", None),
+    ("People", "people.html", None),
 ]
 
 
