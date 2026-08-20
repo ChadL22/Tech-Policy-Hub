@@ -6,13 +6,28 @@ at the UMD School of Public Policy. The new site replaces
 techpolicy.info.umd.edu and complements (does not replace) gotech.umd.edu.
 
 The redesign keeps UMD/GoTech brand continuity (Terrapin red, SPP/UMD seal)
-while adopting an active, editorial publishing layout inspired by the
+and draws its design language primarily from financial/legal news
+sources — **Bloomberg** and **CNBC** (the homepage's scrolling signal
+ticker: gold border, channel tabs, pulsing "live" dot) and **SCOTUSblog**
+(the tight magazine-grid density: a multi-column homepage lead grid,
+dense list-style feed rows instead of oversized cards, filterable
+Research and Events pages, and a real month-grid events calendar with a
+live subscribe feed) — all adapted for a research lab rather than a news
+outlet: Hub-authored research and events take the lead spot everywhere a
+news outlet would run a headline story, and outside reading/commentary is
+demoted to a clearly secondary "Field Pulse" section rather than
+competing with the Hub's own output. That's the current, accurate
+description of the site's design language.
+
+Earlier in the redesign the layout started from an editorial publishing
+model loosely modeled on the
 [Knight-Georgetown Institute](https://kgi.georgetown.edu/) — a homepage
-research/news feed, dedicated News and Events pages, and card-based research
-area and program pages — and, in a later compactness pass, by
-**SCOTUSblog**'s tight magazine-grid density: a multi-column homepage lead
-grid, dense list-style feed rows instead of oversized cards, and a real
-month-grid events calendar.
+research/news feed, dedicated News and Events pages, and card-based
+research area and program pages. Repeated compactness/functionality passes
+since then have moved the site well past that starting point, so KGI's
+site is no longer a close visual match to what's shipped here — it's
+noted here as historical context for the redesign's origin, not as a
+current reference.
 
 ## Structure
 
