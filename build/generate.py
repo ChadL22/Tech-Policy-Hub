@@ -17,7 +17,7 @@ ROOT = os.path.join(os.path.dirname(__file__), "..", "docs")
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026082029"
+ASSET_VERSION = "2026082030"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -577,14 +577,18 @@ def question_list_html(items):
 def guiding_questions_html(items):
     """Compact numbered list for the homepage lead grid's left column --
     denser than question_list_html() (About's full-width list), since this
-    one lives in a narrow ~240px rail column alongside the lead story."""
+    one lives in a narrow ~240px rail column alongside the lead story.
+    Not clickable (see follow-up 34) -- each item's per-topic link was
+    dropped on request; it's just a hover-responsive text row now (still
+    highlights on mouseover via the .guide-q:hover CSS rule, just doesn't
+    navigate anywhere)."""
     out = []
     for i, q in enumerate(items, start=1):
         out.append(f"""
-        <a class="guide-q" href="{q['link']}">
+        <div class="guide-q">
           <span class="num">{i:02d}</span>
           <span class="qtext">{q['text']}</span>
-        </a>""")
+        </div>""")
     return "".join(out)
 
 
