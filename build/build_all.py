@@ -48,7 +48,7 @@ home_body = f"""
   </div>
 </section>
 
-<section>
+<section class="soft-bg">
   <div class="container carousel-wrap">
     <div class="carousel-head">
       <div>
@@ -67,7 +67,7 @@ home_body = f"""
   </div>
 </section>
 
-<section class="soft-bg calendar-section">
+<section class="calendar-section">
   <div class="container">
     <div class="section-head">
       <div>

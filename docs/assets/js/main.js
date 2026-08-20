@@ -111,6 +111,12 @@ document.addEventListener('DOMContentLoaded', function () {
     vp.addEventListener('mouseleave', resume);
     vp.addEventListener('touchstart', pause, { passive: true });
     vp.addEventListener('touchend', resume);
+    // touchcancel fires (INSTEAD of touchend) whenever a touch that started
+    // on the ticker turns into a page-level scroll -- easy to trigger by
+    // accident since the ticker sits right under the header. Without this,
+    // "hovered" gets stuck true forever after the first such touch and the
+    // tape never resumes -- this was the actual "ticker doesn't run" bug.
+    vp.addEventListener('touchcancel', resume);
 
     vp.addEventListener('mousedown', function (e) {
       isDown = true; moved = false;

@@ -125,7 +125,13 @@ header.site-header{
 }
 .header-inner{
   display:flex; align-items:center; justify-content:space-between;
-  padding: 18px 0; gap: 20px;
+  /* padding-top/bottom only -- .header-inner shares this element with
+     .container (see header() in generate.py), so a `padding` shorthand
+     here would zero out .container's left/right 24px and pin the logo
+     and nav flush to the viewport edges. That bug was invisible on
+     desktop (max-width centers the whole header with slack to spare)
+     but pinned everything to the screen edges on mobile. */
+  padding-top: 18px; padding-bottom: 18px; gap: 20px;
   --brand-mark-h: 48px; /* height for .tph-mark, see below */
 }
 .brand-lockup{ display:flex; align-items:center; gap:18px; min-width:0; flex:1 1 auto; overflow:hidden; }
@@ -654,7 +660,11 @@ footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding
   .grid-2, .grid-3, .grid-4{ grid-template-columns: 1fr; }
   .grid > .card, .grid-3 > .person, .grid-4 > .topic-card{ border-left:none !important; padding-left:0 !important; border-top: 1px solid var(--line); padding-top: 24px; }
   .grid > .card:first-child, .grid-3 > .person:first-child, .grid-4 > .topic-card:first-child{ border-top:none; padding-top:0; }
-  .research-matrix{ grid-template-columns: 1fr; }
+  /* Collapsing to 1 column moves the grid's "last column" cells' own
+     border-right (which used to close off the right edge) out of the
+     layout entirely, leaving the whole block with no right edge at
+     all -- put it back on the container itself instead. */
+  .research-matrix{ grid-template-columns: 1fr; border-right: 1px solid var(--line); }
   .matrix-cell{ border-right:none; }
   .news-grid-section .grid-3 > .card{ border-top: 1px solid var(--line); padding-top: 24px; margin-top: 0; }
   .news-grid-section .grid-3 > .card:first-child{ border-top:none; padding-top:0; }
