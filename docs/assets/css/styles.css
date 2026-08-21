@@ -640,9 +640,23 @@ li.has-dropdown.open .dropdown{ display:block; }
    saved) -- re-measured after the change: .lead-rail bottom lands
    ~0.5px BELOW .lead-secondary's, i.e. visually identical. */
 .research-matrix--rail{ border-color: var(--line); }
+/* Follow-up 55: `justify-content:center` here vertically centered each
+   cell's index+name block WITHIN the row's full height, which is set by
+   the tallest cell in that row (grid rows share height). Direct user
+   request/screenshot: row 1 ("01 Cybersecurity", 1-line h3, vs "02
+   Consumer Privacy", 2-line h3) visibly misaligned, since the 1-line
+   cell's content got centered in a box tall enough for 2 lines and
+   dropped lower than the 2-line cell's content, which already fills the
+   row top-to-bottom. Row 2 ("03 Information Integrity" / "04
+   Trustworthy ML") happened to look fine only because both of THAT
+   row's h3s wrap to 2 lines, so centering vs. top-aligning made no
+   visible difference there. Switched to `flex-start` so every cell's
+   index+name starts at the same top offset regardless of how many lines
+   its own heading wraps to -- fixes row 1 without depending on both
+   cells in a row having matching line counts. */
 .research-matrix--rail .matrix-cell{
   padding: 22px 16px; min-height: 104px;
-  display:flex; flex-direction:column; justify-content:center;
+  display:flex; flex-direction:column; justify-content:flex-start;
 }
 .research-matrix--rail .matrix-cell .index{ font-size:.76rem; margin-bottom: 6px; }
 .research-matrix--rail .matrix-cell h3{ font-size:.96rem; line-height:1.32; margin-bottom:0; }
