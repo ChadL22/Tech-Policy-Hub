@@ -1,0 +1,27 @@
+{
+  "generated_by": "build/refresh_ticker.py",
+  "generated_at": "2026-08-20T00:00:00Z",
+  "source": "Integrity Institute Tech Policy Tracker (us-federal.techpolicytracker.com, us-state.techpolicytracker.com) -- see build/refresh_ticker.py for the exact query this was built from",
+  "items": [
+    {"jurisdiction": "FED", "datum": "HB8747 — K–12 AI Literacy and Readiness Act of 2026",
+     "link": "https://www.congress.gov/bill/119th-congress/house-bill/8747/all-info"},
+    {"jurisdiction": "FED", "datum": "HB8768 — CHARGE Act Cybersecurity and Hardware Assurance for Resilient Grid Electrification Act",
+     "link": "https://www.congress.gov/bill/119th-congress/house-bill/8768/all-info"},
+    {"jurisdiction": "FED", "datum": "SB4074 — Fund CISA Personnel Act of 2026",
+     "link": "https://www.congress.gov/bill/119th-congress/senate-bill/4074/all-info"},
+    {"jurisdiction": "FED", "datum": "SB4069 — AI-Ready Bio-Data Standards Act",
+     "link": "https://www.congress.gov/bill/119th-congress/senate-bill/4069/all-info"},
+    {"jurisdiction": "MD", "datum": "HB1638 — Consumer Protection - Covered Platforms - Protection of Minors (Kids Online Protection and Antigrooming Act)",
+     "link": "https://mgaleg.maryland.gov/mgawebsite/Legislation/Details/HB1638?ys=2026RS"},
+    {"jurisdiction": "MD", "datum": "SB989 — Child Exploitation Material - Civil and Criminal Actions (Safe Kids Act)",
+     "link": "https://mgaleg.maryland.gov/mgawebsite/Legislation/Details/SB0989?ys=2026RS"},
+    {"jurisdiction": "VA", "datum": "SB796 — Artificial Intelligence Companion Chatbots and Minors Act; established, enforcement, civil penalty.",
+     "link": "https://lis.virginia.gov/bill-details/20261/SB796"},
+    {"jurisdiction": "VA", "datum": "HB1521 — Digital innovation & infrastructure; establishing rights in digital property & technology resources.",
+     "link": "https://lis.virginia.gov/bill-details/20261/HB1521"},
+    {"jurisdiction": "DC", "datum": "B26-0670 — District of Columbia Government Data Privacy and Protection Act of 2026",
+     "link": "https://lims.dccouncil.gov/Legislation/B26-0670"},
+    {"jurisdiction": "DC", "datum": "B26-0656 — Internet Gaming and Consumer Protection Act of 2026",
+     "link": "https://lims.dccouncil.gov/Legislation/B26-0656"}
+  ]
+}

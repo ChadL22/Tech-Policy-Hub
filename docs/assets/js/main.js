@@ -205,21 +205,26 @@ document.addEventListener('DOMContentLoaded', function () {
     }, true);
   });
 
-  // Homepage "Research Spotlight" -- one .spotlight-slide visible at a
-  // time (spotlight_html() in generate.py renders all of them, hidden via
-  // CSS except .is-active). Auto-advances on a timer, pauses on hover so
-  // it doesn't flip out from under someone reading, the .spotlight-dot
-  // buttons jump straight to a slide, the .spotlight-prev/.spotlight-next
-  // arrows step one at a time, and .spotlight-pause is a manual pause/play
-  // toggle -- a manual pause sticks (auto-advance stays off) through
-  // hover-unhover and further dot/arrow clicks, until the user un-pauses.
+  // Homepage "Research Spotlight" -- one slide visible at a time, split
+  // across TWO tracks that stay in sync (spotlight_html() in generate.py
+  // renders both, hidden via CSS except .is-active): .spotlight-media-slide
+  // (just the image) and .spotlight-slide (title/meta/summary/actions),
+  // with .spotlight-controls (dots + pause) sitting between them in normal
+  // flow -- see the big comment in styles.css for why. Auto-advances on a
+  // timer, pauses on hover so it doesn't flip out from under someone
+  // reading, the .spotlight-dot buttons jump straight to a slide, the
+  // .spotlight-prev/.spotlight-next arrows step one at a time, and
+  // .spotlight-pause is a manual pause/play toggle -- a manual pause sticks
+  // (auto-advance stays off) through hover-unhover and further dot/arrow
+  // clicks, until the user un-pauses.
   document.querySelectorAll('[data-spotlight]').forEach(function (widget) {
-    var slides = Array.prototype.slice.call(widget.querySelectorAll('.spotlight-slide'));
+    var mediaSlides = Array.prototype.slice.call(widget.querySelectorAll('.spotlight-media-slide'));
+    var textSlides = Array.prototype.slice.call(widget.querySelectorAll('.spotlight-slide'));
     var dots = Array.prototype.slice.call(widget.querySelectorAll('.spotlight-dot'));
-    if (slides.length < 2) return; // nothing to slide between
+    if (textSlides.length < 2) return; // nothing to slide between
 
     var AUTO_MS = 5000;
-    var FADE_MS = 600; // must match .spotlight-slide's transition-duration in styles.css
+    var FADE_MS = 600; // must match .spotlight-media-slide/.spotlight-slide's transition-duration in styles.css
     var current = 0;
     var timer = null;
     var transitioning = false;
@@ -228,25 +233,32 @@ document.addEventListener('DOMContentLoaded', function () {
     // Crossfades rather than hard-cutting: fade the current slide out,
     // THEN (once that finishes) swap which slide is .is-active and fade
     // the new one in. Sequential rather than a true overlapping crossfade,
-    // so the two slides never visually double-expose mid-transition.
-    // .spotlight-track now holds every slide stacked in the same CSS Grid
-    // area (see styles.css), so the track's height is always the tallest
+    // so the two slides never visually double-expose mid-transition. Each
+    // track holds its own slides stacked in the same CSS Grid area (see
+    // styles.css), so each track's height is always its own tallest
     // slide's height regardless of which one is active/visible -- that's
-    // what keeps this from resizing the whole lead grid on every swap.
-    function show(i) {
-      var next = (i % slides.length + slides.length) % slides.length;
-      if (next === current || transitioning) return;
-      transitioning = true;
-
+    // what keeps this from resizing the whole lead grid on every swap. The
+    // media and text tracks are driven by the SAME index, one call each,
+    // so they always change together even though they're separate DOM
+    // subtrees now.
+    function swapTrack(slides, next) {
       var oldSlide = slides[current];
       var newSlide = slides[next];
-
       oldSlide.classList.remove('is-visible');
       setTimeout(function () {
         oldSlide.classList.remove('is-active');
         newSlide.classList.add('is-active');
         void newSlide.offsetWidth; // force layout so the opacity transition below actually runs
         newSlide.classList.add('is-visible');
+      }, FADE_MS);
+    }
+    function show(i) {
+      var next = (i % textSlides.length + textSlides.length) % textSlides.length;
+      if (next === current || transitioning) return;
+      transitioning = true;
+      swapTrack(mediaSlides, next);
+      swapTrack(textSlides, next);
+      setTimeout(function () {
         current = next;
         dots.forEach(function (d, idx) { d.classList.toggle('is-active', idx === current); });
         setTimeout(function () { transitioning = false; }, FADE_MS);
@@ -272,29 +284,46 @@ document.addEventListener('DOMContentLoaded', function () {
     if (prevBtn) prevBtn.addEventListener('click', function () { show(current - 1); startAuto(); });
     if (nextBtn) nextBtn.addEventListener('click', function () { show(current + 1); startAuto(); });
 
-    // Vertically align the arrows with the lead image, not the whole
-    // widget's midpoint -- the widget's overall height includes the
-    // fixed-space title/summary/button area below the image, so centering
-    // on the whole box would land the arrows across the title text instead
-    // of flanking the image. .lead-media's height comes from a fixed
-    // aspect-ratio, so it's the same for every slide at a given viewport
-    // width -- read it off whichever slide is currently active and convert
-    // to a plain pixel offset (CSS `top` can't be expressed as a
-    // percentage of the track's own width, only its height, so this can't
-    // be done in CSS alone). Re-run on resize since the aspect-ratio'd
-    // image's rendered height changes with viewport width.
+    var mediaTrack = widget.querySelector('.spotlight-media-track');
+    // Vertically align the arrows with the lead image track specifically
+    // (not the whole widget, which also includes the controls row and the
+    // text track below it) -- .spotlight-media-track's own height IS the
+    // image's height now that media lives in its own track, so this is
+    // just "center on that track", no per-slide lookup needed. Re-run on
+    // resize since the aspect-ratio'd image's rendered height changes with
+    // viewport width.
     function positionArrows() {
-      if (!prevBtn && !nextBtn) return;
-      var media = slides[current].querySelector('.lead-media');
-      if (!media) return;
-      var mediaRect = media.getBoundingClientRect();
+      if ((!prevBtn && !nextBtn) || !mediaTrack) return;
+      var mediaRect = mediaTrack.getBoundingClientRect();
       var widgetRect = widget.getBoundingClientRect();
       var top = Math.round(mediaRect.top - widgetRect.top + mediaRect.height / 2);
       if (prevBtn) prevBtn.style.top = top + 'px';
       if (nextBtn) nextBtn.style.top = top + 'px';
     }
-    positionArrows();
-    window.addEventListener('resize', positionArrows);
+
+    // Fixed-height title/summary WITHOUT guessing a worst-case line count:
+    // measure every slide's natural (unclamped) height at the CURRENT
+    // viewport width, then set min-height on every slide's h1/.lede to the
+    // tallest of the 5 -- so the button row lands at the same position on
+    // every slide, using only as much reserved space as the longest REAL
+    // slide actually needs at this breakpoint (see styles.css comment for
+    // why this replaced a fixed line-clamp). Clears any previously-set
+    // inline min-height before measuring, or a stale value from a wider
+    // viewport would inflate the "natural" height it reads back.
+    function fixSpotlightHeights() {
+      var h1s = textSlides.map(function (s) { return s.querySelector('h1'); });
+      var ledes = textSlides.map(function (s) { return s.querySelector('.lede'); });
+      h1s.forEach(function (el) { if (el) el.style.minHeight = '0'; });
+      ledes.forEach(function (el) { if (el) el.style.minHeight = '0'; });
+      var maxH1 = Math.max.apply(null, h1s.map(function (el) { return el ? el.scrollHeight : 0; }));
+      var maxLede = Math.max.apply(null, ledes.map(function (el) { return el ? el.scrollHeight : 0; }));
+      h1s.forEach(function (el) { if (el) el.style.minHeight = maxH1 + 'px'; });
+      ledes.forEach(function (el) { if (el) el.style.minHeight = maxLede + 'px'; });
+    }
+
+    function relayout() { fixSpotlightHeights(); positionArrows(); }
+    relayout();
+    window.addEventListener('resize', relayout);
 
     var pauseBtn = widget.querySelector('[data-spotlight-pause]');
     function setPaused(p) {

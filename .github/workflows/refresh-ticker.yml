@@ -1,0 +1,46 @@
+name: Refresh signal ticker
+
+# Keeps the homepage's signal ticker (TICKER_ITEMS) current without manual
+# curation. Pulls fresh federal + MD/VA/DC bill data straight from the
+# Integrity Institute Tech Policy Tracker's own search backend (see
+# build/refresh_ticker.py's docstring for exactly what this queries and
+# why), rebuilds the static site, and commits the result if anything
+# changed. Runs weekly, plus on-demand via the Actions tab (workflow_dispatch).
+#
+# No secrets/API keys required -- refresh_ticker.py uses the tracker
+# site's own public, read-only "search-only" key (see the script), not a
+# credential of ours.
+
+on:
+  schedule:
+    - cron: '0 13 * * 1' # Monday 13:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Fetch fresh ticker data
+        run: python3 refresh_ticker.py
+        working-directory: build
+
+      - name: Rebuild the site
+        run: python3 build_all.py
+        working-directory: build
+
+      - name: Commit if changed
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'Auto-refresh signal ticker from the Tech Policy Tracker'
+          file_pattern: 'build/data/ticker.json docs/**'
+          commit_user_name: 'github-actions[bot]'
+          commit_user_email: 'github-actions[bot]@users.noreply.github.com'

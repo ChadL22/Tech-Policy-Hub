@@ -93,8 +93,13 @@ python3 build_all.py
   ticker, the Research Spotlight slideshow, the events calendar, the
   filter-pill bar, the `.ics` calendar feed builder, etc.), plus the real
   content arrays (`NEWS_ITEMS`, `EVENTS_ITEMS`, `PAST_EVENTS_ITEMS`,
-  `TICKER_ITEMS`, `SPOTLIGHT_ITEMS`, `PEOPLE_ITEMS`, `TOPICS`, `QUESTIONS`)
+  `SPOTLIGHT_ITEMS`, `PEOPLE_ITEMS`, `TOPICS`, `QUESTIONS`) — `TICKER_ITEMS`
+  is the one exception, loaded from `build/data/ticker.json` instead of
+  being a literal in this file (see **Site capabilities** below)
 - `build/build_all.py` — per-page content and the list of pages to write
+- `build/refresh_ticker.py` — regenerates `build/data/ticker.json` from
+  the Tech Policy Tracker; run on a schedule by
+  `.github/workflows/refresh-ticker.yml`, or by hand
 
 The script writes directly into `docs/` — HTML pages via `write()` (which
 also rewrites internal links to the clean-URL folder scheme), and the
@@ -115,6 +120,16 @@ CSS/JS (no framework, no build step) in `docs/assets/css/styles.css` and
   only — gated behind `matchMedia('(hover: hover)')` so touch devices,
   which fire synthetic hover events after a tap, aren't left permanently
   frozen), and can be scrubbed by dragging with a mouse or a finger.
+  `TICKER_ITEMS` is machine-generated, not hand-curated: `build/
+  refresh_ticker.py` queries the Integrity Institute Tech Policy Tracker's
+  own (undocumented but public, read-only) search backend directly for
+  current bills tagged with themes matching the Hub's four research areas,
+  writes the result to `build/data/ticker.json`, and
+  `.github/workflows/refresh-ticker.yml` runs that + a full rebuild weekly
+  (also runnable on demand from the Actions tab, or by hand with
+  `python3 refresh_ticker.py` from `build/`). No API key needed. See that
+  script's docstring for the full rationale and exactly what it filters
+  for.
 - **Research Spotlight** — a 5-slide auto-advancing slideshow of curated
   Hub outputs (`SPOTLIGHT_ITEMS`) in the homepage lead grid. Slides are
   stacked in one CSS Grid area so the slideshow's footprint stays fixed
@@ -184,8 +199,8 @@ replaced with real material before launch:
   `speaker-series.html`, and `annual-event.html`.
 - `SPOTLIGHT_ITEMS`' visual — an abstract topic-accent graphic stands in
   for real per-article photography.
-- `TICKER_ITEMS` and `EVENTS_ITEMS`/`PAST_EVENTS_ITEMS` need periodic
-  manual refresh as tracked bills move and events are scheduled/occur —
-  `events.ics` regenerates automatically from `EVENTS_ITEMS` on every
-  build, so keeping that array current is what keeps the calendar
-  subscription accurate.
+- `EVENTS_ITEMS`/`PAST_EVENTS_ITEMS` need periodic manual refresh as
+  events are scheduled/occur — `events.ics` regenerates automatically from
+  `EVENTS_ITEMS` on every build, so keeping that array current is what
+  keeps the calendar subscription accurate. `TICKER_ITEMS` no longer needs
+  manual refresh — see **Site capabilities** above.
