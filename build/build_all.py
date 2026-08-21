@@ -16,6 +16,15 @@ g.clean_stale_pages()
 # news rail (see follow-up 9); this is the only news listing on the page,
 # so there's no risk of the same story appearing twice the way an older
 # hero-rail + separate "Recent News" grid once did (see follow-up 8).
+# Follow-up 53: the scroll box's last visible headline used to butt
+# straight into the "Research Areas" header below it with no visual
+# break, per direct user request referencing CNBC's own fade-to-white
+# treatment at the bottom of their "Latest News" box. `.rail-scroll-wrap`
+# is a plain, non-scrolling wrapper purely so the fade (`::after` on the
+# wrapper, see styles.css) can sit OUTSIDE the scrolling element -- an
+# overlay painted inside `.rail-scroll` itself would scroll away with the
+# content instead of staying put over whatever's currently at the bottom
+# of the visible box.
 HUB_NEWS_RAIL = g.NEWS_ITEMS
 EVENTS_RAIL = [dict(tag=f"{e['m']} {e['d']}", title=e['title'], link=e['link']) for e in g.EVENTS_ITEMS[:4]]
 
@@ -31,7 +40,9 @@ home_body = f"""
     </div>
     <div class="lead-rail">
       <div class="rail-head">Hub News</div>
-      <div class="rail-scroll">{g.rail_html(HUB_NEWS_RAIL)}</div>
+      <div class="rail-scroll-wrap">
+        <div class="rail-scroll">{g.rail_html(HUB_NEWS_RAIL)}</div>
+      </div>
       <div class="rail-head rail-head--stacked">Research Areas</div>
       <div class="research-matrix research-matrix--rail">{g.research_matrix_html()}</div>
     </div>

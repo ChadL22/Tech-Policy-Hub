@@ -730,6 +730,22 @@ li.has-dropdown.open .dropdown{ display:block; }
    News" sidebar box. A slim custom scrollbar (Firefox via
    scrollbar-width, WebKit/Chromium via ::-webkit-scrollbar) keeps the
    ~280px-wide rail from getting a bulky default scrollbar. */
+/* Follow-up 53: `.rail-scroll-wrap` is a plain, non-scrolling wrapper
+   around `.rail-scroll` that exists solely to host the fade overlay
+   below. Its `::after` sits OUTSIDE the scrolling box, so it stays put
+   over whichever headline currently lands at the bottom edge -- an
+   overlay painted inside `.rail-scroll` (the scrolling element itself)
+   would scroll away with the content instead. The gradient runs to
+   `var(--paper)`, the page's own background, so it reads as the list
+   softening into the "Research Areas" header below it rather than a
+   hard cutoff -- the same fade-to-white treatment CNBC uses at the foot
+   of their "Latest News" sidebar box. */
+.rail-scroll-wrap{ position: relative; }
+.rail-scroll-wrap::after{
+  content: ""; position: absolute; left: 0; right: 6px; bottom: 0; height: 52px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, var(--paper) 80%);
+  pointer-events: none;
+}
 .rail-scroll{ max-height: 400px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
 .rail-scroll::-webkit-scrollbar{ width: 6px; }
 .rail-scroll::-webkit-scrollbar-track{ background: transparent; }
