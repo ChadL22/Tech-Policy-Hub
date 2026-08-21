@@ -604,10 +604,23 @@ li.has-dropdown.open .dropdown{ display:block; }
 .matrix-cell{
   padding: 24px 28px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
   text-decoration: none !important; transition: background .15s ease;
+  /* Follow-up 56: `1fr` tracks default to a `minmax(auto,1fr)` sizing
+     algorithm -- a grid item's IMPLIED minimum width is its own
+     min-content size (the width of its widest unbreakable word) unless
+     overridden, so a column holding a longer single word ("Cybersecurity")
+     was quietly growing wider than its "equal" 1fr share while the other
+     column shrank to compensate -- an unequal-column-width bug that was
+     always there but only got noticed once follow-up 55's top-alignment
+     fix made the grid easy to scrutinize closely. `min-width:0` removes
+     that implied minimum so `1fr 1fr` actually splits evenly regardless
+     of content; paired with `overflow-wrap`/`hyphens` on h3 below so a
+     word that no longer fits on one line wraps (with a proper hyphen,
+     not a raw mid-word break) instead of overflowing the cell. */
+  min-width: 0;
 }
 .matrix-cell:hover{ background: var(--nav-band); }
 .matrix-cell .index{ font-family: var(--font-nav); font-weight: 700; font-size: .9rem; color: var(--umd-red); display:block; margin-bottom: 8px; }
-.matrix-cell h3{ color: var(--ink); margin-bottom: 6px; }
+.matrix-cell h3{ color: var(--ink); margin-bottom: 6px; overflow-wrap: break-word; hyphens: auto; }
 .matrix-cell:hover h3{ color: var(--umd-red); }
 .matrix-cell p{ color: var(--ink-soft); font-size: .92rem; margin:0; }
 
@@ -655,7 +668,16 @@ li.has-dropdown.open .dropdown{ display:block; }
    its own heading wraps to -- fixes row 1 without depending on both
    cells in a row having matching line counts. */
 .research-matrix--rail .matrix-cell{
-  padding: 22px 16px; min-height: 104px;
+  /* Follow-up 56: horizontal padding trimmed 16px -> 10px so "Cybersecurity"
+     (the one topic name that's a single unbreakable word, ~102px wide at
+     this font) fits on one line within an EQUAL-width column -- see the
+     min-width:0 note on the shared .matrix-cell rule above for why the
+     columns are now forced equal in the first place. Padding alone can't
+     make an unbreakable word wrap, so this is a real width budget fix,
+     not a cosmetic tightening -- `overflow-wrap`/`hyphens` on h3 stay in
+     place as a fallback for any future topic name that's still too wide
+     even at this padding. */
+  padding: 22px 10px; min-height: 104px;
   display:flex; flex-direction:column; justify-content:flex-start;
 }
 .research-matrix--rail .matrix-cell .index{ font-size:.76rem; margin-bottom: 6px; }
