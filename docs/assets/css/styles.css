@@ -358,12 +358,11 @@ li.has-dropdown.open .dropdown{ display:block; }
   .spotlight-prev{ left: -37px; }
   .spotlight-next{ right: -37px; }
 }
-/* Dots + pause share one centered row, sitting between the media and text
-   tracks (see the big comment above) -- NOT stacked/duplicated per slide,
-   just one persistent row like .rail-head. The pause button is pinned to
-   the row's right edge via absolute positioning within a relative parent,
-   so its presence never nudges the dots off center. */
-.spotlight-controls{ display:flex; align-items:center; justify-content:center; gap:14px; margin-bottom: 14px; position: relative; }
+/* Dots sit in their own centered row, between the media and text tracks
+   (see the big comment above) -- NOT stacked/duplicated per slide, just
+   one persistent row like .rail-head, so playback position is visible
+   right under the image without scrolling past the title/summary. */
+.spotlight-controls{ display:flex; align-items:center; justify-content:center; margin-bottom: 14px; }
 .spotlight-dots{ display:flex; gap:8px; }
 .spotlight-dot{
   width:9px; height:9px; padding:0; border-radius:50%; border:1.5px solid var(--ink-soft);
@@ -373,15 +372,20 @@ li.has-dropdown.open .dropdown{ display:block; }
 .spotlight-dot.is-active{ background: var(--umd-red); border-color: var(--umd-red); }
 /* Pause/play toggle -- CSS-drawn icon (two bars = "playing, click to
    pause"; a triangle = "paused, click to play"), swapped via .is-paused,
-   rather than a Unicode/emoji glyph. */
+   rather than a Unicode/emoji glyph. Lives INSIDE .spotlight-media-track
+   (which is position:relative) as an overlay in the image's bottom-right
+   corner (follow-up 45, direct user request) rather than alongside the
+   dots -- a translucent white circle (matching the prev/next arrows'
+   inset-on-image treatment) so the icon stays legible against whichever
+   color the current slide's image graphic happens to be. */
 .spotlight-pause{
-  position: absolute; right: 0;
-  width: 26px; height: 26px; padding: 0; border-radius: 50%;
-  border: 1.5px solid var(--ink-soft); background: transparent; cursor: pointer;
+  position: absolute; right: 10px; bottom: 10px; z-index: 5;
+  width: 30px; height: 30px; padding: 0; border-radius: 50%;
+  border: 1.5px solid var(--ink-soft); background: rgba(255,255,255,.85); cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  transition: border-color .15s ease;
+  transition: border-color .15s ease, background .15s ease;
 }
-.spotlight-pause:hover{ border-color: var(--umd-red); }
+.spotlight-pause:hover{ border-color: var(--umd-red); background: #fff; }
 .spotlight-pause .bar{ display:block; width:2.5px; height:9px; background: var(--ink-soft); border-radius:1px; }
 .spotlight-pause .bar + .bar{ margin-left: 3px; }
 .spotlight-pause .tri{
@@ -446,29 +450,45 @@ li.has-dropdown.open .dropdown{ display:block; }
 
 /* ---------- Ideas We're Reading carousel ---------- */
 .carousel-wrap{ position: relative; }
-.carousel-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom: 28px; }
+/* Head is just the eyebrow/h2 + arrows (follow-up 45) -- the description
+   used to live inside this row too, sharing space with the arrows via
+   justify-content:space-between, which on a full-width container left a
+   large dead gap between the (deliberately narrow, ~46ch) paragraph and
+   the arrows pinned to the far right edge -- a direct user complaint.
+   Moving the description to its own full-width row below (.carousel-note)
+   removes that competition entirely: the head row is only as wide as its
+   own content demands, so the arrows sit right next to the heading
+   instead of stranded at the container's edge. */
+.carousel-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom: 10px; }
+.carousel-note{ margin-top: 0; margin-bottom: 20px; max-width: 640px; }
 .carousel-arrows{ display:flex; gap:8px; }
 .carousel-arrows button{
-  width:38px; height:38px; border-radius:var(--radius); border:1.5px solid var(--ink); background:#fff; cursor:pointer;
+  width:34px; height:34px; border-radius:var(--radius); border:1.5px solid var(--ink); background:#fff; cursor:pointer;
   font-size:1rem; line-height:1; color: var(--ink);
 }
 .carousel-arrows button:hover{ background: var(--ink); color:#fff; }
-.carousel-track{ display:flex; gap:24px; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:6px; scrollbar-width:none; }
+.carousel-track{ display:flex; gap:16px; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:6px; scrollbar-width:none; }
 .carousel-track::-webkit-scrollbar{ display:none; }
+/* Cards sized down (follow-up 45) -- narrower basis + tighter padding/gap/
+   font-sizes than the original, so all 4 fit within the panel at desktop
+   widths without needing the horizontal scroll, and the section reads
+   closer to the compact density used everywhere else on the homepage
+   (a direct user complaint that these were "large cards" relative to the
+   Spotlight/Calendar sections above and below). */
 .read-card{
-  flex: 0 0 clamp(260px, 27vw, 320px); scroll-snap-align:start; border:1px solid var(--line); padding: 26px;
-  display:flex; flex-direction:column; gap:10px; background:#fff;
+  flex: 0 0 clamp(220px, 22vw, 288px); scroll-snap-align:start; border:1px solid var(--line); padding: 18px;
+  display:flex; flex-direction:column; gap:8px; background:#fff;
 }
-.read-card .source{ font-family: var(--font-nav); font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color: var(--ink-soft); }
+.read-card .source{ font-family: var(--font-nav); font-size:.7rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color: var(--ink-soft); }
 .read-card .topic-tag{
-  font-family: var(--font-nav); font-size:.72rem; font-weight:700; letter-spacing:.02em; text-transform:uppercase;
-  color: var(--umd-red); border:1px solid var(--umd-red); border-radius:var(--radius); padding:3px 10px; width:fit-content;
+  font-family: var(--font-nav); font-size:.7rem; font-weight:700; letter-spacing:.02em; text-transform:uppercase;
+  color: var(--umd-red); border:1px solid var(--umd-red); border-radius:var(--radius); padding:2px 8px; width:fit-content;
 }
-.read-card h3{ font-size:1.05rem; margin: 2px 0 0; }
+.read-card h3{ font-size:.98rem; margin: 2px 0 0; }
 .read-card h3 a{ color: var(--ink); }
 .read-card h3 a:hover{ color: var(--umd-red); text-decoration:none; }
-.read-card p{ font-size:.92rem; margin-bottom:0; }
-.read-card .read-meta{ font-size:.8rem; color: var(--ink-soft); margin-top:auto; }
+.read-card p{ font-size:.88rem; margin-bottom:0; }
+.read-card .read-meta{ font-size:.78rem; color: var(--ink-soft); margin-top:auto; }
 
 /* Field Pulse: the section itself stays the normal off-white (.soft-bg);
    only the carousel entries sit inside a dark rectangle (.carousel-panel)
@@ -478,8 +498,9 @@ li.has-dropdown.open .dropdown{ display:block; }
    --header-band (not pure #000) to match the dark shade already used
    elsewhere on the page (About section, Calendar's month-header bar) --
    gold outline matches the signal ticker's gold top/bottom border for a
-   consistent accent treatment across the site's "banner" elements. */
-.carousel-panel{ background: var(--header-band); border: 3px solid var(--umd-gold); padding: 28px 28px 22px; }
+   consistent accent treatment across the site's "banner" elements.
+   Padding tightened (follow-up 45) to match the smaller cards inside. */
+.carousel-panel{ background: var(--header-band); border: 3px solid var(--umd-gold); padding: 20px 20px 16px; }
 .carousel-panel .carousel-track{ padding-bottom:0; }
 
 /* ---------- Cards / feed — flat, hairline-divided, no shadows ---------- */

@@ -24,7 +24,7 @@ SITE_URL = "https://chadl22.github.io/Tech-Policy-Hub/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026082037"
+ASSET_VERSION = "2026082038"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -665,14 +665,20 @@ def spotlight_html(items):
 
     Split into TWO separately-stacked tracks (follow-up 43) rather than one:
     .spotlight-media-track (just the image) and .spotlight-track (title/
-    meta/summary/actions), with .spotlight-controls (dots + pause) sitting
-    between them in normal flow -- per the user's request, so the dots/
-    pause sit right under the image, above the title, where they're visible
-    without scrolling past the text. Each still uses the same CSS Grid
-    stacking trick (every slide sharing one grid-area, fixed to the
-    tallest), just as two independent stacks instead of one combined one --
-    main.js's show() toggles the matching pair (same data-slide index) in
-    both tracks together."""
+    meta/summary/actions), with .spotlight-dots sitting between them in
+    normal flow -- per the user's request, so playback position is visible
+    right under the image, above the title, without scrolling past the
+    text. Each still uses the same CSS Grid stacking trick (every slide
+    sharing one grid-area, fixed to the tallest), just as two independent
+    stacks instead of one combined one -- main.js's show() toggles the
+    matching pair (same data-slide index) in both tracks together.
+
+    .spotlight-pause (follow-up 45) lives INSIDE .spotlight-media-track as
+    an absolutely-positioned overlay in the image's bottom-right corner --
+    not in the dots row -- per direct user request. It's a sibling of the
+    per-slide .spotlight-media-slide divs, not per-slide itself, so it's
+    one persistent button regardless of which slide is showing (same
+    pattern as the prev/next arrows living outside the per-slide loop)."""
     media_slides = []
     text_slides = []
     for i, it in enumerate(items):
@@ -701,12 +707,12 @@ def spotlight_html(items):
         <button type="button" class="spotlight-arrow spotlight-prev" data-spotlight-prev aria-label="Previous spotlight item"></button>
         <button type="button" class="spotlight-arrow spotlight-next" data-spotlight-next aria-label="Next spotlight item"></button>
         <div class="spotlight-media-track">{''.join(media_slides)}
-        </div>
-        <div class="spotlight-controls">
-          <div class="spotlight-dots">{dots}</div>
           <button type="button" class="spotlight-pause" data-spotlight-pause aria-pressed="false" aria-label="Pause slideshow">
             <i class="bar bar-1"></i><i class="bar bar-2"></i><i class="tri"></i>
           </button>
+        </div>
+        <div class="spotlight-controls">
+          <div class="spotlight-dots">{dots}</div>
         </div>
         <div class="spotlight-track">{''.join(text_slides)}
         </div>
