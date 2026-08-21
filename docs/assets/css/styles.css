@@ -449,6 +449,17 @@ li.has-dropdown.open .dropdown{ display:block; }
 .explore-links a{ font-weight: 600; }
 
 /* ---------- Field Pulse ("What we're reading") ---------- */
+/* Follow-up 51 (superseded within the same round -- see below): first
+   tried a plain hairline border-bottom here (matching .lead-section's
+   own rule), confirmed via AskUserQuestion. The user then said to drop
+   the rule entirely and just tighten the gap before Calendar instead,
+   closer to how SCOTUSblog's own cream box has a moderate (not huge) gap
+   before the next module with no divider line. `.reading-section` no
+   longer carries a border; it just trims its own bottom padding, paired
+   with `.calendar-section`'s trimmed top padding below -- together they
+   cut the reading-panel-to-"Events" gap roughly in half (was ~144px:
+   panel's own 32px + two default 56px section paddings; now ~80px). */
+.reading-section{ padding-bottom: 24px; }
 .carousel-wrap{ position: relative; }
 /* Head is just the eyebrow/h2 (follow-up 46 dropped the scroll arrows
    entirely -- see below) -- the description used to live inside this row
@@ -508,6 +519,11 @@ li.has-dropdown.open .dropdown{ display:block; }
 .reading-panel{ background: var(--sidebar-band); border-top: 4px solid var(--umd-gold); padding: 32px; }
 .reading-panel .card{ padding-bottom: 0; }
 .reading-panel .carousel-head{ margin-bottom: 6px; }
+/* Paired with .reading-section's trimmed bottom padding above -- see the
+   follow-up 51 comment there. Scoped to .calendar-section specifically
+   (only used once, on the homepage) so this doesn't touch events.html's
+   own calendar layout, which reuses other classes, not this one. */
+.calendar-section{ padding-top: 24px; }
 
 /* ---------- Cards / feed — flat, hairline-divided, no shadows ---------- */
 .grid{ display:grid; gap: 0; }

@@ -41,7 +41,7 @@ home_body = f"""
   </div>
 </section>
 
-<section>
+<section class="reading-section">
   <div class="container carousel-wrap">
     <div class="reading-panel">
       <div class="carousel-head">
