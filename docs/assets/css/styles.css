@@ -704,27 +704,28 @@ li.has-dropdown.open .dropdown{ display:block; }
 
 /* ---------- About the Hub (dark band, homepage) ---------- */
 .about-hub{ background: var(--header-band); color:#fff; }
-.about-hub h2{ color:#fff; }
 .about-hub .eyebrow{ color: var(--umd-gold); }
 .about-hub p{ color:#C7CACD; }
 .about-hub .text-link{ color:#fff; border-color:#fff; }
 .about-hub .text-link:hover{ color: var(--umd-gold); border-color: var(--umd-gold); }
 /* Follow-up 58: this band used to be a 2-column grid (copy on the left,
-   a "Computing/Policy/Practice" .pillars sidebar on the right, see the
-   .pillars rules below) -- direct user request removed that sidebar
-   ("We can remove the three areas on the right hand side"), so the
-   section is single-column prose now. Without a max-width the copy
-   would stretch to the full ~1320px container and read poorly line by
-   line, so cap it at a normal prose measure instead of letting it go
-   full-width now that there's no second column competing for space. */
+   a "Computing/Policy/Practice" .pillars sidebar on the right) -- direct
+   user request removed that sidebar ("We can remove the three areas on
+   the right hand side"), so the section is single-column prose now.
+   Without a max-width the copy would stretch to the full ~1320px
+   container and read poorly line by line, so cap it at a normal prose
+   measure instead of letting it go full-width now that there's no
+   second column competing for space. */
 .about-hub-copy{ max-width: 760px; }
-
-.pillars{ display:flex; flex-direction:column; gap:26px; }
-.pillar{ border-left: 2px solid var(--umd-gold); padding-left: 20px; }
-.pillar h4{ font-family: var(--font-nav); text-transform:uppercase; letter-spacing:.03em; font-size:.95rem; margin-bottom:6px; }
-.pillar p{ font-size:.92rem; margin-bottom:0; }
-.pillars-light{ display:grid; grid-template-columns: repeat(3,1fr); gap:24px; margin-top:18px; }
-.pillars-light .pillar{ border-left-color: var(--umd-red); }
+/* Follow-up 59: the separate "About" eyebrow + "What is the Tech Policy
+   Hub?" h2 were collapsed into a single eyebrow-styled line ("We can
+   also replace 'about' to 'what is the tech policy hub' and remove the
+   subheader") -- .about-hub h2 rule removed since the section no longer
+   has an <h2>. The about.html page this band used to point to via a
+   "More About the Hub" link was removed entirely in the same follow-up
+   (its content was already duplicated here), so .pillars/.pillar/
+   .pillars-light -- which existed only for that page's now-deleted
+   "Our approach" grid -- were removed too rather than left dead. */
 
 /* ---------- Newsletter / subscribe band ---------- */
 .newsletter-band{ background: var(--paper-soft); padding: 64px 0; text-align: center; }
@@ -962,9 +963,6 @@ footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding
 @media (max-width: 1150px){
   .rail-wrap{ grid-template-columns: 1fr; gap: 32px; }
   .rail-wrap .rail-panel{ border-left:none; padding-left:0; border-top: 2px solid var(--ink); padding-top: 24px; }
-}
-@media (max-width: 1000px){
-  .pillars-light{ grid-template-columns: 1fr; }
 }
 /* Nav collapses to the off-canvas hamburger menu starting here -- five nav
    items plus dropdowns don't leave enough room next to the GoTech logo +

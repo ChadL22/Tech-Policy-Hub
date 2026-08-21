@@ -24,7 +24,7 @@ SITE_URL = "https://chadl22.github.io/Tech-Policy-Hub/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026082149"
+ASSET_VERSION = "2026082150"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -253,7 +253,7 @@ def footer():
         <ul>
           <li><a href="events.html">Events</a></li>
           <li><a href="people.html">People</a></li>
-          <li><a href="about.html">About &amp; Contact</a></li>
+          <li><a href="index.html#about">About &amp; Contact</a></li>
         </ul>
       </div>
     </div>
@@ -542,7 +542,7 @@ QUESTIONS = [
     dict(text="What are the politics of tech policy design?",
          tag="Policy Design", link="research.html"),
     dict(text="How can we use crowdsourcing to improve tech policies?",
-         tag="Practice", link="about.html"),
+         tag="Practice", link="index.html#about"),
     dict(text="How can we teach tech policy through an experiential learning perspective?",
          tag="Teaching", link="courses.html"),
 ]
@@ -855,7 +855,7 @@ def topic_pills_html():
     black statement band -- mirrors the Issues pill-nav on kgi.georgetown.edu,
     and carries the university's third brand color (gold) into the section."""
     out = [f'<a class="btn btn-gold" href="{t["file"]}">{t["name"]}</a>' for t in TOPICS]
-    out.append('<a class="btn btn-gold" href="about.html">All Topics</a>')
+    out.append('<a class="btn btn-gold" href="research.html">All Topics</a>')
     return "".join(out)
 
 
