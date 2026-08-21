@@ -456,7 +456,6 @@ li.has-dropdown.open .dropdown{ display:block; }
    were still here; that row now kept simply for layout consistency with
    other section heads even with nothing on its right). */
 .carousel-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom: 10px; }
-.carousel-note{ margin-top: 0; margin-bottom: 20px; max-width: 640px; }
 /* follow-up 46: rebuilt from a bordered-card horizontal-scroll carousel to
    a static 3-column list, per a direct user request with a SCOTUSblog
    "More News & Commentary" screenshot as the explicit target -- plain
@@ -472,29 +471,41 @@ li.has-dropdown.open .dropdown{ display:block; }
    supplies for its own multi-row .grid-3 use.
 
    Follow-up 48: direct user correction -- three changes. (1) The section
-   itself is back to .soft-bg (build_all.py) so the WHOLE band reads as
+   itself went to .soft-bg (build_all.py) so the WHOLE band read as
    off-white, matching the site's alternating section-background rhythm
    ("the site is supposed to alternate colors as we go down the page") --
-   .reading-panel no longer supplies its own --sidebar-band fill (that
-   would double-stack two near-identical off-whites), it's now just a
-   border + padding wrapper that also holds the header/button row so
-   header+grid read as one bounded unit, matching the SCOTUSblog
-   reference more closely (that box includes its own heading + "All"
-   link, not just the item grid). (2) The top border is UMD gold, not
+   .reading-panel dropped its own fill at the time (would have double-
+   stacked two near-identical off-whites) and became just a border +
+   padding wrapper that also holds the header/button row so header+grid
+   read as one bounded unit. **Reverted in follow-up 50, see below --
+   this paragraph is kept for the header-inside-the-panel structural
+   change, which IS still current.** (2) The top border is UMD gold, not
    red -- a direct request ("we are missing any yellow, which we need"),
    overriding the site's usual red-default-for-accent-color convention
-   since the user named the color explicitly. (3) row-gap increased
-   36px -> 56px so stacked items in the same column read as clearly
-   separate readings instead of running together -- and this turned out
-   to be a real pre-existing bug, not just a preference: the old
-   `.reading-grid{ row-gap: 36px }` was silently zeroed out by `.grid{
-   gap: 0 }` below, since that rule shares .reading-grid's specificity
-   (one class each) and comes later in the source, so its `gap` shorthand
-   (which also sets row-gap) won -- rows had ZERO spacing all along. Fixed
-   by writing this as `.grid.reading-grid` so it outranks `.grid` on
-   specificity and can't be silently overridden by source order again. */
+   since the user named the color explicitly -- still current. (3) row-gap
+   increased 36px -> 56px so stacked items in the same column read as
+   clearly separate readings instead of running together -- and this
+   turned out to be a real pre-existing bug, not just a preference: the
+   old `.reading-grid{ row-gap: 36px }` was silently zeroed out by
+   `.grid{ gap: 0 }` below, since that rule shares .reading-grid's
+   specificity (one class each) and comes later in the source, so its
+   `gap` shorthand (which also sets row-gap) won -- rows had ZERO spacing
+   all along. Fixed by writing this as `.grid.reading-grid` so it
+   outranks `.grid` on specificity and can't be silently overridden by
+   source order again -- still current.
+
+   Follow-up 50: user clarified the intent behind "off-white" was
+   SCOTUSblog's actual page structure -- a WHITE section with the
+   content sitting in a bounded OFF-WHITE box, not the whole band
+   painted off-white. `<section>` (build_all.py) dropped `.soft-bg`
+   again; `.reading-panel` gets its fill back below so it once again
+   reads as a distinct cream box against the white page, the way the
+   reference genuinely looks (its outer page is white; only the "More
+   News & Commentary" module itself is cream). The header/button-inside-
+   the-panel structure from follow-up 48 is unaffected -- only WHERE the
+   off-white color lives moved back to the panel. */
 .grid.reading-grid{ row-gap: 56px; }
-.reading-panel{ border-top: 4px solid var(--umd-gold); padding: 32px; }
+.reading-panel{ background: var(--sidebar-band); border-top: 4px solid var(--umd-gold); padding: 32px; }
 .reading-panel .card{ padding-bottom: 0; }
 .reading-panel .carousel-head{ margin-bottom: 6px; }
 
@@ -519,13 +530,24 @@ li.has-dropdown.open .dropdown{ display:block; }
 }
 .soft-bg .card .media{ background: #ECEAE4; }
 .card .kicker{ font-family: var(--font-nav); font-size:.78rem; font-weight:700; letter-spacing:.03em; text-transform:uppercase; color: var(--umd-red); border: 1px solid var(--umd-red); border-radius: var(--radius); padding: 3px 10px; display:inline-block; width: fit-content; }
-/* follow-up 49: Field Pulse's kicker is a real link (out to the matching
-   phronesisresearch.org content-type page), unlike news_cards_html()'s
-   plain-span kicker -- scoped to .kicker-link specifically so this hover
-   treatment doesn't paint a "clickable" state onto the non-interactive
-   kicker spans used elsewhere on the site. */
-.card .kicker-link{ text-decoration: none; transition: background .15s ease, color .15s ease; }
-.card .kicker-link:hover{ background: var(--umd-red); color: #fff; text-decoration: none; }
+/* follow-up 50: Field Pulse's content-type label dropped the boxed
+   .kicker treatment (used by follow-up 49) for a plain italic caption,
+   leaning on SCOTUSblog's own style more directly -- its category labels
+   (COURT NEWS, EMPIRICAL SCOTUS, ...) are unboxed italic text, not
+   bordered pills. --font-accent (Crimson Text) is used rather than
+   --font-nav (Roboto Condensed) because Crimson Text is the only family
+   in this stack with a REAL italic loaded (see the @import at the top of
+   this file) -- Roboto Condensed/Source Sans 3 only have upright weights
+   loaded, so `font-style: italic` on them would fall back to a browser-
+   synthesized oblique rather than true italic glyphs. Still a real link
+   out to the matching phronesisresearch.org content-type page (unlike
+   news_cards_html()'s plain-span .kicker), just without the box. */
+.card .reading-type{
+  font-family: var(--font-accent); font-style: italic; font-weight: 400;
+  font-size: .95rem; text-transform: uppercase; letter-spacing: .02em;
+  color: var(--umd-red); text-decoration: none; display: inline-block; width: fit-content;
+}
+.card .reading-type:hover{ text-decoration: underline; }
 .card .meta{ font-size:.8rem; color: var(--ink-soft); }
 .card h3{ margin-bottom: 4px; }
 .card h3 a{ color: var(--ink); }

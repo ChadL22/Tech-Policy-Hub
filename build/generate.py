@@ -24,7 +24,7 @@ SITE_URL = "https://chadl22.github.io/Tech-Policy-Hub/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026082041"
+ASSET_VERSION = "2026082042"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -770,14 +770,26 @@ def reading_cards_html(items):
     displayed label is the SINGULAR form (READING_TYPE_LABELS) -- one card
     tags one piece, not a whole collection -- while the link still keys
     off the plural `type` value, which is what matches Phronesis's own
-    section names/URLs."""
+    section names/URLs.
+
+    Follow-up 50: the type label no longer uses the boxed/bordered
+    `.kicker` treatment -- a direct request to lean on SCOTUSblog's own
+    style more closely, which sets its category labels (COURT NEWS,
+    EMPIRICAL SCOTUS, ...) as plain italic caption text, no box. Renders
+    as `.reading-type` instead (italic, uppercase, no border/background).
+
+    `summary` and `link` are written as if pulled directly from Phronesis:
+    `summary` is Phronesis's own dek for the piece, and `link` points at
+    the ORIGINAL document (not phronesisresearch.org) -- Phronesis is
+    the source of the metadata, not the destination. Still placeholder
+    text/`#` links until real Phronesis data replaces READING_ITEMS."""
     out = []
     for r in items:
         type_url = READING_TYPES[r["type"]]
         type_label = READING_TYPE_LABELS[r["type"]]
         out.append(f"""
         <div class="card">
-          <a class="kicker kicker-link" href="{type_url}" target="_blank" rel="noopener">{type_label}</a>
+          <a class="reading-type" href="{type_url}" target="_blank" rel="noopener">{type_label}</a>
           <h3><a href="{r['link']}"{link_attrs(r['link'])}>{r['title']}</a></h3>
           <p>{r['summary']}</p>
           <span class="meta">{r['source']} &middot; {r['meta']}</span>

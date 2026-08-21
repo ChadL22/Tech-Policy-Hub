@@ -41,17 +41,13 @@ home_body = f"""
   </div>
 </section>
 
-<section class="soft-bg">
+<section>
   <div class="container carousel-wrap">
     <div class="reading-panel">
       <div class="carousel-head">
-        <div>
-          <span class="eyebrow">Field Pulse</span>
-          <h2>What we're reading</h2>
-        </div>
-        <a href="https://phronesisresearch.org" target="_blank" rel="noopener" class="btn btn-ghost btn-arrow">Read More</a>
+        <h2>What we're reading</h2>
+        <a href="https://phronesisresearch.org" target="_blank" rel="noopener" class="btn btn-ghost btn-arrow">More</a>
       </div>
-      <p class="label-note carousel-note">An array of papers, essays, analyses, and articles that we have recently come across in the last 30 days or so and care to share.</p>
       <div class="grid grid-3 reading-grid">
         {g.reading_cards_html(g.READING_ITEMS)}
       </div>
