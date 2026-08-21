@@ -38,31 +38,33 @@ build/    Python generator that produces the pages in docs/
 
 `docs/` is a static site (no server or build step required to view it).
 Each page shares the same header, footer, and nav, assembled by the
-generator in `build/` so those stay consistent across all 13 pages. It's
+generator in `build/` so those stay consistent across all 12 pages. It's
 named `docs/` (not `site/`) specifically so GitHub Pages can serve it
 directly — see **Publishing** below.
 
 Every page except the homepage lives in its own folder as `index.html`
-(e.g. `docs/news/index.html`), so it serves at a clean, extension-less
-URL — `.../Tech-Policy-Hub/news/` instead of `.../news.html`. The
+(e.g. `docs/events/index.html`), so it serves at a clean, extension-less
+URL — `.../Tech-Policy-Hub/events/` instead of `.../events.html`. The
 generator (`build/generate.py`'s `write()`) handles this automatically,
 including rewriting internal links, so page content in `build/build_all.py`
-can just use plain `href="news.html"`-style references.
+can just use plain `href="events.html"`-style references.
 
 Pages: `index.html` (home), `research/` (research hub — projects,
 publications, teaching), `topic-cybersecurity/`, `topic-privacy/`,
 `topic-integrity/`, `topic-ml/`, `courses/`, `speaker-series/`,
-`annual-event/`, `news/`, `events/`, `people/`, `about/`. Alongside those
-13 HTML pages, the build also writes one non-HTML file to the site
+`annual-event/`, `events/`, `people/`, `about/`. Alongside those
+12 HTML pages, the build also writes one non-HTML file to the site
 root — `docs/events.ics`, a generated calendar feed (see **Site
-capabilities** below).
+capabilities** below). There is no standalone news page — the homepage's
+"Hub News" rail is the site's one news listing (see **Site capabilities**
+below).
 
 The primary nav is **Home / Research (dropdown) / Events (dropdown) /
 People**. Each dropdown's parent label is itself a real link to that
 page's index (Research/Events), so there's no separate "All Research"/"All
 Events" entry — the page itself is the "view everything" destination, and
-both are filterable in place (see below). News and About aren't in the
-top-level nav, but both stay reachable via the footer's "Connect" column.
+both are filterable in place (see below). About isn't in the top-level
+nav, but stays reachable via the footer's "Connect" column.
 
 ## Publishing (GitHub Pages)
 
@@ -138,8 +140,11 @@ CSS/JS (no framework, no build step) in `docs/assets/css/styles.css` and
   dot navigation and pause-on-hover (same touch-safe `matchMedia` gating
   as the ticker, below).
 - **Hub News rail + Research Areas matrix** — a compact side rail on the
-  homepage surfacing recent news (`NEWS_ITEMS`) and the Hub's four research
-  focus areas (`TOPICS`) as a 2×2 index.
+  homepage. Since there's no standalone news page, Hub News lists every
+  `NEWS_ITEMS` entry inside a fixed-height scrollable box (styled after
+  CNBC's own "Latest News" sidebar), not a short excerpt with a "more"
+  link out to a fuller page. Below it, the Hub's four research focus
+  areas (`TOPICS`) render as a 2×2 index.
 - **Guiding Questions** — a list of the Hub's core research questions
   (`QUESTIONS`) that highlight on hover but are intentionally not links.
 - **Field Pulse** — a secondary carousel of outside reading (papers,

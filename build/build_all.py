@@ -6,19 +6,17 @@ g.clean_stale_pages()
 # ===========================================================================
 # HOME
 # ===========================================================================
-# The homepage's "what we do" lead grid uses NEWS_ITEMS[0] as the lead
-# story, with 1-3 shown (3 items, default) in the "Hub News" rail
-# (RECENT_NEWS_RAIL, below) with a "More News" link to news.html; the
-# "Recent News" section further down uses NEWS_ITEMS[4:8] -- every item
-# appears at most once on the homepage, no story shows up twice the way
-# the old hero-rail + Recent News grid did. The remaining items (8-13)
-# are real news/press but only appear on news.html, which lists the full
-# NEWS_ITEMS set. The lead grid's left column is the Guiding Questions
-# list rather than a news rail (see follow-up 9). As of follow-up 10,
-# RECENT_NEWS_RAIL is pure Hub news again -- events are no longer folded
-# in here now that it's real, dated press coverage; the "Upcoming
-# Events" rail in the "Recent News" section below still covers events.
-RECENT_NEWS_RAIL = g.NEWS_ITEMS[1:4]
+# Follow-up 52: the standalone news.html page is gone, so the homepage's
+# "Hub News" rail (HUB_NEWS_RAIL, below) is now the site's ONE place to
+# browse news -- it lists every NEWS_ITEMS entry (not a short 3-item
+# excerpt with a "More News" link out to a fuller page anymore) inside a
+# fixed-height scrollable box (`.rail-scroll` in styles.css), styled after
+# CNBC's own "Latest News" sidebar per direct user request. The lead
+# grid's left column is the Guiding Questions list rather than a second
+# news rail (see follow-up 9); this is the only news listing on the page,
+# so there's no risk of the same story appearing twice the way an older
+# hero-rail + separate "Recent News" grid once did (see follow-up 8).
+HUB_NEWS_RAIL = g.NEWS_ITEMS
 EVENTS_RAIL = [dict(tag=f"{e['m']} {e['d']}", title=e['title'], link=e['link']) for e in g.EVENTS_ITEMS[:4]]
 
 home_body = f"""
@@ -33,8 +31,7 @@ home_body = f"""
     </div>
     <div class="lead-rail">
       <div class="rail-head">Hub News</div>
-      {g.rail_html(RECENT_NEWS_RAIL)}
-      <a href="news.html" class="text-link rail-more">More News</a>
+      <div class="rail-scroll">{g.rail_html(HUB_NEWS_RAIL)}</div>
       <div class="rail-head rail-head--stacked">Research Areas</div>
       <div class="research-matrix research-matrix--rail">{g.research_matrix_html()}</div>
     </div>
@@ -337,25 +334,11 @@ annual_body = f"""
 g.write("annual-event.html", g.page("annual-event.html", "Annual Event", "The Tech Policy Hub's flagship annual gathering.", annual_body))
 
 # ===========================================================================
-# NEWS
-# ===========================================================================
-news_body = f"""
-<section class="page-hero">
-  <div class="container">
-    <div class="breadcrumb"><a href="index.html">Home</a> / News</div>
-    <span class="eyebrow">Latest</span>
-    <h1>News</h1>
-    <p class="lede">Publications, media coverage, awards, and updates from across the Hub.</p>
-  </div>
-</section>
-<section>
-  <div class="container">
-    {g.feed_items_html(g.NEWS_ITEMS)}
-  </div>
-</section>
-"""
-g.write("news.html", g.page("news.html", "News", "News, publications, and media coverage from the Tech Policy Hub.", news_body))
-
+# NEWS -- removed as a standalone page in follow-up 52. The homepage's
+# "Hub News" rail (see HOME above) is now the site's one news listing,
+# a scrollable box showing every NEWS_ITEMS entry -- no separate news.html
+# needed. feed_items_html() (still defined in generate.py) is now unused,
+# left in place in case a future fuller-archive page wants it back.
 # ===========================================================================
 # EVENTS
 # ===========================================================================

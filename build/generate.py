@@ -24,7 +24,7 @@ SITE_URL = "https://chadl22.github.io/Tech-Policy-Hub/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026082043"
+ASSET_VERSION = "2026082044"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -251,7 +251,6 @@ def footer():
       <div>
         <h4>Connect</h4>
         <ul>
-          <li><a href="news.html">News</a></li>
           <li><a href="events.html">Events</a></li>
           <li><a href="people.html">People</a></li>
           <li><a href="about.html">About &amp; Contact</a></li>
@@ -368,6 +367,13 @@ SPOTLIGHT_ITEMS = [
          link="https://academic.oup.com/cybersecurity/article/11/1/tyae032/7959399"),
 ]
 
+# Follow-up 52: this is now the SOLE place NEWS_ITEMS is listed in full --
+# the standalone news.html page was removed (the homepage's "Hub News"
+# rail became a real scrollable list showing every entry, per direct user
+# request comparing it to CNBC's "Latest News" sidebar box). One item
+# below used to placeholder-link to "news.html" itself (a real link was
+# never sourced for it); now links to "#" like other not-yet-linked
+# placeholders elsewhere in the site (e.g. READING_ITEMS).
 NEWS_ITEMS = [
     dict(tag="Publication", date="Jul 2025",
          title="Cookie-less Identification: For and Against Privacy",
@@ -408,7 +414,7 @@ NEWS_ITEMS = [
     dict(tag="Recognition", date="Feb 24, 2025",
          title="Privacy Watchdog Accountability Work Accepted at PLSC",
          summary="Work by the Hub's researchers on the accountability powers of formal and informal U.S. privacy watchdogs has been accepted for the Privacy Law Scholars Conference (PLSC).",
-         link="news.html"),
+         link="#"),
     dict(tag="Media", date="Feb 4, 2025",
          title="County Cyberattack Risk Work Highlighted by Maryland Today",
          summary="The Hub's work assessing attack surface across U.S. counties was highlighted by Maryland Today.",

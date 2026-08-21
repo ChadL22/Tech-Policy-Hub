@@ -6,7 +6,7 @@ METHOD:PUBLISH
 X-WR-CALNAME:Tech Policy Hub Events
 BEGIN:VEVENT
 UID:20260909-speaker-series-platform-design-the-law@techpolicyhub.umd.edu
-DTSTAMP:20260821T144815Z
+DTSTAMP:20260821T151402Z
 DTSTART;VALUE=DATE:20260909
 DTEND;VALUE=DATE:20260910
 SUMMARY:Speaker Series: Platform Design & the Law
@@ -16,7 +16,7 @@ URL:https://chadl22.github.io/Tech-Policy-Hub/speaker-series/
 END:VEVENT
 BEGIN:VEVENT
 UID:20261014-workshop-measuring-algorithmic-harm@techpolicyhub.umd.edu
-DTSTAMP:20260821T144815Z
+DTSTAMP:20260821T151402Z
 DTSTART;VALUE=DATE:20261014
 DTEND;VALUE=DATE:20261015
 SUMMARY:Workshop: Measuring Algorithmic Harm
@@ -26,7 +26,7 @@ URL:https://chadl22.github.io/Tech-Policy-Hub/events/
 END:VEVENT
 BEGIN:VEVENT
 UID:20261118-roundtable-ai-policy-in-the-states@techpolicyhub.umd.edu
-DTSTAMP:20260821T144815Z
+DTSTAMP:20260821T151402Z
 DTSTART;VALUE=DATE:20261118
 DTEND;VALUE=DATE:20261119
 SUMMARY:Roundtable: AI Policy in the States
@@ -36,7 +36,7 @@ URL:https://chadl22.github.io/Tech-Policy-Hub/events/
 END:VEVENT
 BEGIN:VEVENT
 UID:20270409-tech-policy-hub-annual-event-2027@techpolicyhub.umd.edu
-DTSTAMP:20260821T144815Z
+DTSTAMP:20260821T151402Z
 DTSTART;VALUE=DATE:20270409
 DTEND;VALUE=DATE:20270410
 SUMMARY:Tech Policy Hub Annual Event 2027
