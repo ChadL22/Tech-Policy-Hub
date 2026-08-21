@@ -364,19 +364,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  // "Ideas We're Reading" carousel arrows
-  document.querySelectorAll('.carousel-wrap').forEach(function (wrap) {
-    var track = wrap.querySelector('.carousel-track');
-    if (!track) return;
-    wrap.querySelectorAll('.carousel-arrows button').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var card = track.querySelector('.read-card');
-        var step = card ? card.getBoundingClientRect().width + 24 : 300;
-        track.scrollBy({ left: step * parseInt(btn.dataset.dir, 10), behavior: 'smooth' });
-      });
-    });
-  });
-
   // Newsletter signup -- submits to The Phronesis Institute's live subscribe
   // API (same endpoint their own site uses: POST /api/subscribe on
   // phronesisresearch.org, which is CORS-open and also syncs to their

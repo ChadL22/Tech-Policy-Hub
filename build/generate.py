@@ -24,7 +24,7 @@ SITE_URL = "https://chadl22.github.io/Tech-Policy-Hub/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026082038"
+ASSET_VERSION = "2026082039"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -542,10 +542,11 @@ QUESTIONS = [
 ]
 
 # Ideas We're Reading -- placeholder examples for the Phronesis + Tech
-# Policy Press carousel ("Field Pulse" on the homepage). NOT real
-# published articles; swap for the Hub's actual picks before launch (see
-# README "Known placeholders"). No longer feeds the signal ticker, which
-# is now DMV/federal policy tracking only (see TICKER_ITEMS above).
+# Policy Press list ("Field Pulse" on the homepage -- a static 3-column
+# grid as of follow-up 46, not a scrolling carousel). NOT real published
+# articles; swap for the Hub's actual picks before launch (see README
+# "Known placeholders"). No longer feeds the signal ticker, which is now
+# DMV/federal policy tracking only (see TICKER_ITEMS above).
 READING_ITEMS = [
     dict(source="Tech Policy Press", topic="Information Integrity",
          title="Why Platform Transparency Reports Still Fall Short",
@@ -648,7 +649,7 @@ def lead_media_html(topic_label):
 
 def spotlight_html(items):
     """Homepage "Research Spotlight" -- a small slideshow (one slide visible
-    at a time, NOT a free-scroll carousel like Field Pulse) of 3-5 Hub
+    at a time, NOT a static list like Field Pulse) of 3-5 Hub
     outputs: papers, media appearances, presentations, etc. "Research
     Spotlight" is a single persistent header (.rail-head, matching the
     "Guiding Questions"/"Hub News" headers on the other two lead-grid
@@ -720,15 +721,22 @@ def spotlight_html(items):
 
 
 def reading_cards_html(items):
+    """Field Pulse ("What we're reading") -- follow-up 46: rebuilt onto the
+    site's existing .card component (the same one news_cards_html() uses)
+    instead of a bespoke bordered read-card, per a direct user request
+    with a SCOTUSblog "More News & Commentary" screenshot as the target:
+    plain text rows (category label, headline, one-line dek, byline-style
+    source/read-time) with hairline dividers between grid columns, NOT
+    individually-boxed cards -- no .media block, since outside reading
+    doesn't get a thumbnail here any more than it did as a read-card."""
     out = []
     for r in items:
         out.append(f"""
-        <div class="read-card">
-          <span class="source">{r['source']}</span>
-          <span class="topic-tag">{r['topic']}</span>
-          <h3><a href="{r['link']}">{r['title']}</a></h3>
+        <div class="card">
+          <span class="kicker">{r['topic']}</span>
+          <h3><a href="{r['link']}"{link_attrs(r['link'])}>{r['title']}</a></h3>
           <p>{r['summary']}</p>
-          <span class="read-meta">{r['meta']}</span>
+          <span class="meta">{r['source']} &middot; {r['meta']}</span>
         </div>""")
     return "".join(out)
 

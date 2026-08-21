@@ -448,60 +448,40 @@ li.has-dropdown.open .dropdown{ display:block; }
 .explore-links{ margin-top: 18px; font-size:.92rem; color: var(--ink-soft); }
 .explore-links a{ font-weight: 600; }
 
-/* ---------- Ideas We're Reading carousel ---------- */
+/* ---------- Field Pulse ("What we're reading") ---------- */
 .carousel-wrap{ position: relative; }
-/* Head is just the eyebrow/h2 + arrows (follow-up 45) -- the description
-   used to live inside this row too, sharing space with the arrows via
-   justify-content:space-between, which on a full-width container left a
-   large dead gap between the (deliberately narrow, ~46ch) paragraph and
-   the arrows pinned to the far right edge -- a direct user complaint.
-   Moving the description to its own full-width row below (.carousel-note)
-   removes that competition entirely: the head row is only as wide as its
-   own content demands, so the arrows sit right next to the heading
-   instead of stranded at the container's edge. */
+/* Head is just the eyebrow/h2 (follow-up 46 dropped the scroll arrows
+   entirely -- see below) -- the description used to live inside this row
+   too (follow-up 45 moved it below to fix a dead-gap issue when arrows
+   were still here; that row now kept simply for layout consistency with
+   other section heads even with nothing on its right). */
 .carousel-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom: 10px; }
 .carousel-note{ margin-top: 0; margin-bottom: 20px; max-width: 640px; }
-.carousel-arrows{ display:flex; gap:8px; }
-.carousel-arrows button{
-  width:34px; height:34px; border-radius:var(--radius); border:1.5px solid var(--ink); background:#fff; cursor:pointer;
-  font-size:1rem; line-height:1; color: var(--ink);
-}
-.carousel-arrows button:hover{ background: var(--ink); color:#fff; }
-.carousel-track{ display:flex; gap:16px; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:6px; scrollbar-width:none; }
-.carousel-track::-webkit-scrollbar{ display:none; }
-/* Cards sized down (follow-up 45) -- narrower basis + tighter padding/gap/
-   font-sizes than the original, so all 4 fit within the panel at desktop
-   widths without needing the horizontal scroll, and the section reads
-   closer to the compact density used everywhere else on the homepage
-   (a direct user complaint that these were "large cards" relative to the
-   Spotlight/Calendar sections above and below). */
-.read-card{
-  flex: 0 0 clamp(220px, 22vw, 288px); scroll-snap-align:start; border:1px solid var(--line); padding: 18px;
-  display:flex; flex-direction:column; gap:8px; background:#fff;
-}
-.read-card .source{ font-family: var(--font-nav); font-size:.7rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color: var(--ink-soft); }
-.read-card .topic-tag{
-  font-family: var(--font-nav); font-size:.7rem; font-weight:700; letter-spacing:.02em; text-transform:uppercase;
-  color: var(--umd-red); border:1px solid var(--umd-red); border-radius:var(--radius); padding:2px 8px; width:fit-content;
-}
-.read-card h3{ font-size:.98rem; margin: 2px 0 0; }
-.read-card h3 a{ color: var(--ink); }
-.read-card h3 a:hover{ color: var(--umd-red); text-decoration:none; }
-.read-card p{ font-size:.88rem; margin-bottom:0; }
-.read-card .read-meta{ font-size:.78rem; color: var(--ink-soft); margin-top:auto; }
-
-/* Field Pulse: the section itself stays the normal off-white (.soft-bg);
-   only the carousel entries sit inside a dark rectangle (.carousel-panel)
-   wrapping just the card row, like a mat around the cards. The cards
-   themselves stay their original white -- no color override here, the
-   dark panel is just the frame showing through the gap/padding. Uses
-   --header-band (not pure #000) to match the dark shade already used
-   elsewhere on the page (About section, Calendar's month-header bar) --
-   gold outline matches the signal ticker's gold top/bottom border for a
-   consistent accent treatment across the site's "banner" elements.
-   Padding tightened (follow-up 45) to match the smaller cards inside. */
-.carousel-panel{ background: var(--header-band); border: 3px solid var(--umd-gold); padding: 20px 20px 16px; }
-.carousel-panel .carousel-track{ padding-bottom:0; }
+/* follow-up 46: rebuilt from a bordered-card horizontal-scroll carousel to
+   a static 3-column list, per a direct user request with a SCOTUSblog
+   "More News & Commentary" screenshot as the explicit target -- plain
+   text rows with a light boxed panel and vertical hairline dividers
+   between columns, NOT individually-boxed cards, and no scroll arrows
+   since every item is visible at once. Reuses the site's existing
+   .grid/.card hairline-divided component (the same one news_cards_html()
+   uses elsewhere) rather than a bespoke component, which is what makes
+   this "in line with the design of the site at large" -- .card already
+   handles the responsive 3-col -> 2-col -> 1-col collapse (see the
+   .grid-3 media queries below), so no new breakpoint CSS was needed here.
+   .reading-grid only adds the row spacing .news-grid-section normally
+   supplies for its own multi-row .grid-3 use. */
+.reading-grid{ row-gap: 36px; }
+/* Panel: a light, bounded box (not the page's plain white, not the old
+   dark/gold carousel treatment) so the module reads as a distinct unit
+   the way the reference's cream box does against a white page -- reuses
+   --sidebar-band (the same light fill .sidebar-box uses elsewhere) with
+   a solid red top border, the site's standard "banner" accent treatment
+   for light panels (gold is reserved for dark banner elements -- see
+   .carousel-panel's old comment, now moot). The section itself dropped
+   .soft-bg (see build_all.py) so this panel provides the sole visual
+   separation instead of stacking two off-white fills. */
+.reading-panel{ background: var(--sidebar-band); border-top: 4px solid var(--umd-red); padding: 32px; }
+.reading-panel .card{ padding-bottom: 0; }
 
 /* ---------- Cards / feed — flat, hairline-divided, no shadows ---------- */
 .grid{ display:grid; gap: 0; }
@@ -846,7 +826,6 @@ footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding
   .with-sidebar{ grid-template-columns: 1fr; }
   .cal-day{ min-height: 46px; }
   .footer-grid{ grid-template-columns: 1fr 1fr; gap: 28px; }
-  .read-card{ flex-basis: 70vw; }
   .teaching-cta{ text-align:left; margin-top:16px; }
   .header-inner{ --brand-mark-h: 40px; }
 }
@@ -870,7 +849,6 @@ footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding
   .event-row{ grid-template-columns: 60px 1fr; }
   .event-row .btn{ grid-column: 1 / -1; justify-self:start; }
   .footer-grid{ grid-template-columns: 1fr 1fr; }
-  .read-card{ flex-basis: 78vw; }
 }
 @media (max-width: 480px){
   .header-inner{ gap:10px; --brand-mark-h: 28px; }
