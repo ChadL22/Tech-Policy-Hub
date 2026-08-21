@@ -24,7 +24,7 @@ SITE_URL = "https://chadl22.github.io/Tech-Policy-Hub/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026082153"
+ASSET_VERSION = "2026082155"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -221,9 +221,21 @@ def footer():
     <div class="footer-grid">
       <div>
         <div class="footer-social">
-          <a href="#" aria-label="LinkedIn">LinkedIn</a>
-          <a href="#" aria-label="Bluesky">Bluesky</a>
-          <a href="#" aria-label="YouTube">YouTube</a>
+          <a href="https://sclanga.substack.com/" target="_blank" rel="noopener" aria-label="Substack">
+            <img src="assets/img/social/substack.png?v={ASSET_VERSION}" alt="" loading="lazy">
+          </a>
+          <a href="https://x.com/phronesisres" target="_blank" rel="noopener" aria-label="X">
+            <img src="assets/img/social/x.png?v={ASSET_VERSION}" alt="" loading="lazy">
+          </a>
+          <a href="https://www.instagram.com/phronesisres" target="_blank" rel="noopener" aria-label="Instagram">
+            <img src="assets/img/social/instagram.png?v={ASSET_VERSION}" alt="" loading="lazy">
+          </a>
+          <a href="https://www.threads.com/@phronesisres" target="_blank" rel="noopener" aria-label="Threads">
+            <img src="assets/img/social/threads.png?v={ASSET_VERSION}" alt="" loading="lazy">
+          </a>
+          <a href="https://www.tiktok.com/@phronesis.research" target="_blank" rel="noopener" aria-label="TikTok">
+            <img src="assets/img/social/tiktok.png?v={ASSET_VERSION}" alt="" loading="lazy">
+          </a>
         </div>
         <ul class="footer-legal">
           <li><a href="#">Privacy Policy</a></li>

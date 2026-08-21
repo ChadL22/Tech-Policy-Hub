@@ -957,11 +957,15 @@ footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding
 .footer-grid ul{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:9px; }
 .footer-grid a{ color: var(--ink-soft); font-size:.92rem; }
 .footer-grid a:hover{ color: var(--umd-red); }
-.footer-social{ display:flex; gap:16px; margin-bottom: 18px; }
+.footer-social{ display:flex; flex-wrap:wrap; align-items:center; row-gap:10px; column-gap:16px; margin-bottom: 18px; }
 .footer-social a{
-  color: var(--ink); font-family: var(--font-nav); font-weight: 700; font-size: .8rem; text-transform: uppercase; letter-spacing: .02em;
+  display:inline-flex; align-items:center; justify-content:center;
 }
-.footer-social a:hover{ color: var(--umd-red); text-decoration:none; }
+.footer-social img{
+  height:20px; width:auto; display:block; opacity:.8;
+  transition: opacity .15s ease, transform .15s ease;
+}
+.footer-social a:hover img{ opacity:1; transform: translateY(-1px); }
 .footer-legal{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px; }
 .footer-legal a{ color: var(--ink-soft); font-size:.85rem; }
 .footer-bottom{
