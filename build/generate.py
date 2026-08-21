@@ -24,7 +24,7 @@ SITE_URL = "https://chadl22.github.io/Tech-Policy-Hub/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026082145"
+ASSET_VERSION = "2026082146"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -654,9 +654,10 @@ def guiding_questions_html(items):
     denser than question_list_html() (About's full-width list), since this
     one lives in a narrow ~240px rail column alongside the lead story.
     Not clickable (see follow-up 34) -- each item's per-topic link was
-    dropped on request; it's just a hover-responsive text row now (still
-    highlights on mouseover via the .guide-q:hover CSS rule, just doesn't
-    navigate anywhere)."""
+    dropped on request. As of follow-up 54, it doesn't highlight on
+    hover either -- a plain static text row, since a hover highlight on
+    something that doesn't navigate anywhere was misleading about its
+    own interactivity."""
     out = []
     for i, q in enumerate(items, start=1):
         out.append(f"""

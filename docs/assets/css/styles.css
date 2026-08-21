@@ -615,8 +615,30 @@ li.has-dropdown.open .dropdown{ display:block; }
    beneath the Hub News rail) -- same ruled 2x2 grid, but each cell is
    too narrow there for a full blurb, so it's index + name only. A
    ruled divider + extra top space sets it off as its own block rather
-   than reading as a continuation of the Hub News list above it. */
-.rail-head--stacked{ margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--line); }
+   than reading as a continuation of the Hub News list above it.
+   Follow-up 54: `margin-top` tightened 32px -> 16px, direct user request
+   to shrink the gap between the Hub News list and this divider (still
+   enough space to read as its own block, just less of it) -- see the
+   "Lead grid column-height parity" note below for how this and
+   `.rail-scroll`'s max-height together were tuned to a specific pixel
+   target rather than picked by eye. */
+.rail-head--stacked{ margin-top: 16px; padding-top: 24px; border-top: 1px solid var(--line); }
+/* Follow-up 54: Lead grid column-height parity. Direct user request --
+   the 3 lead-grid columns (Guiding Questions / Research Spotlight / Hub
+   News + Research Areas) should end at the same height, achieved (per
+   the user's own suggested approach) by shrinking the Hub News scroll
+   window rather than touching Guiding Questions' content or the
+   Spotlight's fixed slide height. Measured via Playwright at 1440px
+   (all 3 columns are FIXED-width above the 1151px breakpoint --
+   .lead-secondary 240px, .lead-rail 280px, only .lead-story stretches --
+   so a single measurement holds at every width the 3-column layout is
+   active): before this change, .lead-rail's total height (752.8px) ran
+   31.5px past .lead-secondary's (721.3px, the tallest of the other two
+   at 8 real Guiding Questions items). `.rail-head--stacked`'s
+   margin-top (32px -> 16px, -16px) plus `.rail-scroll`'s max-height
+   (400px -> 384px, -16px) together close exactly that 31.5px gap (32px
+   saved) -- re-measured after the change: .lead-rail bottom lands
+   ~0.5px BELOW .lead-secondary's, i.e. visually identical. */
 .research-matrix--rail{ border-color: var(--line); }
 .research-matrix--rail .matrix-cell{
   padding: 22px 16px; min-height: 104px;
@@ -739,14 +761,26 @@ li.has-dropdown.open .dropdown{ display:block; }
    `var(--paper)`, the page's own background, so it reads as the list
    softening into the "Research Areas" header below it rather than a
    hard cutoff -- the same fade-to-white treatment CNBC uses at the foot
-   of their "Latest News" sidebar box. */
+   of their "Latest News" sidebar box.
+   Follow-up 54: shortened AND softened, per a direct user complaint that
+   the last visible item was getting swallowed almost entirely -- the
+   first ~45% of the (now shorter) fade zone stays fully transparent, so
+   most of the last row's headline stays legible, and only the final
+   ~22px actually ramps to solid, matching CNBC's own subtler cue (their
+   last row is still readable, just softened right at the edge) rather
+   than the heavier full-height fade this started as. */
 .rail-scroll-wrap{ position: relative; }
 .rail-scroll-wrap::after{
-  content: ""; position: absolute; left: 0; right: 6px; bottom: 0; height: 52px;
-  background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, var(--paper) 80%);
+  content: ""; position: absolute; left: 0; right: 6px; bottom: 0; height: 40px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 45%, var(--paper) 100%);
   pointer-events: none;
 }
-.rail-scroll{ max-height: 400px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+/* Follow-up 54: max-height trimmed 400px -> 384px specifically so the
+   lead grid's 3 columns end at (very nearly) the same height -- see the
+   dedicated "Lead grid column-height parity" note near
+   `.rail-head--stacked` below for the actual measurements this was
+   tuned against. */
+.rail-scroll{ max-height: 384px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
 .rail-scroll::-webkit-scrollbar{ width: 6px; }
 .rail-scroll::-webkit-scrollbar-track{ background: transparent; }
 .rail-scroll::-webkit-scrollbar-thumb{ background: var(--line); border-radius: var(--radius); }
@@ -771,7 +805,10 @@ li.has-dropdown.open .dropdown{ display:block; }
 .guide-q:first-of-type{ border-top:none; padding-top:0; }
 .guide-q .num{ font-family: var(--font-nav); font-weight:700; font-size:.74rem; color: var(--umd-red); flex:none; padding-top: 1px; }
 .guide-q .qtext{ font-size:.86rem; line-height:1.4; color: var(--ink); }
-.guide-q:hover .qtext{ color: var(--umd-red); }
+/* Follow-up 54: the hover-highlight removed (was `.guide-q:hover
+   .qtext{ color: var(--umd-red); }`) -- direct user request, since these
+   items don't link anywhere (see follow-up 34), a hover highlight was
+   implying interactivity that isn't actually there. */
 
 /* ---------- Two column with sidebar ---------- */
 .with-sidebar{ display:grid; grid-template-columns: 1fr 280px; gap: 48px; }
