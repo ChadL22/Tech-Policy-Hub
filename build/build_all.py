@@ -99,7 +99,7 @@ home_body = f"""
         </div>
       </div>
       <div class="about-hub-join">
-        <h4>Join the Hub</h4>
+        <h4>Join Us</h4>
         <p>If all this sounds relevant and interesting for you &ndash; feel free to join our hub! We are bringing together a network of students, scholars, practitioners, civil activists, and industry leaders to discuss tech policy on a regular basis. Feel free to subscribe and join our mailing list and be up-to-date with our research outputs &amp; events. Interested in becoming affiliated with us? Please email our founder, <a href="https://idonibrasco.github.io/" target="_blank" rel="noopener">Dr. Sivan-Sevilla</a>, to discuss further.</p>
       </div>
     </div>
