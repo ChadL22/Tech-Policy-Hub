@@ -24,7 +24,7 @@ SITE_URL = "https://chadl22.github.io/Tech-Policy-Hub/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026082040"
+ASSET_VERSION = "2026082041"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -547,23 +547,53 @@ QUESTIONS = [
 # articles; swap for the Hub's actual picks before launch (see README
 # "Known placeholders"). No longer feeds the signal ticker, which is now
 # DMV/federal policy tracking only (see TICKER_ITEMS above).
+#
+# Follow-up 49: each item now carries a `type` field -- ONE of Phronesis's
+# own 6 content-format categories (see READING_TYPES below), NOT a
+# UMD-research-area tag (that's exactly what was removed in follow-up 47,
+# since an outside reading might not fit one of the Hub's own 4 areas).
+# This is orthogonal: it labels the KIND of writing (report vs. essay vs.
+# legal analysis...), a classification the source site itself uses, not a
+# claim about which of the Hub's topics it belongs to. Dict keys stay the
+# PLURAL collection names (matching Phronesis's own section names/URLs,
+# and what `type=` on each READING_ITEMS entry is set to); READING_TYPE_LABELS
+# holds the SINGULAR form each kicker actually displays -- a direct user
+# correction ("the category should be singular not plural"), since one
+# card is tagging one piece, not a whole collection.
+READING_TYPES = {
+    "Research Papers": "https://phronesisresearch.org/research",
+    "Policy Artifacts": "https://phronesisresearch.org/policy",
+    "Legal Analyses":   "https://phronesisresearch.org/legal",
+    "Essays":           "https://phronesisresearch.org/essays",
+    "Articles":         "https://phronesisresearch.org/articles",
+    "Reports":          "https://phronesisresearch.org/reports",
+}
+READING_TYPE_LABELS = {
+    "Research Papers": "Research Paper",
+    "Policy Artifacts": "Policy Artifact",
+    "Legal Analyses":   "Legal Analysis",
+    "Essays":           "Essay",
+    "Articles":         "Article",
+    "Reports":          "Report",
+}
+
 READING_ITEMS = [
-    dict(source="Tech Policy Press", title="Why Platform Transparency Reports Still Fall Short",
+    dict(source="Tech Policy Press", type="Articles", title="Why Platform Transparency Reports Still Fall Short",
          summary="A look at what current disclosure requirements do and don't reveal about content moderation at scale.",
          meta="6 min read", link="#"),
-    dict(source="The Phronesis Institute", title="The State of AI Governance, Three Years In",
+    dict(source="The Phronesis Institute", type="Reports", title="The State of AI Governance, Three Years In",
          summary="A field scan of regulatory approaches emerging across the U.S., EU, and Asia.",
          meta="8 min read", link="#"),
-    dict(source="Tech Policy Press", title="Cookies Are Dying. What Comes Next for Ad Tracking?",
+    dict(source="Tech Policy Press", type="Articles", title="Cookies Are Dying. What Comes Next for Ad Tracking?",
          summary="An explainer on the identification methods rushing to fill the gap.",
          meta="5 min read", link="#"),
-    dict(source="The Phronesis Institute", title="County Governments Are the New Cybersecurity Frontline",
+    dict(source="The Phronesis Institute", type="Essays", title="County Governments Are the New Cybersecurity Frontline",
          summary="Why local governments face outsized cyber risk with the fewest resources to manage it.",
          meta="7 min read", link="#"),
-    dict(source="Tech Policy Press", title="How the EU's AI Act Is Reshaping Global Compliance",
+    dict(source="Tech Policy Press", type="Legal Analyses", title="How the EU's AI Act Is Reshaping Global Compliance",
          summary="What multinational platforms are actually changing in response to Brussels' risk-tiered rules.",
          meta="9 min read", link="#"),
-    dict(source="The Phronesis Institute", title="Congress Weighs a Federal Preemption Standard for AI",
+    dict(source="The Phronesis Institute", type="Policy Artifacts", title="Congress Weighs a Federal Preemption Standard for AI",
          summary="A rundown of the competing proposals to override the current patchwork of state AI laws.",
          meta="6 min read", link="#"),
 ]
@@ -724,15 +754,30 @@ def reading_cards_html(items):
     cards -- no .media block, since outside reading doesn't get a
     thumbnail here any more than it did as a read-card.
 
-    Follow-up 47: no kicker/category label on these cards, unlike
+    Follow-up 47: no research-area kicker on these cards, unlike
     news_cards_html(). These are outside pieces we're reading, not our own
     research output -- tagging them with one of the Hub's own research
     areas implies a formal categorization that may not fit, since a given
-    piece can easily fall outside the Hub's defined topics."""
+    piece can easily fall outside the Hub's defined topics.
+
+    Follow-up 49: a kicker is back, but it now labels the piece's FORMAT
+    (one of READING_TYPES, Phronesis's own 6-way content taxonomy) rather
+    than a UMD research area -- a different axis of categorization the
+    follow-up-47 objection doesn't apply to, and one that also helps tell
+    the six titles apart at a glance now that they're tighter-packed.
+    Linked out to the matching phronesisresearch.org/<type> page rather
+    than a plain span, since a real destination exists for each one. The
+    displayed label is the SINGULAR form (READING_TYPE_LABELS) -- one card
+    tags one piece, not a whole collection -- while the link still keys
+    off the plural `type` value, which is what matches Phronesis's own
+    section names/URLs."""
     out = []
     for r in items:
+        type_url = READING_TYPES[r["type"]]
+        type_label = READING_TYPE_LABELS[r["type"]]
         out.append(f"""
         <div class="card">
+          <a class="kicker kicker-link" href="{type_url}" target="_blank" rel="noopener">{type_label}</a>
           <h3><a href="{r['link']}"{link_attrs(r['link'])}>{r['title']}</a></h3>
           <p>{r['summary']}</p>
           <span class="meta">{r['source']} &middot; {r['meta']}</span>
