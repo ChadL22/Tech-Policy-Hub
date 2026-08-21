@@ -469,19 +469,34 @@ li.has-dropdown.open .dropdown{ display:block; }
    handles the responsive 3-col -> 2-col -> 1-col collapse (see the
    .grid-3 media queries below), so no new breakpoint CSS was needed here.
    .reading-grid only adds the row spacing .news-grid-section normally
-   supplies for its own multi-row .grid-3 use. */
-.reading-grid{ row-gap: 36px; }
-/* Panel: a light, bounded box (not the page's plain white, not the old
-   dark/gold carousel treatment) so the module reads as a distinct unit
-   the way the reference's cream box does against a white page -- reuses
-   --sidebar-band (the same light fill .sidebar-box uses elsewhere) with
-   a solid red top border, the site's standard "banner" accent treatment
-   for light panels (gold is reserved for dark banner elements -- see
-   .carousel-panel's old comment, now moot). The section itself dropped
-   .soft-bg (see build_all.py) so this panel provides the sole visual
-   separation instead of stacking two off-white fills. */
-.reading-panel{ background: var(--sidebar-band); border-top: 4px solid var(--umd-red); padding: 32px; }
+   supplies for its own multi-row .grid-3 use.
+
+   Follow-up 48: direct user correction -- three changes. (1) The section
+   itself is back to .soft-bg (build_all.py) so the WHOLE band reads as
+   off-white, matching the site's alternating section-background rhythm
+   ("the site is supposed to alternate colors as we go down the page") --
+   .reading-panel no longer supplies its own --sidebar-band fill (that
+   would double-stack two near-identical off-whites), it's now just a
+   border + padding wrapper that also holds the header/button row so
+   header+grid read as one bounded unit, matching the SCOTUSblog
+   reference more closely (that box includes its own heading + "All"
+   link, not just the item grid). (2) The top border is UMD gold, not
+   red -- a direct request ("we are missing any yellow, which we need"),
+   overriding the site's usual red-default-for-accent-color convention
+   since the user named the color explicitly. (3) row-gap increased
+   36px -> 56px so stacked items in the same column read as clearly
+   separate readings instead of running together -- and this turned out
+   to be a real pre-existing bug, not just a preference: the old
+   `.reading-grid{ row-gap: 36px }` was silently zeroed out by `.grid{
+   gap: 0 }` below, since that rule shares .reading-grid's specificity
+   (one class each) and comes later in the source, so its `gap` shorthand
+   (which also sets row-gap) won -- rows had ZERO spacing all along. Fixed
+   by writing this as `.grid.reading-grid` so it outranks `.grid` on
+   specificity and can't be silently overridden by source order again. */
+.grid.reading-grid{ row-gap: 56px; }
+.reading-panel{ border-top: 4px solid var(--umd-gold); padding: 32px; }
 .reading-panel .card{ padding-bottom: 0; }
+.reading-panel .carousel-head{ margin-bottom: 6px; }
 
 /* ---------- Cards / feed — flat, hairline-divided, no shadows ---------- */
 .grid{ display:grid; gap: 0; }
