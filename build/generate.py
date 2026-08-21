@@ -548,28 +548,22 @@ QUESTIONS = [
 # "Known placeholders"). No longer feeds the signal ticker, which is now
 # DMV/federal policy tracking only (see TICKER_ITEMS above).
 READING_ITEMS = [
-    dict(source="Tech Policy Press", topic="Information Integrity",
-         title="Why Platform Transparency Reports Still Fall Short",
+    dict(source="Tech Policy Press", title="Why Platform Transparency Reports Still Fall Short",
          summary="A look at what current disclosure requirements do and don't reveal about content moderation at scale.",
          meta="6 min read", link="#"),
-    dict(source="The Phronesis Institute", topic="Trustworthy ML",
-         title="The State of AI Governance, Three Years In",
+    dict(source="The Phronesis Institute", title="The State of AI Governance, Three Years In",
          summary="A field scan of regulatory approaches emerging across the U.S., EU, and Asia.",
          meta="8 min read", link="#"),
-    dict(source="Tech Policy Press", topic="Consumer Privacy",
-         title="Cookies Are Dying. What Comes Next for Ad Tracking?",
+    dict(source="Tech Policy Press", title="Cookies Are Dying. What Comes Next for Ad Tracking?",
          summary="An explainer on the identification methods rushing to fill the gap.",
          meta="5 min read", link="#"),
-    dict(source="The Phronesis Institute", topic="Cybersecurity",
-         title="County Governments Are the New Cybersecurity Frontline",
+    dict(source="The Phronesis Institute", title="County Governments Are the New Cybersecurity Frontline",
          summary="Why local governments face outsized cyber risk with the fewest resources to manage it.",
          meta="7 min read", link="#"),
-    dict(source="Tech Policy Press", topic="Trustworthy ML",
-         title="How the EU's AI Act Is Reshaping Global Compliance",
+    dict(source="Tech Policy Press", title="How the EU's AI Act Is Reshaping Global Compliance",
          summary="What multinational platforms are actually changing in response to Brussels' risk-tiered rules.",
          meta="9 min read", link="#"),
-    dict(source="The Phronesis Institute", topic="Information Integrity",
-         title="Congress Weighs a Federal Preemption Standard for AI",
+    dict(source="The Phronesis Institute", title="Congress Weighs a Federal Preemption Standard for AI",
          summary="A rundown of the competing proposals to override the current patchwork of state AI laws.",
          meta="6 min read", link="#"),
 ]
@@ -725,15 +719,20 @@ def reading_cards_html(items):
     site's existing .card component (the same one news_cards_html() uses)
     instead of a bespoke bordered read-card, per a direct user request
     with a SCOTUSblog "More News & Commentary" screenshot as the target:
-    plain text rows (category label, headline, one-line dek, byline-style
-    source/read-time) with hairline dividers between grid columns, NOT
-    individually-boxed cards -- no .media block, since outside reading
-    doesn't get a thumbnail here any more than it did as a read-card."""
+    plain text rows (headline, one-line dek, byline-style source/read-time)
+    with hairline dividers between grid columns, NOT individually-boxed
+    cards -- no .media block, since outside reading doesn't get a
+    thumbnail here any more than it did as a read-card.
+
+    Follow-up 47: no kicker/category label on these cards, unlike
+    news_cards_html(). These are outside pieces we're reading, not our own
+    research output -- tagging them with one of the Hub's own research
+    areas implies a formal categorization that may not fit, since a given
+    piece can easily fall outside the Hub's defined topics."""
     out = []
     for r in items:
         out.append(f"""
         <div class="card">
-          <span class="kicker">{r['topic']}</span>
           <h3><a href="{r['link']}"{link_attrs(r['link'])}>{r['title']}</a></h3>
           <p>{r['summary']}</p>
           <span class="meta">{r['source']} &middot; {r['meta']}</span>
