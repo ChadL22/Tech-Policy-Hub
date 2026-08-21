@@ -85,29 +85,13 @@ home_body = f"""
 </section>
 
 <section class="about-hub">
-  <div class="container grid grid-2">
-    <div>
-      <span class="eyebrow">About</span>
-      <h2>What is the Tech Policy Hub?</h2>
-      <p>The University of Maryland&rsquo;s Tech Policy Hub studies tech policy from a socio-technical perspective, building the bridge between computer science &amp; public policy to understand how policy is designed and implemented for, by, and with tech. Our hub spans across the forefront of tech policy domains, including cybersecurity, consumer privacy, misinformation, and trustworthy machine learning (ML). We bring together DMV-based issue networks of practitioners, scholars, industry leaders, and civil activists to inform, impact, and shape the future of technology in society, applying a mix of comparative, qualitative, and computational research methods to advance our understanding and craft socially desired future paths for tech policy development.</p>
-      <p>If all this sounds relevant and interesting for you &ndash; feel free to join our hub! We are bringing together a network of students, scholars, practitioners, civil activists, and industry leaders to discuss tech policy on a regular basis. Feel free to subscribe and join our mailing list and be up-to-date with our research outputs &amp; events. Interested in becoming affiliated with us? Please email our founder, <a href="https://idonibrasco.github.io/" target="_blank" rel="noopener">Dr. Sivan-Sevilla</a>, to discuss further.</p>
-      <a class="text-link about-hub-link" href="about.html">More About the Hub</a>
-      <p class="explore-links">Explore: <a href="research.html">Research</a> &middot; <a href="people.html">People</a> &middot; <a href="events.html">Events</a></p>
-    </div>
-    <div class="pillars">
-      <div class="pillar">
-        <h4>Computing</h4>
-        <p>Attack-surface measurement, algorithmic accountability, and privacy-enhancing technology.</p>
-      </div>
-      <div class="pillar">
-        <h4>Policy</h4>
-        <p>Comparative, qualitative, and computational research into how tech policy is designed, adopted, and enforced.</p>
-      </div>
-      <div class="pillar">
-        <h4>Practice</h4>
-        <p>A DMV-based issue network of scholars, practitioners, industry leaders, and civil society.</p>
-      </div>
-    </div>
+  <div class="container about-hub-copy">
+    <span class="eyebrow">About</span>
+    <h2>What is the Tech Policy Hub?</h2>
+    <p>The University of Maryland&rsquo;s Tech Policy Hub studies tech policy from a socio-technical perspective, building the bridge between computer science &amp; public policy to understand how policy is designed and implemented for, by, and with tech. Our hub spans across the forefront of tech policy domains, including cybersecurity, consumer privacy, misinformation, and trustworthy machine learning (ML). We bring together DMV-based issue networks of practitioners, scholars, industry leaders, and civil activists to inform, impact, and shape the future of technology in society, applying a mix of comparative, qualitative, and computational research methods to advance our understanding and craft socially desired future paths for tech policy development.</p>
+    <p>If all this sounds relevant and interesting for you &ndash; feel free to join our hub! We are bringing together a network of students, scholars, practitioners, civil activists, and industry leaders to discuss tech policy on a regular basis. Feel free to subscribe and join our mailing list and be up-to-date with our research outputs &amp; events. Interested in becoming affiliated with us? Please email our founder, <a href="https://idonibrasco.github.io/" target="_blank" rel="noopener">Dr. Sivan-Sevilla</a>, to discuss further.</p>
+    <a class="text-link about-hub-link" href="about.html">More About the Hub</a>
+    <p class="explore-links">Explore: <a href="research.html">Research</a> &middot; <a href="people.html">People</a> &middot; <a href="events.html">Events</a></p>
   </div>
 </section>
 
