@@ -85,11 +85,24 @@ home_body = f"""
 </section>
 
 <section id="about" class="about-hub">
-  <div class="container about-hub-copy">
-    <span class="eyebrow">What is the Tech Policy Hub?</span>
-    <p>The University of Maryland&rsquo;s Tech Policy Hub studies tech policy from a socio-technical perspective, building the bridge between computer science &amp; public policy to understand how policy is designed and implemented for, by, and with tech. Our hub spans across the forefront of tech policy domains, including cybersecurity, consumer privacy, misinformation, and trustworthy machine learning (ML). We bring together DMV-based issue networks of practitioners, scholars, industry leaders, and civil activists to inform, impact, and shape the future of technology in society, applying a mix of comparative, qualitative, and computational research methods to advance our understanding and craft socially desired future paths for tech policy development.</p>
-    <p>If all this sounds relevant and interesting for you &ndash; feel free to join our hub! We are bringing together a network of students, scholars, practitioners, civil activists, and industry leaders to discuss tech policy on a regular basis. Feel free to subscribe and join our mailing list and be up-to-date with our research outputs &amp; events. Interested in becoming affiliated with us? Please email our founder, <a href="https://idonibrasco.github.io/" target="_blank" rel="noopener">Dr. Sivan-Sevilla</a>, to discuss further.</p>
-    <p class="explore-links">Explore: <a href="research.html">Research</a> &middot; <a href="people.html">People</a> &middot; <a href="events.html">Events</a></p>
+  <div class="container">
+    <div class="about-hub-grid">
+      <div class="about-hub-lead">
+        <span class="eyebrow">What is the Tech Policy Hub?</span>
+        <p>The University of Maryland&rsquo;s Tech Policy Hub studies tech policy from a socio-technical perspective, building the bridge between computer science &amp; public policy to understand how policy is designed and implemented for, by, and with tech. Our hub spans across the forefront of tech policy domains, including cybersecurity, consumer privacy, misinformation, and trustworthy machine learning (ML).</p>
+        <p>We bring together DMV-based issue networks of practitioners, scholars, industry leaders, and civil activists to inform, impact, and shape the future of technology in society, applying a mix of comparative, qualitative, and computational research methods to advance our understanding and craft socially desired future paths for tech policy development.</p>
+        <div class="about-hub-explore">
+          <span class="about-hub-explore-label">Explore</span>
+          <a class="btn btn-gold" href="research.html">Research</a>
+          <a class="btn btn-gold" href="people.html">People</a>
+          <a class="btn btn-gold" href="events.html">Events</a>
+        </div>
+      </div>
+      <div class="about-hub-join">
+        <h4>Join the Hub</h4>
+        <p>If all this sounds relevant and interesting for you &ndash; feel free to join our hub! We are bringing together a network of students, scholars, practitioners, civil activists, and industry leaders to discuss tech policy on a regular basis. Feel free to subscribe and join our mailing list and be up-to-date with our research outputs &amp; events. Interested in becoming affiliated with us? Please email our founder, <a href="https://idonibrasco.github.io/" target="_blank" rel="noopener">Dr. Sivan-Sevilla</a>, to discuss further.</p>
+      </div>
+    </div>
   </div>
 </section>
 

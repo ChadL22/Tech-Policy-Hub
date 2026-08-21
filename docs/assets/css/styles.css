@@ -442,12 +442,6 @@ li.has-dropdown.open .dropdown{ display:block; }
 .question-row:hover .qtext{ color: var(--umd-red); }
 @media (max-width: 640px){ .question-row{ grid-template-columns: 1fr; gap: 6px; } }
 
-/* Slim "Explore: Research · People · Events" link row -- replaces the old
-   3-card "Get Involved" section, which just re-linked the same 3 pages
-   already in the top nav. */
-.explore-links{ margin-top: 18px; font-size:.92rem; color: var(--ink-soft); }
-.explore-links a{ font-weight: 600; }
-
 /* ---------- Field Pulse ("What we're reading") ---------- */
 /* Follow-up 51 (superseded within the same round -- see below): first
    tried a plain hairline border-bottom here (matching .lead-section's
@@ -706,26 +700,42 @@ li.has-dropdown.open .dropdown{ display:block; }
 .about-hub{ background: var(--header-band); color:#fff; }
 .about-hub .eyebrow{ color: var(--umd-gold); }
 .about-hub p{ color:#C7CACD; }
-.about-hub .text-link{ color:#fff; border-color:#fff; }
-.about-hub .text-link:hover{ color: var(--umd-gold); border-color: var(--umd-gold); }
-/* Follow-up 58: this band used to be a 2-column grid (copy on the left,
-   a "Computing/Policy/Practice" .pillars sidebar on the right) -- direct
-   user request removed that sidebar ("We can remove the three areas on
-   the right hand side"), so the section is single-column prose now.
-   Without a max-width the copy would stretch to the full ~1320px
-   container and read poorly line by line, so cap it at a normal prose
-   measure instead of letting it go full-width now that there's no
-   second column competing for space. */
-.about-hub-copy{ max-width: 760px; }
-/* Follow-up 59: the separate "About" eyebrow + "What is the Tech Policy
-   Hub?" h2 were collapsed into a single eyebrow-styled line ("We can
-   also replace 'about' to 'what is the tech policy hub' and remove the
-   subheader") -- .about-hub h2 rule removed since the section no longer
-   has an <h2>. The about.html page this band used to point to via a
-   "More About the Hub" link was removed entirely in the same follow-up
-   (its content was already duplicated here), so .pillars/.pillar/
-   .pillars-light -- which existed only for that page's now-deleted
-   "Our approach" grid -- were removed too rather than left dead. */
+.about-hub p a{ color: var(--umd-gold); }
+.about-hub p a:hover{ color:#fff; }
+/* Follow-up 59, round 2: after the "About" eyebrow + h2 were collapsed
+   into one eyebrow line and the old .pillars sidebar's replacement (a
+   single 760px-capped prose column) shipped, the user flagged it as
+   "too much text in one long column" and asked for the Explore links to
+   look distinct from body copy rather than an inline sentence. Rebuilt
+   as a 2-column grid: the mission copy + a pill-button Explore row on
+   the left, the "join us" invite pulled out into its own card on the
+   right -- splitting the copy in two is what actually breaks up the
+   wall of text (a max-width alone wasn't enough), and the card gives
+   the invite its own visual weight instead of reading as a third
+   paragraph identical to the first two. */
+.about-hub-grid{ display:grid; grid-template-columns: 1.6fr 1fr; gap: 56px; align-items:start; }
+
+.about-hub-explore{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-top:28px; }
+.about-hub-explore-label{
+  font-family: var(--font-nav); font-size:.78rem; font-weight:700; letter-spacing:.08em;
+  text-transform:uppercase; color:#9a9d9f;
+}
+
+.about-hub-join{
+  background: rgba(255,255,255,.06);
+  border-left: 3px solid var(--umd-gold);
+  border-radius: var(--radius);
+  padding: 28px 30px;
+}
+.about-hub-join h4{
+  font-family: var(--font-nav); text-transform:uppercase; letter-spacing:.04em;
+  font-size:.95rem; color:#fff; margin-bottom:12px;
+}
+.about-hub-join p{ font-size:.92rem; margin-bottom:0; }
+
+@media (max-width: 900px){
+  .about-hub-grid{ grid-template-columns: 1fr; gap: 32px; }
+}
 
 /* ---------- Newsletter / subscribe band ---------- */
 .newsletter-band{ background: var(--paper-soft); padding: 64px 0; text-align: center; }
