@@ -301,29 +301,19 @@ document.addEventListener('DOMContentLoaded', function () {
       if (nextBtn) nextBtn.style.top = top + 'px';
     }
 
-    // Fixed-height title/summary WITHOUT guessing a worst-case line count:
-    // measure every slide's natural (unclamped) height at the CURRENT
-    // viewport width, then set min-height on every slide's h1/.lede to the
-    // tallest of the 5 -- so the button row lands at the same position on
-    // every slide, using only as much reserved space as the longest REAL
-    // slide actually needs at this breakpoint (see styles.css comment for
-    // why this replaced a fixed line-clamp). Clears any previously-set
-    // inline min-height before measuring, or a stale value from a wider
-    // viewport would inflate the "natural" height it reads back.
-    function fixSpotlightHeights() {
-      var h1s = textSlides.map(function (s) { return s.querySelector('h1'); });
-      var ledes = textSlides.map(function (s) { return s.querySelector('.lede'); });
-      h1s.forEach(function (el) { if (el) el.style.minHeight = '0'; });
-      ledes.forEach(function (el) { if (el) el.style.minHeight = '0'; });
-      var maxH1 = Math.max.apply(null, h1s.map(function (el) { return el ? el.scrollHeight : 0; }));
-      var maxLede = Math.max.apply(null, ledes.map(function (el) { return el ? el.scrollHeight : 0; }));
-      h1s.forEach(function (el) { if (el) el.style.minHeight = maxH1 + 'px'; });
-      ledes.forEach(function (el) { if (el) el.style.minHeight = maxLede + 'px'; });
-    }
-
-    function relayout() { fixSpotlightHeights(); positionArrows(); }
-    relayout();
-    window.addEventListener('resize', relayout);
+    // Title/summary height reservation is now a flat CSS min-height + 2-line
+    // clamp (see styles.css) instead of a JS-measured "tallest real slide"
+    // value -- a prior version of this measured each slide's natural
+    // scrollHeight and reserved the max, which correctly held the button row
+    // steady but still left a visible gap under shorter slides whenever any
+    // ONE slide needed a 3rd line. A flat clamp has no such gap since it
+    // never varies by content, at the cost of truncating (with an ellipsis)
+    // any title/summary long enough to need a 3rd line. No JS measurement or
+    // inline min-height needed for that anymore -- only the arrow vertical
+    // position still depends on the rendered layout, so only that needs to
+    // re-run on resize.
+    positionArrows();
+    window.addEventListener('resize', positionArrows);
 
     var pauseBtn = widget.querySelector('[data-spotlight-pause]');
     function setPaused(p) {

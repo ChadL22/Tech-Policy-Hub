@@ -297,28 +297,43 @@ li.has-dropdown.open .dropdown{ display:block; }
   transition: opacity .6s ease-in-out;
 }
 .spotlight-slide.is-active.is-visible{ opacity:1; pointer-events:auto; }
-/* Fixed-height title/summary WITHOUT reserving worst-case space at every
-   breakpoint: main.js measures each slide's natural (unclamped) height at
-   the CURRENT viewport width and sets min-height to the tallest of the 5 --
-   see positionSpotlight()/fixSpotlightHeights() in main.js. That keeps the
-   button row's position constant across slides (nothing shifts) while
-   never reserving more room than the longest REAL slide actually needs at
-   that width -- a fixed line-count guess (the earlier approach) had to
-   assume the worst case across every breakpoint at once, which left a lot
-   of dead air under shorter titles/summaries at wide viewports. line-height
-   is pinned explicitly so the JS measurement is stable/reproducible. No
-   CSS min-height here on purpose -- JS sets it inline; without JS, only the
-   single server-rendered active slide ever shows anyway (no way to cycle),
-   so there's nothing to keep in sync and reserving space would just add
-   unused blank area. */
-.spotlight-slide h1{ line-height: 1.2; }
-.spotlight-slide .lede{ max-width: none; line-height: 1.5; }
+/* Fixed-height title/summary via a hard 2-line cap (not a per-slide/per-
+   breakpoint MEASURED reservation -- an earlier version of this measured
+   the tallest real slide at each viewport width and reserved exactly that,
+   which correctly held the button row's position but still left a visible
+   gap under shorter titles whenever any ONE of the 5 slides needed a 3rd
+   line, per direct user feedback that the gap was still too big). A flat
+   2-line clamp is smaller and, critically, CONSTANT regardless of content
+   or viewport, so there's never a taller sibling slide inflating the
+   reservation -- the tradeoff is that a title/summary long enough to need
+   a 3rd line is truncated with an ellipsis rather than reserving room for
+   it. line-height is pinned explicitly so the em-based min-height math
+   (lines * line-height) stays exact as h1's font-size itself is a fluid
+   clamp(). No JS measurement needed for this anymore -- see main.js. */
+.spotlight-slide h1{
+  line-height: 1.2; min-height: 2.4em;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
+}
+.spotlight-slide .lede{
+  max-width: none; line-height: 1.5; min-height: 3em;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
+}
 /* Prev/next carousel arrows -- vertically centered on .spotlight-media-track
-   specifically (set inline by main.js, since that track is now media-only),
-   inset INSIDE the box edges (not overflowing outward) so they can never
-   trigger horizontal overflow at narrow widths. CSS-drawn chevrons (a
-   rotated two-sided border corner), matching the project's no-icon-font
-   convention already used by .spotlight-dot/.spotlight-pause. */
+   specifically (set inline by main.js, since that track is now media-only).
+   CSS-drawn chevrons (a rotated two-sided border corner), matching the
+   project's no-icon-font convention already used by .spotlight-dot/
+   .spotlight-pause.
+   Positioned INSIDE the image by default (mobile/tablet, where the lead
+   grid has collapsed to one column and there's no space beside the image
+   to put them) but moved OUT into the white gutter beside the image once
+   the 3-column .lead-grid is active (see the min-width:1151px override
+   below) -- per the user's request to get them off the image entirely.
+   The -37px offset centers a 34px button in the grid's 40px column gap
+   (see .lead-grid's `gap: 40px` -- (40-34)/2 = 3px clearance each side).
+   Only done above 1150px: below that .lead-story spans the FULL container
+   width with no side gutter, so a negative offset there would push the
+   arrows outside the page and reintroduce the exact horizontal-overflow
+   risk this component was built to avoid. */
 .spotlight-arrow{
   position: absolute; top: 50%; transform: translateY(-50%); z-index: 5;
   width: 34px; height: 34px; padding: 0; border-radius: 50%;
@@ -337,6 +352,12 @@ li.has-dropdown.open .dropdown{ display:block; }
 .spotlight-prev::before{ transform: rotate(-135deg); margin-left: 4px; }
 .spotlight-next{ right: 6px; }
 .spotlight-next::before{ transform: rotate(45deg); margin-right: 4px; }
+@media (min-width: 1151px){
+  .spotlight-arrow{ background: transparent; }
+  .spotlight-arrow:hover{ background: var(--paper-soft); }
+  .spotlight-prev{ left: -37px; }
+  .spotlight-next{ right: -37px; }
+}
 /* Dots + pause share one centered row, sitting between the media and text
    tracks (see the big comment above) -- NOT stacked/duplicated per slide,
    just one persistent row like .rail-head. The pause button is pinned to
