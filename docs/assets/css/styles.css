@@ -235,7 +235,7 @@ li.has-dropdown.open .dropdown{ display:block; }
    secondary headlines / lead story / Hub-updates rail, no oversized
    placeholder art. Replaces the old single-story "featured-hero" block. ---------- */
 .lead-section{ padding: 28px 0 32px; border-bottom: 1px solid var(--line); }
-.lead-grid{ display:grid; grid-template-columns: 240px 1fr 280px; gap: 40px; align-items: start; }
+.lead-grid{ display:grid; grid-template-columns: 280px 1fr 280px; gap: 40px; align-items: start; }
 .lead-secondary{ grid-column: 1; border-right: 1px solid var(--line); padding-right: 28px; }
 .lead-secondary p{ font-size:.88rem; line-height:1.6; }
 .lead-join strong{ color: var(--umd-red); }
