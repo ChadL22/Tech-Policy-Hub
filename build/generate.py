@@ -24,7 +24,7 @@ SITE_URL = "https://chadl22.github.io/Tech-Policy-Hub/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026090805"
+ASSET_VERSION = "2026090806"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -729,12 +729,16 @@ def spotlight_html(items):
         </div>""")
         text_slides.append(f"""
         <div class="spotlight-slide{active}" data-slide="{i}">
-          <h1><a href="{it['link']}"{link_attrs(it['link'])}>{it['title']}</a></h1>
-          <div class="meta">{it['tag']} &middot; {it['date']}</div>
-          <p class="lede">{it['summary']}</p>
-          <div class="hero-actions">
-            <a href="{it['link']}"{link_attrs(it['link'])} class="btn btn-primary btn-arrow">{it['primary_label']}</a>
-            <a href="{it['topic_file']}" class="btn btn-ghost">Explore {it['topic']}</a>
+          <div class="spotlight-title-block">
+            <h1><a href="{it['link']}"{link_attrs(it['link'])}>{it['title']}</a></h1>
+          </div>
+          <div class="spotlight-body-block">
+            <div class="meta">{it['tag']} &middot; {it['date']}</div>
+            <p class="lede">{it['summary']}</p>
+            <div class="hero-actions">
+              <a href="{it['link']}"{link_attrs(it['link'])} class="btn btn-primary btn-arrow">{it['primary_label']}</a>
+              <a href="{it['topic_file']}" class="btn btn-ghost">Explore {it['topic']}</a>
+            </div>
           </div>
         </div>""")
     dots = "".join(
