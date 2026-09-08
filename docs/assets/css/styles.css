@@ -404,6 +404,11 @@ li.has-dropdown.open .dropdown{ display:block; }
   .lead-secondary{ border-right:none; padding-right:0; }
   .lead-secondary, .lead-rail{ border-left:none; padding-left:0; border-top: 2px solid var(--ink); padding-top: 24px; }
   .lead-story{ order: -1; }
+  /* .lead-rail has no left border/padding to be flush with at this
+     width (it uses a border-top like .lead-secondary instead, see
+     above) -- undo .rail-foot-divider's negative margin so it doesn't
+     overhang past the column's edge. */
+  .rail-foot-divider{ margin-left: 0; width: 100%; }
 }
 
 /* ---------- Questions We Answer ---------- */
@@ -638,6 +643,16 @@ li.has-dropdown.open .dropdown{ display:block; }
    syncHubNewsHeight() in main.js, for the runtime-measured approach
    that replaced it. */
 .rail-head--stacked{ margin-top: 16px; padding-top: 24px; border-top: 1px solid var(--line); }
+/* The Hub News rail's closing divider (see .lead-rail in build_all.py)
+   reuses .rail-head--stacked's spacing/border but needs its border-top
+   to start flush with .lead-rail's own border-left, not indented in
+   from it the way "Research Areas"' heading (.rail-head--stacked's
+   other use, in .lead-secondary) reads fine being indented alongside
+   its own text -- this one has no text to align with, so being inset
+   just reads as a gap between the two lines instead of a corner. Pulled
+   left by .lead-rail's own padding-left (28px) and widened to match,
+   so the border-box's left edge lines up with the vertical border. */
+.rail-foot-divider{ margin-left: -28px; width: calc(100% + 28px); }
 .research-matrix--rail{ border-color: var(--line); }
 /* Follow-up 55: `justify-content:center` here vertically centered each
    cell's index+name block WITHIN the row's full height, which is set by
