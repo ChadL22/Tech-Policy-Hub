@@ -24,7 +24,7 @@ SITE_URL = "https://chadl22.github.io/Tech-Policy-Hub/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026090804"
+ASSET_VERSION = "2026090805"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -145,12 +145,8 @@ def header(active):
 <header class="site-header">
   <div class="container header-inner">
     <div class="brand-lockup">
-      <a href="https://gotech.umd.edu/" target="_blank" rel="noopener" class="umd-logo-link" aria-label="University of Maryland">
-        <img src="assets/img/umd-seal.png?v={ASSET_VERSION}" alt="University of Maryland" class="umd-logo">
-      </a>
-      <span class="brand-divider" aria-hidden="true"></span>
-      <a href="index.html" class="brand">
-        <img src="assets/img/tph-mark.png?v={ASSET_VERSION}" alt="Tech Policy Hub" class="tph-mark">
+      <a href="index.html" class="brand" aria-label="Tech Policy Hub, University of Maryland School of Public Policy">
+        <img src="assets/img/sopp-tph-lockup.png?v={ASSET_VERSION}" alt="University of Maryland School of Public Policy &ndash; Tech Policy Hub" class="brand-mark">
       </a>
     </div>
     <nav class="primary-nav" aria-label="Primary">
