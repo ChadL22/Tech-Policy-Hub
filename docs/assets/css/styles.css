@@ -319,31 +319,18 @@ li.has-dropdown.open .dropdown{ display:block; }
   max-width: none; line-height: 1.5; min-height: 3em;
   display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
 }
-/* Title + body color blocks -- mirrors the red "initiative" banner /
-   dark control-bar treatment from the user's reference (a red block
-   holding the headline, a charcoal block holding everything below it),
-   reusing --umd-red and --header-band (the same dark tone .ink-bg
-   sections already use elsewhere on the site) rather than introducing
-   new colors. Wins over the plain .lead-story h1/.meta/.lede rules
-   above by appearing later in the cascade at equal specificity. */
-.spotlight-title-block{ background: var(--umd-red); padding: 16px 22px; }
-.spotlight-title-block h1{ margin: 0; }
-.spotlight-title-block h1 a{ color: #fff; }
-.spotlight-title-block h1 a:hover{ color: #fff; text-decoration: underline; }
-.spotlight-body-block{ background: var(--header-band); color: #fff; padding: 20px 22px 24px; }
-.spotlight-body-block .meta{ color: rgba(255,255,255,.62); }
-.spotlight-body-block .lede{ color: #C7CACD; }
-.spotlight-body-block .hero-actions{ display:flex; align-items:center; gap:14px; margin-top: 18px; flex-wrap:wrap; }
-/* Solid off-white / gold fills for the two action buttons, matching
-   the two-tone prev/next arrow blocks from the user's reference
-   (off-white block + gray arrow, gold block + black arrow) rather
-   than the site's default red-fill/dark-outline button pair. Scoped
-   to .spotlight-body-block via a class+class selector so it wins over
-   .btn-primary/.btn-ghost's own rules regardless of source order. */
-.spotlight-body-block .btn-primary{ background: var(--umd-gold); color: var(--ink); border-color: var(--umd-gold); }
-.spotlight-body-block .btn-primary:hover{ filter: brightness(.92); }
-.spotlight-body-block .btn-ghost{ background: var(--paper-soft); color: var(--ink); border-color: var(--paper-soft); }
-.spotlight-body-block .btn-ghost:hover{ filter: brightness(.92); }
+/* Light palette (follow-up) -- the solid red-title/charcoal-body blocks
+   above were replaced per a second reference image (a white calendar-tile
+   event card: red used only for a small month chip, black title/body
+   text, thin gold accent bar along the bottom). .meta-tag recreates that
+   small red chip for the "Publication"/"Award"/etc. tag word, and the
+   gold bar sits on .spotlight-track itself so it spans the full panel
+   width once, below whichever slide is showing, rather than per-slide. */
+.meta-tag{
+  display:inline-block; background: var(--umd-red); color:#fff; font-weight:700; text-transform:uppercase;
+  font-size:.68rem; letter-spacing:.03em; padding: 3px 8px; border-radius: var(--radius); margin-right: 6px;
+}
+.spotlight-track{ border-bottom: 4px solid var(--umd-gold); padding-bottom: 20px; }
 /* Prev/next carousel arrows -- vertically centered on .spotlight-media-track
    specifically (set inline by main.js, since that track is now media-only).
    CSS-drawn chevrons (a rotated two-sided border corner), matching the
