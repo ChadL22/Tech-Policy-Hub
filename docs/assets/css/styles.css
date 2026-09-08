@@ -334,8 +334,16 @@ li.has-dropdown.open .dropdown{ display:block; }
 .spotlight-body-block .meta{ color: rgba(255,255,255,.62); }
 .spotlight-body-block .lede{ color: #C7CACD; }
 .spotlight-body-block .hero-actions{ display:flex; align-items:center; gap:14px; margin-top: 18px; flex-wrap:wrap; }
-.spotlight-body-block .btn-ghost{ border-color:#fff; color:#fff; }
-.spotlight-body-block .btn-ghost:hover{ background:#fff; color: var(--ink); }
+/* Solid off-white / gold fills for the two action buttons, matching
+   the two-tone prev/next arrow blocks from the user's reference
+   (off-white block + gray arrow, gold block + black arrow) rather
+   than the site's default red-fill/dark-outline button pair. Scoped
+   to .spotlight-body-block via a class+class selector so it wins over
+   .btn-primary/.btn-ghost's own rules regardless of source order. */
+.spotlight-body-block .btn-primary{ background: var(--umd-gold); color: var(--ink); border-color: var(--umd-gold); }
+.spotlight-body-block .btn-primary:hover{ filter: brightness(.92); }
+.spotlight-body-block .btn-ghost{ background: var(--paper-soft); color: var(--ink); border-color: var(--paper-soft); }
+.spotlight-body-block .btn-ghost:hover{ filter: brightness(.92); }
 /* Prev/next carousel arrows -- vertically centered on .spotlight-media-track
    specifically (set inline by main.js, since that track is now media-only).
    CSS-drawn chevrons (a rotated two-sided border corner), matching the
