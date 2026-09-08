@@ -381,18 +381,24 @@ li.has-dropdown.open .dropdown{ display:block; }
   .spotlight-prev{ left: -37px; }
   .spotlight-next{ right: -37px; }
 }
-/* Dots sit in their own centered row, between the media and text tracks
-   (see the big comment above) -- NOT stacked/duplicated per slide, just
-   one persistent row like .rail-head, so playback position is visible
-   right under the image without scrolling past the title/summary. */
-.spotlight-controls{ display:flex; align-items:center; justify-content:center; margin-bottom: 14px; }
+/* Dots overlay the bottom of the image itself (a translucent pill,
+   like the pause button's inset-on-image treatment right below) rather
+   than sitting in their own row in the white gap under it -- per direct
+   user request. Centered, and kept clear of .spotlight-pause in the
+   corner. NOT stacked/duplicated per slide, just one persistent row,
+   positioned via .spotlight-media-track (position:relative). */
+.spotlight-controls{
+  position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 5;
+  display:flex; align-items:center; justify-content:center;
+  padding: 6px 10px; border-radius: 999px; background: rgba(0,0,0,.34);
+}
 .spotlight-dots{ display:flex; gap:8px; }
 .spotlight-dot{
-  width:9px; height:9px; padding:0; border-radius:50%; border:1.5px solid var(--ink-soft);
-  background: transparent; cursor:pointer; transition: background .15s ease, border-color .15s ease;
+  width:8px; height:8px; padding:0; border-radius:50%; border:1.5px solid rgba(255,255,255,.75);
+  background: rgba(255,255,255,.25); cursor:pointer; transition: background .15s ease, border-color .15s ease;
 }
-.spotlight-dot:hover{ border-color: var(--umd-red); }
-.spotlight-dot.is-active{ background: var(--umd-red); border-color: var(--umd-red); }
+.spotlight-dot:hover{ border-color: #fff; background: rgba(255,255,255,.5); }
+.spotlight-dot.is-active{ background: #fff; border-color: #fff; }
 /* Pause/play toggle -- CSS-drawn icon (two bars = "playing, click to
    pause"; a triangle = "paused, click to play"), swapped via .is-paused,
    rather than a Unicode/emoji glyph. Lives INSIDE .spotlight-media-track

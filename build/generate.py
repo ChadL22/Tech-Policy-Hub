@@ -24,7 +24,7 @@ SITE_URL = "https://chadl22.github.io/Tech-Policy-Hub/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026090813"
+ASSET_VERSION = "2026090814"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -747,12 +747,12 @@ def spotlight_html(items):
         <button type="button" class="spotlight-arrow spotlight-prev" data-spotlight-prev aria-label="Previous spotlight item"></button>
         <button type="button" class="spotlight-arrow spotlight-next" data-spotlight-next aria-label="Next spotlight item"></button>
         <div class="spotlight-media-track">{''.join(media_slides)}
+          <div class="spotlight-controls">
+            <div class="spotlight-dots">{dots}</div>
+          </div>
           <button type="button" class="spotlight-pause" data-spotlight-pause aria-pressed="false" aria-label="Pause slideshow">
             <i class="bar bar-1"></i><i class="bar bar-2"></i><i class="tri"></i>
           </button>
-        </div>
-        <div class="spotlight-controls">
-          <div class="spotlight-dots">{dots}</div>
         </div>
         <div class="spotlight-track">{''.join(text_slides)}
         </div>
