@@ -208,15 +208,16 @@ document.addEventListener('DOMContentLoaded', function () {
   // Homepage "Research Spotlight" -- one slide visible at a time, split
   // across TWO tracks that stay in sync (spotlight_html() in generate.py
   // renders both, hidden via CSS except .is-active): .spotlight-media-slide
-  // (just the image) and .spotlight-slide (title/meta/summary/actions),
-  // with .spotlight-controls (dots + pause) sitting between them in normal
-  // flow -- see the big comment in styles.css for why. Auto-advances on a
-  // timer, pauses on hover so it doesn't flip out from under someone
-  // reading, the .spotlight-dot buttons jump straight to a slide, the
-  // .spotlight-prev/.spotlight-next arrows step one at a time, and
-  // .spotlight-pause is a manual pause/play toggle -- a manual pause sticks
-  // (auto-advance stays off) through hover-unhover and further dot/arrow
-  // clicks, until the user un-pauses.
+  // (just the image) and .spotlight-slide (title/meta/summary/actions).
+  // The dots and prev/next arrows now live in .spotlight-footer, a
+  // persistent bottom bar in the .spotlight-card -- see the big comment
+  // in styles.css/generate.py for the Bloomberg-card layout this became.
+  // Auto-advances on a timer, pauses on hover so it doesn't flip out from
+  // under someone reading, the .spotlight-dot buttons jump straight to a
+  // slide, the .spotlight-prev/.spotlight-next arrows step one at a time,
+  // and .spotlight-pause is a manual pause/play toggle -- a manual pause
+  // sticks (auto-advance stays off) through hover-unhover and further
+  // dot/arrow clicks, until the user un-pauses.
   document.querySelectorAll('[data-spotlight]').forEach(function (widget) {
     var mediaSlides = Array.prototype.slice.call(widget.querySelectorAll('.spotlight-media-slide'));
     var textSlides = Array.prototype.slice.call(widget.querySelectorAll('.spotlight-slide'));
@@ -284,36 +285,17 @@ document.addEventListener('DOMContentLoaded', function () {
     if (prevBtn) prevBtn.addEventListener('click', function () { show(current - 1); startAuto(); });
     if (nextBtn) nextBtn.addEventListener('click', function () { show(current + 1); startAuto(); });
 
-    var mediaTrack = widget.querySelector('.spotlight-media-track');
-    // Vertically align the arrows with the lead image track specifically
-    // (not the whole widget, which also includes the controls row and the
-    // text track below it) -- .spotlight-media-track's own height IS the
-    // image's height now that media lives in its own track, so this is
-    // just "center on that track", no per-slide lookup needed. Re-run on
-    // resize since the aspect-ratio'd image's rendered height changes with
-    // viewport width.
-    function positionArrows() {
-      if ((!prevBtn && !nextBtn) || !mediaTrack) return;
-      var mediaRect = mediaTrack.getBoundingClientRect();
-      var widgetRect = widget.getBoundingClientRect();
-      var top = Math.round(mediaRect.top - widgetRect.top + mediaRect.height / 2);
-      if (prevBtn) prevBtn.style.top = top + 'px';
-      if (nextBtn) nextBtn.style.top = top + 'px';
-    }
-
-    // Title/summary height reservation is now a flat CSS min-height + 2-line
+    // Title/summary height reservation is a flat CSS min-height + 2-line
     // clamp (see styles.css) instead of a JS-measured "tallest real slide"
     // value -- a prior version of this measured each slide's natural
     // scrollHeight and reserved the max, which correctly held the button row
     // steady but still left a visible gap under shorter slides whenever any
     // ONE slide needed a 3rd line. A flat clamp has no such gap since it
     // never varies by content, at the cost of truncating (with an ellipsis)
-    // any title/summary long enough to need a 3rd line. No JS measurement or
-    // inline min-height needed for that anymore -- only the arrow vertical
-    // position still depends on the rendered layout, so only that needs to
-    // re-run on resize.
-    positionArrows();
-    window.addEventListener('resize', positionArrows);
+    // any title/summary long enough to need a 3rd line. No JS measurement
+    // needed for that, and the prev/next arrows no longer need JS
+    // positioning either now that they're static flex items in
+    // .spotlight-footer instead of floating beside the image.
 
     var pauseBtn = widget.querySelector('[data-spotlight-pause]');
     function setPaused(p) {

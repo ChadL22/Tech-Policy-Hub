@@ -24,7 +24,7 @@ SITE_URL = "https://chadl22.github.io/Tech-Policy-Hub/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026090815"
+ASSET_VERSION = "2026090816"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -688,37 +688,41 @@ def lead_media_html(topic_label):
 
 def spotlight_html(items):
     """Homepage "Research Spotlight" -- a small slideshow (one slide visible
-    at a time, NOT a static list like Field Pulse) of 3-5 Hub
-    outputs: papers, media appearances, presentations, etc. "Research
-    Spotlight" is a single persistent header (.rail-head, matching the
-    "Guiding Questions"/"Hub News" headers on the other two lead-grid
-    columns) -- it does NOT repeat per slide and never changes. Each
-    slide's own .meta line (tag + date) sits next to the summary instead,
-    since THAT changes per item. Reuses the .lead-media/h1/.lede/
-    .hero-actions markup and CSS already defined for the single-item
-    version this replaces. main.js finds every [data-spotlight],
+    at a time, NOT a static list like Field Pulse) of 3-5 Hub outputs and
+    Hub-adjacent research: papers, media appearances, presentations, etc.,
+    NOT all necessarily Hub-authored -- the Hub is interdisciplinary and
+    this is meant to also carry tech-policy-relevant work from other
+    campus departments/labs (see .spotlight-credit below).
+
+    Rebuilt (follow-up) into a single bordered .spotlight-card per a
+    Bloomberg "Today's Videos" card reference the user provided, replacing
+    the old floating-label + gray-frame-around-a-white-card look:
+      .spotlight-head    persistent gray header strip -- the "Research
+                          Spotlight" label + a "View All Research" link to
+                          research.html, echoing the reference's
+                          title + "Explore More" row. Does NOT repeat per
+                          slide.
+      .spotlight-media-track   the image (one .spotlight-media-slide per
+                          item) plus the persistent .spotlight-pause
+                          toggle, inset in its bottom-right corner.
+      .spotlight-track    title/meta/credit/summary/actions (one
+                          .spotlight-slide per item).
+      .spotlight-footer   persistent bottom bar -- .spotlight-dots (left)
+                          + the prev/next .spotlight-arrow buttons
+                          (right), anchored together like the reference's
+                          bottom control row, instead of the dots
+                          overlaying the image and the arrows floating
+                          beside it.
+    .spotlight-media-track/.spotlight-track still use the CSS Grid
+    stacking trick (every slide sharing one grid-area, sized to the
+    tallest) as two independent stacks, so each track's height stays
+    constant regardless of which slide is active -- main.js's show()
+    toggles the matching .spotlight-media-slide/.spotlight-slide pair
+    (same data-slide index) together. main.js finds every [data-spotlight],
     auto-advances through an .is-active class, pauses on hover, and wires
-    the .spotlight-dot buttons for manual navigation -- see follow-ups
-    26-27. Also wires the prev/next .spotlight-arrow buttons and the
-    .spotlight-pause manual pause/play toggle (see follow-up 42) -- a
-    manual pause sticks even through hover-unhover and dot/arrow clicks.
-
-    Split into TWO separately-stacked tracks (follow-up 43) rather than one:
-    .spotlight-media-track (just the image) and .spotlight-track (title/
-    meta/summary/actions), with .spotlight-dots sitting between them in
-    normal flow -- per the user's request, so playback position is visible
-    right under the image, above the title, without scrolling past the
-    text. Each still uses the same CSS Grid stacking trick (every slide
-    sharing one grid-area, fixed to the tallest), just as two independent
-    stacks instead of one combined one -- main.js's show() toggles the
-    matching pair (same data-slide index) in both tracks together.
-
-    .spotlight-pause (follow-up 45) lives INSIDE .spotlight-media-track as
-    an absolutely-positioned overlay in the image's bottom-right corner --
-    not in the dots row -- per direct user request. It's a sibling of the
-    per-slide .spotlight-media-slide divs, not per-slide itself, so it's
-    one persistent button regardless of which slide is showing (same
-    pattern as the prev/next arrows living outside the per-slide loop)."""
+    the .spotlight-dot / prev-next / pause controls -- none of that
+    changed, only where those controls sit in the markup (main.js queries
+    by class/attribute, not DOM position, so the move is CSS/HTML-only)."""
     media_slides = []
     text_slides = []
     for i, it in enumerate(items):
@@ -743,19 +747,24 @@ def spotlight_html(items):
         for i in range(len(items))
     )
     return f"""
-      <div class="rail-head">Research Spotlight</div>
-      <div class="spotlight" data-spotlight>
-        <button type="button" class="spotlight-arrow spotlight-prev" data-spotlight-prev aria-label="Previous spotlight item"></button>
-        <button type="button" class="spotlight-arrow spotlight-next" data-spotlight-next aria-label="Next spotlight item"></button>
+      <div class="spotlight-card" data-spotlight>
+        <div class="spotlight-head">
+          <span class="spotlight-head-label">Research Spotlight</span>
+          <a href="research.html" class="spotlight-head-link">View All Research</a>
+        </div>
         <div class="spotlight-media-track">{''.join(media_slides)}
-          <div class="spotlight-controls">
-            <div class="spotlight-dots">{dots}</div>
-          </div>
           <button type="button" class="spotlight-pause" data-spotlight-pause aria-pressed="false" aria-label="Pause slideshow">
             <i class="bar bar-1"></i><i class="bar bar-2"></i><i class="tri"></i>
           </button>
         </div>
         <div class="spotlight-track">{''.join(text_slides)}
+        </div>
+        <div class="spotlight-footer">
+          <div class="spotlight-dots">{dots}</div>
+          <div class="spotlight-arrows">
+            <button type="button" class="spotlight-arrow spotlight-prev" data-spotlight-prev aria-label="Previous spotlight item"></button>
+            <button type="button" class="spotlight-arrow spotlight-next" data-spotlight-next aria-label="Next spotlight item"></button>
+          </div>
         </div>
       </div>"""
 

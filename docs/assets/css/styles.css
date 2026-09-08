@@ -258,32 +258,40 @@ li.has-dropdown.open .dropdown{ display:block; }
 .lead-story h1 a{ color: var(--ink); }
 .lead-story h1 a:hover{ color: var(--umd-red); text-decoration: none; }
 .lead-story .lede{ font-size: .92rem; max-width: 52ch; }
-/* Research Spotlight slideshow -- one slide visible at a time, advanced by
-   main.js on a timer, the .spotlight-dot buttons, the prev/next
-   .spotlight-arrow buttons, or paused via .spotlight-pause.
-   Slide content reuses the .meta/.lead-media/h1/.lede/.hero-actions rules
-   above unchanged (they're descendant selectors under .lead-story, which
-   still wraps this), except the lede's 52ch cap is dropped here so the
-   summary fills the full column width instead of wrapping narrow.
-   Split into TWO independently-stacked tracks (follow-up 43) so
-   .spotlight-controls (dots + pause) can sit in normal flow BETWEEN them --
-   right under the image, above the title -- per the user's request to see
-   playback position without scrolling past the text:
-     .spotlight-media-track   (just the image, one .spotlight-media-slide each)
-     .spotlight-controls      (dots + pause, NOT stacked -- one persistent copy)
-     .spotlight-track         (title/meta/summary/actions, one .spotlight-slide each)
-   Each track is its own CSS Grid with every slide placed in the SAME named
-   area, so they stack directly on top of one another instead of sitting in
-   normal flow. Every slide (not just the active one) stays part of layout
-   -- opacity/pointer-events hide it, not display:none -- so each grid's
-   auto row height is always its tallest slide's height, fixed no matter
-   which slide is showing. That's what keeps the media track's height AND
-   the text track's height independently constant as slides cycle, so nothing
-   below either track ever reflows. main.js's show() toggles the matching
-   .spotlight-media-slide/.spotlight-slide pair (same data-slide index)
-   together. */
-.spotlight{ position: relative; }
-.spotlight-media-track{ position: relative; display: grid; grid-template-areas: "slide"; margin-bottom: 14px; }
+/* Research Spotlight -- a bordered card (.spotlight-card) rebuilt per a
+   Bloomberg "Today's Videos" card the user provided as a reference:
+   a persistent gray header strip (label + "View All Research" link),
+   the image, the title/summary content, and a bottom bar pairing the
+   slide dots with the prev/next arrows -- replacing the earlier
+   floating-label + gray-frame-around-white-card treatment. Slide
+   content still reuses the .meta/.lead-media/h1/.lede/.hero-actions
+   rules above (descendant selectors under .lead-story, which still
+   wraps this). .spotlight-media-track (the image) and .spotlight-track
+   (title/meta/credit/summary/actions) are each their own CSS Grid with
+   every slide sharing one grid-area, so each track's height stays fixed
+   to its tallest slide no matter which one is active -- main.js's
+   show() toggles the matching .spotlight-media-slide/.spotlight-slide
+   pair (same data-slide index) together. */
+.spotlight-card{
+  position: relative; background: var(--paper);
+  border: 1px solid var(--line); border-top: 3px solid var(--umd-gold);
+}
+.spotlight-head{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding: 14px 18px; background: var(--paper-soft); border-bottom: 1px solid var(--line);
+}
+.spotlight-head-label{
+  font-family: var(--font-nav); font-size:.72rem; font-weight:700; letter-spacing:.06em;
+  text-transform:uppercase; color: var(--ink-soft);
+}
+.spotlight-head-link{
+  font-family: var(--font-nav); font-weight:700; font-size:.74rem; text-transform:uppercase;
+  letter-spacing:.02em; color: var(--ink); border: 1.5px solid var(--ink); border-radius: 999px;
+  padding: 7px 16px; white-space:nowrap; text-decoration: none !important;
+  transition: background .15s ease, color .15s ease;
+}
+.spotlight-head-link:hover{ background: var(--ink); color:#fff; }
+.spotlight-media-track{ position: relative; display: grid; grid-template-areas: "slide"; }
 .spotlight-media-slide{ grid-area: slide; opacity:0; pointer-events:none; transition: opacity .6s ease-in-out; }
 .spotlight-media-slide.is-active.is-visible{ opacity:1; pointer-events:auto; }
 .spotlight-media-slide .lead-media{ margin-bottom: 0; }
@@ -291,36 +299,17 @@ li.has-dropdown.open .dropdown{ display:block; }
 /* Fade (not a hard cut) -- main.js's show() removes .is-visible first
    (opacity 1->0 over FADE_MS), waits for that to finish, THEN swaps
    .is-active to the next slide and adds .is-visible back (opacity
-   0->1). Slowed and eased (was a linear-feeling .32s) per user feedback
-   that the cut still read as jarring -- FADE_MS here must match the JS
-   constant of the same name. */
+   0->1). FADE_MS here must match the JS constant of the same name. */
 .spotlight-slide{
   grid-area: slide; opacity:0; pointer-events:none;
   transition: opacity .6s ease-in-out;
-  /* White card hugging the text, sitting inside .spotlight-track's own
-     gray (--slate-gray) padding -- per user request, the gray shows as
-     a frame AROUND the text block rather than directly behind it. Kept
-     tight (not the text's only bound -- the text itself was also sized
-     down, see .lead-story h1/.lede) so the gray frame reads as the
-     dominant shape, matching the ratio in the user's reference. The gold
-     accent lives here (not on .spotlight-track) so it sits as the white
-     card's own bottom border, per direct user request. */
-  background: var(--paper); padding: 14px 16px; border-bottom: 4px solid var(--umd-gold);
+  padding: 20px 18px;
 }
 .spotlight-slide.is-active.is-visible{ opacity:1; pointer-events:auto; }
-/* Fixed-height title/summary via a hard 2-line cap (not a per-slide/per-
-   breakpoint MEASURED reservation -- an earlier version of this measured
-   the tallest real slide at each viewport width and reserved exactly that,
-   which correctly held the button row's position but still left a visible
-   gap under shorter titles whenever any ONE of the 5 slides needed a 3rd
-   line, per direct user feedback that the gap was still too big). A flat
-   2-line clamp is smaller and, critically, CONSTANT regardless of content
-   or viewport, so there's never a taller sibling slide inflating the
-   reservation -- the tradeoff is that a title/summary long enough to need
-   a 3rd line is truncated with an ellipsis rather than reserving room for
-   it. line-height is pinned explicitly so the em-based min-height math
-   (lines * line-height) stays exact as h1's font-size itself is a fluid
-   clamp(). No JS measurement needed for this anymore -- see main.js. */
+/* Fixed-height title/summary via a hard 2-line cap so there's never a
+   taller sibling slide inflating the reservation -- the tradeoff is
+   that a title/summary long enough to need a 3rd line is truncated
+   with an ellipsis rather than reserving room for it. */
 .spotlight-slide h1{
   line-height: 1.2; min-height: 2.4em;
   display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
@@ -329,13 +318,7 @@ li.has-dropdown.open .dropdown{ display:block; }
   max-width: none; line-height: 1.5; min-height: 3em;
   display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
 }
-/* Light palette (follow-up) -- the solid red-title/charcoal-body blocks
-   above were replaced per a second reference image (a white calendar-tile
-   event card: red used only for a small month chip, black title/body
-   text, thin gold accent bar along the bottom). .meta-tag recreates that
-   small red chip for the "Publication"/"Award"/etc. tag word, and the
-   gold bar sits on .spotlight-track itself so it spans the full panel
-   width once, below whichever slide is showing, rather than per-slide. */
+/* Small filled red chip for the tag word ("Publication"/"Award"/etc). */
 .meta-tag{
   display:inline-block; background: var(--umd-red); color:#fff; font-weight:700; text-transform:uppercase;
   font-size:.68rem; letter-spacing:.03em; padding: 3px 8px; border-radius: var(--radius); margin-right: 6px;
@@ -345,73 +328,46 @@ li.has-dropdown.open .dropdown{ display:block; }
    authored work, so every slide names its source (Hub team or an
    outside lab/department) rather than assuming one shared affiliation. */
 .spotlight-credit{ font-size:.82rem; font-style: italic; color: var(--ink-soft); margin: 4px 0 10px; }
-.spotlight-track{ background: var(--slate-gray); padding: 32px; }
-/* Prev/next carousel arrows -- vertically centered on .spotlight-media-track
-   specifically (set inline by main.js, since that track is now media-only).
-   CSS-drawn chevrons (a rotated two-sided border corner), matching the
+/* Bottom bar -- dots (playback position) on the left, prev/next arrows
+   on the right, both static flex items now (not absolutely positioned
+   over/beside the image) since they live in their own row below the
+   content, matching the reference's paired bottom controls. */
+.spotlight-footer{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding: 12px 18px; border-top: 1px solid var(--line);
+}
+.spotlight-dots{ display:flex; gap:8px; }
+.spotlight-dot{
+  width:8px; height:8px; padding:0; border-radius:50%; border:1.5px solid var(--ink-soft);
+  background: transparent; cursor:pointer; transition: background .15s ease, border-color .15s ease;
+}
+.spotlight-dot:hover{ border-color: var(--umd-red); }
+.spotlight-dot.is-active{ background: var(--ink); border-color: var(--ink); }
+.spotlight-arrows{ display:flex; gap:8px; }
+/* CSS-drawn chevrons (a rotated two-sided border corner), matching the
    project's no-icon-font convention already used by .spotlight-dot/
-   .spotlight-pause.
-   Positioned INSIDE the image by default (mobile/tablet, where the lead
-   grid has collapsed to one column and there's no space beside the image
-   to put them) but moved OUT into the white gutter beside the image once
-   the 3-column .lead-grid is active (see the min-width:1151px override
-   below) -- per the user's request to get them off the image entirely.
-   The -37px offset centers a 34px button in the grid's 40px column gap
-   (see .lead-grid's `gap: 40px` -- (40-34)/2 = 3px clearance each side).
-   Only done above 1150px: below that .lead-story spans the FULL container
-   width with no side gutter, so a negative offset there would push the
-   arrows outside the page and reintroduce the exact horizontal-overflow
-   risk this component was built to avoid. */
+   .spotlight-pause. */
 .spotlight-arrow{
-  position: absolute; top: 50%; transform: translateY(-50%); z-index: 5;
-  width: 34px; height: 34px; padding: 0; border-radius: 50%;
-  border: 1.5px solid var(--ink-soft); background: rgba(255,255,255,.85);
+  position: static; width: 32px; height: 32px; padding: 0; border-radius: 50%;
+  border: 1.5px solid var(--ink-soft); background: transparent;
   cursor: pointer; display: flex; align-items: center; justify-content: center;
   transition: border-color .15s ease, background .15s ease;
 }
-.spotlight-arrow:hover{ border-color: var(--umd-red); background: #fff; }
+.spotlight-arrow:hover{ border-color: var(--umd-red); background: var(--paper-soft); }
 .spotlight-arrow::before{
   content: ''; width: 8px; height: 8px;
   border-right: 2px solid var(--ink-soft); border-top: 2px solid var(--ink-soft);
   transition: border-color .15s ease;
 }
 .spotlight-arrow:hover::before{ border-color: var(--umd-red); }
-.spotlight-prev{ left: 6px; }
 .spotlight-prev::before{ transform: rotate(-135deg); margin-left: 4px; }
-.spotlight-next{ right: 6px; }
 .spotlight-next::before{ transform: rotate(45deg); margin-right: 4px; }
-@media (min-width: 1151px){
-  .spotlight-arrow{ background: transparent; }
-  .spotlight-arrow:hover{ background: var(--paper-soft); }
-  .spotlight-prev{ left: -37px; }
-  .spotlight-next{ right: -37px; }
-}
-/* Dots overlay the bottom of the image itself (a translucent pill,
-   like the pause button's inset-on-image treatment right below) rather
-   than sitting in their own row in the white gap under it -- per direct
-   user request. Centered, and kept clear of .spotlight-pause in the
-   corner. NOT stacked/duplicated per slide, just one persistent row,
-   positioned via .spotlight-media-track (position:relative). */
-.spotlight-controls{
-  position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 5;
-  display:flex; align-items:center; justify-content:center;
-  padding: 6px 10px; border-radius: 999px; background: rgba(0,0,0,.34);
-}
-.spotlight-dots{ display:flex; gap:8px; }
-.spotlight-dot{
-  width:8px; height:8px; padding:0; border-radius:50%; border:1.5px solid rgba(255,255,255,.75);
-  background: rgba(255,255,255,.25); cursor:pointer; transition: background .15s ease, border-color .15s ease;
-}
-.spotlight-dot:hover{ border-color: #fff; background: rgba(255,255,255,.5); }
-.spotlight-dot.is-active{ background: #fff; border-color: #fff; }
 /* Pause/play toggle -- CSS-drawn icon (two bars = "playing, click to
-   pause"; a triangle = "paused, click to play"), swapped via .is-paused,
-   rather than a Unicode/emoji glyph. Lives INSIDE .spotlight-media-track
-   (which is position:relative) as an overlay in the image's bottom-right
-   corner (follow-up 45, direct user request) rather than alongside the
-   dots -- a translucent white circle (matching the prev/next arrows'
-   inset-on-image treatment) so the icon stays legible against whichever
-   color the current slide's image graphic happens to be. */
+   pause"; a triangle = "paused, click to play"), swapped via .is-paused.
+   Lives INSIDE .spotlight-media-track (position:relative) as an overlay
+   in the image's bottom-right corner -- a translucent white circle so
+   the icon stays legible against whichever color the current slide's
+   image graphic happens to be. */
 .spotlight-pause{
   position: absolute; right: 10px; bottom: 10px; z-index: 5;
   width: 30px; height: 30px; padding: 0; border-radius: 50%;
