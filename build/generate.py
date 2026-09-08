@@ -829,9 +829,15 @@ def rail_html(entries):
     title, hairline-divided, no imagery. Used for the side rails next to
     the homepage hero and the Recent News section, so those sections don't
     have to be one massive full-width block to feel substantial -- entries
-    need 'tag', 'title', and 'link' keys."""
-    return "".join(f"""
-        <a class="rail-item" href="{e['link']}"{link_attrs(e['link'])}><span class="tag">{e['tag']}</span><h4>{e['title']}</h4></a>""" for e in entries)
+    need 'tag', 'title', and 'link' keys. 'date' is optional (NEWS_ITEMS
+    has one, EVENTS_RAIL doesn't -- it bakes its own date into 'tag'
+    instead) -- shown next to the tag, AP-style, via ap_date()."""
+    out = []
+    for e in entries:
+        date_bit = f'<span class="date">{ap_date(e["date"])}</span>' if e.get("date") else ""
+        out.append(f"""
+        <a class="rail-item" href="{e['link']}"{link_attrs(e['link'])}><span class="tag">{e['tag']}</span>{date_bit}<h4>{e['title']}</h4></a>""")
+    return "".join(out)
 
 
 def feed_items_html(items, limit=None):
@@ -926,6 +932,29 @@ def news_cards_html(items, limit=None):
 
 
 _MONTH_NUM = {abbr.upper(): i for i, abbr in enumerate(calendar.month_abbr) if abbr}
+
+# AP style: Jan./Feb./Aug./Sept./Oct./Nov./Dec. abbreviate when paired
+# with a day number; March/April/May/June/July are always spelled out
+# (they're already short enough AP doesn't shorten them further). When
+# a NEWS_ITEMS date has no day (just "Mon YYYY"), AP style also spells
+# the month out in full rather than abbreviating it.
+_MONTH_AP_WITH_DAY = {
+    1: "Jan.", 2: "Feb.", 3: "March", 4: "April", 5: "May", 6: "June",
+    7: "July", 8: "Aug.", 9: "Sept.", 10: "Oct.", 11: "Nov.", 12: "Dec.",
+}
+
+
+def ap_date(date_str):
+    """Reformat a NEWS_ITEMS "date" value ("Jun 24, 2025" or "Jul 2025")
+    into AP style for display in the Hub News rail, e.g. "June 24, 2025"
+    or "July 2025"."""
+    parts = date_str.replace(",", "").split()
+    month_num = _MONTH_NUM[parts[0].upper()]
+    if len(parts) == 3:
+        _, day, year = parts
+        return f"{_MONTH_AP_WITH_DAY[month_num]} {day}, {year}"
+    _, year = parts
+    return f"{calendar.month_name[month_num]} {year}"
 
 
 def calendar_legend_html(categories):
