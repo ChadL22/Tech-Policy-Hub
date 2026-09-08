@@ -714,12 +714,32 @@ li.has-dropdown.open .dropdown{ display:block; }
    the invite its own visual weight instead of reading as a third
    paragraph identical to the first two. */
 .about-hub-grid{ display:grid; grid-template-columns: 1.6fr 1fr; gap: 56px; align-items:start; }
+/* Follow-up: Guiding Questions now lives in this section (swapped with
+   "What is the Tech Policy Hub?", which moved up into the hero's
+   .lead-secondary column) -- stacked full-width instead of the 2-col
+   split, since a numbered question list doesn't need a second column
+   the way the old two-paragraph mission copy did. Reuses .about-hub-grid
+   (same gap) rather than a bespoke layout. */
+.about-hub-grid--stack{ grid-template-columns: 1fr; }
+.about-hub-grid--stack .about-hub-join{ margin-top: 0; }
+
+/* Guiding Questions' default styling (.guide-q) assumes it's sitting on
+   the light page background (the hero's .lead-secondary); overridden
+   here for legibility against .about-hub's dark background. */
+.about-hub .guide-q{ border-top-color: rgba(255,255,255,.15); }
+.about-hub .guide-q .num{ color: var(--umd-gold); }
+.about-hub .guide-q .qtext{ color: #fff; }
 
 .about-hub-explore{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-top:28px; }
 .about-hub-explore-label{
   font-family: var(--font-nav); font-size:.78rem; font-weight:700; letter-spacing:.08em;
   text-transform:uppercase; color:#fff;
 }
+/* "What is the Tech Policy Hub?"'s Explore row now also appears in the
+   hero's .lead-secondary column, on the light page background rather
+   than .about-hub's dark one -- .about-hub-explore-label's own color:#fff
+   would be invisible there, so .lead-explore overrides it. */
+.lead-explore .about-hub-explore-label{ color: var(--ink-soft); }
 
 .about-hub-join{
   background: rgba(255,255,255,.06);

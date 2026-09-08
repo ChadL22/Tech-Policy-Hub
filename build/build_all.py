@@ -32,8 +32,15 @@ home_body = f"""
 <section class="lead-section">
   <div class="container lead-grid">
     <div class="lead-secondary">
-      <div class="rail-head">Guiding Questions</div>
-      {g.guiding_questions_html(g.QUESTIONS)}
+      <div class="rail-head">What is the Tech Policy Hub?</div>
+      <p>The University of Maryland&rsquo;s Tech Policy Hub studies tech policy from a socio-technical perspective, building the bridge between computer science &amp; public policy to understand how policy is designed and implemented for, by, and with tech. Our hub spans across the forefront of tech policy domains, including cybersecurity, consumer privacy, misinformation, and trustworthy machine learning (ML).</p>
+      <p>We bring together DMV-based issue networks of practitioners, scholars, industry leaders, and civil activists to inform, impact, and shape the future of technology in society, applying a mix of comparative, qualitative, and computational research methods to advance our understanding and craft socially desired future paths for tech policy development.</p>
+      <div class="about-hub-explore lead-explore">
+        <span class="about-hub-explore-label">Explore</span>
+        <a class="btn btn-gold" href="research.html">Research</a>
+        <a class="btn btn-gold" href="people.html">People</a>
+        <a class="btn btn-gold" href="events.html">Events</a>
+      </div>
     </div>
     <div class="lead-story">
       {g.spotlight_html(g.SPOTLIGHT_ITEMS)}
@@ -86,16 +93,11 @@ home_body = f"""
 
 <section id="about" class="about-hub">
   <div class="container">
-    <div class="about-hub-grid">
+    <div class="about-hub-grid about-hub-grid--stack">
       <div class="about-hub-lead">
-        <span class="eyebrow">What is the Tech Policy Hub?</span>
-        <p>The University of Maryland&rsquo;s Tech Policy Hub studies tech policy from a socio-technical perspective, building the bridge between computer science &amp; public policy to understand how policy is designed and implemented for, by, and with tech. Our hub spans across the forefront of tech policy domains, including cybersecurity, consumer privacy, misinformation, and trustworthy machine learning (ML).</p>
-        <p>We bring together DMV-based issue networks of practitioners, scholars, industry leaders, and civil activists to inform, impact, and shape the future of technology in society, applying a mix of comparative, qualitative, and computational research methods to advance our understanding and craft socially desired future paths for tech policy development.</p>
-        <div class="about-hub-explore">
-          <span class="about-hub-explore-label">Explore</span>
-          <a class="btn btn-gold" href="research.html">Research</a>
-          <a class="btn btn-gold" href="people.html">People</a>
-          <a class="btn btn-gold" href="events.html">Events</a>
+        <span class="eyebrow">Guiding Questions</span>
+        <div class="guide-q-list">
+          {g.guiding_questions_html(g.QUESTIONS)}
         </div>
       </div>
       <div class="about-hub-join">
