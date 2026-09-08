@@ -279,10 +279,15 @@ li.has-dropdown.open .dropdown{ display:block; }
    (same data-slide index) together. */
 .spotlight-card{
   position: relative; background: var(--paper);
-  border: 1px solid var(--line); border-top: 3px solid var(--umd-gold);
+  border: 1px solid var(--line);
   border-radius: 10px; overflow: hidden;
 }
-.spotlight-media-track{ position: relative; display: grid; grid-template-areas: "slide"; }
+/* Gold accent moved to the bottom of the image (was the card's top
+   border) per direct user request. */
+.spotlight-media-track{
+  position: relative; display: grid; grid-template-areas: "slide";
+  border-bottom: 3px solid var(--umd-gold);
+}
 .spotlight-media-slide{ grid-area: slide; opacity:0; pointer-events:none; transition: opacity .6s ease-in-out; }
 .spotlight-media-slide.is-active.is-visible{ opacity:1; pointer-events:auto; }
 .spotlight-media-slide .lead-media{ margin-bottom: 0; }
