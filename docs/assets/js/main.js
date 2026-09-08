@@ -364,6 +364,12 @@ document.addEventListener('DOMContentLoaded', function () {
     var left = document.querySelector('.lead-secondary');
     var wrap = document.querySelector('.lead-rail .rail-scroll-wrap');
     var scroll = document.querySelector('.lead-rail .rail-scroll');
+    // Closing divider below the scroll box (mirrors the one above
+    // Research Areas in .lead-secondary) -- empty, exists purely for
+    // its border-top/margin-top/padding-top, so its own rendered space
+    // has to come out of the scroll box's budget or .lead-rail would
+    // run past .lead-secondary's bottom by that amount.
+    var foot = document.querySelector('.lead-rail .rail-head--stacked');
     if (!left || !wrap || !scroll) return;
 
     function sync() {
@@ -377,7 +383,12 @@ document.addEventListener('DOMContentLoaded', function () {
       }
       var target = left.getBoundingClientRect().bottom;
       var top = wrap.getBoundingClientRect().top;
-      var available = target - top;
+      var footSpace = 0;
+      if (foot) {
+        var footMarginTop = parseFloat(window.getComputedStyle(foot).marginTop) || 0;
+        footSpace = foot.getBoundingClientRect().height + footMarginTop;
+      }
+      var available = target - top - footSpace;
       if (available > 40) scroll.style.maxHeight = available + 'px';
     }
 
