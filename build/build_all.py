@@ -34,6 +34,9 @@ home_body = f"""
     <div class="lead-secondary">
       <div class="rail-head">What We Do</div>
       <p>The University of Maryland&rsquo;s Tech Policy Hub studies tech policy from a socio-technical perspective, building the bridge between computer science &amp; public policy to understand how policy is designed and implemented for, by, and with tech. Our hub spans the forefront of tech policy domains &ndash; cybersecurity, consumer privacy, misinformation, and trustworthy machine learning &ndash; bringing together DMV-based practitioners, scholars, and civil activists to shape the future of technology in society.</p>
+      <p class="lead-join"><strong>Join us:</strong> Interested in getting involved? <a href="https://idonibrasco.github.io/" target="_blank" rel="noopener">Get in touch with our founder, Dr. Sivan-Sevilla</a>.</p>
+      <div class="rail-head rail-head--stacked">Research Areas</div>
+      <div class="research-matrix research-matrix--rail">{g.research_matrix_html()}</div>
     </div>
     <div class="lead-story">
       {g.spotlight_html(g.SPOTLIGHT_ITEMS)}
@@ -43,8 +46,6 @@ home_body = f"""
       <div class="rail-scroll-wrap">
         <div class="rail-scroll">{g.rail_html(HUB_NEWS_RAIL)}</div>
       </div>
-      <div class="rail-head rail-head--stacked">Research Areas</div>
-      <div class="research-matrix research-matrix--rail">{g.research_matrix_html()}</div>
     </div>
   </div>
 </section>
@@ -92,10 +93,6 @@ home_body = f"""
         <div class="guide-q-list">
           {g.guiding_questions_html(g.QUESTIONS)}
         </div>
-      </div>
-      <div class="about-hub-join">
-        <h4>Join Us</h4>
-        <p>Interested in getting involved? <a href="https://idonibrasco.github.io/" target="_blank" rel="noopener">Get in touch with our founder, Dr. Sivan-Sevilla</a>.</p>
       </div>
     </div>
   </div>
