@@ -259,38 +259,29 @@ li.has-dropdown.open .dropdown{ display:block; }
 .lead-story h1 a:hover{ color: var(--umd-red); text-decoration: none; }
 .lead-story .lede{ font-size: .92rem; max-width: 52ch; }
 /* Research Spotlight -- a bordered card (.spotlight-card) rebuilt per a
-   Bloomberg "Today's Videos" card the user provided as a reference:
-   a persistent gray header strip (label + "View All Research" link),
-   the image, the title/summary content, and a bottom bar pairing the
-   slide dots with the prev/next arrows -- replacing the earlier
-   floating-label + gray-frame-around-white-card treatment. Slide
-   content still reuses the .meta/.lead-media/h1/.lede/.hero-actions
-   rules above (descendant selectors under .lead-story, which still
-   wraps this). .spotlight-media-track (the image) and .spotlight-track
-   (title/meta/credit/summary/actions) are each their own CSS Grid with
-   every slide sharing one grid-area, so each track's height stays fixed
-   to its tallest slide no matter which one is active -- main.js's
-   show() toggles the matching .spotlight-media-slide/.spotlight-slide
-   pair (same data-slide index) together. */
+   Bloomberg "Today's Videos" card the user provided as a reference: the
+   image, the title/summary content, and a bottom bar pairing the slide
+   dots with the prev/next arrows. The card's own header strip (label +
+   "View All Research" link) from an earlier pass was dropped per user
+   feedback -- the plain .rail-head above the card (matching "What We
+   Do"/"Research Areas"/"Hub News") handles the label now, so the image
+   is the card's first/top element. Rounded corners + overflow:hidden
+   apply to the whole card rather than per-section, which is what
+   actually rounds the image's top corners and .spotlight-footer's
+   bottom corners specifically, per direct user request. Slide content
+   still reuses the .meta/.lead-media/h1/.lede/.hero-actions rules above
+   (descendant selectors under .lead-story, which still wraps this).
+   .spotlight-media-track (the image) and .spotlight-track (title/meta/
+   credit/summary/actions) are each their own CSS Grid with every slide
+   sharing one grid-area, so each track's height stays fixed to its
+   tallest slide no matter which one is active -- main.js's show()
+   toggles the matching .spotlight-media-slide/.spotlight-slide pair
+   (same data-slide index) together. */
 .spotlight-card{
   position: relative; background: var(--paper);
   border: 1px solid var(--line); border-top: 3px solid var(--umd-gold);
+  border-radius: 10px; overflow: hidden;
 }
-.spotlight-head{
-  display:flex; align-items:center; justify-content:space-between; gap:12px;
-  padding: 14px 18px; background: var(--paper-soft); border-bottom: 1px solid var(--line);
-}
-.spotlight-head-label{
-  font-family: var(--font-nav); font-size:.72rem; font-weight:700; letter-spacing:.06em;
-  text-transform:uppercase; color: var(--ink-soft);
-}
-.spotlight-head-link{
-  font-family: var(--font-nav); font-weight:700; font-size:.74rem; text-transform:uppercase;
-  letter-spacing:.02em; color: var(--ink); border: 1.5px solid var(--ink); border-radius: 999px;
-  padding: 7px 16px; white-space:nowrap; text-decoration: none !important;
-  transition: background .15s ease, color .15s ease;
-}
-.spotlight-head-link:hover{ background: var(--ink); color:#fff; }
 .spotlight-media-track{ position: relative; display: grid; grid-template-areas: "slide"; }
 .spotlight-media-slide{ grid-area: slide; opacity:0; pointer-events:none; transition: opacity .6s ease-in-out; }
 .spotlight-media-slide.is-active.is-visible{ opacity:1; pointer-events:auto; }
@@ -331,10 +322,12 @@ li.has-dropdown.open .dropdown{ display:block; }
 /* Bottom bar -- dots (playback position) on the left, prev/next arrows
    on the right, both static flex items now (not absolutely positioned
    over/beside the image) since they live in their own row below the
-   content, matching the reference's paired bottom controls. */
+   content, matching the reference's paired bottom controls. Same
+   --paper-soft gray the card's old header strip used, per direct user
+   request, even with that strip itself gone now. */
 .spotlight-footer{
   display:flex; align-items:center; justify-content:space-between; gap:12px;
-  padding: 12px 18px; border-top: 1px solid var(--line);
+  padding: 12px 18px; background: var(--paper-soft); border-top: 1px solid var(--line);
 }
 .spotlight-dots{ display:flex; gap:8px; }
 .spotlight-dot{
@@ -353,7 +346,7 @@ li.has-dropdown.open .dropdown{ display:block; }
   cursor: pointer; display: flex; align-items: center; justify-content: center;
   transition: border-color .15s ease, background .15s ease;
 }
-.spotlight-arrow:hover{ border-color: var(--umd-red); background: var(--paper-soft); }
+.spotlight-arrow:hover{ border-color: var(--umd-red); background: var(--paper); }
 .spotlight-arrow::before{
   content: ''; width: 8px; height: 8px;
   border-right: 2px solid var(--ink-soft); border-top: 2px solid var(--ink-soft);

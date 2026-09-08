@@ -24,7 +24,7 @@ SITE_URL = "https://chadl22.github.io/Tech-Policy-Hub/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026090816"
+ASSET_VERSION = "2026090817"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -695,24 +695,31 @@ def spotlight_html(items):
     campus departments/labs (see .spotlight-credit below).
 
     Rebuilt (follow-up) into a single bordered .spotlight-card per a
-    Bloomberg "Today's Videos" card reference the user provided, replacing
-    the old floating-label + gray-frame-around-a-white-card look:
-      .spotlight-head    persistent gray header strip -- the "Research
-                          Spotlight" label + a "View All Research" link to
-                          research.html, echoing the reference's
-                          title + "Explore More" row. Does NOT repeat per
-                          slide.
+    Bloomberg "Today's Videos" card reference the user provided:
+      .rail-head          the "Research Spotlight" label, back to a plain
+                          rail-head ABOVE the card -- per direct user
+                          request, matching the "What We Do"/"Research
+                          Areas"/"Hub News" headers on the other lead-grid
+                          columns rather than living in its own boxed
+                          strip inside the card (an earlier version of
+                          this put the label + a "View All Research" link
+                          in a gray strip at the top of the card; dropped
+                          per user feedback that it made this column's
+                          header uniquely different from its siblings).
       .spotlight-media-track   the image (one .spotlight-media-slide per
                           item) plus the persistent .spotlight-pause
-                          toggle, inset in its bottom-right corner.
+                          toggle, inset in its bottom-right corner. Now
+                          the card's first/top element, so its top
+                          corners are what .spotlight-card's rounded
+                          corners + overflow:hidden actually clip.
       .spotlight-track    title/meta/credit/summary/actions (one
                           .spotlight-slide per item).
       .spotlight-footer   persistent bottom bar -- .spotlight-dots (left)
                           + the prev/next .spotlight-arrow buttons
                           (right), anchored together like the reference's
-                          bottom control row, instead of the dots
-                          overlaying the image and the arrows floating
-                          beside it.
+                          bottom control row. Same --paper-soft gray as
+                          the old header strip used, per direct user
+                          request, even though that strip itself is gone.
     .spotlight-media-track/.spotlight-track still use the CSS Grid
     stacking trick (every slide sharing one grid-area, sized to the
     tallest) as two independent stacks, so each track's height stays
@@ -747,11 +754,8 @@ def spotlight_html(items):
         for i in range(len(items))
     )
     return f"""
+      <div class="rail-head">Research Spotlight</div>
       <div class="spotlight-card" data-spotlight>
-        <div class="spotlight-head">
-          <span class="spotlight-head-label">Research Spotlight</span>
-          <a href="research.html" class="spotlight-head-link">View All Research</a>
-        </div>
         <div class="spotlight-media-track">{''.join(media_slides)}
           <button type="button" class="spotlight-pause" data-spotlight-pause aria-pressed="false" aria-label="Pause slideshow">
             <i class="bar bar-1"></i><i class="bar bar-2"></i><i class="tri"></i>
