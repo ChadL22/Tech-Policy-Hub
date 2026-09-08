@@ -342,6 +342,55 @@ document.addEventListener('DOMContentLoaded', function () {
     startAuto();
   });
 
+  // Homepage Hub News rail -- match its scroll box's height to
+  // .lead-secondary (What We Do / Join Us / Research Areas) so the two
+  // hero side-columns end at the same height, same as before Research
+  // Areas swapped from this rail over to .lead-secondary.
+  //
+  // This can't be done in CSS alone: a `.lead-grid` column can be told
+  // to stretch to match its tallest sibling (`align-items:stretch`),
+  // but that only works when the *shorter* column is the one being
+  // grown -- here it's the reverse, the news list is the naturally
+  // taller one and needs to be *capped* to its sibling's height, and
+  // CSS has no "shrink this to match that" primitive (a flex:1 child
+  // with no explicit bound just reports its own full content height
+  // back into the grid's row-sizing pass, so the row balloons to fit
+  // the whole list instead of clipping it -- see the long comment on
+  // .rail-scroll-wrap in styles.css for the full autopsy of that first
+  // attempt). Measuring both elements' real rendered height and setting
+  // an explicit max-height in px is the only way to actually cap one to
+  // the other.
+  (function () {
+    var left = document.querySelector('.lead-secondary');
+    var wrap = document.querySelector('.lead-rail .rail-scroll-wrap');
+    var scroll = document.querySelector('.lead-rail .rail-scroll');
+    if (!left || !wrap || !scroll) return;
+
+    function sync() {
+      // Below the 3-column breakpoint (see styles.css) the hero columns
+      // stack into separate rows instead of sharing one, so there's
+      // nothing to match heights against -- clear any inline override
+      // and let the CSS default (.rail-scroll's own max-height) apply.
+      if (window.matchMedia('(max-width: 1150px)').matches) {
+        scroll.style.maxHeight = '';
+        return;
+      }
+      var target = left.getBoundingClientRect().bottom;
+      var top = wrap.getBoundingClientRect().top;
+      var available = target - top;
+      if (available > 40) scroll.style.maxHeight = available + 'px';
+    }
+
+    sync();
+    window.addEventListener('resize', sync);
+    // Re-sync after web fonts finish loading -- a font swap can change
+    // .lead-secondary's wrapped line count (and so its height) after
+    // the measurement above already ran.
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(sync);
+    }
+  })();
+
   // Homepage calendar -- pages between pre-rendered month panels (one
   // per month that actually has an event; see calendar_widget_html() in
   // generate.py) with prev/next, wrapping around at either end.

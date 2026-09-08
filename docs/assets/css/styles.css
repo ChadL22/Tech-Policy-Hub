@@ -235,12 +235,12 @@ li.has-dropdown.open .dropdown{ display:block; }
    secondary headlines / lead story / Hub-updates rail, no oversized
    placeholder art. Replaces the old single-story "featured-hero" block. ---------- */
 .lead-section{ padding: 28px 0 32px; border-bottom: 1px solid var(--line); }
-.lead-grid{ display:grid; grid-template-columns: 280px 1fr 280px; gap: 40px; align-items: stretch; }
+.lead-grid{ display:grid; grid-template-columns: 280px 1fr 280px; gap: 40px; align-items: start; }
 .lead-secondary{ grid-column: 1; border-right: 1px solid var(--line); padding-right: 28px; }
 .lead-secondary p{ font-size:.88rem; line-height:1.6; }
 .lead-join strong{ color: var(--umd-red); }
 .lead-story{ grid-column: 2; }
-.lead-rail{ grid-column: 3; border-left: 1px solid var(--line); padding-left: 28px; display:flex; flex-direction:column; }
+.lead-rail{ grid-column: 3; border-left: 1px solid var(--line); padding-left: 28px; }
 .lead-media{
   aspect-ratio: 16/7; margin-bottom: 18px; position: relative; overflow: hidden;
   background: linear-gradient(135deg, var(--ink) 0%, var(--ink) 42%, var(--umd-red) 42%, var(--umd-red) 100%);
@@ -404,13 +404,6 @@ li.has-dropdown.open .dropdown{ display:block; }
   .lead-secondary{ border-right:none; padding-right:0; }
   .lead-secondary, .lead-rail{ border-left:none; padding-left:0; border-top: 2px solid var(--ink); padding-top: 24px; }
   .lead-story{ order: -1; }
-  /* Below the 3-column breakpoint the columns stack into separate rows
-     instead of sharing one, so .lead-grid's align-items:stretch has
-     nothing to match Hub News's height to -- cap it back to a fixed
-     scroll window here instead of letting an unbounded flex:1 collapse
-     it to nothing. */
-  .rail-scroll-wrap{ flex: none; }
-  .rail-scroll{ height: auto; max-height: 420px; }
 }
 
 /* ---------- Questions We Answer ---------- */
@@ -641,8 +634,9 @@ li.has-dropdown.open .dropdown{ display:block; }
    used to live in this comment (a specific `.rail-scroll` max-height
    measured via Playwright to match .lead-secondary's height at a given
    moment) is gone now that Research Areas has swapped columns -- see
-   the note on `.rail-scroll-wrap`/`.rail-scroll` below for the
-   self-adjusting flex approach that replaced it. */
+   the note on `.rail-scroll-wrap`/`.rail-scroll` below, and
+   syncHubNewsHeight() in main.js, for the runtime-measured approach
+   that replaced it. */
 .rail-head--stacked{ margin-top: 16px; padding-top: 24px; border-top: 1px solid var(--line); }
 .research-matrix--rail{ border-color: var(--line); }
 /* Follow-up 55: `justify-content:center` here vertically centered each
@@ -836,22 +830,24 @@ li.has-dropdown.open .dropdown{ display:block; }
    ~22px actually ramps to solid, matching CNBC's own subtler cue (their
    last row is still readable, just softened right at the edge) rather
    than the heavier full-height fade this started as.
-   Follow-up 60: `flex:1; min-height:0` replaces the old fixed max-height
-   (previously hand-tuned via Playwright measurement to match whatever
-   .lead-secondary happened to hold at the time). Research Areas moving
-   out of this column and What We Do/Join Us/Research Areas moving into
-   .lead-secondary made that measurement stale, and it'll go stale again
-   the next time either column's content changes -- flexing to fill
-   whatever height `.lead-grid`'s `align-items:stretch` gives this column
-   (see .lead-grid/.lead-rail above) keeps the two in sync automatically
-   instead of needing to be re-measured by hand each time. */
-.rail-scroll-wrap{ position: relative; flex: 1; min-height: 0; }
+   Follow-up 60: `max-height` here is just a fallback for before JS runs
+   (and for no-JS). A pure-CSS attempt at self-matching this box's height
+   to .lead-secondary's (align-items:stretch + flex:1/height:100%) turned
+   out to be circular and doesn't work: grid track sizing needs each
+   item's OWN natural content height to size the row in the first place,
+   so a flex:1 child with no explicit cap just reports its full,
+   unclipped list height as "natural" -- the row balloons to fit every
+   item instead of clipping to match its sibling. The actual match now
+   happens in main.js (syncHubNewsHeight), which measures
+   .lead-secondary's real rendered height and sets this max-height to
+   fit -- see the comment there for the full explanation. */
+.rail-scroll-wrap{ position: relative; }
 .rail-scroll-wrap::after{
   content: ""; position: absolute; left: 0; right: 6px; bottom: 0; height: 40px;
   background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 45%, var(--paper) 100%);
   pointer-events: none;
 }
-.rail-scroll{ height: 100%; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+.rail-scroll{ max-height: 420px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
 .rail-scroll::-webkit-scrollbar{ width: 6px; }
 .rail-scroll::-webkit-scrollbar-track{ background: transparent; }
 .rail-scroll::-webkit-scrollbar-thumb{ background: var(--line); border-radius: var(--radius); }
