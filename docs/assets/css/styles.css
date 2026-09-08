@@ -237,6 +237,7 @@ li.has-dropdown.open .dropdown{ display:block; }
 .lead-section{ padding: 28px 0 32px; border-bottom: 1px solid var(--line); }
 .lead-grid{ display:grid; grid-template-columns: 240px 1fr 280px; gap: 40px; align-items: start; }
 .lead-secondary{ grid-column: 1; border-right: 1px solid var(--line); padding-right: 28px; }
+.lead-secondary p{ font-size:.88rem; line-height:1.6; }
 .lead-story{ grid-column: 2; }
 .lead-rail{ grid-column: 3; border-left: 1px solid var(--line); padding-left: 28px; }
 .lead-media{
@@ -726,20 +727,9 @@ li.has-dropdown.open .dropdown{ display:block; }
 /* Guiding Questions' default styling (.guide-q) assumes it's sitting on
    the light page background (the hero's .lead-secondary); overridden
    here for legibility against .about-hub's dark background. */
-.about-hub .guide-q{ border-top-color: rgba(255,255,255,.15); }
-.about-hub .guide-q .num{ color: var(--umd-gold); }
-.about-hub .guide-q .qtext{ color: #fff; }
-
-.about-hub-explore{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-top:28px; }
-.about-hub-explore-label{
-  font-family: var(--font-nav); font-size:.78rem; font-weight:700; letter-spacing:.08em;
-  text-transform:uppercase; color:#fff;
-}
-/* "What is the Tech Policy Hub?"'s Explore row now also appears in the
-   hero's .lead-secondary column, on the light page background rather
-   than .about-hub's dark one -- .about-hub-explore-label's own color:#fff
-   would be invisible there, so .lead-explore overrides it. */
-.lead-explore .about-hub-explore-label{ color: var(--ink-soft); }
+.about-hub .guide-q{ border-top-color: rgba(255,255,255,.15); padding: 14px 0; }
+.about-hub .guide-q .num{ color: var(--umd-gold); font-size:.84rem; }
+.about-hub .guide-q .qtext{ color: #fff; font-size:.98rem; }
 
 .about-hub-join{
   background: rgba(255,255,255,.06);
