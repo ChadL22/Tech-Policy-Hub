@@ -24,7 +24,7 @@ SITE_URL = "https://chadl22.github.io/Tech-Policy-Hub/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026090814"
+ASSET_VERSION = "2026090815"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -344,31 +344,31 @@ TOPICS = [
 # elsewhere on the site -- see follow-up 26.
 SPOTLIGHT_ITEMS = [
     dict(tag="Publication", topic="Consumer Privacy", topic_file="topic-privacy.html",
-         date="Jul 2025",
+         date="Jul 2025", source="[Add contributing lab/department]",
          title="Cookie-less Identification: For and Against Privacy",
          summary="Work from the privacy team on the privacy implications of cookie-less identification on the Web was published in the Internet Policy Review.",
          primary_label="Read the Research",
          link="https://policyreview.info/articles/analysis/cookie-less-identification-foragainst-privacy"),
     dict(tag="Publication", topic="Information Integrity", topic_file="topic-integrity.html",
-         date="Jul 2025",
+         date="Jul 2025", source="[Add contributing lab/department]",
          title="Classifying Trustworthy Content via Third-Party Web Structure",
          summary="New work classifying trustworthy content on the Web based on the third-party structure of websites was published through the FOCI workshop at PETs.",
          primary_label="Read the Paper",
          link="https://www.petsymposium.org/foci/2025/foci-2025-0017.pdf"),
     dict(tag="Media", topic="Cybersecurity", topic_file="topic-cybersecurity.html",
-         date="Mar 2, 2025",
+         date="Mar 2, 2025", source="[Add contributing lab/department]",
          title="Hub Cybersecurity Work Highlighted by Newsweek",
          summary="Research from the Hub's Cybersecurity group on county-level cyber risk was highlighted by Newsweek.",
          primary_label="Read the Coverage",
          link="https://www.newsweek.com/cybersecurity-risk-map-usa-counties-2026762"),
     dict(tag="Speaker Series", topic="Consumer Privacy", topic_file="topic-privacy.html",
-         date="Mar 12, 2025",
+         date="Mar 12, 2025", source="[Add contributing lab/department]",
          title="Spring 2025 Speaker Series: Privacy Research and Regulation",
          summary="An online Spring 2025 Speaker Series event on how privacy research can inform privacy regulation.",
          primary_label="Event Details",
          link="https://umd.zoom.us/meeting/register/HbxWvfXnSBWxFfr1a7vnQA"),
     dict(tag="Publication", topic="Cybersecurity", topic_file="topic-cybersecurity.html",
-         date="Jan 17, 2025",
+         date="Jan 17, 2025", source="[Add contributing lab/department]",
          title="Attack Surface Across U.S. County Governments Published in Journal of Cybersecurity",
          summary="Research on the size, diversity, and severity of exposed attack surface across U.S. county governments is officially published by the Journal of Cybersecurity.",
          primary_label="Read the Paper",
@@ -731,6 +731,7 @@ def spotlight_html(items):
         <div class="spotlight-slide{active}" data-slide="{i}">
           <h1><a href="{it['link']}"{link_attrs(it['link'])}>{it['title']}</a></h1>
           <div class="meta"><span class="meta-tag">{it['tag']}</span> {it['date']}</div>
+          <div class="spotlight-credit">{it['source']}</div>
           <p class="lede">{it['summary']}</p>
           <div class="hero-actions">
             <a href="{it['link']}"{link_attrs(it['link'])} class="btn btn-primary btn-arrow">{it['primary_label']}</a>
