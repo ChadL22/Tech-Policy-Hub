@@ -345,23 +345,51 @@ g.write("annual-event.html", g.page("annual-event.html", "Annual Event", "The Te
 _ics_url = g.SITE_URL + "events.ics"
 _ics_webcal_url = _ics_url.replace("https://", "webcal://")
 
+# Follow-up: reworked at direct user request into something closer to
+# SCOTUSblog's own "Supreme Court Calendar" page -- same category filter
+# pills and sidebar calendar widget as before, but the on-page title now
+# reads "Tech Policy Hub Calendar" (not just "Events"), a text search
+# box filters both lists client-side (see main.js's applyEventFilters,
+# combined with the category pills so both conditions apply together),
+# and Upcoming/Past Events each sit in a capped-height scroll box
+# (reusing the same .rail-scroll-wrap/.rail-scroll fade-bottom component
+# as the homepage's Hub News rail) instead of growing as an unbounded
+# list -- direct user request: "It wouldn't be in our best interest to
+# have a laundry list of events for the page that goes on forever."
 events_body = f"""
 <section class="page-hero">
   <div class="container">
     <div class="breadcrumb"><a href="index.html">Home</a> / Events</div>
     <span class="eyebrow">Upcoming</span>
-    <h1>Events</h1>
-    <p class="lede">Speaker Series sessions, workshops, roundtables, and our flagship Annual Event.</p>
+    <h1>Tech Policy Hub Calendar</h1>
+    <p class="lede">Speaker Series sessions, workshops, roundtables, and our flagship Annual Event -- searchable below.</p>
   </div>
 </section>
 <section>
   <div class="container with-sidebar">
     <div>
       {g.filter_pills_html(list(g.EVENT_CATEGORIES.keys()), 'events')}
+      <div class="events-search">
+        <svg class="events-search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="7" cy="7" r="5.25" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="11.1" y1="11.1" x2="15" y2="15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <input type="text" id="events-search" class="events-search-input" placeholder="Search events&hellip;" aria-label="Search events">
+      </div>
       <div class="section-head" style="margin-top:28px;"><div><span class="eyebrow">Upcoming</span><h2>Upcoming Events</h2></div></div>
-      {g.events_rows_html(g.EVENTS_ITEMS)}
+      <div class="rail-scroll-wrap">
+        <div class="rail-scroll events-scroll" id="upcoming-events-list">
+          {g.events_rows_html(g.EVENTS_ITEMS)}
+        </div>
+      </div>
+      <p class="events-empty" data-empty-for="upcoming-events-list" hidden>No upcoming events match your search or filter.</p>
       <div class="section-head" style="margin-top:48px;"><div><span class="eyebrow">Past</span><h2>Past Events</h2></div></div>
-      {g.past_events_html(g.PAST_EVENTS_ITEMS)}
+      <div class="rail-scroll-wrap">
+        <div class="rail-scroll events-scroll" id="past-events-list">
+          {g.past_events_html(g.PAST_EVENTS_ITEMS)}
+        </div>
+      </div>
+      <p class="events-empty" data-empty-for="past-events-list" hidden>No past events match your search or filter.</p>
     </div>
     <div>
       <h4 style="font-family:var(--font-body); font-size:.95rem; font-weight:700; margin-bottom:14px;">Calendar</h4>
@@ -373,7 +401,7 @@ events_body = f"""
   </div>
 </section>
 """
-g.write("events.html", g.page("events.html", "Events", "Upcoming events from the Tech Policy Hub.", events_body))
+g.write("events.html", g.page("events.html", "Events", "Search and browse upcoming and past Tech Policy Hub events.", events_body))
 g.write_raw("events.ics", g.events_ics(g.EVENTS_ITEMS))
 
 # ===========================================================================

@@ -75,20 +75,50 @@ document.addEventListener('DOMContentLoaded', function () {
   // this doesn't scope items to a specific bar; it just shows/hides every
   // [data-filter-target] element on the page against whichever pill in
   // [data-filter-group] is active ("all" always shows everything).
+  // Follow-up: on events.html an #events-search text box (see
+  // events_body in build_all.py) filters the same [data-filter-target]
+  // rows by their text content -- combined here so a row shows only when
+  // it matches BOTH the active category pill AND the search text. Any
+  // other page's filter bar has no #events-search on it, so `query`
+  // just stays empty there and behavior is unchanged from before.
   document.querySelectorAll('[data-filter-group]').forEach(function (bar) {
     var buttons = Array.prototype.slice.call(bar.querySelectorAll('.filter-pill'));
-    var items = document.querySelectorAll('[data-filter-target]');
+    var items = Array.prototype.slice.call(document.querySelectorAll('[data-filter-target]'));
+    var searchInput = document.getElementById('events-search');
+    var emptyMsgs = Array.prototype.slice.call(document.querySelectorAll('[data-empty-for]'));
+
+    function applyFilters() {
+      var activeBtn = bar.querySelector('.filter-pill.active');
+      var activeVal = activeBtn ? activeBtn.getAttribute('data-filter') : 'all';
+      var query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+      items.forEach(function (item) {
+        var matchesCategory = (activeVal === 'all' || item.getAttribute('data-filter-target') === activeVal);
+        var matchesSearch = !query || item.textContent.toLowerCase().indexOf(query) !== -1;
+        item.style.display = (matchesCategory && matchesSearch) ? '' : 'none';
+      });
+      // Each scrollable list (see events_body's .events-scroll boxes) has
+      // its own "no results" message keyed by the list's id -- shown only
+      // when every row inside that specific list is hidden, so an empty
+      // Upcoming list doesn't also blank out a non-empty Past list.
+      emptyMsgs.forEach(function (msg) {
+        var list = document.getElementById(msg.getAttribute('data-empty-for'));
+        if (!list) return;
+        var anyVisible = Array.prototype.slice.call(list.querySelectorAll('[data-filter-target]'))
+          .some(function (item) { return item.style.display !== 'none'; });
+        msg.hidden = anyVisible;
+      });
+    }
+
     buttons.forEach(function (btn) {
       btn.addEventListener('click', function () {
         buttons.forEach(function (b) { b.classList.remove('active'); });
         btn.classList.add('active');
-        var val = btn.getAttribute('data-filter');
-        items.forEach(function (item) {
-          var show = (val === 'all' || item.getAttribute('data-filter-target') === val);
-          item.style.display = show ? '' : 'none';
-        });
+        applyFilters();
       });
     });
+    if (searchInput) {
+      searchInput.addEventListener('input', applyFilters);
+    }
   });
 
   // Signal ticker -- NYSE-tape style: streams continuously to the left,

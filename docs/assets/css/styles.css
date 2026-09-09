@@ -722,6 +722,27 @@ li.has-dropdown.open .dropdown{ display:block; }
 .newsletter-partner a{ font-weight: 600; }
 
 /* ---------- Events ---------- */
+/* Follow-up: search box + scroll-capped Upcoming/Past lists, added at
+   direct user request modeled on SCOTUSblog's "Supreme Court Calendar"
+   page -- see events_body in build_all.py and applyFilters() in main.js. */
+.events-search{ position: relative; margin: 22px 0 4px; max-width: 420px; }
+.events-search-icon{ position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--ink-soft); pointer-events: none; }
+.events-search-input{
+  width:100%; padding: 12px 16px 12px 40px; border-radius: var(--radius);
+  border: 1.5px solid var(--line); background:#fff; color: var(--ink);
+  font-family: var(--font-body); font-size:.92rem;
+}
+.events-search-input::placeholder{ color:#9a9d9f; }
+.events-search-input:focus{ outline: none; border-color: var(--umd-red); }
+/* .events-scroll shares .rail-scroll's fade/scrollbar treatment (see
+   .rail-scroll-wrap above) but caps taller, since event rows (date +
+   title + meta + button) run taller than the compact .rail-item headline
+   rows that component was built for -- same class pair either way
+   (.rail-scroll-wrap wrapping .rail-scroll), just this extra class to
+   bump the max-height. */
+.events-scroll{ max-height: 480px; }
+.events-empty{ padding: 20px 0; color: var(--ink-soft); font-size:.92rem; border-top: 1px solid var(--line); }
+
 .event-row{
   display:grid; grid-template-columns: 90px 1fr auto; gap: 22px; align-items:center;
   padding: 20px 0; border-top: 1px solid var(--line);
