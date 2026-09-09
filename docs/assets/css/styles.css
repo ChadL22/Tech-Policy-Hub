@@ -679,6 +679,40 @@ li.has-dropdown.open .dropdown{ display:block; }
 .feed-item h3{ margin-bottom:6px; font-size: 1.15rem; }
 .feed-item h3 a{ color: var(--ink); }
 .feed-item h3 a:hover{ color: var(--umd-red); text-decoration:none; }
+.pub-authors{ font-size:.85rem; color: var(--ink-soft); margin-top:2px; }
+
+/* ---------- Research areas (expand/collapse accordion cards) ----------
+   Direct user request: replace the old flat topic-link grid + separately
+   filterable projects grid with one card per research area that expands
+   to reveal that area's Projects/Publications/People (reusing the
+   existing .tabs/.tab-panel component inside each panel). Collapsed by
+   default; main.js toggles [aria-expanded] on .area-card-toggle and
+   [hidden] on the matching .area-card-panel. */
+.area-list{ display:flex; flex-direction:column; gap:14px; }
+.area-card{ border: 1.5px solid var(--line); border-radius: var(--radius); background:#fff; }
+.area-card-toggle{
+  display:flex; align-items:center; gap:20px; width:100%; padding: 22px 24px;
+  background:none; border:none; text-align:left; cursor:pointer; font-family: var(--font-body);
+}
+.area-card-index{
+  font-family: var(--font-nav); font-size:.8rem; font-weight:700; color: var(--umd-red);
+  flex-shrink:0; width: 28px;
+}
+.area-card-title{ flex:1; }
+.area-card-title h3{ margin-bottom:4px; }
+.area-card-title p{ margin:0; color: var(--ink-soft); font-size:.9rem; }
+.area-card-caret{
+  flex-shrink:0; font-size: 1.1rem; color: var(--ink-soft);
+  transition: transform .15s ease;
+}
+.area-card-toggle[aria-expanded="true"] .area-card-caret{ transform: rotate(180deg); }
+.area-card-panel{ padding: 0 24px 28px; border-top: 1px solid var(--line); margin: 0 24px; padding-top: 24px; }
+.area-card-panel[hidden]{ display:none; }
+
+@media (max-width: 640px){
+  .area-card-toggle{ padding: 18px; gap: 14px; }
+  .area-card-panel{ margin: 0 18px; padding: 20px 0 24px; }
+}
 
 /* ---------- Section header row ---------- */
 .section-head{ display:flex; align-items:flex-end; justify-content:space-between; margin-bottom: 28px; gap: 16px; flex-wrap:wrap; padding-bottom: 16px; border-bottom: 2px solid var(--ink); }
@@ -721,27 +755,34 @@ li.has-dropdown.open .dropdown{ display:block; }
 .newsletter-partner{ margin: 18px 0 0; font-size: .82rem; color: var(--ink-soft); }
 .newsletter-partner a{ font-weight: 600; }
 
-/* ---------- Events ---------- */
-/* Follow-up: search box + scroll-capped Upcoming/Past lists, added at
-   direct user request modeled on SCOTUSblog's "Supreme Court Calendar"
-   page -- see events_body in build_all.py and applyFilters() in main.js. */
-.events-search{ position: relative; margin: 22px 0 4px; max-width: 420px; }
-.events-search-icon{ position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--ink-soft); pointer-events: none; }
-.events-search-input{
+/* ---------- Shared search box + "no results" message ----------
+   Originally built for events.html (SCOTUSblog-style calendar search),
+   now reused by research.html's publications search too -- generic
+   names since it's no longer events-specific; see applyFilters() in
+   main.js, which looks for .filter-search-input by class (not by page-
+   specific id) so this drops into any page with a [data-filter-group]
+   bar. */
+.search-box{ position: relative; margin: 22px 0 4px; max-width: 420px; }
+.search-box-icon{ position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--ink-soft); pointer-events: none; }
+.search-box-input{
   width:100%; padding: 12px 16px 12px 40px; border-radius: var(--radius);
   border: 1.5px solid var(--line); background:#fff; color: var(--ink);
   font-family: var(--font-body); font-size:.92rem;
 }
-.events-search-input::placeholder{ color:#9a9d9f; }
-.events-search-input:focus{ outline: none; border-color: var(--umd-red); }
-/* .events-scroll shares .rail-scroll's fade/scrollbar treatment (see
-   .rail-scroll-wrap above) but caps taller, since event rows (date +
-   title + meta + button) run taller than the compact .rail-item headline
-   rows that component was built for -- same class pair either way
-   (.rail-scroll-wrap wrapping .rail-scroll), just this extra class to
-   bump the max-height. */
+.search-box-input::placeholder{ color:#9a9d9f; }
+.search-box-input:focus{ outline: none; border-color: var(--umd-red); }
+.list-empty{ padding: 20px 0; color: var(--ink-soft); font-size:.92rem; border-top: 1px solid var(--line); }
+
+/* ---------- Events ---------- */
+/* Follow-up: scroll-capped Upcoming/Past lists, added at direct user
+   request modeled on SCOTUSblog's "Supreme Court Calendar" page -- see
+   events_body in build_all.py. .events-scroll shares .rail-scroll's
+   fade/scrollbar treatment (see .rail-scroll-wrap above) but caps
+   taller, since event rows (date + title + meta + button) run taller
+   than the compact .rail-item headline rows that component was built
+   for -- same class pair either way (.rail-scroll-wrap wrapping
+   .rail-scroll), just this extra class to bump the max-height. */
 .events-scroll{ max-height: 480px; }
-.events-empty{ padding: 20px 0; color: var(--ink-soft); font-size:.92rem; border-top: 1px solid var(--line); }
 
 .event-row{
   display:grid; grid-template-columns: 90px 1fr auto; gap: 22px; align-items:center;

@@ -70,21 +70,36 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
+  // Research-area accordion cards (Research page) -- direct user request
+  // for expand/collapse cards instead of a flat link grid. Toggles
+  // aria-expanded on the button and [hidden] on its aria-controls panel;
+  // independent per card, and doesn't touch any other open card.
+  document.querySelectorAll('.area-card-toggle').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var expanded = btn.getAttribute('aria-expanded') === 'true';
+      var panel = document.getElementById(btn.getAttribute('aria-controls'));
+      btn.setAttribute('aria-expanded', String(!expanded));
+      if (panel) panel.hidden = expanded;
+    });
+  });
+
   // Filter pills (Research: by focus area / Events: by category) -- see
   // filter_pills_html() in generate.py. One filter bar per page today, so
   // this doesn't scope items to a specific bar; it just shows/hides every
   // [data-filter-target] element on the page against whichever pill in
   // [data-filter-group] is active ("all" always shows everything).
-  // Follow-up: on events.html an #events-search text box (see
-  // events_body in build_all.py) filters the same [data-filter-target]
-  // rows by their text content -- combined here so a row shows only when
-  // it matches BOTH the active category pill AND the search text. Any
-  // other page's filter bar has no #events-search on it, so `query`
-  // just stays empty there and behavior is unchanged from before.
+  // Follow-up: a .filter-search-input text box (see .search-box in
+  // styles.css; used on events.html and research.html so far) filters
+  // the same [data-filter-target] rows by their text content -- combined
+  // here so a row shows only when it matches BOTH the active category
+  // pill AND the search text. Looked up by class, not a page-specific
+  // id, so any page can drop the same markup in without a main.js
+  // change; a filter bar with no search box on the page just gets an
+  // empty `query` and behaves exactly as it did before search existed.
   document.querySelectorAll('[data-filter-group]').forEach(function (bar) {
     var buttons = Array.prototype.slice.call(bar.querySelectorAll('.filter-pill'));
     var items = Array.prototype.slice.call(document.querySelectorAll('[data-filter-target]'));
-    var searchInput = document.getElementById('events-search');
+    var searchInput = document.querySelector('.filter-search-input');
     var emptyMsgs = Array.prototype.slice.call(document.querySelectorAll('[data-empty-for]'));
 
     function applyFilters() {

@@ -113,6 +113,11 @@ g.write("index.html", g.page("index.html", "Home", "The University of Maryland T
 # ===========================================================================
 # RESEARCH HUB + TOPIC DETAIL DATA
 # ===========================================================================
+# Follow-up: each publication is now a dict (venue/year/title/authors)
+# instead of a bare (venue-with-year, title) tuple -- direct user request
+# for a publications search that covers "author, year, title, conference
+# etc.", which needs the author byline as its own real field rather than
+# folded into a description string.
 TOPIC_DETAIL = {
     "cybersecurity": dict(
         projects=[
@@ -120,8 +125,8 @@ TOPIC_DETAIL = {
             ("Critical Infrastructure Resilience", "Working with practitioners to translate attack-surface research into actionable defense priorities."),
         ],
         pubs=[
-            ("Journal of Cybersecurity, 2026", "Size, diversity, and severity of exposed attack surface across U.S. county governments."),
-            ("Maryland Today, 2026", "UMD researchers calculate cyberattack risk for all 50 states."),
+            dict(venue="Journal of Cybersecurity", year=2026, title="Size, diversity, and severity of exposed attack surface across U.S. county governments.", authors=["Dr. Charlie Harry"]),
+            dict(venue="Maryland Today", year=2026, title="UMD researchers calculate cyberattack risk for all 50 states.", authors=["Dr. Charlie Harry", "Jordan Diaz"]),
         ],
         people=["Dr. Charlie Harry", "Jordan Diaz"],
     ),
@@ -131,8 +136,8 @@ TOPIC_DETAIL = {
             ("Watchdog Accountability", "Assessing the powers of formal and informal U.S. privacy regulators."),
         ],
         pubs=[
-            ("Internet Policy Review, 2026", "Cookie-less identification: for and against privacy."),
-            ("Privacy Law Scholars Conference, 2026", "Accountability powers of formal and informal U.S. privacy watchdogs."),
+            dict(venue="Internet Policy Review", year=2026, title="Cookie-less identification: for and against privacy.", authors=["Dr. Ido Sivan-Sevilla"]),
+            dict(venue="Privacy Law Scholars Conference", year=2026, title="Accountability powers of formal and informal U.S. privacy watchdogs.", authors=["Dr. Ido Sivan-Sevilla", "Amara Mensah"]),
         ],
         people=["Dr. Ido Sivan-Sevilla", "Amara Mensah"],
     ),
@@ -142,8 +147,8 @@ TOPIC_DETAIL = {
             ("Platform Transparency Tracker", "Monitoring platform disclosures and their real-world enforcement."),
         ],
         pubs=[
-            ("FOCI Workshop @ PETs, 2026", "Classifying trustworthy content on the web based on third-party structure."),
-            ("Policy Brief, 2026", "What platform transparency reports do and don't tell us."),
+            dict(venue="FOCI Workshop @ PETs", year=2026, title="Classifying trustworthy content on the web based on third-party structure.", authors=["Jordan Diaz"]),
+            dict(venue="Policy Brief", year=2026, title="What platform transparency reports do and don't tell us.", authors=["Dr. Ido Sivan-Sevilla"]),
         ],
         people=["Jordan Diaz", "Dr. Ido Sivan-Sevilla"],
     ),
@@ -153,27 +158,83 @@ TOPIC_DETAIL = {
             ("AI Governance Roundtables", "Convening researchers and policymakers on the governance of emerging AI systems."),
         ],
         pubs=[
-            ("arXiv, 2026", "Applying Contextual Integrity to measure algorithmic decision-making."),
-            ("Roundtable Summary, 2025", "Tech Policy Hub & VCAI roundtable on AI policy."),
+            dict(venue="arXiv", year=2026, title="Applying Contextual Integrity to measure algorithmic decision-making.", authors=["Dr. Katie Shilton"]),
+            dict(venue="Roundtable Summary", year=2025, title="Tech Policy Hub & VCAI roundtable on AI policy.", authors=["Lee Tiedrich"]),
         ],
         people=["Dr. Katie Shilton", "Lee Tiedrich"],
     ),
 }
 
-project_cards = []
+
+# Shared per-topic renderers -- used both inside each research.html
+# accordion card below AND on that topic's own standalone page (see
+# "TOPIC PAGES" further down), so the two never drift apart.
+def _topic_projects_html(d):
+    return "".join(f'<div class="card"><span class="kicker">Project</span><h3>{n}</h3><p>{desc}</p></div>' for n, desc in d["projects"])
+
+
+def _topic_pubs_html(d):
+    out = []
+    for p in d["pubs"]:
+        out.append(f"""<div class="card"><span class="kicker">Publication</span><h3>{p['title']}</h3><p>{p['venue']}, {p['year']}</p><p class="pub-authors">{', '.join(p['authors'])}</p></div>""")
+    return "".join(out)
+
+
+def _topic_people_html(d):
+    return "".join(f'<div class="card"><span class="kicker">Person</span><h3>{n}</h3></div>' for n in d["people"])
+
+
+# Follow-up: the old flat "Where we work" link-grid + a separately
+# filterable "Current projects" grid are gone -- replaced at direct user
+# request by ONE set of collapsible cards, one per research area, each
+# expanding into the same Projects/Publications/People tabs the topic's
+# own page already used. Collapsed by default (.area-card-panel[hidden]);
+# toggled by main.js's accordion handler. Each panel still links out to
+# the topic's full page underneath, so that page stays reachable/
+# bookmarkable, not orphaned by folding its content in here too.
+area_cards = []
 for t in g.TOPICS:
     d = TOPIC_DETAIL[t["key"]]
-    for name, desc in d["projects"]:
-        project_cards.append(f'<div class="card" data-filter-target="{t["name"]}"><span class="kicker">{t["name"]}</span><h3>{name}</h3><p>{desc}</p></div>')
+    panel_id = f"area-panel-{t['key']}"
+    area_cards.append(f"""
+    <div class="area-card">
+      <button type="button" class="area-card-toggle" aria-expanded="false" aria-controls="{panel_id}">
+        <span class="area-card-index">{t['index']}</span>
+        <span class="area-card-title"><h3>{t['name']}</h3><p>{t['blurb']}</p></span>
+        <span class="area-card-caret" aria-hidden="true">&#9662;</span>
+      </button>
+      <div class="area-card-panel" id="{panel_id}" hidden>
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="projects">Projects</button>
+          <button class="tab-btn" data-tab="pubs">Publications</button>
+          <button class="tab-btn" data-tab="people">People</button>
+        </div>
+        <div>
+          <div class="tab-panel active" data-tab="projects"><div class="grid grid-2">{_topic_projects_html(d)}</div></div>
+          <div class="tab-panel" data-tab="pubs"><div class="grid grid-2">{_topic_pubs_html(d)}</div></div>
+          <div class="tab-panel" data-tab="people"><div class="grid grid-2">{_topic_people_html(d)}</div></div>
+        </div>
+        <a class="text-link" href="{t['file']}" style="display:inline-block; margin-top:20px;">View the full {t['name']} page &rarr;</a>
+      </div>
+    </div>""")
 
+# Flat, all-topics publication feed -- what the new search box (below)
+# actually searches. Kept separate from the per-area accordions above:
+# those are for browsing one area at a time, this is for a direct
+# author/year/title/venue lookup across every area at once, matching the
+# user's "one search bar" request rather than a search scoped per-card.
 pub_feed = []
 for t in g.TOPICS:
     d = TOPIC_DETAIL[t["key"]]
-    for venue, desc in d["pubs"]:
+    for p in d["pubs"]:
         pub_feed.append(f"""
         <div class="feed-item" data-filter-target="{t['name']}">
           <span class="tag">{t['name']}</span>
-          <div><div class="meta" style="margin-bottom:6px;">{venue}</div><h3><a href="{t['file']}">{desc}</a></h3></div>
+          <div>
+            <div class="meta" style="margin-bottom:6px;">{p['venue']}, {p['year']}</div>
+            <h3><a href="{t['file']}">{p['title']}</a></h3>
+            <p class="pub-authors">{', '.join(p['authors'])}</p>
+          </div>
         </div>""")
 
 research_body = f"""
@@ -185,24 +246,20 @@ research_body = f"""
     <p class="lede">Cybersecurity, consumer privacy, information integrity, and trustworthy machine learning &mdash; studied through comparative, qualitative, and computational methods.</p>
   </div>
 </section>
-<section>
-  <div class="container">
-    <div class="section-head"><div><span class="eyebrow">Focus Areas</span><h2>Where we work</h2></div></div>
-    <div class="grid grid-4">{g.topic_cards_html()}</div>
-  </div>
-</section>
 <section class="soft-bg">
   <div class="container">
-    <div class="section-head"><div><span class="eyebrow">Featured</span><h2>Current projects</h2></div></div>
-    <p style="color:var(--ink-soft); font-size:.92rem; margin-bottom:16px;">Filter projects and publications below by focus area.</p>
-    {g.filter_pills_html([t['name'] for t in g.TOPICS], 'research')}
-    <div class="grid grid-2" style="margin-top:28px;">{"".join(project_cards)}</div>
+    <div class="section-head"><div><span class="eyebrow">Focus Areas</span><h2>Research areas</h2></div></div>
+    <p style="color:var(--ink-soft); font-size:.92rem; margin-bottom:8px;">Expand an area to see its projects, publications, and people.</p>
+    <div class="area-list">{"".join(area_cards)}</div>
   </div>
 </section>
 <section id="publications">
   <div class="container">
     <div class="section-head"><div><span class="eyebrow">Publications</span><h2>Recent publications</h2></div></div>
-    {"".join(pub_feed)}
+    {g.filter_pills_html([t['name'] for t in g.TOPICS], 'research')}
+    {g.search_box_html("Search by title, author, year, or venue&hellip;", "Search publications")}
+    <div id="pub-feed-list" style="margin-top:24px;">{"".join(pub_feed)}</div>
+    <p class="list-empty" data-empty-for="pub-feed-list" hidden>No publications match your search or filter.</p>
   </div>
 </section>
 <section class="soft-bg">
@@ -223,9 +280,9 @@ g.write("research.html", g.page("research.html", "Research", "Cybersecurity, con
 # ===========================================================================
 for t in g.TOPICS:
     d = TOPIC_DETAIL[t["key"]]
-    projects_html = "".join(f'<div class="card"><span class="kicker">Project</span><h3>{n}</h3><p>{desc}</p></div>' for n, desc in d["projects"])
-    pubs_html = "".join(f'<div class="card"><span class="kicker">Publication</span><h3>{n}</h3><p>{desc}</p></div>' for n, desc in d["pubs"])
-    people_html = "".join(f'<div class="card"><span class="kicker">Person</span><h3>{n}</h3></div>' for n in d["people"])
+    projects_html = _topic_projects_html(d)
+    pubs_html = _topic_pubs_html(d)
+    people_html = _topic_people_html(d)
     body = f"""
 <section class="page-hero">
   <div class="container">
@@ -367,27 +424,21 @@ events_body = f"""
   <div class="container with-sidebar events-layout">
     <div>
       {g.filter_pills_html(list(g.EVENT_CATEGORIES.keys()), 'events')}
-      <div class="events-search">
-        <svg class="events-search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <circle cx="7" cy="7" r="5.25" stroke="currentColor" stroke-width="1.5"/>
-          <line x1="11.1" y1="11.1" x2="15" y2="15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        <input type="text" id="events-search" class="events-search-input" placeholder="Search events&hellip;" aria-label="Search events">
-      </div>
+      {g.search_box_html("Search events&hellip;", "Search events")}
       <div class="section-head" style="margin-top:28px;"><div><span class="eyebrow">Upcoming</span><h2>Upcoming Events</h2></div></div>
       <div class="rail-scroll-wrap">
         <div class="rail-scroll events-scroll" id="upcoming-events-list">
           {g.events_rows_html(g.EVENTS_ITEMS)}
         </div>
       </div>
-      <p class="events-empty" data-empty-for="upcoming-events-list" hidden>No upcoming events match your search or filter.</p>
+      <p class="list-empty" data-empty-for="upcoming-events-list" hidden>No upcoming events match your search or filter.</p>
       <div class="section-head" style="margin-top:48px;"><div><span class="eyebrow">Past</span><h2>Past Events</h2></div></div>
       <div class="rail-scroll-wrap">
         <div class="rail-scroll events-scroll" id="past-events-list">
           {g.past_events_html(g.PAST_EVENTS_ITEMS)}
         </div>
       </div>
-      <p class="events-empty" data-empty-for="past-events-list" hidden>No past events match your search or filter.</p>
+      <p class="list-empty" data-empty-for="past-events-list" hidden>No past events match your search or filter.</p>
     </div>
     <div>
       <h4 style="font-family:var(--font-body); font-size:.95rem; font-weight:700; margin-bottom:14px;">Calendar</h4>

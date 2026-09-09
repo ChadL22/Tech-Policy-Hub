@@ -24,7 +24,7 @@ SITE_URL = "https://chadl22.github.io/Tech-Policy-Hub/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026090829"
+ASSET_VERSION = "2026090830"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -897,6 +897,22 @@ def topic_pills_plain_html():
     replaced with an in-page filter instead), but left defined in case a
     future page wants a plain nav-only pill row."""
     return "".join(f'<a class="btn btn-ghost" href="{t["file"]}">{t["name"]}</a>' for t in TOPICS)
+
+
+def search_box_html(placeholder, aria_label):
+    """Shared search-box markup: an icon + text input carrying the
+    .filter-search-input class main.js looks for (see applyFilters()) to
+    combine with whatever [data-filter-group] pill bar is on the same
+    page. Used on events.html (search events) and research.html (search
+    publications) -- same component, different placeholder/label."""
+    return f"""
+      <div class="search-box">
+        <svg class="search-box-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="7" cy="7" r="5.25" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="11.1" y1="11.1" x2="15" y2="15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <input type="text" class="search-box-input filter-search-input" placeholder="{placeholder}" aria-label="{aria_label}">
+      </div>"""
 
 
 def filter_pills_html(values, group):
