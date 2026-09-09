@@ -676,14 +676,16 @@ li.has-dropdown.open .dropdown{ display:block; }
 
 /* ---------- Guiding Questions (homepage) ---------- */
 /* Follow-up: rebuilt off a Bloomberg reference (the "How To" module) at
-   direct user request -- was previously a dark full-bleed band
-   (.about-hub) holding a plain numbered text list; that band is gone in
-   favor of thin top/bottom rules on the page's normal white background,
-   a plain bold title positioned like Bloomberg's "How To" label, and
-   each question as its own bordered, rounded-corner card (.guide-q)
-   arranged in a grid like Bloomberg's "Odd Lots" row. */
-.guiding-section{ border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-.guiding-head{ margin-bottom: 24px; }
+   direct user request -- a plain bold title positioned like Bloomberg's
+   "How To" label, and each question as its own bordered, rounded-corner
+   card (.guide-q) arranged in a grid like Bloomberg's "Odd Lots" row.
+   Follow-up 2: user asked for the section's previous dark full-bleed
+   band + gold/white color scheme back on top of this new card layout --
+   .guiding-section is the dark band again (was .about-hub), with the
+   title and card outlines/text picking up the old gold/white treatment
+   below instead of .about-hub's old dark-mode overrides. */
+.guiding-section{ background: var(--header-band); }
+.guiding-head{ color: var(--umd-gold); margin-bottom: 24px; }
 .guide-q-list{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
 
 @media (max-width: 900px){
@@ -824,11 +826,11 @@ li.has-dropdown.open .dropdown{ display:block; }
 .guide-q{
   display:flex; flex-direction: column; gap: 8px;
   padding: 20px 18px;
-  border: 1px solid var(--line); border-radius: 10px;
-  background: var(--paper);
+  border: 1px solid rgba(255,255,255,.3); border-radius: 10px;
+  background: transparent;
 }
-.guide-q .num{ font-family: var(--font-nav); font-weight:700; font-size:.74rem; color: var(--umd-red); }
-.guide-q .qtext{ font-size:.86rem; line-height:1.4; color: var(--ink); }
+.guide-q .num{ font-family: var(--font-nav); font-weight:700; font-size:.74rem; color: var(--umd-gold); }
+.guide-q .qtext{ font-size:.86rem; line-height:1.4; color: #fff; }
 /* Follow-up 54: no hover highlight -- direct user request, since these
    items don't link anywhere (see follow-up 34), a hover highlight was
    implying interactivity that isn't actually there. */
