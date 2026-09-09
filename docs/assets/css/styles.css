@@ -689,7 +689,15 @@ li.has-dropdown.open .dropdown{ display:block; }
    default; main.js toggles [aria-expanded] on .area-card-toggle and
    [hidden] on the matching .area-card-panel. */
 .area-list{ display:flex; flex-direction:column; gap:14px; }
-.area-card{ border: 1.5px solid var(--line); border-radius: var(--radius); background:#fff; }
+.area-card{
+  border: 1.5px solid var(--line); border-radius: var(--radius); background:#fff;
+  /* Deep-linked from the nav, footer, homepage matrix, spotlight, and
+     publication titles (research.html#area-panel-<key>) now that each
+     research area no longer has its own page -- this keeps the card
+     clear of the sticky header when main.js scrolls a hash target into
+     view on load. */
+  scroll-margin-top: 100px;
+}
 .area-card-toggle{
   display:flex; align-items:center; gap:20px; width:100%; padding: 22px 24px;
   background:none; border:none; text-align:left; cursor:pointer; font-family: var(--font-body);

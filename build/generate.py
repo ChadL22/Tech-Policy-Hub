@@ -24,7 +24,7 @@ SITE_URL = "https://chadl22.github.io/Tech-Policy-Hub/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026090830"
+ASSET_VERSION = "2026090831"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -91,10 +91,10 @@ NAV = [
         # goes there, so a duplicate first child was pure redundancy. That
         # page is now filterable in-place (see filter_pills_html()) instead
         # of needing a nav entry to reach the unfiltered view.
-        ("Cybersecurity", "topic-cybersecurity.html"),
-        ("Consumer Privacy", "topic-privacy.html"),
-        ("Information Integrity", "topic-integrity.html"),
-        ("Trustworthy ML", "topic-ml.html"),
+        ("Cybersecurity", "research.html#area-panel-cybersecurity"),
+        ("Consumer Privacy", "research.html#area-panel-privacy"),
+        ("Information Integrity", "research.html#area-panel-integrity"),
+        ("Trustworthy ML", "research.html#area-panel-ml"),
         ("Publications", "research.html#publications"),
         ("Teaching", "courses.html"),
     ]),
@@ -242,10 +242,10 @@ def footer():
       <div>
         <h4>Research</h4>
         <ul>
-          <li><a href="topic-cybersecurity.html">Cybersecurity</a></li>
-          <li><a href="topic-privacy.html">Consumer Privacy</a></li>
-          <li><a href="topic-integrity.html">Information Integrity</a></li>
-          <li><a href="topic-ml.html">Trustworthy ML</a></li>
+          <li><a href="research.html#area-panel-cybersecurity">Cybersecurity</a></li>
+          <li><a href="research.html#area-panel-privacy">Consumer Privacy</a></li>
+          <li><a href="research.html#area-panel-integrity">Information Integrity</a></li>
+          <li><a href="research.html#area-panel-ml">Trustworthy ML</a></li>
           <li><a href="courses.html">Teaching</a></li>
         </ul>
       </div>
@@ -322,16 +322,16 @@ def write_raw(name, content):
 # ---------------------------------------------------------------------------
 
 TOPICS = [
-    dict(key="cybersecurity", file="topic-cybersecurity.html", index="01",
+    dict(key="cybersecurity", file="research.html#area-panel-cybersecurity", index="01",
          name="Cybersecurity",
          blurb="Measuring attack surface, risk, and resilience across governments, critical infrastructure, and the private sector."),
-    dict(key="privacy", file="topic-privacy.html", index="02",
+    dict(key="privacy", file="research.html#area-panel-privacy", index="02",
          name="Consumer Privacy",
          blurb="Studying how privacy law is designed, enforced, and experienced -- from cookie-less tracking to watchdog accountability."),
-    dict(key="integrity", file="topic-integrity.html", index="03",
+    dict(key="integrity", file="research.html#area-panel-integrity", index="03",
          name="Information Integrity",
          blurb="Tracking misinformation, platform transparency, and the policies that shape what people see and trust online."),
-    dict(key="ml", file="topic-ml.html", index="04",
+    dict(key="ml", file="research.html#area-panel-ml", index="04",
          name="Trustworthy ML",
          blurb="Examining algorithmic accountability, AI governance, and the standards needed for machine learning the public can trust."),
 ]
@@ -343,31 +343,31 @@ TOPICS = [
 # Content is pulled from the same real, verified NEWS_ITEMS entries used
 # elsewhere on the site -- see follow-up 26.
 SPOTLIGHT_ITEMS = [
-    dict(tag="Publication", topic="Consumer Privacy", topic_file="topic-privacy.html",
+    dict(tag="Publication", topic="Consumer Privacy", topic_file="research.html#area-panel-privacy",
          date="Jul 2025", source="[Add contributing lab/department]",
          title="Cookie-less Identification: For and Against Privacy",
          summary="Work from the privacy team on the privacy implications of cookie-less identification on the Web was published in the Internet Policy Review.",
          primary_label="Read the Research",
          link="https://policyreview.info/articles/analysis/cookie-less-identification-foragainst-privacy"),
-    dict(tag="Publication", topic="Information Integrity", topic_file="topic-integrity.html",
+    dict(tag="Publication", topic="Information Integrity", topic_file="research.html#area-panel-integrity",
          date="Jul 2025", source="[Add contributing lab/department]",
          title="Classifying Trustworthy Content via Third-Party Web Structure",
          summary="New work classifying trustworthy content on the Web based on the third-party structure of websites was published through the FOCI workshop at PETs.",
          primary_label="Read the Paper",
          link="https://www.petsymposium.org/foci/2025/foci-2025-0017.pdf"),
-    dict(tag="Media", topic="Cybersecurity", topic_file="topic-cybersecurity.html",
+    dict(tag="Media", topic="Cybersecurity", topic_file="research.html#area-panel-cybersecurity",
          date="Mar 2, 2025", source="[Add contributing lab/department]",
          title="Hub Cybersecurity Work Highlighted by Newsweek",
          summary="Research from the Hub's Cybersecurity group on county-level cyber risk was highlighted by Newsweek.",
          primary_label="Read the Coverage",
          link="https://www.newsweek.com/cybersecurity-risk-map-usa-counties-2026762"),
-    dict(tag="Speaker Series", topic="Consumer Privacy", topic_file="topic-privacy.html",
+    dict(tag="Speaker Series", topic="Consumer Privacy", topic_file="research.html#area-panel-privacy",
          date="Mar 12, 2025", source="[Add contributing lab/department]",
          title="Spring 2025 Speaker Series: Privacy Research and Regulation",
          summary="An online Spring 2025 Speaker Series event on how privacy research can inform privacy regulation.",
          primary_label="Event Details",
          link="https://umd.zoom.us/meeting/register/HbxWvfXnSBWxFfr1a7vnQA"),
-    dict(tag="Publication", topic="Cybersecurity", topic_file="topic-cybersecurity.html",
+    dict(tag="Publication", topic="Cybersecurity", topic_file="research.html#area-panel-cybersecurity",
          date="Jan 17, 2025", source="[Add contributing lab/department]",
          title="Attack Surface Across U.S. County Governments Published in Journal of Cybersecurity",
          summary="Research on the size, diversity, and severity of exposed attack surface across U.S. county governments is officially published by the Journal of Cybersecurity.",

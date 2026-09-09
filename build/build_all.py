@@ -166,9 +166,12 @@ TOPIC_DETAIL = {
 }
 
 
-# Shared per-topic renderers -- used both inside each research.html
-# accordion card below AND on that topic's own standalone page (see
-# "TOPIC PAGES" further down), so the two never drift apart.
+# Shared per-topic renderers -- used inside each research.html accordion
+# card below. (Each research area used to also get its own standalone
+# page reusing these same renderers; direct user request removed those
+# pages since the accordion card already shows everything inline, but
+# the renderers stay factored out in case a per-area page is wanted
+# again later.)
 def _topic_projects_html(d):
     return "".join(f'<div class="card"><span class="kicker">Project</span><h3>{n}</h3><p>{desc}</p></div>' for n, desc in d["projects"])
 
@@ -187,11 +190,16 @@ def _topic_people_html(d):
 # Follow-up: the old flat "Where we work" link-grid + a separately
 # filterable "Current projects" grid are gone -- replaced at direct user
 # request by ONE set of collapsible cards, one per research area, each
-# expanding into the same Projects/Publications/People tabs the topic's
-# own page already used. Collapsed by default (.area-card-panel[hidden]);
-# toggled by main.js's accordion handler. Each panel still links out to
-# the topic's full page underneath, so that page stays reachable/
-# bookmarkable, not orphaned by folding its content in here too.
+# expanding into its own Projects/Publications/People tabs. Collapsed by
+# default (.area-card-panel[hidden]); toggled by main.js's accordion
+# handler. Follow-up 2: the standalone per-topic pages these used to
+# also power are gone too (direct user request -- no research area
+# needs its own page now that this card shows everything), so every
+# link that used to point to e.g. topic-cybersecurity.html now points
+# to research.html#area-panel-cybersecurity instead (see TOPICS in
+# generate.py) -- main.js opens + scrolls to the right card on load
+# when that hash is present, so the card is still a real deep-linkable,
+# bookmarkable destination.
 area_cards = []
 for t in g.TOPICS:
     d = TOPIC_DETAIL[t["key"]]
@@ -214,7 +222,6 @@ for t in g.TOPICS:
           <div class="tab-panel" data-tab="pubs"><div class="grid grid-2">{_topic_pubs_html(d)}</div></div>
           <div class="tab-panel" data-tab="people"><div class="grid grid-2">{_topic_people_html(d)}</div></div>
         </div>
-        <a class="text-link" href="{t['file']}" style="display:inline-block; margin-top:20px;">View the full {t['name']} page &rarr;</a>
       </div>
     </div>""")
 
@@ -274,40 +281,6 @@ research_body = f"""
 </section>
 """
 g.write("research.html", g.page("research.html", "Research", "Cybersecurity, consumer privacy, information integrity, and trustworthy ML research from the Tech Policy Hub.", research_body))
-
-# ===========================================================================
-# TOPIC PAGES
-# ===========================================================================
-for t in g.TOPICS:
-    d = TOPIC_DETAIL[t["key"]]
-    projects_html = _topic_projects_html(d)
-    pubs_html = _topic_pubs_html(d)
-    people_html = _topic_people_html(d)
-    body = f"""
-<section class="page-hero">
-  <div class="container">
-    <div class="breadcrumb"><a href="index.html">Home</a> / <a href="research.html">Research</a> / {t['name']}</div>
-    <span class="eyebrow">Research Area</span>
-    <h1>{t['name']}</h1>
-    <p class="lede">{t['blurb']}</p>
-  </div>
-</section>
-<section>
-  <div class="container">
-    <div class="tabs">
-      <button class="tab-btn active" data-tab="projects">Projects</button>
-      <button class="tab-btn" data-tab="pubs">Publications</button>
-      <button class="tab-btn" data-tab="people">People</button>
-    </div>
-    <div>
-      <div class="tab-panel active" data-tab="projects"><div class="grid grid-2">{projects_html}</div></div>
-      <div class="tab-panel" data-tab="pubs"><div class="grid grid-2">{pubs_html}</div></div>
-      <div class="tab-panel" data-tab="people"><div class="grid grid-2">{people_html}</div></div>
-    </div>
-  </div>
-</section>
-"""
-    g.write(t["file"], g.page(t["file"], t["name"], t["blurb"], body))
 
 # ===========================================================================
 # TEACHING (formerly "Courses"), SPEAKER SERIES, ANNUAL EVENT

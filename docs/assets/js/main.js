@@ -83,6 +83,28 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
+  // Open + scroll to an accordion card from a URL hash, e.g.
+  // research.html#area-panel-cybersecurity -- direct user request: no
+  // research area has its own page anymore, so the nav dropdown,
+  // footer, homepage research matrix, spotlight "Explore" buttons, and
+  // publication titles all deep-link here instead, and this is what
+  // makes that landing actually show the right card open rather than
+  // just a collapsed list.
+  function openAreaCardFromHash() {
+    var id = window.location.hash.slice(1);
+    if (!id) return;
+    var panel = document.getElementById(id);
+    if (!panel || !panel.classList.contains('area-card-panel')) return;
+    var toggle = document.querySelector('.area-card-toggle[aria-controls="' + id + '"]');
+    if (!toggle) return;
+    toggle.setAttribute('aria-expanded', 'true');
+    panel.hidden = false;
+    var card = toggle.closest('.area-card') || toggle;
+    card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  openAreaCardFromHash();
+  window.addEventListener('hashchange', openAreaCardFromHash);
+
   // Filter pills (Research: by focus area / Events: by category) -- see
   // filter_pills_html() in generate.py. One filter bar per page today, so
   // this doesn't scope items to a specific bar; it just shows/hides every
