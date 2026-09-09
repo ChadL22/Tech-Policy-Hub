@@ -286,7 +286,7 @@ li.has-dropdown.open .dropdown{ display:block; }
    border) per direct user request. */
 .spotlight-media-track{
   position: relative; display: grid; grid-template-areas: "slide";
-  border-bottom: 3px solid var(--umd-gold);
+  border-bottom: 6px solid var(--umd-gold);
 }
 .spotlight-media-slide{ grid-area: slide; opacity:0; pointer-events:none; transition: opacity .6s ease-in-out; }
 .spotlight-media-slide.is-active.is-visible{ opacity:1; pointer-events:auto; }
