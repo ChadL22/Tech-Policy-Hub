@@ -356,17 +356,15 @@ _ics_webcal_url = _ics_url.replace("https://", "webcal://")
 # as the homepage's Hub News rail) instead of growing as an unbounded
 # list -- direct user request: "It wouldn't be in our best interest to
 # have a laundry list of events for the page that goes on forever."
+# Follow-up: the page-hero intro (breadcrumb/eyebrow/h1/lede) was
+# removed entirely per direct user request -- the page now opens
+# straight into the filter pills, matching SCOTUSblog's own calendar
+# page (which drops straight into its filter row + search box right
+# under the nav) rather than restating "Tech Policy Hub Calendar" above
+# a tool the EVENTS nav item already led the visitor to.
 events_body = f"""
-<section class="page-hero">
-  <div class="container">
-    <div class="breadcrumb"><a href="index.html">Home</a> / Events</div>
-    <span class="eyebrow">Upcoming</span>
-    <h1>Tech Policy Hub Calendar</h1>
-    <p class="lede">Speaker Series sessions, workshops, roundtables, and our flagship Annual Event -- searchable below.</p>
-  </div>
-</section>
 <section>
-  <div class="container with-sidebar">
+  <div class="container with-sidebar events-layout">
     <div>
       {g.filter_pills_html(list(g.EVENT_CATEGORIES.keys()), 'events')}
       <div class="events-search">

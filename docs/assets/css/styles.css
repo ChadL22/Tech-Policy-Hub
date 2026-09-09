@@ -869,6 +869,16 @@ li.has-dropdown.open .dropdown{ display:block; }
 /* ---------- Two column with sidebar ---------- */
 .with-sidebar{ display:grid; grid-template-columns: 1fr 280px; gap: 48px; }
 .rail-wrap{ align-items: start; }
+/* Follow-up: events.html's own column ratio -- direct user request to
+   widen the calendar and narrow the events list, which was leaving a
+   lot of empty space between each row's meta text and its Details
+   button at the old 1fr/280px split. Capping the events column at
+   620px (rather than letting it be the flexible 1fr side) and giving
+   the calendar the flexible remainder does both at once. Declared after
+   .with-sidebar so it wins the tie on shared selector specificity;
+   still overridden by the 900px .with-sidebar mobile rule below since
+   that one comes later in the file. */
+.events-layout{ grid-template-columns: minmax(0, 620px) 1fr; }
 
 /* ---------- Homepage calendar (replaces the old Recent News feed) --
    real month-grid, Sun-Sat, correct weekday math from the stdlib
