@@ -237,11 +237,10 @@ li.has-dropdown.open .dropdown{ display:block; }
 .lead-section{ padding: 28px 0 32px; border-bottom: 1px solid var(--line); }
 .lead-grid{ display:grid; grid-template-columns: 280px 1fr 280px; gap: 40px; align-items: start; }
 .lead-secondary{ grid-column: 1; border-right: 1px solid var(--line); padding-right: 28px; }
-/* Follow-up: matched to .rail-item h4's darkness/weight (Hub News
-   headlines) at direct user request -- overrides the sitewide p{ color:
-   var(--ink-soft) } rule, which was making this copy read lighter than
-   the rail titles beside it. */
-.lead-secondary p{ font-size:.88rem; line-height:1.6; color: var(--ink); font-weight:700; }
+/* Follow-up: briefly matched to .rail-item h4's darkness/weight (Hub
+   News headlines), then walked back per direct user request -- back to
+   the plain sitewide p{ color: var(--ink-soft) } weight/color. */
+.lead-secondary p{ font-size:.88rem; line-height:1.6; }
 .lead-join strong{ color: var(--umd-red); }
 .lead-story{ grid-column: 2; }
 .lead-rail{ grid-column: 3; border-left: 1px solid var(--line); padding-left: 28px; }
