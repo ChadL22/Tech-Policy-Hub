@@ -203,55 +203,60 @@ def _topic_pubs_table_html(d):
 # research.html#area-panel-cybersecurity instead (see TOPICS in
 # generate.py). Follow-up 3: card visuals restyled off a reference
 # screenshot (MIT Media Lab's "Initiatives and Programs" grid). Follow-up
-# 4 (direct user request, second reference from the same site): replaced
-# the old per-card click-to-expand + internal Projects/Publications/
-# People tab strip with ONE People/Projects/Publications selector above
-# the whole grid (mirroring that reference's secondary nav row) plus a
-# search box next to it -- picking a category opens every card's table
-# for that category at once (main.js's areaCategory), and the standalone
-# "Recent publications" section that used to live further down the page
-# is gone too, folded into this Publications table instead of keeping
-# two separate search UIs. main.js still opens + scrolls to the right
-# card (or category) on load when a matching hash is present, so this
-# stays a real deep-linkable, bookmarkable destination for every link
-# above that points here.
+# 4: added a People/Projects/Publications selector above the whole grid
+# plus a search box, folding the standalone "Recent publications"
+# section that used to live further down the page into this instead of
+# keeping two separate search UIs. Follow-up 5 (direct user request):
+# clicking a category alone no longer opens every card's table at once
+# -- now you click a SPECIFIC area card to select it, which enlarges
+# that card, shrinks the other three into a gapped 2x2 grid
+# (.area-list.has-selection), and populates ONE table -- for the
+# selected area, in whichever category is active -- in the
+# #area-detail section directly beneath the grid. Every (area, category)
+# combination is pre-rendered as its own hidden .area-detail-table (this
+# is a static site -- there's no data to fetch client-side), and
+# main.js's areaExplorer closure just toggles which single one is
+# visible. main.js still opens + scrolls to the right card (or the list
+# in general, for a bare category hash) on load when a matching hash is
+# present, so this stays a real deep-linkable, bookmarkable destination
+# for every link above that points here. Follow-up 6 (direct user
+# request): dropped the page-hero title/breadcrumb/lede above the grid
+# entirely -- the card grid is now the first thing on the page, MIT
+# Media Lab style. Also reordered the category tabs to
+# Publications/Projects/People (Publications stays the default open
+# category, matching this new tab order) and re-checked the card visuals
+# against the MIT reference.
 area_cards = []
+area_detail_tables = []
 for t in g.TOPICS:
     d = TOPIC_DETAIL[t["key"]]
     area_cards.append(f"""
-    <div class="area-card" id="area-panel-{t['key']}">
-      <div class="area-card-head">
+      <button type="button" class="area-card" id="area-panel-{t['key']}" data-area="{t['key']}">
         <span class="area-card-top"><span class="area-card-index">{t['index']}</span></span>
         <span class="area-card-title"><h3>{t['name']}</h3><p>{t['blurb']}</p></span>
-      </div>
-      <div class="area-card-table" data-category-panel="people" hidden>{_topic_people_table_html(d)}</div>
-      <div class="area-card-table" data-category-panel="projects" hidden>{_topic_projects_table_html(d)}</div>
-      <div class="area-card-table" data-category-panel="publications" hidden>{_topic_pubs_table_html(d)}</div>
-    </div>""")
+      </button>""")
+    area_detail_tables.append(f'<div class="area-detail-table" data-area="{t["key"]}" data-category="people" hidden>{_topic_people_table_html(d)}</div>')
+    area_detail_tables.append(f'<div class="area-detail-table" data-area="{t["key"]}" data-category="projects" hidden>{_topic_projects_table_html(d)}</div>')
+    area_detail_tables.append(f'<div class="area-detail-table" data-area="{t["key"]}" data-category="publications" hidden>{_topic_pubs_table_html(d)}</div>')
 
 area_tabs = "".join(
     f'<button type="button" class="filter-pill area-tab" data-category="{cat}">{label}</button>'
-    for cat, label in [("people", "People"), ("projects", "Projects"), ("publications", "Publications")]
+    for cat, label in [("publications", "Publications"), ("projects", "Projects"), ("people", "People")]
 )
 
 research_body = f"""
-<section class="page-hero">
-  <div class="container">
-    <div class="breadcrumb"><a href="index.html">Home</a> / Research</div>
-    <span class="eyebrow">Research</span>
-    <h1>Research</h1>
-    <p class="lede">Cybersecurity, consumer privacy, information integrity, and trustworthy machine learning &mdash; studied through comparative, qualitative, and computational methods.</p>
-  </div>
-</section>
 <section class="soft-bg">
   <div class="container">
-    <div class="section-head"><div><span class="eyebrow">Focus Areas</span><h2>Research areas</h2></div></div>
     <div class="area-controls">
       <div class="filter-bar">{area_tabs}</div>
       {g.search_box_html("Search by name, title, venue&hellip;", "Search research areas")}
     </div>
     <div class="area-list" id="area-list">{"".join(area_cards)}</div>
-    <p class="list-empty" data-empty-for="area-list" hidden>No results match your search.</p>
+    <div class="area-detail" id="area-detail" hidden>
+      <div class="area-detail-head"><h3 id="area-detail-title"></h3></div>
+      {"".join(area_detail_tables)}
+      <p class="list-empty" data-empty-for="area-detail" hidden>No results match your search.</p>
+    </div>
   </div>
 </section>
 <section class="soft-bg">

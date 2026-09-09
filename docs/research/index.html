@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Research | Tech Policy Hub</title>
 <meta name="description" content="Cybersecurity, consumer privacy, information integrity, and trustworthy ML research from the Tech Policy Hub.">
-<link rel="stylesheet" href="../assets/css/styles.css?v=2026090833">
+<link rel="stylesheet" href="../assets/css/styles.css?v=2026090834">
 </head>
 <body>
 
@@ -13,7 +13,7 @@
   <div class="container header-inner">
     <div class="brand-lockup">
       <a href="../" class="brand" aria-label="Tech Policy Hub, University of Maryland School of Public Policy">
-        <img src="../assets/img/sopp-tph-lockup.png?v=2026090833" alt="University of Maryland School of Public Policy &ndash; Tech Policy Hub" class="brand-mark">
+        <img src="../assets/img/sopp-tph-lockup.png?v=2026090834" alt="University of Maryland School of Public Policy &ndash; Tech Policy Hub" class="brand-mark">
       </a>
     </div>
     <nav class="primary-nav" aria-label="Primary">
@@ -28,19 +28,10 @@
   </div>
 </header>
 
-<section class="page-hero">
-  <div class="container">
-    <div class="breadcrumb"><a href="../">Home</a> / Research</div>
-    <span class="eyebrow">Research</span>
-    <h1>Research</h1>
-    <p class="lede">Cybersecurity, consumer privacy, information integrity, and trustworthy machine learning &mdash; studied through comparative, qualitative, and computational methods.</p>
-  </div>
-</section>
 <section class="soft-bg">
   <div class="container">
-    <div class="section-head"><div><span class="eyebrow">Focus Areas</span><h2>Research areas</h2></div></div>
     <div class="area-controls">
-      <div class="filter-bar"><button type="button" class="filter-pill area-tab" data-category="people">People</button><button type="button" class="filter-pill area-tab" data-category="projects">Projects</button><button type="button" class="filter-pill area-tab" data-category="publications">Publications</button></div>
+      <div class="filter-bar"><button type="button" class="filter-pill area-tab" data-category="publications">Publications</button><button type="button" class="filter-pill area-tab" data-category="projects">Projects</button><button type="button" class="filter-pill area-tab" data-category="people">People</button></div>
       
       <div class="search-box">
         <svg class="search-box-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -51,43 +42,27 @@
       </div>
     </div>
     <div class="area-list" id="area-list">
-    <div class="area-card" id="area-panel-cybersecurity">
-      <div class="area-card-head">
+      <button type="button" class="area-card" id="area-panel-cybersecurity" data-area="cybersecurity">
         <span class="area-card-top"><span class="area-card-index">01</span></span>
         <span class="area-card-title"><h3>Cybersecurity</h3><p>Measuring attack surface, risk, and resilience across governments, critical infrastructure, and the private sector.</p></span>
-      </div>
-      <div class="area-card-table" data-category-panel="people" hidden><table class="area-table"><thead><tr><th>Name</th></tr></thead><tbody><tr data-search-row><td>Dr. Charlie Harry</td></tr><tr data-search-row><td>Jordan Diaz</td></tr></tbody></table></div>
-      <div class="area-card-table" data-category-panel="projects" hidden><table class="area-table"><thead><tr><th>Project</th><th>Description</th></tr></thead><tbody><tr data-search-row><td>Cyber Risk Mapping for U.S. Counties</td><td>Quantifying exposed attack surface and cyber risk across all 50 states and thousands of county governments.</td></tr><tr data-search-row><td>Critical Infrastructure Resilience</td><td>Working with practitioners to translate attack-surface research into actionable defense priorities.</td></tr></tbody></table></div>
-      <div class="area-card-table" data-category-panel="publications" hidden><table class="area-table"><thead><tr><th>Title</th><th>Venue</th><th>Year</th><th>Authors</th></tr></thead><tbody><tr data-search-row><td>Size, diversity, and severity of exposed attack surface across U.S. county governments.</td><td>Journal of Cybersecurity</td><td>2026</td><td>Dr. Charlie Harry</td></tr><tr data-search-row><td>UMD researchers calculate cyberattack risk for all 50 states.</td><td>Maryland Today</td><td>2026</td><td>Dr. Charlie Harry, Jordan Diaz</td></tr></tbody></table></div>
-    </div>
-    <div class="area-card" id="area-panel-privacy">
-      <div class="area-card-head">
+      </button>
+      <button type="button" class="area-card" id="area-panel-privacy" data-area="privacy">
         <span class="area-card-top"><span class="area-card-index">02</span></span>
         <span class="area-card-title"><h3>Consumer Privacy</h3><p>Studying how privacy law is designed, enforced, and experienced -- from cookie-less tracking to watchdog accountability.</p></span>
-      </div>
-      <div class="area-card-table" data-category-panel="people" hidden><table class="area-table"><thead><tr><th>Name</th></tr></thead><tbody><tr data-search-row><td>Dr. Ido Sivan-Sevilla</td></tr><tr data-search-row><td>Amara Mensah</td></tr></tbody></table></div>
-      <div class="area-card-table" data-category-panel="projects" hidden><table class="area-table"><thead><tr><th>Project</th><th>Description</th></tr></thead><tbody><tr data-search-row><td>Cookie-less Identification Tracking</td><td>Studying how identification methods are evolving as third-party cookies are phased out, and what it means for privacy.</td></tr><tr data-search-row><td>Watchdog Accountability</td><td>Assessing the powers of formal and informal U.S. privacy regulators.</td></tr></tbody></table></div>
-      <div class="area-card-table" data-category-panel="publications" hidden><table class="area-table"><thead><tr><th>Title</th><th>Venue</th><th>Year</th><th>Authors</th></tr></thead><tbody><tr data-search-row><td>Cookie-less identification: for and against privacy.</td><td>Internet Policy Review</td><td>2026</td><td>Dr. Ido Sivan-Sevilla</td></tr><tr data-search-row><td>Accountability powers of formal and informal U.S. privacy watchdogs.</td><td>Privacy Law Scholars Conference</td><td>2026</td><td>Dr. Ido Sivan-Sevilla, Amara Mensah</td></tr></tbody></table></div>
-    </div>
-    <div class="area-card" id="area-panel-integrity">
-      <div class="area-card-head">
+      </button>
+      <button type="button" class="area-card" id="area-panel-integrity" data-area="integrity">
         <span class="area-card-top"><span class="area-card-index">03</span></span>
         <span class="area-card-title"><h3>Information Integrity</h3><p>Tracking misinformation, platform transparency, and the policies that shape what people see and trust online.</p></span>
-      </div>
-      <div class="area-card-table" data-category-panel="people" hidden><table class="area-table"><thead><tr><th>Name</th></tr></thead><tbody><tr data-search-row><td>Jordan Diaz</td></tr><tr data-search-row><td>Dr. Ido Sivan-Sevilla</td></tr></tbody></table></div>
-      <div class="area-card-table" data-category-panel="projects" hidden><table class="area-table"><thead><tr><th>Project</th><th>Description</th></tr></thead><tbody><tr data-search-row><td>Trustworthy Content Classification</td><td>Classifying trustworthy content on the web using third-party site structure.</td></tr><tr data-search-row><td>Platform Transparency Tracker</td><td>Monitoring platform disclosures and their real-world enforcement.</td></tr></tbody></table></div>
-      <div class="area-card-table" data-category-panel="publications" hidden><table class="area-table"><thead><tr><th>Title</th><th>Venue</th><th>Year</th><th>Authors</th></tr></thead><tbody><tr data-search-row><td>Classifying trustworthy content on the web based on third-party structure.</td><td>FOCI Workshop @ PETs</td><td>2026</td><td>Jordan Diaz</td></tr><tr data-search-row><td>What platform transparency reports do and don't tell us.</td><td>Policy Brief</td><td>2026</td><td>Dr. Ido Sivan-Sevilla</td></tr></tbody></table></div>
-    </div>
-    <div class="area-card" id="area-panel-ml">
-      <div class="area-card-head">
+      </button>
+      <button type="button" class="area-card" id="area-panel-ml" data-area="ml">
         <span class="area-card-top"><span class="area-card-index">04</span></span>
         <span class="area-card-title"><h3>Trustworthy ML</h3><p>Examining algorithmic accountability, AI governance, and the standards needed for machine learning the public can trust.</p></span>
-      </div>
-      <div class="area-card-table" data-category-panel="people" hidden><table class="area-table"><thead><tr><th>Name</th></tr></thead><tbody><tr data-search-row><td>Dr. Katie Shilton</td></tr><tr data-search-row><td>Lee Tiedrich</td></tr></tbody></table></div>
-      <div class="area-card-table" data-category-panel="projects" hidden><table class="area-table"><thead><tr><th>Project</th><th>Description</th></tr></thead><tbody><tr data-search-row><td>Algorithmic Accountability Framework</td><td>Developing standards for evaluating machine learning systems used in public decision-making.</td></tr><tr data-search-row><td>AI Governance Roundtables</td><td>Convening researchers and policymakers on the governance of emerging AI systems.</td></tr></tbody></table></div>
-      <div class="area-card-table" data-category-panel="publications" hidden><table class="area-table"><thead><tr><th>Title</th><th>Venue</th><th>Year</th><th>Authors</th></tr></thead><tbody><tr data-search-row><td>Applying Contextual Integrity to measure algorithmic decision-making.</td><td>arXiv</td><td>2026</td><td>Dr. Katie Shilton</td></tr><tr data-search-row><td>Tech Policy Hub & VCAI roundtable on AI policy.</td><td>Roundtable Summary</td><td>2025</td><td>Lee Tiedrich</td></tr></tbody></table></div>
-    </div></div>
-    <p class="list-empty" data-empty-for="area-list" hidden>No results match your search.</p>
+      </button></div>
+    <div class="area-detail" id="area-detail" hidden>
+      <div class="area-detail-head"><h3 id="area-detail-title"></h3></div>
+      <div class="area-detail-table" data-area="cybersecurity" data-category="people" hidden><table class="area-table"><thead><tr><th>Name</th></tr></thead><tbody><tr data-search-row><td>Dr. Charlie Harry</td></tr><tr data-search-row><td>Jordan Diaz</td></tr></tbody></table></div><div class="area-detail-table" data-area="cybersecurity" data-category="projects" hidden><table class="area-table"><thead><tr><th>Project</th><th>Description</th></tr></thead><tbody><tr data-search-row><td>Cyber Risk Mapping for U.S. Counties</td><td>Quantifying exposed attack surface and cyber risk across all 50 states and thousands of county governments.</td></tr><tr data-search-row><td>Critical Infrastructure Resilience</td><td>Working with practitioners to translate attack-surface research into actionable defense priorities.</td></tr></tbody></table></div><div class="area-detail-table" data-area="cybersecurity" data-category="publications" hidden><table class="area-table"><thead><tr><th>Title</th><th>Venue</th><th>Year</th><th>Authors</th></tr></thead><tbody><tr data-search-row><td>Size, diversity, and severity of exposed attack surface across U.S. county governments.</td><td>Journal of Cybersecurity</td><td>2026</td><td>Dr. Charlie Harry</td></tr><tr data-search-row><td>UMD researchers calculate cyberattack risk for all 50 states.</td><td>Maryland Today</td><td>2026</td><td>Dr. Charlie Harry, Jordan Diaz</td></tr></tbody></table></div><div class="area-detail-table" data-area="privacy" data-category="people" hidden><table class="area-table"><thead><tr><th>Name</th></tr></thead><tbody><tr data-search-row><td>Dr. Ido Sivan-Sevilla</td></tr><tr data-search-row><td>Amara Mensah</td></tr></tbody></table></div><div class="area-detail-table" data-area="privacy" data-category="projects" hidden><table class="area-table"><thead><tr><th>Project</th><th>Description</th></tr></thead><tbody><tr data-search-row><td>Cookie-less Identification Tracking</td><td>Studying how identification methods are evolving as third-party cookies are phased out, and what it means for privacy.</td></tr><tr data-search-row><td>Watchdog Accountability</td><td>Assessing the powers of formal and informal U.S. privacy regulators.</td></tr></tbody></table></div><div class="area-detail-table" data-area="privacy" data-category="publications" hidden><table class="area-table"><thead><tr><th>Title</th><th>Venue</th><th>Year</th><th>Authors</th></tr></thead><tbody><tr data-search-row><td>Cookie-less identification: for and against privacy.</td><td>Internet Policy Review</td><td>2026</td><td>Dr. Ido Sivan-Sevilla</td></tr><tr data-search-row><td>Accountability powers of formal and informal U.S. privacy watchdogs.</td><td>Privacy Law Scholars Conference</td><td>2026</td><td>Dr. Ido Sivan-Sevilla, Amara Mensah</td></tr></tbody></table></div><div class="area-detail-table" data-area="integrity" data-category="people" hidden><table class="area-table"><thead><tr><th>Name</th></tr></thead><tbody><tr data-search-row><td>Jordan Diaz</td></tr><tr data-search-row><td>Dr. Ido Sivan-Sevilla</td></tr></tbody></table></div><div class="area-detail-table" data-area="integrity" data-category="projects" hidden><table class="area-table"><thead><tr><th>Project</th><th>Description</th></tr></thead><tbody><tr data-search-row><td>Trustworthy Content Classification</td><td>Classifying trustworthy content on the web using third-party site structure.</td></tr><tr data-search-row><td>Platform Transparency Tracker</td><td>Monitoring platform disclosures and their real-world enforcement.</td></tr></tbody></table></div><div class="area-detail-table" data-area="integrity" data-category="publications" hidden><table class="area-table"><thead><tr><th>Title</th><th>Venue</th><th>Year</th><th>Authors</th></tr></thead><tbody><tr data-search-row><td>Classifying trustworthy content on the web based on third-party structure.</td><td>FOCI Workshop @ PETs</td><td>2026</td><td>Jordan Diaz</td></tr><tr data-search-row><td>What platform transparency reports do and don't tell us.</td><td>Policy Brief</td><td>2026</td><td>Dr. Ido Sivan-Sevilla</td></tr></tbody></table></div><div class="area-detail-table" data-area="ml" data-category="people" hidden><table class="area-table"><thead><tr><th>Name</th></tr></thead><tbody><tr data-search-row><td>Dr. Katie Shilton</td></tr><tr data-search-row><td>Lee Tiedrich</td></tr></tbody></table></div><div class="area-detail-table" data-area="ml" data-category="projects" hidden><table class="area-table"><thead><tr><th>Project</th><th>Description</th></tr></thead><tbody><tr data-search-row><td>Algorithmic Accountability Framework</td><td>Developing standards for evaluating machine learning systems used in public decision-making.</td></tr><tr data-search-row><td>AI Governance Roundtables</td><td>Convening researchers and policymakers on the governance of emerging AI systems.</td></tr></tbody></table></div><div class="area-detail-table" data-area="ml" data-category="publications" hidden><table class="area-table"><thead><tr><th>Title</th><th>Venue</th><th>Year</th><th>Authors</th></tr></thead><tbody><tr data-search-row><td>Applying Contextual Integrity to measure algorithmic decision-making.</td><td>arXiv</td><td>2026</td><td>Dr. Katie Shilton</td></tr><tr data-search-row><td>Tech Policy Hub & VCAI roundtable on AI policy.</td><td>Roundtable Summary</td><td>2025</td><td>Lee Tiedrich</td></tr></tbody></table></div>
+      <p class="list-empty" data-empty-for="area-detail" hidden>No results match your search.</p>
+    </div>
   </div>
 </section>
 <section class="soft-bg">
@@ -107,19 +82,19 @@
       <div>
         <div class="footer-social">
           <a href="https://sclanga.substack.com/" target="_blank" rel="noopener" aria-label="Substack">
-            <img src="../assets/img/social/substack.png?v=2026090833" alt="" loading="lazy">
+            <img src="../assets/img/social/substack.png?v=2026090834" alt="" loading="lazy">
           </a>
           <a href="https://x.com/phronesisres" target="_blank" rel="noopener" aria-label="X">
-            <img src="../assets/img/social/x.png?v=2026090833" alt="" loading="lazy">
+            <img src="../assets/img/social/x.png?v=2026090834" alt="" loading="lazy">
           </a>
           <a href="https://www.instagram.com/phronesisres" target="_blank" rel="noopener" aria-label="Instagram">
-            <img src="../assets/img/social/instagram.png?v=2026090833" alt="" loading="lazy">
+            <img src="../assets/img/social/instagram.png?v=2026090834" alt="" loading="lazy">
           </a>
           <a href="https://www.threads.com/@phronesisres" target="_blank" rel="noopener" aria-label="Threads">
-            <img src="../assets/img/social/threads.png?v=2026090833" alt="" loading="lazy">
+            <img src="../assets/img/social/threads.png?v=2026090834" alt="" loading="lazy">
           </a>
           <a href="https://www.tiktok.com/@phronesis.research" target="_blank" rel="noopener" aria-label="TikTok">
-            <img src="../assets/img/social/tiktok.png?v=2026090833" alt="" loading="lazy">
+            <img src="../assets/img/social/tiktok.png?v=2026090834" alt="" loading="lazy">
           </a>
         </div>
         <ul class="footer-legal">
@@ -164,6 +139,6 @@
     </div>
   </div>
 </footer>
-<script src="../assets/js/main.js?v=2026090833"></script>
+<script src="../assets/js/main.js?v=2026090834"></script>
 </body>
 </html>

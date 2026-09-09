@@ -70,58 +70,76 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  // Research-area explorer (Research page) -- direct user request to
-  // replace the old per-card Projects/Publications/People tab strip
-  // with ONE People/Projects/Publications selector above all four
-  // cards (mirroring a reference screenshot's secondary nav row), plus
-  // a search box across from it. Picking a category expands every card
-  // at once, each showing its own table for that category (an
-  // Excel-like list per direct user request); picking the active
-  // category again collapses back to the plain header-card grid. The
-  // search box filters visible table rows by text match and hides a
-  // card entirely if none of its rows match, using the same
-  // [data-empty-for] "no results" pattern as the other search boxes on
-  // the site.
-  var areaCategory = (function () {
+  // Research-area explorer (Research page) -- direct user request,
+  // second iteration: click a SPECIFIC area card to select it. The
+  // selected card enlarges (.is-selected), its three siblings shrink
+  // into a gapped 2x2 grid (.is-other, list gains .has-selection), and
+  // ONE table -- for the selected area, in whichever
+  // People/Projects/Publications tab is active -- populates directly
+  // beneath the grid in #area-detail. Every (area, category) pair is
+  // pre-rendered as its own hidden .area-detail-table (a static site
+  // has nothing to fetch client-side), so this closure just decides
+  // which single one is visible. Clicking the selected card again
+  // deselects it, returning to the plain lattice grid and hiding the
+  // detail panel. The search box filters that one visible table's rows
+  // by text match, using the same [data-empty-for] "no results" pattern
+  // as the other search boxes on the site.
+  var areaExplorer = (function () {
     var list = document.getElementById('area-list');
+    var detail = document.getElementById('area-detail');
+    var detailTitle = document.getElementById('area-detail-title');
+    var cards = Array.prototype.slice.call(document.querySelectorAll('.area-card'));
     var tabs = Array.prototype.slice.call(document.querySelectorAll('.area-tab'));
-    if (!list || !tabs.length) return { set: function () {} };
+    if (!list || !detail || !cards.length || !tabs.length) return { select: function () {} };
 
     var searchInput = document.querySelector('.area-controls .filter-search-input');
-    var emptyMsg = document.querySelector('[data-empty-for="area-list"]');
-    var active = null;
+    var emptyMsg = document.querySelector('[data-empty-for="area-detail"]');
+    var selectedArea = null;
+    var selectedCategory = 'publications';
 
     function render() {
       var query = ((searchInput && searchInput.value) || '').trim().toLowerCase();
-      list.classList.toggle('is-expanded', !!active);
+      list.classList.toggle('has-selection', !!selectedArea);
       tabs.forEach(function (tab) {
-        tab.classList.toggle('active', tab.getAttribute('data-category') === active);
+        tab.classList.toggle('active', !!selectedArea && tab.getAttribute('data-category') === selectedCategory);
       });
+      cards.forEach(function (card) {
+        var isSelected = card.getAttribute('data-area') === selectedArea;
+        card.classList.toggle('is-selected', isSelected);
+        card.classList.toggle('is-other', !!selectedArea && !isSelected);
+      });
+
+      detail.hidden = !selectedArea;
+      if (!selectedArea) return;
+
+      var nameEl = list.querySelector('.area-card[data-area="' + selectedArea + '"] h3');
+      if (detailTitle) detailTitle.textContent = (nameEl ? nameEl.textContent : '') + ' — ' + selectedCategory;
+
       var anyVisible = false;
-      list.querySelectorAll('.area-card').forEach(function (card) {
-        card.querySelectorAll('.area-card-table').forEach(function (panel) {
-          panel.hidden = panel.getAttribute('data-category-panel') !== active;
+      detail.querySelectorAll('.area-detail-table').forEach(function (panel) {
+        var match = panel.getAttribute('data-area') === selectedArea && panel.getAttribute('data-category') === selectedCategory;
+        panel.hidden = !match;
+        if (!match) return;
+        panel.querySelectorAll('tr[data-search-row]').forEach(function (row) {
+          var rowMatch = !query || row.textContent.toLowerCase().indexOf(query) !== -1;
+          row.hidden = !rowMatch;
+          if (rowMatch) anyVisible = true;
         });
-        if (!active) { card.hidden = false; return; }
-        var visiblePanel = card.querySelector('.area-card-table[data-category-panel="' + active + '"]');
-        var cardHasMatch = !query;
-        if (visiblePanel) {
-          visiblePanel.querySelectorAll('tr[data-search-row]').forEach(function (row) {
-            var match = !query || row.textContent.toLowerCase().indexOf(query) !== -1;
-            row.hidden = !match;
-            if (match) cardHasMatch = true;
-          });
-        }
-        card.hidden = !!query && !cardHasMatch;
-        if (!card.hidden) anyVisible = true;
       });
-      if (emptyMsg) emptyMsg.hidden = !(active && query && !anyVisible);
+      if (emptyMsg) emptyMsg.hidden = !(query && !anyVisible);
     }
 
+    cards.forEach(function (card) {
+      card.addEventListener('click', function () {
+        var area = card.getAttribute('data-area');
+        selectedArea = selectedArea === area ? null : area;
+        render();
+        if (selectedArea) detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      });
+    });
     tabs.forEach(function (tab) {
       tab.addEventListener('click', function () {
-        var cat = tab.getAttribute('data-category');
-        active = active === cat ? null : cat;
+        selectedCategory = tab.getAttribute('data-category');
         render();
       });
     });
@@ -129,7 +147,11 @@ document.addEventListener('DOMContentLoaded', function () {
     render();
 
     return {
-      set: function (cat) { active = cat; render(); }
+      select: function (area, category) {
+        if (category) selectedCategory = category;
+        selectedArea = area;
+        render();
+      }
     };
   })();
 
@@ -139,22 +161,22 @@ document.addEventListener('DOMContentLoaded', function () {
   // research area has its own page anymore, so the nav dropdown,
   // footer, homepage research matrix, spotlight "Explore" buttons, and
   // publication titles all deep-link here instead. A bare category name
-  // opens that category across every card and scrolls to the list; a
-  // specific area card's id opens the Publications table (the most
-  // common reason something links to one card in particular) and
-  // scrolls straight to that card.
+  // just pre-picks that tab and scrolls to the list (there's no longer
+  // an "every card at once" state to open); a specific area card's id
+  // selects that one card, defaulting to its Publications table, and
+  // scrolls straight to it.
   function openAreaFromHash() {
     var id = window.location.hash.slice(1);
     if (!id) return;
     if (id === 'people' || id === 'projects' || id === 'publications') {
-      areaCategory.set(id);
+      areaExplorer.select(null, id);
       var list = document.getElementById('area-list');
       if (list) list.scrollIntoView({ behavior: 'smooth', block: 'start' });
       return;
     }
     var card = document.getElementById(id);
     if (!card || !card.classList.contains('area-card')) return;
-    areaCategory.set('publications');
+    areaExplorer.select(card.getAttribute('data-area'), 'publications');
     card.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
   openAreaFromHash();

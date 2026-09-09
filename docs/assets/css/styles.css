@@ -691,18 +691,22 @@ li.has-dropdown.open .dropdown{ display:block; }
    always fully filled at every column count below (4/2/1), so the
    border-top+left on the container plus border-right+bottom on each
    card forms a complete lattice with no gaps to patch with nth-child
-   rules.
-   Follow-up (direct user request, second reference from the same site):
-   replaced the old per-card click-to-expand + internal Projects/
-   Publications/People tab strip with ONE People/Projects/Publications
-   selector (.area-tabs, reusing the site's existing .filter-pill look)
-   above the whole grid, next to a search box (.area-controls) -- mirrors
-   that reference's own secondary nav + search icon row. Picking a
-   category expands every card at once, each showing an Excel-style
-   .area-table for that category (main.js's areaCategory closure); the
-   grid switches to a single full-width column while expanded
-   (.area-list.is-expanded) since a multi-column table needs the room a
-   quarter-width lattice cell can't give it. Collapsed by default. */
+   rules. That's .area-list's plain (no selection) state.
+   Direct user request, second reference from the same site: a
+   People/Projects/Publications selector (.area-tab, reusing the site's
+   existing .filter-pill look) plus a search box sit above the grid
+   (.area-controls). Clicking one of the four cards selects it --
+   .area-list gains .has-selection, switching from the touching lattice
+   to a gapped 2x2 grid; the clicked card gets .is-selected (enlarged:
+   bigger index/title/description, a red accent border) while its three
+   siblings get .is-other (shrunk: smaller type, tighter padding).
+   Exactly one (area, category) combination is pre-rendered per
+   .area-detail-table -- this is a static site, nothing to fetch
+   client-side -- and main.js's areaExplorer closure shows only the one
+   matching the selected card and the active category tab in
+   #area-detail, directly below the grid. Clicking the selected card
+   again deselects it, returning to the plain lattice and hiding
+   #area-detail. */
 .area-controls{
   display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;
   margin-bottom: 20px;
@@ -712,10 +716,16 @@ li.has-dropdown.open .dropdown{ display:block; }
   display:grid; grid-template-columns: repeat(4, 1fr);
   border-top: 1px solid var(--line); border-left: 1px solid var(--line);
 }
-.area-list.is-expanded{ grid-template-columns: 1fr; }
+.area-list.has-selection{
+  grid-template-columns: repeat(2, 1fr); gap: 16px;
+  border-top: none; border-left: none;
+}
 .area-card{
+  display:flex; flex-direction:column; align-items:flex-start; width:100%; min-height: 190px;
+  padding: 26px 22px; gap: 14px;
   border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
-  background:#fff;
+  background:#fff; text-align:left; cursor:pointer; font-family: var(--font-body);
+  transition: padding .15s ease, min-height .15s ease;
   /* Deep-linked from the nav, footer, homepage matrix, spotlight, and
      publication titles (research.html#area-panel-<key>, or a bare
      research.html#publications / #projects / #people for the category
@@ -724,12 +734,9 @@ li.has-dropdown.open .dropdown{ display:block; }
      a hash target into view on load. */
   scroll-margin-top: 100px;
 }
-.area-card[hidden]{ display:none; }
-.area-card-head{
-  display:flex; flex-direction:column; align-items:flex-start; width:100%; min-height: 190px;
-  padding: 26px 22px; gap: 14px;
+.has-selection .area-card{
+  border: 1px solid var(--line); border-radius: var(--radius); min-height: 0;
 }
-.is-expanded .area-card-head{ min-height:0; padding-bottom: 18px; }
 .area-card-top{ display:flex; justify-content:flex-end; width:100%; }
 .area-card-index{
   font-family: var(--font-nav); font-size:.72rem; font-weight:700; letter-spacing:.03em;
@@ -738,8 +745,19 @@ li.has-dropdown.open .dropdown{ display:block; }
 .area-card-title h3{ font-size:1.3rem; font-weight:800; line-height:1.18; margin-bottom:10px; text-transform: lowercase; }
 .area-card-title p{ margin:0; color: var(--ink-soft); font-size:.92rem; line-height:1.5; }
 
-.area-card-table{ padding: 0 22px 28px; border-top: 1px solid var(--line); margin: 0 22px; padding-top: 20px; overflow-x:auto; }
-.area-card-table[hidden]{ display:none; }
+.area-card.is-selected{
+  border-color: var(--umd-red); border-width: 2px; padding: 30px 26px;
+}
+.area-card.is-selected .area-card-title h3{ font-size:1.5rem; }
+.area-card.is-other{ padding: 16px; gap: 8px; }
+.area-card.is-other .area-card-title h3{ font-size:1.05rem; margin-bottom:4px; }
+.area-card.is-other .area-card-title p{ display:none; }
+
+.area-detail{ margin-top: 20px; border: 1px solid var(--line); border-radius: var(--radius); padding: 24px 22px; background:#fff; }
+.area-detail[hidden]{ display:none; }
+.area-detail-head h3{ font-size:1.1rem; font-weight:800; text-transform: lowercase; margin-bottom: 16px; }
+.area-detail-table[hidden]{ display:none; }
+.area-detail-table{ overflow-x:auto; }
 .area-table{ width:100%; border-collapse:collapse; font-size:.88rem; }
 .area-table th{
   text-align:left; font-family: var(--font-nav); font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.03em;
@@ -753,9 +771,10 @@ li.has-dropdown.open .dropdown{ display:block; }
   .area-list{ grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 560px){
-  .area-list{ grid-template-columns: 1fr; }
-  .area-card-head{ padding: 20px; min-height: 0; gap: 12px; }
-  .area-card-table{ margin: 0 20px; padding: 18px 0 22px; }
+  .area-list, .area-list.has-selection{ grid-template-columns: 1fr; gap: 12px; }
+  .area-card{ padding: 20px; min-height: 0; gap: 12px; }
+  .area-card.is-selected{ padding: 22px 20px; }
+  .area-detail{ padding: 20px 18px; }
   .area-table{ font-size:.82rem; }
 }
 
