@@ -34,7 +34,7 @@ home_body = f"""
     <div class="lead-secondary">
       <div class="rail-head">What We Do</div>
       <p>The University of Maryland&rsquo;s Tech Policy Hub studies tech policy from a socio&#8209;technical&nbsp;perspective, building the bridge between computer science &amp; public policy to understand how policy is designed and implemented for, by, and with tech. Our hub spans the forefront of tech policy across four research areas, bringing together DMV&#8209;based practitioners, scholars, and civil activists to shape the future of technology in society.</p>
-      <p class="lead-join"><strong>Join us:</strong> Interested in getting involved? <a href="https://idonibrasco.github.io/" target="_blank" rel="noopener">Get in touch with our founder, Dr.&nbsp;Sivan&#8209;Sevilla</a>.</p>
+      <p class="lead-join"><strong>Interested in becoming affiliated with us?</strong> Please email our founder, <a href="https://idonibrasco.github.io/" target="_blank" rel="noopener">Dr.&nbsp;Sivan&#8209;Sevilla</a>, to discuss further.</p>
       <div class="rail-head rail-head--stacked">Research Areas</div>
       <div class="research-matrix research-matrix--rail">{g.research_matrix_html()}</div>
     </div>

@@ -241,7 +241,11 @@ li.has-dropdown.open .dropdown{ display:block; }
    News headlines), then walked back per direct user request -- back to
    the plain sitewide p{ color: var(--ink-soft) } weight/color. */
 .lead-secondary p{ font-size:.88rem; line-height:1.6; }
-.lead-join strong{ color: var(--umd-red); }
+/* Follow-up: opening phrase is just bold now (previously "Join us:"
+   was bold red) -- the red/bold treatment moved to the founder link
+   below per direct user request. Link color already comes from the
+   sitewide a{color:var(--umd-red)} rule; this just adds the bold. */
+.lead-join a{ font-weight:700; }
 .lead-story{ grid-column: 2; }
 .lead-rail{ grid-column: 3; border-left: 1px solid var(--line); padding-left: 28px; }
 .lead-media{
