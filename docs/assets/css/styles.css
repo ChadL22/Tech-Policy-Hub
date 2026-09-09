@@ -674,60 +674,23 @@ li.has-dropdown.open .dropdown{ display:block; }
 .section-head{ display:flex; align-items:flex-end; justify-content:space-between; margin-bottom: 28px; gap: 16px; flex-wrap:wrap; padding-bottom: 16px; border-bottom: 2px solid var(--ink); }
 .section-head h2{ margin-bottom:0; }
 
-/* ---------- About the Hub (dark band, homepage) ---------- */
-.about-hub{ background: var(--header-band); color:#fff; }
-.about-hub .eyebrow{ color: var(--umd-gold); }
-.about-hub p{ color:#C7CACD; }
-.about-hub p a{ color: var(--umd-gold); }
-.about-hub p a:hover{ color:#fff; }
-/* Follow-up 59, round 2: after the "About" eyebrow + h2 were collapsed
-   into one eyebrow line and the old .pillars sidebar's replacement (a
-   single 760px-capped prose column) shipped, the user flagged it as
-   "too much text in one long column" and asked for the Explore links to
-   look distinct from body copy rather than an inline sentence. Rebuilt
-   as a 2-column grid: the mission copy + a pill-button Explore row on
-   the left, the "join us" invite pulled out into its own card on the
-   right -- splitting the copy in two is what actually breaks up the
-   wall of text (a max-width alone wasn't enough), and the card gives
-   the invite its own visual weight instead of reading as a third
-   paragraph identical to the first two. */
-.about-hub-grid{ display:grid; grid-template-columns: 1.6fr 1fr; gap: 56px; align-items:start; }
-/* Follow-up: Guiding Questions now lives in this section (swapped with
-   "What is the Tech Policy Hub?", which moved up into the hero's
-   .lead-secondary column) -- stacked full-width instead of the 2-col
-   split, since a numbered question list doesn't need a second column
-   the way the old two-paragraph mission copy did. Reuses .about-hub-grid
-   (same gap) rather than a bespoke layout. */
-.about-hub-grid--stack{ grid-template-columns: 1fr; }
-.about-hub-grid--stack .about-hub-join{ margin-top: 0; }
-
-/* Guiding Questions' default styling (.guide-q) assumes it's sitting on
-   the light page background (the hero's .lead-secondary); overridden
-   here for legibility against .about-hub's dark background. */
-.about-hub .guide-q{ border-top-color: rgba(255,255,255,.15); padding: 14px 0; }
-.about-hub .guide-q .num{ color: var(--umd-gold); font-size:.84rem; }
-.about-hub .guide-q .qtext{ color: #fff; font-size:.98rem; }
-
-.about-hub-join{
-  background: rgba(255,255,255,.06);
-  border-left: 3px solid var(--umd-gold);
-  border-radius: var(--radius);
-  padding: 28px 30px;
-  /* Lines the card's top edge up with the first line of body copy in the
-     left column (i.e. below the eyebrow), not with the eyebrow itself --
-     measured via Playwright at 1440px (eyebrow's own line-height + its
-     14px margin-bottom = 39px). */
-  margin-top: 39px;
-}
-.about-hub-join h4{
-  font-family: var(--font-nav); text-transform:uppercase; letter-spacing:.04em;
-  font-size:.95rem; color:#fff; margin-bottom:12px;
-}
-.about-hub-join p{ font-size:.92rem; margin-bottom:0; }
+/* ---------- Guiding Questions (homepage) ---------- */
+/* Follow-up: rebuilt off a Bloomberg reference (the "How To" module) at
+   direct user request -- was previously a dark full-bleed band
+   (.about-hub) holding a plain numbered text list; that band is gone in
+   favor of thin top/bottom rules on the page's normal white background,
+   a plain bold title positioned like Bloomberg's "How To" label, and
+   each question as its own bordered, rounded-corner card (.guide-q)
+   arranged in a grid like Bloomberg's "Odd Lots" row. */
+.guiding-section{ border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.guiding-head{ margin-bottom: 24px; }
+.guide-q-list{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
 
 @media (max-width: 900px){
-  .about-hub-grid{ grid-template-columns: 1fr; gap: 32px; }
-  .about-hub-join{ margin-top: 0; }
+  .guide-q-list{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px){
+  .guide-q-list{ grid-template-columns: 1fr; }
 }
 
 /* ---------- Newsletter / subscribe band ---------- */
@@ -856,15 +819,17 @@ li.has-dropdown.open .dropdown{ display:block; }
 }
 .rail-more:hover{ color: var(--umd-red-dark); border-color: var(--umd-red-dark); }
 
-/* Guiding Questions -- compact numbered list for the lead grid's narrow
-   left column (see .lead-secondary), denser than .rail-item since a full
-   tag+headline treatment for 8 items would run very long in ~240px. */
-.guide-q{ display:flex; gap: 10px; padding: 11px 0; border-top: 1px solid var(--line); }
-.guide-q:first-of-type{ border-top:none; padding-top:0; }
-.guide-q .num{ font-family: var(--font-nav); font-weight:700; font-size:.74rem; color: var(--umd-red); flex:none; padding-top: 1px; }
+/* Guiding Questions -- rounded-rectangle card per question (Bloomberg
+   "Odd Lots" reference), laid out by .guide-q-list's grid above. */
+.guide-q{
+  display:flex; flex-direction: column; gap: 8px;
+  padding: 20px 18px;
+  border: 1px solid var(--line); border-radius: 10px;
+  background: var(--paper);
+}
+.guide-q .num{ font-family: var(--font-nav); font-weight:700; font-size:.74rem; color: var(--umd-red); }
 .guide-q .qtext{ font-size:.86rem; line-height:1.4; color: var(--ink); }
-/* Follow-up 54: the hover-highlight removed (was `.guide-q:hover
-   .qtext{ color: var(--umd-red); }`) -- direct user request, since these
+/* Follow-up 54: no hover highlight -- direct user request, since these
    items don't link anywhere (see follow-up 34), a hover highlight was
    implying interactivity that isn't actually there. */
 

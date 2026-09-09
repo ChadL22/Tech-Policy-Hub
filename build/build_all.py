@@ -86,15 +86,11 @@ home_body = f"""
   </div>
 </section>
 
-<section id="about" class="about-hub">
+<section id="about" class="guiding-section">
   <div class="container">
-    <div class="about-hub-grid about-hub-grid--stack">
-      <div class="about-hub-lead">
-        <span class="eyebrow">Guiding Questions</span>
-        <div class="guide-q-list">
-          {g.guiding_questions_html(g.QUESTIONS)}
-        </div>
-      </div>
+    <h3 class="guiding-head">Guiding Questions</h3>
+    <div class="guide-q-list">
+      {g.guiding_questions_html(g.QUESTIONS)}
     </div>
   </div>
 </section>

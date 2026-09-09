@@ -24,7 +24,7 @@ SITE_URL = "https://chadl22.github.io/Tech-Policy-Hub/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026090819"
+ASSET_VERSION = "2026090820"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -658,14 +658,16 @@ def question_list_html(items):
 
 
 def guiding_questions_html(items):
-    """Compact numbered list for the homepage lead grid's left column --
-    denser than question_list_html() (About's full-width list), since this
-    one lives in a narrow ~240px rail column alongside the lead story.
-    Not clickable (see follow-up 34) -- each item's per-topic link was
-    dropped on request. As of follow-up 54, it doesn't highlight on
-    hover either -- a plain static text row, since a hover highlight on
-    something that doesn't navigate anywhere was misleading about its
-    own interactivity."""
+    """Rounded-rectangle card grid for the homepage's Guiding Questions
+    section (#about) -- one .guide-q card per question, laid out via
+    .guide-q-list's CSS grid (4 cols desktop, responsive down to 1).
+    Modeled on a Bloomberg reference the user provided: bordered white
+    cards like Bloomberg's "Odd Lots" row, under a plain bold section
+    title positioned like Bloomberg's "How To" label (see .guiding-head
+    in styles.css) -- replacing the previous dark full-bleed band with a
+    numbered text list. Not clickable (see follow-up 34) -- each item's
+    per-topic link was dropped on request, and no hover highlight (follow-
+    up 54) since these don't navigate anywhere."""
     out = []
     for i, q in enumerate(items, start=1):
         out.append(f"""
