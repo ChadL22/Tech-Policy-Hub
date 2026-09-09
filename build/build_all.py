@@ -166,83 +166,73 @@ TOPIC_DETAIL = {
 }
 
 
-# Shared per-topic renderers -- used inside each research.html accordion
-# card below. (Each research area used to also get its own standalone
-# page reusing these same renderers; direct user request removed those
-# pages since the accordion card already shows everything inline, but
-# the renderers stay factored out in case a per-area page is wanted
-# again later.)
-def _topic_projects_html(d):
-    return "".join(f'<div class="card"><span class="kicker">Project</span><h3>{n}</h3><p>{desc}</p></div>' for n, desc in d["projects"])
+# Shared per-topic table renderers -- one Excel-style <table> per
+# category, used inside each research.html area card below. (Each
+# research area used to also get its own standalone page reusing an
+# earlier card-based version of these same renderers; direct user
+# request removed those pages since the area card already shows
+# everything inline. A later direct user request replaced that
+# card-based Projects/Publications/People tab strip with these tables,
+# shown/hidden together across all four cards by the global People/
+# Projects/Publications selector in main.js -- see areaCategory there.)
+def _topic_people_table_html(d):
+    rows = "".join(f'<tr data-search-row><td>{n}</td></tr>' for n in d["people"])
+    return f'<table class="area-table"><thead><tr><th>Name</th></tr></thead><tbody>{rows}</tbody></table>'
 
 
-def _topic_pubs_html(d):
-    out = []
-    for p in d["pubs"]:
-        out.append(f"""<div class="card"><span class="kicker">Publication</span><h3>{p['title']}</h3><p>{p['venue']}, {p['year']}</p><p class="pub-authors">{', '.join(p['authors'])}</p></div>""")
-    return "".join(out)
+def _topic_projects_table_html(d):
+    rows = "".join(f'<tr data-search-row><td>{n}</td><td>{desc}</td></tr>' for n, desc in d["projects"])
+    return f'<table class="area-table"><thead><tr><th>Project</th><th>Description</th></tr></thead><tbody>{rows}</tbody></table>'
 
 
-def _topic_people_html(d):
-    return "".join(f'<div class="card"><span class="kicker">Person</span><h3>{n}</h3></div>' for n in d["people"])
+def _topic_pubs_table_html(d):
+    rows = "".join(
+        f"""<tr data-search-row><td>{p['title']}</td><td>{p['venue']}</td><td>{p['year']}</td><td>{', '.join(p['authors'])}</td></tr>"""
+        for p in d["pubs"]
+    )
+    return f'<table class="area-table"><thead><tr><th>Title</th><th>Venue</th><th>Year</th><th>Authors</th></tr></thead><tbody>{rows}</tbody></table>'
 
 
 # Follow-up: the old flat "Where we work" link-grid + a separately
-# filterable "Current projects" grid are gone -- replaced at direct user
-# request by ONE set of collapsible cards, one per research area, each
-# expanding into its own Projects/Publications/People tabs. Collapsed by
-# default (.area-card-panel[hidden]); toggled by main.js's accordion
-# handler. Follow-up 2: the standalone per-topic pages these used to
-# also power are gone too (direct user request -- no research area
-# needs its own page now that this card shows everything), so every
-# link that used to point to e.g. topic-cybersecurity.html now points
-# to research.html#area-panel-cybersecurity instead (see TOPICS in
-# generate.py) -- main.js opens + scrolls to the right card on load
-# when that hash is present, so the card is still a real deep-linkable,
-# bookmarkable destination.
+# filterable "Current projects" grid became one set of cards, one per
+# research area, each expanding to reveal that area's own content.
+# Follow-up 2: the standalone per-topic pages these used to also power
+# are gone too (direct user request -- no research area needs its own
+# page now that this card shows everything), so every link that used to
+# point to e.g. topic-cybersecurity.html now points to
+# research.html#area-panel-cybersecurity instead (see TOPICS in
+# generate.py). Follow-up 3: card visuals restyled off a reference
+# screenshot (MIT Media Lab's "Initiatives and Programs" grid). Follow-up
+# 4 (direct user request, second reference from the same site): replaced
+# the old per-card click-to-expand + internal Projects/Publications/
+# People tab strip with ONE People/Projects/Publications selector above
+# the whole grid (mirroring that reference's secondary nav row) plus a
+# search box next to it -- picking a category opens every card's table
+# for that category at once (main.js's areaCategory), and the standalone
+# "Recent publications" section that used to live further down the page
+# is gone too, folded into this Publications table instead of keeping
+# two separate search UIs. main.js still opens + scrolls to the right
+# card (or category) on load when a matching hash is present, so this
+# stays a real deep-linkable, bookmarkable destination for every link
+# above that points here.
 area_cards = []
 for t in g.TOPICS:
     d = TOPIC_DETAIL[t["key"]]
-    panel_id = f"area-panel-{t['key']}"
     area_cards.append(f"""
-    <div class="area-card">
-      <button type="button" class="area-card-toggle" aria-expanded="false" aria-controls="{panel_id}">
-        <span class="area-card-index">{t['index']}</span>
+    <div class="area-card" id="area-panel-{t['key']}">
+      <div class="area-card-head">
+        <span class="area-card-top"><span class="area-card-index">{t['index']}</span></span>
         <span class="area-card-title"><h3>{t['name']}</h3><p>{t['blurb']}</p></span>
-        <span class="area-card-caret" aria-hidden="true">&#9662;</span>
-      </button>
-      <div class="area-card-panel" id="{panel_id}" hidden>
-        <div class="tabs">
-          <button class="tab-btn active" data-tab="projects">Projects</button>
-          <button class="tab-btn" data-tab="pubs">Publications</button>
-          <button class="tab-btn" data-tab="people">People</button>
-        </div>
-        <div>
-          <div class="tab-panel active" data-tab="projects"><div class="grid grid-2">{_topic_projects_html(d)}</div></div>
-          <div class="tab-panel" data-tab="pubs"><div class="grid grid-2">{_topic_pubs_html(d)}</div></div>
-          <div class="tab-panel" data-tab="people"><div class="grid grid-2">{_topic_people_html(d)}</div></div>
-        </div>
       </div>
+      <div class="area-card-table" data-category-panel="people" hidden>{_topic_people_table_html(d)}</div>
+      <div class="area-card-table" data-category-panel="projects" hidden>{_topic_projects_table_html(d)}</div>
+      <div class="area-card-table" data-category-panel="publications" hidden>{_topic_pubs_table_html(d)}</div>
     </div>""")
 
-# Flat, all-topics publication feed -- what the new search box (below)
-# actually searches. Kept separate from the per-area accordions above:
-# those are for browsing one area at a time, this is for a direct
-# author/year/title/venue lookup across every area at once, matching the
-# user's "one search bar" request rather than a search scoped per-card.
-pub_feed = []
-for t in g.TOPICS:
-    d = TOPIC_DETAIL[t["key"]]
-    for p in d["pubs"]:
-        pub_feed.append(f"""
-        <div class="feed-item" data-filter-target="{t['name']}">
-          <span class="tag">{t['name']}</span>
-          <div>
-            <div class="meta" style="margin-bottom:6px;">{p['venue']}, {p['year']}</div>
-            <h3><a href="{t['file']}">{p['title']}</a></h3>
-            <p class="pub-authors">{', '.join(p['authors'])}</p>
-          </div>
-        </div>""")
+area_tabs = "".join(
+    f'<button type="button" class="filter-pill area-tab" data-category="{cat}">{label}</button>'
+    for cat, label in [("people", "People"), ("projects", "Projects"), ("publications", "Publications")]
+)
 
 research_body = f"""
 <section class="page-hero">
@@ -256,17 +246,12 @@ research_body = f"""
 <section class="soft-bg">
   <div class="container">
     <div class="section-head"><div><span class="eyebrow">Focus Areas</span><h2>Research areas</h2></div></div>
-    <p style="color:var(--ink-soft); font-size:.92rem; margin-bottom:8px;">Expand an area to see its projects, publications, and people.</p>
-    <div class="area-list">{"".join(area_cards)}</div>
-  </div>
-</section>
-<section id="publications">
-  <div class="container">
-    <div class="section-head"><div><span class="eyebrow">Publications</span><h2>Recent publications</h2></div></div>
-    {g.filter_pills_html([t['name'] for t in g.TOPICS], 'research')}
-    {g.search_box_html("Search by title, author, year, or venue&hellip;", "Search publications")}
-    <div id="pub-feed-list" style="margin-top:24px;">{"".join(pub_feed)}</div>
-    <p class="list-empty" data-empty-for="pub-feed-list" hidden>No publications match your search or filter.</p>
+    <div class="area-controls">
+      <div class="filter-bar">{area_tabs}</div>
+      {g.search_box_html("Search by name, title, venue&hellip;", "Search research areas")}
+    </div>
+    <div class="area-list" id="area-list">{"".join(area_cards)}</div>
+    <p class="list-empty" data-empty-for="area-list" hidden>No results match your search.</p>
   </div>
 </section>
 <section class="soft-bg">

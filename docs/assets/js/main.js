@@ -70,40 +70,95 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  // Research-area accordion cards (Research page) -- direct user request
-  // for expand/collapse cards instead of a flat link grid. Toggles
-  // aria-expanded on the button and [hidden] on its aria-controls panel;
-  // independent per card, and doesn't touch any other open card.
-  document.querySelectorAll('.area-card-toggle').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var expanded = btn.getAttribute('aria-expanded') === 'true';
-      var panel = document.getElementById(btn.getAttribute('aria-controls'));
-      btn.setAttribute('aria-expanded', String(!expanded));
-      if (panel) panel.hidden = expanded;
-    });
-  });
+  // Research-area explorer (Research page) -- direct user request to
+  // replace the old per-card Projects/Publications/People tab strip
+  // with ONE People/Projects/Publications selector above all four
+  // cards (mirroring a reference screenshot's secondary nav row), plus
+  // a search box across from it. Picking a category expands every card
+  // at once, each showing its own table for that category (an
+  // Excel-like list per direct user request); picking the active
+  // category again collapses back to the plain header-card grid. The
+  // search box filters visible table rows by text match and hides a
+  // card entirely if none of its rows match, using the same
+  // [data-empty-for] "no results" pattern as the other search boxes on
+  // the site.
+  var areaCategory = (function () {
+    var list = document.getElementById('area-list');
+    var tabs = Array.prototype.slice.call(document.querySelectorAll('.area-tab'));
+    if (!list || !tabs.length) return { set: function () {} };
 
-  // Open + scroll to an accordion card from a URL hash, e.g.
+    var searchInput = document.querySelector('.area-controls .filter-search-input');
+    var emptyMsg = document.querySelector('[data-empty-for="area-list"]');
+    var active = null;
+
+    function render() {
+      var query = ((searchInput && searchInput.value) || '').trim().toLowerCase();
+      list.classList.toggle('is-expanded', !!active);
+      tabs.forEach(function (tab) {
+        tab.classList.toggle('active', tab.getAttribute('data-category') === active);
+      });
+      var anyVisible = false;
+      list.querySelectorAll('.area-card').forEach(function (card) {
+        card.querySelectorAll('.area-card-table').forEach(function (panel) {
+          panel.hidden = panel.getAttribute('data-category-panel') !== active;
+        });
+        if (!active) { card.hidden = false; return; }
+        var visiblePanel = card.querySelector('.area-card-table[data-category-panel="' + active + '"]');
+        var cardHasMatch = !query;
+        if (visiblePanel) {
+          visiblePanel.querySelectorAll('tr[data-search-row]').forEach(function (row) {
+            var match = !query || row.textContent.toLowerCase().indexOf(query) !== -1;
+            row.hidden = !match;
+            if (match) cardHasMatch = true;
+          });
+        }
+        card.hidden = !!query && !cardHasMatch;
+        if (!card.hidden) anyVisible = true;
+      });
+      if (emptyMsg) emptyMsg.hidden = !(active && query && !anyVisible);
+    }
+
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        var cat = tab.getAttribute('data-category');
+        active = active === cat ? null : cat;
+        render();
+      });
+    });
+    if (searchInput) searchInput.addEventListener('input', render);
+    render();
+
+    return {
+      set: function (cat) { active = cat; render(); }
+    };
+  })();
+
+  // Open + scroll to a category or a specific area card from a URL
+  // hash, e.g. research.html#publications or
   // research.html#area-panel-cybersecurity -- direct user request: no
   // research area has its own page anymore, so the nav dropdown,
   // footer, homepage research matrix, spotlight "Explore" buttons, and
-  // publication titles all deep-link here instead, and this is what
-  // makes that landing actually show the right card open rather than
-  // just a collapsed list.
-  function openAreaCardFromHash() {
+  // publication titles all deep-link here instead. A bare category name
+  // opens that category across every card and scrolls to the list; a
+  // specific area card's id opens the Publications table (the most
+  // common reason something links to one card in particular) and
+  // scrolls straight to that card.
+  function openAreaFromHash() {
     var id = window.location.hash.slice(1);
     if (!id) return;
-    var panel = document.getElementById(id);
-    if (!panel || !panel.classList.contains('area-card-panel')) return;
-    var toggle = document.querySelector('.area-card-toggle[aria-controls="' + id + '"]');
-    if (!toggle) return;
-    toggle.setAttribute('aria-expanded', 'true');
-    panel.hidden = false;
-    var card = toggle.closest('.area-card') || toggle;
+    if (id === 'people' || id === 'projects' || id === 'publications') {
+      areaCategory.set(id);
+      var list = document.getElementById('area-list');
+      if (list) list.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    var card = document.getElementById(id);
+    if (!card || !card.classList.contains('area-card')) return;
+    areaCategory.set('publications');
     card.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
-  openAreaCardFromHash();
-  window.addEventListener('hashchange', openAreaCardFromHash);
+  openAreaFromHash();
+  window.addEventListener('hashchange', openAreaFromHash);
 
   // Filter pills (Research: by focus area / Events: by category) -- see
   // filter_pills_html() in generate.py. One filter bar per page today, so

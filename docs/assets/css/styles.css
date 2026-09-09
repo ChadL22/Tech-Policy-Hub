@@ -681,45 +681,82 @@ li.has-dropdown.open .dropdown{ display:block; }
 .feed-item h3 a:hover{ color: var(--umd-red); text-decoration:none; }
 .pub-authors{ font-size:.85rem; color: var(--ink-soft); margin-top:2px; }
 
-/* ---------- Research areas (expand/collapse accordion cards) ----------
-   Direct user request: replace the old flat topic-link grid + separately
-   filterable projects grid with one card per research area that expands
-   to reveal that area's Projects/Publications/People (reusing the
-   existing .tabs/.tab-panel component inside each panel). Collapsed by
-   default; main.js toggles [aria-expanded] on .area-card-toggle and
-   [hidden] on the matching .area-card-panel. */
-.area-list{ display:flex; flex-direction:column; gap:14px; }
+/* ---------- Research areas (People / Projects / Publications explorer)
+   ----------
+   Card visuals are off a reference screenshot (MIT Media Lab's
+   "Initiatives and Programs" grid): a hairline-bordered lattice of
+   square-cornered cards -- small numbered index in the corner, a bold
+   (lowercased, matching the reference's typographic voice) multi-line
+   title, a lighter description. Exactly 4 areas means the grid is
+   always fully filled at every column count below (4/2/1), so the
+   border-top+left on the container plus border-right+bottom on each
+   card forms a complete lattice with no gaps to patch with nth-child
+   rules.
+   Follow-up (direct user request, second reference from the same site):
+   replaced the old per-card click-to-expand + internal Projects/
+   Publications/People tab strip with ONE People/Projects/Publications
+   selector (.area-tabs, reusing the site's existing .filter-pill look)
+   above the whole grid, next to a search box (.area-controls) -- mirrors
+   that reference's own secondary nav + search icon row. Picking a
+   category expands every card at once, each showing an Excel-style
+   .area-table for that category (main.js's areaCategory closure); the
+   grid switches to a single full-width column while expanded
+   (.area-list.is-expanded) since a multi-column table needs the room a
+   quarter-width lattice cell can't give it. Collapsed by default. */
+.area-controls{
+  display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;
+  margin-bottom: 20px;
+}
+.area-controls .search-box{ margin:0; max-width:320px; flex:1 1 260px; }
+.area-list{
+  display:grid; grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--line); border-left: 1px solid var(--line);
+}
+.area-list.is-expanded{ grid-template-columns: 1fr; }
 .area-card{
-  border: 1.5px solid var(--line); border-radius: var(--radius); background:#fff;
+  border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  background:#fff;
   /* Deep-linked from the nav, footer, homepage matrix, spotlight, and
-     publication titles (research.html#area-panel-<key>) now that each
-     research area no longer has its own page -- this keeps the card
-     clear of the sticky header when main.js scrolls a hash target into
-     view on load. */
+     publication titles (research.html#area-panel-<key>, or a bare
+     research.html#publications / #projects / #people for the category
+     itself) now that each research area no longer has its own page --
+     this keeps the card clear of the sticky header when main.js scrolls
+     a hash target into view on load. */
   scroll-margin-top: 100px;
 }
-.area-card-toggle{
-  display:flex; align-items:center; gap:20px; width:100%; padding: 22px 24px;
-  background:none; border:none; text-align:left; cursor:pointer; font-family: var(--font-body);
+.area-card[hidden]{ display:none; }
+.area-card-head{
+  display:flex; flex-direction:column; align-items:flex-start; width:100%; min-height: 190px;
+  padding: 26px 22px; gap: 14px;
 }
+.is-expanded .area-card-head{ min-height:0; padding-bottom: 18px; }
+.area-card-top{ display:flex; justify-content:flex-end; width:100%; }
 .area-card-index{
-  font-family: var(--font-nav); font-size:.8rem; font-weight:700; color: var(--umd-red);
-  flex-shrink:0; width: 28px;
+  font-family: var(--font-nav); font-size:.72rem; font-weight:700; letter-spacing:.03em;
+  color: var(--umd-red);
 }
-.area-card-title{ flex:1; }
-.area-card-title h3{ margin-bottom:4px; }
-.area-card-title p{ margin:0; color: var(--ink-soft); font-size:.9rem; }
-.area-card-caret{
-  flex-shrink:0; font-size: 1.1rem; color: var(--ink-soft);
-  transition: transform .15s ease;
-}
-.area-card-toggle[aria-expanded="true"] .area-card-caret{ transform: rotate(180deg); }
-.area-card-panel{ padding: 0 24px 28px; border-top: 1px solid var(--line); margin: 0 24px; padding-top: 24px; }
-.area-card-panel[hidden]{ display:none; }
+.area-card-title h3{ font-size:1.3rem; font-weight:800; line-height:1.18; margin-bottom:10px; text-transform: lowercase; }
+.area-card-title p{ margin:0; color: var(--ink-soft); font-size:.92rem; line-height:1.5; }
 
-@media (max-width: 640px){
-  .area-card-toggle{ padding: 18px; gap: 14px; }
-  .area-card-panel{ margin: 0 18px; padding: 20px 0 24px; }
+.area-card-table{ padding: 0 22px 28px; border-top: 1px solid var(--line); margin: 0 22px; padding-top: 20px; overflow-x:auto; }
+.area-card-table[hidden]{ display:none; }
+.area-table{ width:100%; border-collapse:collapse; font-size:.88rem; }
+.area-table th{
+  text-align:left; font-family: var(--font-nav); font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.03em;
+  color: var(--ink-soft); padding: 8px 16px 8px 0; border-bottom: 1.5px solid var(--ink); white-space:nowrap;
+}
+.area-table td{ padding: 10px 16px 10px 0; border-bottom: 1px solid var(--line); color: var(--ink); vertical-align:top; }
+.area-table tr:last-child td{ border-bottom:none; }
+.area-table tr[hidden]{ display:none; }
+
+@media (max-width: 900px){
+  .area-list{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px){
+  .area-list{ grid-template-columns: 1fr; }
+  .area-card-head{ padding: 20px; min-height: 0; gap: 12px; }
+  .area-card-table{ margin: 0 20px; padding: 18px 0 22px; }
+  .area-table{ font-size:.82rem; }
 }
 
 /* ---------- Section header row ---------- */
