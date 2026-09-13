@@ -187,12 +187,8 @@ TOPIC_DETAIL = {
 # a pill's own id (area-panel-<key>, the site's existing deep-link
 # target from the nav, footer, homepage matrix and spotlight) lets it
 # select just that one area and scroll here on load, same as before.
-AREA_META = {
-    "cybersecurity": dict(code="CY", color="#E21833"),
-    "privacy": dict(code="CP", color="#7A1F3D"),
-    "integrity": dict(code="II", color="#52565A"),
-    "ml": dict(code="ML", color="#B8860B"),
-}
+# AREA_META now lives in generate.py (g.AREA_META) -- shared with
+# people.html's research-area badges/filter pills, not just this page's.
 
 # PEOPLE_ITEMS (generate.py) already carries a real role + one-line focus
 # for everyone on the People page -- reused here as each person tile's
@@ -201,7 +197,7 @@ _PEOPLE_BY_NAME = {p["name"]: p for p in g.PEOPLE_ITEMS}
 
 
 def _area_tag_html(key):
-    m = AREA_META[key]
+    m = g.AREA_META[key]
     return f'<span class="area-tag" style="--area-color:{m["color"]}">{m["code"]}</span>'
 
 
@@ -280,7 +276,7 @@ def _year_filter_pills_html():
 
 
 area_filter_pills = "".join(
-    f'<button type="button" class="filter-pill area-filter-pill" id="area-panel-{t["key"]}" data-area="{t["key"]}" style="--area-color:{AREA_META[t["key"]]["color"]}" aria-pressed="false">{t["name"]}</button>'
+    f'<button type="button" class="filter-pill area-filter-pill" id="area-panel-{t["key"]}" data-area="{t["key"]}" style="--area-color:{g.AREA_META[t["key"]]["color"]}" aria-pressed="false">{t["name"]}</button>'
     for t in g.TOPICS
 )
 
@@ -525,6 +521,69 @@ g.write_raw("events.ics", g.events_ics(g.EVENTS_ITEMS))
 # ===========================================================================
 # PEOPLE
 # ===========================================================================
+# Follow-up (direct user request): replaced the plain 3-up initials/role/
+# one-liner grid with a vertical list carrying real per-person content --
+# a headshot slot with links/contact underneath it, the person's title
+# doing double duty as a section-header-style divider for that entry, and
+# a bio to the right of the headshot alongside their research-area
+# badges. Two independent, ANDed multi-select filters sit above the list
+# -- Role (ROLE_TYPES in generate.py: Leadership/Area Lead/Affiliate/
+# Fellow/Graduate Fellow, a person can carry more than one) and Research
+# Area (the same 4 areas/colors as research.html, reusing _area_tag_html/
+# _area_tags_html and g.AREA_META) -- plus a search box, all wired
+# through the same researchExplorer closure in main.js that already
+# drove research.html's People/Projects/Publications filtering (extended
+# there with a third `data-roles` facet alongside its existing area+year
+# facets). Deliberately NOT reusing research.html's `.area-filter-pill`
+# ids (those are research.html's own nav/footer/homepage deep-link
+# targets -- giving people.html pills the same ids would just be unused
+# duplicate ids in a different document, so these carry no id at all).
+#
+# Photos are still the initials placeholder (no headshot files yet), and
+# `bio`/`website`/`linkedin` on most PEOPLE_ITEMS entries are placeholder/
+# blank pending real copy and links from each person -- see README
+# "Known placeholders". A person with no website/linkedin set gets no
+# links block at all rather than an empty one.
+def _person_links_html(p):
+    links = []
+    if p.get("website"):
+        links.append(f'<a href="{p["website"]}" target="_blank" rel="noopener">Website</a>')
+    if p.get("linkedin"):
+        links.append(f'<a href="{p["linkedin"]}" target="_blank" rel="noopener">LinkedIn</a>')
+    if not links:
+        return ""
+    return f'<div class="person-links">{"".join(links)}</div>'
+
+
+def _person_row_html(p):
+    areas = _person_areas.get(p["name"], [])
+    return f"""
+      <div class="person-row" data-areas="{' '.join(areas)}" data-roles="{' '.join(p['role_types'])}" data-search-row>
+        <div class="person-title">{p['role']}</div>
+        <div class="person-body">
+          <div class="person-media">
+            <div class="person-avatar">{p['initials']}</div>
+            <h3>{p['name']}</h3>
+            {_person_links_html(p)}
+          </div>
+          <div class="person-bio">
+            {_area_tags_html(areas) if areas else ""}
+            <p>{p['bio']}</p>
+          </div>
+        </div>
+      </div>"""
+
+
+role_filter_pills_people = "".join(
+    f'<button type="button" class="filter-pill role-filter-pill" data-role="{key}" aria-pressed="false">{label}</button>'
+    for key, label in g.ROLE_TYPES.items()
+)
+area_filter_pills_people = "".join(
+    f'<button type="button" class="filter-pill area-filter-pill" data-area="{t["key"]}" style="--area-color:{g.AREA_META[t["key"]]["color"]}" aria-pressed="false">{t["name"]}</button>'
+    for t in g.TOPICS
+)
+people_rows = "".join(_person_row_html(p) for p in g.PEOPLE_ITEMS)
+
 people_body = f"""
 <section class="page-hero">
   <div class="container">
@@ -536,9 +595,23 @@ people_body = f"""
 </section>
 <section>
   <div class="container">
-    <div class="grid grid-3">
-      {g.people_grid_html(g.PEOPLE_ITEMS)}
+    <div class="area-controls people-controls">
+      <div class="people-filter-groups">
+        <div class="people-filter-group">
+          <span class="people-filter-label">Role</span>
+          <div class="area-filter-bar" role="group" aria-label="Filter by role">{role_filter_pills_people}</div>
+        </div>
+        <div class="people-filter-group">
+          <span class="people-filter-label">Research Area</span>
+          <div class="area-filter-bar" role="group" aria-label="Filter by research area">{area_filter_pills_people}</div>
+        </div>
+      </div>
+      {g.search_box_html("Search people&hellip;", "Search people")}
     </div>
+    <div class="people-list" id="people-list">
+      {people_rows}
+    </div>
+    <p class="list-empty" data-empty-for="people-list" hidden>No people match your filters.</p>
   </div>
 </section>
 """

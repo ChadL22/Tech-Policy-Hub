@@ -24,7 +24,7 @@ SITE_URL = "https://chadl22.github.io/Tech-Policy-Hub/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026091308"
+ASSET_VERSION = "2026091310"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -322,6 +322,21 @@ TOPICS = [
          blurb="Examining algorithmic accountability, AI governance, and the standards needed for machine learning the public can trust."),
 ]
 
+# Each research area's accent color + short code, used for the small
+# colored .area-tag badge wherever a person/project/publication is tagged
+# with an area -- research.html's People/Project tiles and Publications
+# rows, and people.html's per-person research-area badges (see
+# PEOPLE_ITEMS below). Moved here from build_all.py (was research.html-
+# only) once the People page started using the same badge/filter-pill
+# language for the same four areas -- one shared source of truth for the
+# color+code instead of two.
+AREA_META = {
+    "cybersecurity": dict(code="CY", color="#E21833"),
+    "privacy": dict(code="CP", color="#7A1F3D"),
+    "integrity": dict(code="II", color="#52565A"),
+    "ml": dict(code="ML", color="#B8860B"),
+}
+
 # Homepage "Research Spotlight" slideshow -- 3-5 real Hub outputs across
 # formats (papers, media appearances, presentations), not just papers, so
 # "primary_label" varies per item ("Read the Paper" / "Read the Coverage" /
@@ -491,19 +506,68 @@ PAST_EVENTS_ITEMS = [
          link="speaker-series.html"),
 ]
 
+# Role-type facet for the People page's second filter dimension (direct
+# user request: "filter by role type (affiliate, grad student, leads
+# etc)"), independent of and ANDed with the research-area filter below --
+# a person can carry more than one (Dr. Harry is both an Affiliate and a
+# research-area Lead), same multi-select-per-row idea as PEOPLE_ITEMS'
+# `role_types` list and TOPIC_DETAIL's areas. Keys are what main.js's
+# researchExplorer matches on (data-roles); values are the filter-pill
+# labels people.html shows.
+ROLE_TYPES = {
+    "leadership": "Leadership",
+    "lead": "Area Lead",
+    "affiliate": "Affiliate",
+    "fellow": "Fellow",
+    "grad-fellow": "Graduate Fellow",
+}
+
+# `bio`, `website`, and `linkedin` added per direct user request for the
+# People page redesign (headshot + bio + links + role/area badges). Real
+# copy/links aren't gathered yet for most entries -- see README "Known
+# placeholders" -- so `bio` extends each person's existing one-line
+# `focus` into a short placeholder paragraph using only facts already on
+# record here (role + focus), not invented biographical detail, and
+# `website`/`linkedin` are None except where a real URL already exists
+# elsewhere on the site (the founder's site, already linked from the
+# homepage's "become affiliated" line). people.html's card renderer skips
+# any link field that's None rather than showing a broken/empty link.
+# Each person's research-area badges are NOT stored here -- they're
+# derived from TOPIC_DETAIL's per-area `people` lists (build_all.py),
+# the site's one existing source of truth for who works in which area,
+# rather than duplicating that mapping into a second list here that could
+# drift out of sync with it.
 PEOPLE_ITEMS = [
     dict(initials="IS", name="Dr. Ido Sivan-Sevilla", role="Founder & Director",
-         focus="Privacy law, regulatory enforcement, comparative tech policy"),
+         focus="Privacy law, regulatory enforcement, comparative tech policy",
+         role_types=["leadership"],
+         bio="Founder and director of the Tech Policy Hub, setting its research agenda and studying privacy law, regulatory enforcement, and tech policy from a comparative, cross-jurisdictional perspective.",
+         website="https://idonibrasco.github.io/", linkedin=None),
     dict(initials="CH", name="Dr. Charlie Harry", role="Affiliate, Cybersecurity Lead",
-         focus="Cyber risk measurement, critical infrastructure"),
+         focus="Cyber risk measurement, critical infrastructure",
+         role_types=["affiliate", "lead"],
+         bio="Leads the Hub's cybersecurity research, measuring cyber risk and exposed attack surface across critical infrastructure and government systems.",
+         website=None, linkedin=None),
     dict(initials="KS", name="Dr. Katie Shilton", role="Affiliate, Trustworthy ML Lead",
-         focus="Data ethics, responsible AI research practice"),
+         focus="Data ethics, responsible AI research practice",
+         role_types=["affiliate", "lead"],
+         bio="Leads the Hub's trustworthy machine learning research, focusing on data ethics and standards for responsible AI research practice.",
+         website=None, linkedin=None),
     dict(initials="LT", name="Lee Tiedrich", role="AI Fellow",
-         focus="AI governance, emerging technology law"),
+         focus="AI governance, emerging technology law",
+         role_types=["fellow"],
+         bio="The Hub's AI Fellow, bringing expertise in AI governance and emerging technology law to its research and programming.",
+         website=None, linkedin=None),
     dict(initials="JD", name="Jordan Diaz", role="Graduate Research Fellow",
-         focus="Platform transparency, information integrity"),
+         focus="Platform transparency, information integrity",
+         role_types=["grad-fellow"],
+         bio="Graduate research fellow studying platform transparency and information integrity, with additional work on measuring cybersecurity attack surface.",
+         website=None, linkedin=None),
     dict(initials="AM", name="Amara Mensah", role="Graduate Research Fellow",
-         focus="Consumer privacy, algorithmic accountability"),
+         focus="Consumer privacy, algorithmic accountability",
+         role_types=["grad-fellow"],
+         bio="Graduate research fellow focused on consumer privacy and algorithmic accountability.",
+         website=None, linkedin=None),
 ]
 
 # Homepage signal ticker -- real, tracked tech policy activity in the DMV
@@ -1167,19 +1231,6 @@ def events_ics(events):
         ]
     lines.append("END:VCALENDAR")
     return "\r\n".join(lines) + "\r\n"
-
-
-def people_grid_html(items):
-    out = []
-    for p in items:
-        out.append(f"""
-        <div class="person">
-          <div class="avatar">{p['initials']}</div>
-          <h3>{p['name']}</h3>
-          <div class="role">{p['role']}</div>
-          <p style="font-size:.88rem;">{p['focus']}</p>
-        </div>""")
-    return "".join(out)
 
 
 print("Generator module loaded -- run build_all.py to write pages.")

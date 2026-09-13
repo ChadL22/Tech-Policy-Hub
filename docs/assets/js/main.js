@@ -100,8 +100,15 @@ document.addEventListener('DOMContentLoaded', function () {
     var emptyMsgs = Array.prototype.slice.call(document.querySelectorAll('[data-empty-for]'));
     var searchInput = controls.querySelector('.filter-search-input');
     var yearPills = Array.prototype.slice.call(document.querySelectorAll('.year-filter-pill'));
+    // Role filter (people.html's second facet, ANDed with area/search --
+    // direct user request to filter by role type alongside research
+    // area). No page but people.html has .role-filter-pill elements or
+    // data-roles rows, so this is a no-op everywhere else, same as the
+    // year facet is a no-op outside research.html's Publications.
+    var rolePills = Array.prototype.slice.call(document.querySelectorAll('.role-filter-pill'));
     var selected = new Set();
     var selectedYears = new Set();
+    var selectedRoles = new Set();
 
     function render() {
       var query = ((searchInput && searchInput.value) || '').trim().toLowerCase();
@@ -112,6 +119,11 @@ document.addEventListener('DOMContentLoaded', function () {
       });
       yearPills.forEach(function (pill) {
         var on = selectedYears.has(pill.getAttribute('data-year'));
+        pill.classList.toggle('active', on);
+        pill.setAttribute('aria-pressed', String(on));
+      });
+      rolePills.forEach(function (pill) {
+        var on = selectedRoles.has(pill.getAttribute('data-role'));
         pill.classList.toggle('active', on);
         pill.setAttribute('aria-pressed', String(on));
       });
@@ -127,8 +139,15 @@ document.addEventListener('DOMContentLoaded', function () {
         // selection (the year filter only ever narrows Publications).
         var year = row.getAttribute('data-year');
         var matchesYear = !year || selectedYears.size === 0 || selectedYears.has(year);
+        // Only people.html's .person-row elements carry data-roles --
+        // everything else (research.html's tiles/pub-rows) always
+        // matches regardless of the role selection, same reasoning as
+        // the year check above.
+        var rolesAttr = row.getAttribute('data-roles');
+        var matchesRole = !rolesAttr || selectedRoles.size === 0 ||
+          rolesAttr.split(/\s+/).some(function (r) { return selectedRoles.has(r); });
         var matchesSearch = !query || row.textContent.toLowerCase().indexOf(query) !== -1;
-        row.hidden = !(matchesArea && matchesYear && matchesSearch);
+        row.hidden = !(matchesArea && matchesYear && matchesRole && matchesSearch);
       });
       // A publication year heading has no data-areas/data-search-row of
       // its own -- hide it only when every row under it (up to the next
@@ -164,6 +183,13 @@ document.addEventListener('DOMContentLoaded', function () {
       pill.addEventListener('click', function () {
         var year = pill.getAttribute('data-year');
         if (selectedYears.has(year)) selectedYears.delete(year); else selectedYears.add(year);
+        render();
+      });
+    });
+    rolePills.forEach(function (pill) {
+      pill.addEventListener('click', function () {
+        var role = pill.getAttribute('data-role');
+        if (selectedRoles.has(role)) selectedRoles.delete(role); else selectedRoles.add(role);
         render();
       });
     });

@@ -908,17 +908,63 @@ li.has-dropdown.open .dropdown{ display:block; }
    2-digit day number to sit comfortably in the same 90px date column. */
 .event-row--past .event-date .d{ font-size:1.3rem; }
 
-/* ---------- People ---------- */
-.person{ text-align:left; padding: 0 24px 0 0; border-left: 1px solid var(--line); padding-left: 24px; }
-.grid-3 > .person:nth-child(3n+1){ border-left:none; padding-left:0; }
-.person .avatar{
-  width:80px; height:80px; background: var(--umd-red);
+/* ---------- People ----------
+   Follow-up (direct user request): the old 3-up initials/role/one-liner
+   grid (dead code removed above) is now a vertical list -- a headshot
+   slot with links/contact underneath it, the person's title doing
+   double duty as a section-header-style divider (.person-title, same
+   border-bottom idiom as .research-subsection > h2), and a bio to the
+   right of the headshot alongside their research-area badges (reusing
+   .area-tag/.rp-tags from the research page rather than a new badge
+   style). Two filter facets (Role, Research Area) sit above the list --
+   see .people-controls below and _person_row_html()/ROLE_TYPES in
+   build/build_all.py + build/generate.py for the data side, and
+   researchExplorer's `data-roles` facet in main.js for the filtering
+   itself (same closure that already filtered research.html's tiles). */
+.people-controls{ flex-direction: column; align-items: stretch; gap: 18px; }
+/* .area-controls .search-box (styles.css, research page) sets
+   `flex: 1 1 260px` for its ROW-direction container, where that
+   flex-basis sizes WIDTH. .people-controls flips to a COLUMN direction,
+   where the same still-inherited flex-basis instead sizes HEIGHT --
+   stretching the box to 260px+ tall and detaching the absolutely-
+   positioned search icon (centered at top:50% of that tall box) from
+   the input it's supposed to sit inside. `flex: 0 0 auto` here resets
+   that so the box sizes to its actual content again. */
+.people-controls .search-box{ margin: 0; max-width: 360px; flex: 0 0 auto; }
+.people-filter-groups{ display:flex; flex-wrap:wrap; gap: 28px 40px; }
+.people-filter-group{ display:flex; flex-direction:column; gap:10px; }
+.people-filter-label{
+  font-family: var(--font-nav); font-size:.7rem; font-weight:700; text-transform:uppercase;
+  letter-spacing:.04em; color: var(--ink-soft);
+}
+.people-list{ margin-top: 8px; }
+.person-row{ padding: 40px 0; border-top: 1px solid var(--line); }
+.person-row:first-child{ border-top:none; padding-top:0; }
+.person-row[hidden]{ display:none; }
+.person-title{
+  font-family: var(--font-nav); font-size:.92rem; font-weight:700; text-transform:uppercase;
+  letter-spacing:.03em; color: var(--umd-red);
+  padding-bottom:14px; margin-bottom:24px; border-bottom: 1px solid var(--ink);
+}
+.person-body{ display:grid; grid-template-columns: 160px 1fr; gap: 32px; align-items:start; }
+.person-media{ display:flex; flex-direction:column; align-items:flex-start; }
+.person-avatar{
+  width:120px; height:120px; background: var(--umd-red);
   display:flex; align-items:center; justify-content:center;
-  color: #fff; font-family: var(--font-nav); font-size: 1.5rem; font-weight:700;
+  color: #fff; font-family: var(--font-nav); font-size: 2rem; font-weight:700;
   margin-bottom: 16px;
 }
-.person h3{ font-size:1.05rem; margin-bottom:2px; }
-.person .role{ font-size:.85rem; color: var(--umd-red); font-weight:700; margin-bottom:8px; font-family: var(--font-nav); text-transform: uppercase; letter-spacing: .02em; }
+.person-media h3{ font-size:1.02rem; margin-bottom:8px; }
+.person-links{ display:flex; flex-direction:column; gap:4px; }
+.person-links a{ font-size:.82rem; font-weight:700; color: var(--umd-red); }
+.person-links a:hover{ text-decoration:underline; }
+.person-bio .rp-tags{ margin-bottom:12px; }
+.person-bio p{ font-size:.95rem; line-height:1.6; color: var(--ink-soft); margin:0; }
+
+@media (max-width: 700px){
+  .person-body{ grid-template-columns: 1fr; gap: 20px; }
+  .person-avatar{ width:88px; height:88px; font-size:1.5rem; margin-bottom:12px; }
+}
 
 /* ---------- Page hero (interior pages) ---------- */
 .page-hero{ background: var(--paper); border-bottom:1px solid var(--line); padding: 40px 0 36px; }

@@ -193,9 +193,14 @@ Most homepage/news/events content (`NEWS_ITEMS`, `EVENTS_ITEMS`,
 external links — not sample copy. What's still illustrative and should be
 replaced with real material before launch:
 
-- `PEOPLE_ITEMS` in `build/generate.py` — the founder's entry is real;
-  several other bios/roles are placeholder names standing in for the
-  Hub's actual affiliates and fellows.
+- `PEOPLE_ITEMS` in `build/generate.py` — the six people, their roles,
+  and their research-area badges (derived from `TOPIC_DETAIL` in
+  `build/build_all.py`) are real. Still placeholder, pending real
+  material from each person: `bio` is a short paragraph auto-expanded
+  from the existing role/focus fields rather than a bio they wrote;
+  `website`/`linkedin` are blank except the founder's site (already
+  linked from the homepage); and photos are the initials-avatar
+  placeholder (no headshot files yet).
 - `PAST_EVENTS_ITEMS` in `build/generate.py` — illustrative past-event
   copy (shared by the Events page's Past Events section, the Speaker
   Series page's "Past sessions," and the Annual Event page's recap card),
