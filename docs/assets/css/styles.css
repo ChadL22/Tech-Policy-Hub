@@ -782,6 +782,28 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 }
 .subsection-toggle[aria-expanded="false"] .subsection-caret{ transform: rotate(45deg); }
 
+/* Follow-up (direct user request): "Filters" was sharing the exact same
+   bold, full-size .subsection-toggle look as real content-section
+   headers -- on Research it sat directly above "People"/"Projects"/
+   "Publications" in identical styling, so all four read as
+   interchangeable section headers; on the People page, which has no
+   such content header at all, that same bold treatment made "Filters"
+   look like an orphaned page heading with nothing to pair with. Only
+   Events read fine, because there "Filters" sits above a much larger
+   plain h2 ("Upcoming Events") with real visual contrast.
+   .subsection-toggle--filters restyles just the "Filters" buttons
+   (People/Research/Events) as a small, muted, uppercase utility control
+   -- in the same visual family as .eyebrow/.rail-head elsewhere on the
+   site -- so it clearly reads as secondary to whatever content headers
+   follow it, without touching the base .subsection-toggle look that
+   People/Projects/Publications still use. */
+.subsection-toggle--filters{ padding-bottom:6px; margin-bottom:24px; border-bottom-color: var(--line); }
+.subsection-toggle--filters h2{
+  font-family: var(--font-nav); font-size:.78rem; font-weight:700; letter-spacing:.06em;
+  text-transform: uppercase; color: var(--ink-soft);
+}
+.subsection-toggle--filters .subsection-caret{ width:7px; height:7px; border-color: var(--ink-soft); }
+
 .area-tag{
   display:inline-block; font-family: var(--font-nav); font-size:.66rem; font-weight:700; letter-spacing:.03em;
   color:#fff; background: var(--area-color, var(--umd-red)); padding:2px 7px; border-radius: var(--radius);

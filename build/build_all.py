@@ -262,7 +262,7 @@ year_filter_pills = _year_filter_pills_html()
 research_body = f"""
 <section>
   <div class="container container-narrow">
-    <button type="button" class="subsection-toggle" aria-expanded="false" aria-controls="research-filters-panel">
+    <button type="button" class="subsection-toggle subsection-toggle--filters" aria-expanded="false" aria-controls="research-filters-panel">
       <h2>Filters</h2>
       <span class="subsection-caret" aria-hidden="true"></span>
     </button>
@@ -458,7 +458,7 @@ events_body = f"""
 <section>
   <div class="container with-sidebar events-layout">
     <div>
-      <button type="button" class="subsection-toggle" aria-expanded="false" aria-controls="events-filters-panel">
+      <button type="button" class="subsection-toggle subsection-toggle--filters" aria-expanded="false" aria-controls="events-filters-panel">
         <h2>Filters</h2>
         <span class="subsection-caret" aria-hidden="true"></span>
       </button>
@@ -614,7 +614,7 @@ people_body = f"""
          `document.querySelector('.area-controls')` lookup at page load
          still finds the search input/pills inside it regardless of
          collapsed state. -->
-    <button type="button" class="subsection-toggle" aria-expanded="false" aria-controls="people-filters-panel">
+    <button type="button" class="subsection-toggle subsection-toggle--filters" aria-expanded="false" aria-controls="people-filters-panel">
       <h2>Filters</h2>
       <span class="subsection-caret" aria-hidden="true"></span>
     </button>
