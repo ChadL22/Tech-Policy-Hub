@@ -462,6 +462,15 @@ _ics_webcal_url = _ics_url.replace("https://", "webcal://")
 # page (which drops straight into its filter row + search box right
 # under the nav) rather than restating "Tech Policy Hub Calendar" above
 # a tool the EVENTS nav item already led the visitor to.
+# Follow-up (direct user request): dropped the "Upcoming"/"Past" eyebrow
+# above each section's own "Upcoming Events"/"Past Events" <h2> -- the
+# eyebrow was restating the heading right below it, not labeling
+# something the heading didn't already say (contrast the homepage's
+# eyebrows, which label a *different* word than the h2 beside them,
+# e.g. "Calendar" above "Events"). See event-row styling in styles.css
+# for the alternating-background/gold-top-bar treatment on every other
+# row, also a direct user request (modeled on .reading-panel's gold top
+# border on the homepage's "What we're reading" panel).
 # Follow-up (direct user request): the calendar (.events-sidebar-sticky
 # -- legend + widget + subscribe buttons) is sticky on desktop -- see
 # the `min-width: 901px` rule in styles.css -- so it travels with the
@@ -483,14 +492,14 @@ events_body = f"""
     <div>
       {g.filter_pills_html(list(g.EVENT_CATEGORIES.keys()), 'events')}
       {g.search_box_html("Search events&hellip;", "Search events")}
-      <div class="section-head" style="margin-top:28px;"><div><span class="eyebrow">Upcoming</span><h2>Upcoming Events</h2></div></div>
+      <div class="section-head" style="margin-top:28px;"><div><h2>Upcoming Events</h2></div></div>
       <div class="rail-scroll-wrap">
         <div class="rail-scroll events-scroll" id="upcoming-events-list">
           {g.events_rows_html(g.EVENTS_ITEMS)}
         </div>
       </div>
       <p class="list-empty" data-empty-for="upcoming-events-list" hidden>No upcoming events match your search or filter.</p>
-      <div class="section-head" style="margin-top:48px;"><div><span class="eyebrow">Past</span><h2>Past Events</h2></div></div>
+      <div class="section-head" style="margin-top:48px;"><div><h2>Past Events</h2></div></div>
       <div class="rail-scroll-wrap">
         <div class="rail-scroll events-scroll" id="past-events-list">
           {g.past_events_html(g.PAST_EVENTS_ITEMS)}
