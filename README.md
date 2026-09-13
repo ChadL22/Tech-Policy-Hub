@@ -273,14 +273,18 @@ Most homepage/news/events content (`NEWS_ITEMS`, `EVENTS_ITEMS`,
 external links — not sample copy. What's still illustrative and should be
 replaced with real material before launch:
 
-- `PEOPLE_ITEMS` (`build/data/people.yml`) — the six people, their roles,
-  and their research-area badges (derived from `TOPIC_DETAIL` in
-  `build/build_all.py`) are real. Still placeholder, pending real
-  material from each person: `bio` is a short paragraph auto-expanded
-  from the existing role/focus fields rather than a bio they wrote;
-  `website`/`linkedin` are blank except the founder's site (already
-  linked from the homepage); and photos are the initials-avatar
-  placeholder (no headshot files yet).
+- `PEOPLE_ITEMS` (`build/data/people.yml`) — the 15-person roster (founder
+  & director, co-lead, and affiliates), their roles, and their
+  research-area badges (derived from `TOPIC_DETAIL` in
+  `build/build_all.py`) are real, condensed from bios each person/their
+  lab provided. Still pending: `website`/`linkedin` are blank except
+  the founder's and co-lead's personal sites; photos are the
+  initials-avatar placeholder (no headshot files yet — swap in real
+  images via `build/data/people.yml`'s entries once available); and
+  the Publications list under `TOPIC_DETAIL` in `build/build_all.py`
+  still credits a few placeholder co-authors (Jordan Diaz, Amara
+  Mensah, Lee Tiedrich) who aren't part of the current roster — those
+  need reconciling against real publication records.
 - `PAST_EVENTS_ITEMS` (`build/data/past_events.yml`) — illustrative past-event
   copy (shared by the Events page's Past Events section, the Speaker
   Series page's "Past sessions," and the Annual Event page's recap card),
