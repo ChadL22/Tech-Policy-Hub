@@ -174,7 +174,20 @@ li.has-dropdown.open .dropdown{ display:block; }
 
 .header-actions{ display:flex; align-items:center; gap:12px; flex:none; }
 .nav-toggle{ display:none; background:none; border:none; cursor:pointer; padding:8px; }
-.nav-toggle span{ display:block; width:22px; height:2px; background:var(--ink); margin:5px 0; }
+.nav-toggle span{ display:block; width:22px; height:2px; background:var(--ink); margin:5px 0; transition: transform .2s ease, opacity .2s ease; }
+/* Hamburger -> X, driven purely by .primary-nav's own "open" class via
+   a sibling selector (nav.primary-nav comes before .header-actions in
+   the markup -- see header() in generate.py) -- no JS needed to toggle
+   an icon class separately. Gives the button itself a visible "this
+   closes the menu" cue once open, on top of the explicit .nav-close
+   button and backdrop click below. */
+nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(1){ transform: translateY(7px) rotate(45deg); }
+nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(2){ opacity:0; }
+nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform: translateY(-7px) rotate(-45deg); }
+/* Both hidden by default (desktop) -- shown only in the collapsed-nav
+   breakpoint below, same pattern as .nav-toggle itself. */
+.nav-panel-head{ display:none; }
+.nav-backdrop{ display:none; }
 
 /* ---------- Affiliation strip ---------- */
 .affiliation-strip{ background: var(--nav-band); border-bottom: 1px solid var(--line); }
@@ -1258,25 +1271,52 @@ footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding
   .rail-wrap{ grid-template-columns: 1fr; gap: 32px; }
   .rail-wrap .rail-panel{ border-left:none; padding-left:0; border-top: 2px solid var(--ink); padding-top: 24px; }
 }
-/* Nav collapses to the off-canvas hamburger menu starting here -- five nav
+/* Nav collapses to an off-canvas hamburger menu starting here -- five nav
    items plus dropdowns don't leave enough room next to the GoTech logo +
    Hub lockup + Subscribe button above this width. (This used to kick in
    only at 720px, which left a squeezed 720-1080px zone where the brand
    lockup -- and before it, the plain text wordmark -- could get clipped
-   by .brand-lockup's overflow:hidden.) */
+   by .brand-lockup's overflow:hidden.)
+   Follow-up (direct user request): this used to be a FULL-SCREEN
+   overlay with no visible way to close it (the hamburger never
+   changed appearance, so re-finding "the same 3 bars" was the only,
+   undiscoverable exit). Now a bounded-width drawer (min(320px, 85vw) --
+   never the full screen even on a narrow phone) that slides in from
+   the right over a dimmed, click-to-close .nav-backdrop, with an
+   explicit "X" .nav-close button at the top of the panel and the
+   hamburger itself morphing into an X (see base rules above) -- three
+   redundant, discoverable ways to exit instead of one hidden one. */
 @media (max-width: 1080px){
+  .nav-backdrop{
+    display:block; position:fixed; inset:0; background:rgba(15,15,20,.45);
+    z-index:140; opacity:0; pointer-events:none; transition: opacity .2s ease;
+  }
+  .nav-backdrop.open{ opacity:1; pointer-events:auto; }
   nav.primary-nav{
-    position: fixed; top: 0; left:0; right:0; bottom:0;
+    position: fixed; top: 0; right:0; bottom:0; left:auto;
+    width: min(320px, 85vw);
     background:#fff; flex-direction:column; align-items:stretch;
-    padding: 84px 20px 20px; transform: translateX(100%); transition: transform .2s ease;
-    overflow-y:auto; z-index: 150;
+    padding: 16px 20px 20px; transform: translateX(100%); transition: transform .2s ease;
+    overflow-y:auto; z-index: 150; box-shadow: -12px 0 32px rgba(15,15,20,.18);
   }
   nav.primary-nav.open{ transform: translateX(0); }
+  .nav-panel-head{ display:flex; justify-content:flex-end; margin-bottom:8px; }
+  .nav-close{
+    display:flex; align-items:center; justify-content:center; width:36px; height:36px;
+    background:none; border:1.5px solid var(--line); border-radius: var(--radius);
+    color: var(--ink); font-size:1.3rem; line-height:1; cursor:pointer;
+  }
+  .nav-close:hover{ border-color: var(--ink); }
   nav.primary-nav > ul{ flex-direction:column; align-items:stretch; gap:0; }
   nav.primary-nav a.nav-link{ color: var(--ink); padding:14px 4px; border-bottom:1px solid var(--line); justify-content:space-between; }
   .dropdown{ position:static; transform:none; width:auto; display:block; box-shadow:none; border:none; padding-left:12px; margin:0; }
   .nav-toggle{ display:block; }
 }
+/* Prevents the page behind the dimmed backdrop from scrolling while the
+   drawer is open (main.js toggles this class on <body> alongside the
+   drawer/backdrop) -- otherwise a touch-scroll on what looks like a
+   dimmed, inert background still scrolls the real page underneath it. */
+body.nav-open{ overflow:hidden; }
 @media (max-width: 900px){
   .grid-4{ grid-template-columns: repeat(2,1fr); }
   .grid-3{ grid-template-columns: repeat(2,1fr); }

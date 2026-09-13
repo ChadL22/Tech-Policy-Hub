@@ -44,7 +44,7 @@ SITE_URL = "https://chadl22.github.io/Tech-Policy-Hub/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026091314"
+ASSET_VERSION = "2026091315"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -146,6 +146,17 @@ def head(title, description):
 
 
 def header(active):
+    # Follow-up (direct user request, after seeing the mobile/narrow-
+    # screen nav take over the entire viewport with no visible way out):
+    # the collapsed nav below the 1080px breakpoint (see styles.css) is
+    # now a bounded-width slide-in drawer, not a full-screen takeover --
+    # `.nav-backdrop` dims the rest of the page (and closes the drawer
+    # on click), and `.nav-close` is an explicit, always-visible close
+    # button inside the drawer itself, in addition to the hamburger
+    # (`.nav-toggle`) now morphing into an X when open and Escape also
+    # closing it (see main.js). `.nav-backdrop` sits here, a sibling of
+    # `.primary-nav`/`.header-actions`, purely because position:fixed
+    # makes its DOM position irrelevant to where it renders.
     return f"""
 <header class="site-header">
   <div class="container header-inner">
@@ -155,8 +166,14 @@ def header(active):
       </a>
     </div>
     <nav class="primary-nav" aria-label="Primary">
+      <div class="nav-panel-head">
+        <button type="button" class="nav-close" aria-label="Close menu">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
       <ul>{nav_html(active)}</ul>
     </nav>
+    <div class="nav-backdrop"></div>
     <div class="header-actions">
       <a href="index.html#subscribe" class="btn btn-primary">Subscribe</a>
       <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">

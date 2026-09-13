@@ -1,14 +1,35 @@
 // Tech Policy Hub — shared interactions
 document.addEventListener('DOMContentLoaded', function () {
-  // Mobile nav toggle
+  // Mobile nav toggle -- follow-up (direct user request): the collapsed
+  // nav is now a bounded-width drawer + dimmed backdrop instead of a
+  // full-screen takeover (see the 1080px breakpoint in styles.css), so
+  // there are three ways to close it (hamburger again, the explicit
+  // .nav-close button, clicking the backdrop) plus Escape, all funneled
+  // through one setNavOpen() so they can't drift out of sync with each
+  // other or with the "nav-open" class that locks background scroll.
   var toggle = document.querySelector('.nav-toggle');
   var nav = document.querySelector('.primary-nav');
+  var navBackdrop = document.querySelector('.nav-backdrop');
+  var navClose = document.querySelector('.nav-close');
+
+  function setNavOpen(open) {
+    if (!nav) return;
+    nav.classList.toggle('open', open);
+    if (toggle) toggle.setAttribute('aria-expanded', String(open));
+    if (navBackdrop) navBackdrop.classList.toggle('open', open);
+    document.body.classList.toggle('nav-open', open);
+  }
+
   if (toggle && nav) {
     toggle.addEventListener('click', function () {
-      nav.classList.toggle('open');
-      toggle.setAttribute('aria-expanded', nav.classList.contains('open'));
+      setNavOpen(!nav.classList.contains('open'));
     });
   }
+  if (navBackdrop) navBackdrop.addEventListener('click', function () { setNavOpen(false); });
+  if (navClose) navClose.addEventListener('click', function () { setNavOpen(false); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && nav && nav.classList.contains('open')) setNavOpen(false);
+  });
 
   // Dropdown toggle -- on mobile (where the CSS collapses nav into a full
   // panel, see the 720px breakpoint in styles.css), tapping "Research" or
