@@ -565,6 +565,39 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   })();
 
+  // Events page: cap Upcoming/Past Events to a 5-row preview, direct
+  // user request "similar to what we see in the hub news section" --
+  // same fixed-height/fade-out/scroll idea as syncHubNewsHeight above,
+  // but sized to a row COUNT rather than matched against a sibling
+  // column (there's no sibling to match on this page). Event rows
+  // aren't a fixed height -- a wrapped title, or a shaded even row's
+  // slightly different box, can shift things by a few px -- so this
+  // measures the 5th row's actual rendered bottom edge rather than
+  // multiplying an assumed per-row height, the same "measure, don't
+  // guess" approach as that other function. 5 or fewer rows total
+  // needs no cap at all; the CSS max-height on .events-scroll (see
+  // styles.css) is left as the pre-JS/no-JS fallback either way.
+  (function () {
+    function capToRows(listId, n) {
+      var list = document.getElementById(listId);
+      if (!list) return;
+      function sync() {
+        var rows = Array.prototype.slice.call(list.children);
+        if (rows.length <= n) { list.style.maxHeight = ''; return; }
+        var top = list.getBoundingClientRect().top;
+        var bottom = rows[n - 1].getBoundingClientRect().bottom;
+        list.style.maxHeight = (bottom - top) + 'px';
+      }
+      sync();
+      window.addEventListener('resize', sync);
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(sync);
+      }
+    }
+    capToRows('upcoming-events-list', 5);
+    capToRows('past-events-list', 5);
+  })();
+
   // Homepage calendar -- pages between pre-rendered month panels (one
   // per month that actually has an event; see calendar_widget_html() in
   // generate.py) with prev/next, wrapping around at either end.

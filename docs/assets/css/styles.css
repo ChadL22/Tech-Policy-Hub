@@ -858,36 +858,46 @@ li.has-dropdown.open .dropdown{ display:block; }
    per later direct feedback, the same fixed-height/fade-out cap as the
    homepage's Hub News rail -- see events_body in build_all.py and
    .rail-scroll below) so a long Past Events history never turns into
-   an endless scroll down the page. .events-scroll shares .rail-scroll's
-   fade/scrollbar treatment (see .rail-scroll-wrap below) but caps
-   taller, since event rows (date + title + meta + button) run taller
-   than the compact .rail-item headline rows that component was built
-   for. Written as `.rail-scroll.events-scroll` (not a bare
-   `.events-scroll`) so this max-height reliably wins over the plain
+   an endless scroll down the page. .events-scroll's max-height here is
+   only the pre-JS/no-JS fallback -- main.js's capToRows() (see the
+   events-page section near syncHubNewsHeight) measures the real
+   rendered height of the first 5 rows and sets a precise inline
+   max-height once the page loads (direct user request:
+   preview exactly 5 rows, not "however many happen to fit in 480px"),
+   the same division of labor as the homepage rail's syncHubNewsHeight.
+   Written as `.rail-scroll.events-scroll` (not a bare `.events-scroll`)
+   so this fallback max-height reliably wins over the plain
    `.rail-scroll` rule below regardless of the two rules' order in this
    file -- a bare single-class override here previously lost that tie
    silently (equal specificity, and `.rail-scroll` happens to be
    declared later), capping events at 420px instead of the intended
-   480px without anyone noticing, since neither list yet had enough
-   rows to actually overflow either height. */
+   480px without anyone noticing. */
 .rail-scroll.events-scroll{ max-height: 480px; }
+/* Follow-up (direct user request): the list now reads as one framed
+   panel -- a gold top border and an ink bottom border around the whole
+   box -- instead of a gold bar repeating on every other row (too
+   jarring/busy down a long scrolling list). This is the "find another
+   way to work the gold in" resolution: one accent line per list,
+   echoing .reading-panel's gold border-top on the homepage, rather
+   than the eyesore of an every-other-row treatment. Lives on the OUTER
+   .rail-scroll-wrap, not the scrolling .rail-scroll element itself, so
+   the borders stay put at the panel's edges instead of scrolling away
+   with the content. events.html-specific (.events-list-wrap), so the
+   homepage's plain .rail-scroll-wrap (Hub News) is untouched. */
+.events-list-wrap{ border-top: 4px solid var(--umd-gold); border-bottom: 2px solid var(--ink); }
 
 .event-row{
   display:grid; grid-template-columns: 90px 1fr auto; gap: 22px; align-items:center;
   padding: 20px 24px; border-top: 1px solid var(--line);
 }
-.event-row:first-child{ border-top: 1px solid var(--ink); }
-/* Follow-up (direct user request): every other row gets a shaded
-   background plus a gold top bar in place of the plain hairline divider
-   -- same treatment (.reading-panel's fill + border-top) as the
-   homepage's "What we're reading" panel, applied per-row instead of to
-   one panel. nth-child(even) counts DOM position, not visible position,
-   so a filtered-out row can leave two same-shade rows adjacent -- a
-   minor, accepted tradeoff of a pure-CSS striping rule. */
-.event-row:nth-child(even){
-  background: var(--sidebar-band);
-  border-top: 4px solid var(--umd-gold);
-}
+/* Follow-up (direct user request): every other row keeps a quiet shaded
+   background for scan-ability down a long list -- just no border-top
+   accent of its own any more, now that .events-list-wrap carries the
+   page's one gold accent instead (see above). nth-child(even) counts
+   DOM position, not visible position, so a filtered-out row can leave
+   two same-shade rows adjacent -- a minor, accepted tradeoff of a
+   pure-CSS striping rule. */
+.event-row:nth-child(even){ background: var(--sidebar-band); }
 .event-date{ text-align:center; border-right: 1px solid var(--line); padding-right: 18px; }
 .event-date .d{ font-family: var(--font-nav); font-size:1.8rem; font-weight:700; line-height:1; color: var(--umd-red); }
 .event-date .m{ font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; color: var(--ink-soft); font-weight:700; font-family: var(--font-nav); }
