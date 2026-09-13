@@ -1,0 +1,48 @@
+- tag: Publication
+  topic: Consumer Privacy
+  topic_file: research.html#area-panel-privacy
+  date: Jul 2025
+  source: '[Add contributing lab/department]'
+  title: 'Cookie-less Identification: For and Against Privacy'
+  summary: Work from the privacy team on the privacy implications of cookie-less identification on the
+    Web was published in the Internet Policy Review.
+  primary_label: Read the Research
+  link: https://policyreview.info/articles/analysis/cookie-less-identification-foragainst-privacy
+- tag: Publication
+  topic: Information Integrity
+  topic_file: research.html#area-panel-integrity
+  date: Jul 2025
+  source: '[Add contributing lab/department]'
+  title: Classifying Trustworthy Content via Third-Party Web Structure
+  summary: New work classifying trustworthy content on the Web based on the third-party structure of websites
+    was published through the FOCI workshop at PETs.
+  primary_label: Read the Paper
+  link: https://www.petsymposium.org/foci/2025/foci-2025-0017.pdf
+- tag: Media
+  topic: Cybersecurity
+  topic_file: research.html#area-panel-cybersecurity
+  date: Mar 2, 2025
+  source: '[Add contributing lab/department]'
+  title: Hub Cybersecurity Work Highlighted by Newsweek
+  summary: Research from the Hub's Cybersecurity group on county-level cyber risk was highlighted by Newsweek.
+  primary_label: Read the Coverage
+  link: https://www.newsweek.com/cybersecurity-risk-map-usa-counties-2026762
+- tag: Speaker Series
+  topic: Consumer Privacy
+  topic_file: research.html#area-panel-privacy
+  date: Mar 12, 2025
+  source: '[Add contributing lab/department]'
+  title: 'Spring 2025 Speaker Series: Privacy Research and Regulation'
+  summary: An online Spring 2025 Speaker Series event on how privacy research can inform privacy regulation.
+  primary_label: Event Details
+  link: https://umd.zoom.us/meeting/register/HbxWvfXnSBWxFfr1a7vnQA
+- tag: Publication
+  topic: Cybersecurity
+  topic_file: research.html#area-panel-cybersecurity
+  date: Jan 17, 2025
+  source: '[Add contributing lab/department]'
+  title: Attack Surface Across U.S. County Governments Published in Journal of Cybersecurity
+  summary: Research on the size, diversity, and severity of exposed attack surface across U.S. county
+    governments is officially published by the Journal of Cybersecurity.
+  primary_label: Read the Paper
+  link: https://academic.oup.com/cybersecurity/article/11/1/tyae032/7959399

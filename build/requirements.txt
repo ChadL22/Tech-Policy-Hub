@@ -1,0 +1,4 @@
+# Build-time dependencies for build/generate.py + build/build_all.py.
+# PyYAML is what load_data() (generate.py) uses to read the site's
+# content out of build/data/*.yml -- see README "Editing content".
+PyYAML>=6.0

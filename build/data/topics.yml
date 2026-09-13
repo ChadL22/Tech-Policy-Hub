@@ -1,0 +1,24 @@
+- key: cybersecurity
+  file: research.html#area-panel-cybersecurity
+  index: '01'
+  name: Cybersecurity
+  blurb: Measuring attack surface, risk, and resilience across governments, critical infrastructure, and
+    the private sector.
+- key: privacy
+  file: research.html#area-panel-privacy
+  index: '02'
+  name: Consumer Privacy
+  blurb: Studying how privacy law is designed, enforced, and experienced -- from cookie-less tracking
+    to watchdog accountability.
+- key: integrity
+  file: research.html#area-panel-integrity
+  index: '03'
+  name: Information Integrity
+  blurb: Tracking misinformation, platform transparency, and the policies that shape what people see and
+    trust online.
+- key: ml
+  file: research.html#area-panel-ml
+  index: '04'
+  name: Trustworthy ML
+  blurb: Examining algorithmic accountability, AI governance, and the standards needed for machine learning
+    the public can trust.

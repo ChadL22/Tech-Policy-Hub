@@ -12,7 +12,27 @@ import json
 import os
 import re
 
+import yaml
+
 ROOT = os.path.join(os.path.dirname(__file__), "..", "docs")
+DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+
+
+def load_data(name):
+    """Load build/data/<name>.yml -- the site's real content (people,
+    events, research areas, news, ...), externalized out of this file's
+    Python literals so it can be edited without touching code: by hand
+    in any text editor or GitHub's own web editor, and eventually
+    through a CMS admin UI that commits straight to these same files
+    (see README "Editing content"). Every constant below that used to be
+    an inline list/dict literal is now just `load_data("<name>")` --
+    same variable name, same shape, so nothing downstream needed to
+    change. `TOPIC_DETAIL` in build_all.py follows the same pattern via
+    this same function (it isn't generate.py's own data, so it isn't
+    loaded here)."""
+    path = os.path.join(DATA_DIR, f"{name}.yml")
+    with open(path) as f:
+        return yaml.safe_load(f)
 
 # Absolute site URL -- used for the .ics feed's UIDs/event links (which need
 # to be absolute regardless of what page linked to the feed) and for the
@@ -307,20 +327,8 @@ def write_raw(name, content):
 # Reusable content fragments
 # ---------------------------------------------------------------------------
 
-TOPICS = [
-    dict(key="cybersecurity", file="research.html#area-panel-cybersecurity", index="01",
-         name="Cybersecurity",
-         blurb="Measuring attack surface, risk, and resilience across governments, critical infrastructure, and the private sector."),
-    dict(key="privacy", file="research.html#area-panel-privacy", index="02",
-         name="Consumer Privacy",
-         blurb="Studying how privacy law is designed, enforced, and experienced -- from cookie-less tracking to watchdog accountability."),
-    dict(key="integrity", file="research.html#area-panel-integrity", index="03",
-         name="Information Integrity",
-         blurb="Tracking misinformation, platform transparency, and the policies that shape what people see and trust online."),
-    dict(key="ml", file="research.html#area-panel-ml", index="04",
-         name="Trustworthy ML",
-         blurb="Examining algorithmic accountability, AI governance, and the standards needed for machine learning the public can trust."),
-]
+# Content lives in build/data/topics.yml -- see README "Editing content".
+TOPICS = load_data("topics")
 
 # Each research area's accent color + short code, used for the small
 # colored .area-tag badge wherever a person/project/publication is tagged
@@ -330,12 +338,8 @@ TOPICS = [
 # only) once the People page started using the same badge/filter-pill
 # language for the same four areas -- one shared source of truth for the
 # color+code instead of two.
-AREA_META = {
-    "cybersecurity": dict(code="CY", color="#E21833"),
-    "privacy": dict(code="CP", color="#7A1F3D"),
-    "integrity": dict(code="II", color="#52565A"),
-    "ml": dict(code="ML", color="#B8860B"),
-}
+# Content lives in build/data/area_meta.yml -- see README "Editing content".
+AREA_META = load_data("area_meta")
 
 # Homepage "Research Spotlight" slideshow -- 3-5 real Hub outputs across
 # formats (papers, media appearances, presentations), not just papers, so
@@ -343,38 +347,8 @@ AREA_META = {
 # "Event Details") instead of a single "Read the Research" for everything.
 # Content is pulled from the same real, verified NEWS_ITEMS entries used
 # elsewhere on the site -- see follow-up 26.
-SPOTLIGHT_ITEMS = [
-    dict(tag="Publication", topic="Consumer Privacy", topic_file="research.html#area-panel-privacy",
-         date="Jul 2025", source="[Add contributing lab/department]",
-         title="Cookie-less Identification: For and Against Privacy",
-         summary="Work from the privacy team on the privacy implications of cookie-less identification on the Web was published in the Internet Policy Review.",
-         primary_label="Read the Research",
-         link="https://policyreview.info/articles/analysis/cookie-less-identification-foragainst-privacy"),
-    dict(tag="Publication", topic="Information Integrity", topic_file="research.html#area-panel-integrity",
-         date="Jul 2025", source="[Add contributing lab/department]",
-         title="Classifying Trustworthy Content via Third-Party Web Structure",
-         summary="New work classifying trustworthy content on the Web based on the third-party structure of websites was published through the FOCI workshop at PETs.",
-         primary_label="Read the Paper",
-         link="https://www.petsymposium.org/foci/2025/foci-2025-0017.pdf"),
-    dict(tag="Media", topic="Cybersecurity", topic_file="research.html#area-panel-cybersecurity",
-         date="Mar 2, 2025", source="[Add contributing lab/department]",
-         title="Hub Cybersecurity Work Highlighted by Newsweek",
-         summary="Research from the Hub's Cybersecurity group on county-level cyber risk was highlighted by Newsweek.",
-         primary_label="Read the Coverage",
-         link="https://www.newsweek.com/cybersecurity-risk-map-usa-counties-2026762"),
-    dict(tag="Speaker Series", topic="Consumer Privacy", topic_file="research.html#area-panel-privacy",
-         date="Mar 12, 2025", source="[Add contributing lab/department]",
-         title="Spring 2025 Speaker Series: Privacy Research and Regulation",
-         summary="An online Spring 2025 Speaker Series event on how privacy research can inform privacy regulation.",
-         primary_label="Event Details",
-         link="https://umd.zoom.us/meeting/register/HbxWvfXnSBWxFfr1a7vnQA"),
-    dict(tag="Publication", topic="Cybersecurity", topic_file="research.html#area-panel-cybersecurity",
-         date="Jan 17, 2025", source="[Add contributing lab/department]",
-         title="Attack Surface Across U.S. County Governments Published in Journal of Cybersecurity",
-         summary="Research on the size, diversity, and severity of exposed attack surface across U.S. county governments is officially published by the Journal of Cybersecurity.",
-         primary_label="Read the Paper",
-         link="https://academic.oup.com/cybersecurity/article/11/1/tyae032/7959399"),
-]
+# Content lives in build/data/spotlight_items.yml -- see README "Editing content".
+SPOTLIGHT_ITEMS = load_data("spotlight_items")
 
 # Follow-up 52: this is now the SOLE place NEWS_ITEMS is listed in full --
 # the standalone news.html page was removed (the homepage's "Hub News"
@@ -383,64 +357,8 @@ SPOTLIGHT_ITEMS = [
 # below used to placeholder-link to "news.html" itself (a real link was
 # never sourced for it); now links to "#" like other not-yet-linked
 # placeholders elsewhere in the site (e.g. READING_ITEMS).
-NEWS_ITEMS = [
-    dict(tag="Publication", date="Jul 2025",
-         title="Cookie-less Identification: For and Against Privacy",
-         summary="Work from the privacy team on the privacy implications of cookie-less identification on the Web was published in the Internet Policy Review.",
-         link="https://policyreview.info/articles/analysis/cookie-less-identification-foragainst-privacy"),
-    dict(tag="Publication", date="Jul 2025",
-         title="Classifying Trustworthy Content via Third-Party Web Structure",
-         summary="New work classifying trustworthy content on the Web based on the third-party structure of websites was published through the FOCI workshop at PETs.",
-         link="https://www.petsymposium.org/foci/2025/foci-2025-0017.pdf"),
-    dict(tag="Award", date="Jun 24, 2025",
-         title="Lee Tiedrich Joins the Hub as AI Fellow",
-         summary="Lee Tiedrich is joining the Tech Policy Hub as a co-leader and AI Fellow, under an award to Hub affiliates Charlie Harry and Katie Shilton.",
-         link="https://gotech.spp.umd.edu/news/aim-seed-grants-support-22-ai-research-projects"),
-    dict(tag="Event Recap", date="Jun 10, 2025",
-         title="A Remarkable Annual Event",
-         summary="The Hub's annual event brought together the community for a full day of tech policy programming -- a summary and photos are now available.",
-         link="https://techpolicy.ischool.umd.edu/annual-event/"),
-    dict(tag="Event", date="Jun 6, 2025",
-         title="Join Us for the Tech Policy Hub Annual Event",
-         summary="Details and registration for the in-person Tech Policy Hub Annual Event -- subscribe to our mailing list to stay informed.",
-         link="https://drive.google.com/file/d/1j9EOplAzhqQ79f1RMfmoBkCWT-U1ytp2/view?usp=sharing"),
-    dict(tag="Speaker Series", date="Mar 12, 2025",
-         title="Spring 2025 Speaker Series: Privacy Research and Regulation",
-         summary="An online Spring 2025 Speaker Series event on how privacy research can inform privacy regulation.",
-         link="https://umd.zoom.us/meeting/register/HbxWvfXnSBWxFfr1a7vnQA"),
-    dict(tag="Publication", date="Mar 2, 2025",
-         title="Applying Contextual Integrity to Measure Web Privacy",
-         summary="New work from Hub researchers applying Contextual Integrity to measure Web privacy is now available on arXiv.",
-         link="https://arxiv.org/abs/2412.16246"),
-    dict(tag="Media", date="Mar 2, 2025",
-         title="Hub Cybersecurity Work Highlighted by Newsweek",
-         summary="Research from the Hub's Cybersecurity group on county-level cyber risk was highlighted by Newsweek.",
-         link="https://www.newsweek.com/cybersecurity-risk-map-usa-counties-2026762"),
-    dict(tag="Speaker Series", date="Feb 26, 2025",
-         title="Speaker Series: DeepSeek and AI Governance",
-         summary="The first event in the Spring 2025 Speaker Series brought together an academic and a practitioner to discuss DeepSeek and what it means for AI governance.",
-         link="https://umd.zoom.us/meeting/register/xRjQo5cHQPmW71fDVjoApw"),
-    dict(tag="Recognition", date="Feb 24, 2025",
-         title="Privacy Watchdog Accountability Work Accepted at PLSC",
-         summary="Work by the Hub's researchers on the accountability powers of formal and informal U.S. privacy watchdogs has been accepted for the Privacy Law Scholars Conference (PLSC).",
-         link="#"),
-    dict(tag="Media", date="Feb 4, 2025",
-         title="County Cyberattack Risk Work Highlighted by Maryland Today",
-         summary="The Hub's work assessing attack surface across U.S. counties was highlighted by Maryland Today.",
-         link="https://today.umd.edu/umd-researchers-calculate-cyberattack-risk-for-all-50-states"),
-    dict(tag="Publication", date="Jan 17, 2025",
-         title="Attack Surface Across U.S. County Governments Published in Journal of Cybersecurity",
-         summary="Research on the size, diversity, and severity of exposed attack surface across U.S. county governments is officially published by the Journal of Cybersecurity.",
-         link="https://academic.oup.com/cybersecurity/article/11/1/tyae032/7959399"),
-    dict(tag="Recognition", date="Dec 6, 2024",
-         title="Attack Surface Research Highlighted by the iSchool",
-         summary="Research on measuring the integrated attack surface exposed across U.S. county governments was highlighted by the department; the project has since been accepted for publication in the Journal of Cybersecurity.",
-         link="https://ischool.umd.edu/news/breaking-new-ground-a-strategic-approach-to-cyber-defense/"),
-    dict(tag="Event Recap", date="Nov 21, 2024",
-         title="Tech Policy Hub & VCAI AI Policy Round-Table",
-         summary="The Hub and VCAI held a round-table on AI policy at the CS Department, with more AI-related round-tables from the Hub to follow.",
-         link="https://ischool.umd.edu/centers-and-labs/vcai/"),
-]
+# Content lives in build/data/news_items.yml -- see README "Editing content".
+NEWS_ITEMS = load_data("news_items")
 
 # Category -> color for the homepage calendar's legend/dots (see
 # calendar_widget_html() / calendar_legend_html()). Kept in Hub brand
@@ -453,34 +371,11 @@ NEWS_ITEMS = [
 # Workshop, Roundtable, Annual Event). See EVENTS_ITEMS below for how
 # that shows up in practice, and events_rows_html()'s docstring for why
 # those rows open in a new tab.
-EVENT_CATEGORIES = {
-    "Speaker Series": "var(--umd-red)",
-    "Workshop": "var(--umd-gold)",
-    "Roundtable": "var(--accent-teal)",
-    "Annual Event": "var(--ink)",
-    "Conference": "var(--slate-gray)",
-}
+# Content lives in build/data/event_categories.yml -- see README "Editing content".
+EVENT_CATEGORIES = load_data("event_categories")
 
-EVENTS_ITEMS = [
-    dict(y=2026, m="SEP", d="09", cat="Speaker Series", title="Speaker Series: Platform Design & the Law",
-         meta="4:00 PM · College Park, MD & Zoom", link="speaker-series.html"),
-    dict(y=2026, m="OCT", d="14", cat="Workshop", title="Workshop: Measuring Algorithmic Harm",
-         meta="1:00 PM · Iribe Center, Room 3137", link="events.html"),
-    dict(y=2026, m="NOV", d="18", cat="Roundtable", title="Roundtable: AI Policy in the States",
-         meta="10:00 AM · Virtual", link="events.html"),
-    # "Conference" entry, not a Hub-organized event -- the IAPP Global
-    # Summit is a real, independently-run conference (privacy, AI
-    # governance, and cybersecurity law -- squarely the Hub's four
-    # research areas) that happens to land in the Hub's own backyard;
-    # flagging it is exactly the "support the field, not just our own
-    # events" use case this category exists for. Verified dates/venue
-    # via iapp.org as of Sep 2026 -- reconfirm before relying on them,
-    # the way any 3rd-party listing should be.
-    dict(y=2027, m="MAR", d="23", cat="Conference", title="IAPP Global Summit 2027",
-         meta="Washington, DC · Hosted by the IAPP", link="https://iapp.org/conference/iapp-global-summit"),
-    dict(y=2027, m="APR", d="09", cat="Annual Event", title="Tech Policy Hub Annual Event 2027",
-         meta="All day · University of Maryland", link="annual-event.html"),
-]
+# Content lives in build/data/events.yml -- see README "Editing content".
+EVENTS_ITEMS = load_data("events")
 
 # Past events -- same fields as EVENTS_ITEMS so both can share
 # events_rows_html()/filter_pills_html(). The three Speaker Series/Roundtable
@@ -491,20 +386,8 @@ EVENTS_ITEMS = [
 # Event page's "2026 Recap" all read from the same data instead of drifting.
 # Same caveat as those existing entries: illustrative placeholder content,
 # not verified real dates -- see "Known placeholders" in the README.
-PAST_EVENTS_ITEMS = [
-    dict(y=2026, m="APR", cat="Annual Event", title="A Record Turnout",
-         summary="Our most recent event drew practitioners, scholars, and students for a full day of programming -- summary and photos in the news archive.",
-         link="annual-event.html"),
-    dict(y=2026, m="FEB", cat="Speaker Series", title="DeepSeek and AI Governance",
-         summary="An academic and a practitioner unpack what DeepSeek means for global AI policy.",
-         link="speaker-series.html"),
-    dict(y=2025, m="MAR", cat="Speaker Series", title="Privacy Research to Regulation",
-         summary="How academic privacy research can inform real-world privacy regulation.",
-         link="speaker-series.html"),
-    dict(y=2024, m="NOV", cat="Roundtable", title="AI Policy Roundtable",
-         summary="A joint session with VCAI on the state of AI policy debates.",
-         link="speaker-series.html"),
-]
+# Content lives in build/data/past_events.yml -- see README "Editing content".
+PAST_EVENTS_ITEMS = load_data("past_events")
 
 # Role-type facet for the People page's second filter dimension (direct
 # user request: "filter by role type (affiliate, grad student, leads
@@ -514,13 +397,8 @@ PAST_EVENTS_ITEMS = [
 # `role_types` list and TOPIC_DETAIL's areas. Keys are what main.js's
 # researchExplorer matches on (data-roles); values are the filter-pill
 # labels people.html shows.
-ROLE_TYPES = {
-    "leadership": "Leadership",
-    "lead": "Area Lead",
-    "affiliate": "Affiliate",
-    "fellow": "Fellow",
-    "grad-fellow": "Graduate Fellow",
-}
+# Content lives in build/data/role_types.yml -- see README "Editing content".
+ROLE_TYPES = load_data("role_types")
 
 # `bio`, `website`, and `linkedin` added per direct user request for the
 # People page redesign (headshot + bio + links + role/area badges). Real
@@ -537,38 +415,8 @@ ROLE_TYPES = {
 # the site's one existing source of truth for who works in which area,
 # rather than duplicating that mapping into a second list here that could
 # drift out of sync with it.
-PEOPLE_ITEMS = [
-    dict(initials="IS", name="Dr. Ido Sivan-Sevilla", role="Founder & Director",
-         focus="Privacy law, regulatory enforcement, comparative tech policy",
-         role_types=["leadership"],
-         bio="Founder and director of the Tech Policy Hub, setting its research agenda and studying privacy law, regulatory enforcement, and tech policy from a comparative, cross-jurisdictional perspective.",
-         website="https://idonibrasco.github.io/", linkedin=None),
-    dict(initials="CH", name="Dr. Charlie Harry", role="Affiliate, Cybersecurity Lead",
-         focus="Cyber risk measurement, critical infrastructure",
-         role_types=["affiliate", "lead"],
-         bio="Leads the Hub's cybersecurity research, measuring cyber risk and exposed attack surface across critical infrastructure and government systems.",
-         website=None, linkedin=None),
-    dict(initials="KS", name="Dr. Katie Shilton", role="Affiliate, Trustworthy ML Lead",
-         focus="Data ethics, responsible AI research practice",
-         role_types=["affiliate", "lead"],
-         bio="Leads the Hub's trustworthy machine learning research, focusing on data ethics and standards for responsible AI research practice.",
-         website=None, linkedin=None),
-    dict(initials="LT", name="Lee Tiedrich", role="AI Fellow",
-         focus="AI governance, emerging technology law",
-         role_types=["fellow"],
-         bio="The Hub's AI Fellow, bringing expertise in AI governance and emerging technology law to its research and programming.",
-         website=None, linkedin=None),
-    dict(initials="JD", name="Jordan Diaz", role="Graduate Research Fellow",
-         focus="Platform transparency, information integrity",
-         role_types=["grad-fellow"],
-         bio="Graduate research fellow studying platform transparency and information integrity, with additional work on measuring cybersecurity attack surface.",
-         website=None, linkedin=None),
-    dict(initials="AM", name="Amara Mensah", role="Graduate Research Fellow",
-         focus="Consumer privacy, algorithmic accountability",
-         role_types=["grad-fellow"],
-         bio="Graduate research fellow focused on consumer privacy and algorithmic accountability.",
-         website=None, linkedin=None),
-]
+# Content lives in build/data/people.yml -- see README "Editing content".
+PEOPLE_ITEMS = load_data("people")
 
 # Homepage signal ticker -- real, tracked tech policy activity in the DMV
 # (DC/MD/VA) and at the federal level only (see ticker_section()
@@ -604,24 +452,8 @@ TICKER_ITEMS = _load_ticker_items()
 # we ask"), each tagged to the research area it connects to so they double
 # as intellectual navigation, not just mission-statement copy. Homepage
 # shows a curated subset (see build_all.py); About shows all six.
-QUESTIONS = [
-    dict(text="How do we deal with the social problems of computing through top-down and bottom-up policymaking & implementation?",
-         tag="Trustworthy ML", link="topic-ml.html"),
-    dict(text="What can we learn from the history of policymaking across technology issues?",
-         tag="Information Integrity", link="topic-integrity.html"),
-    dict(text="What can we learn about tech policy from a comparative perspective? Across sectors? Across jurisdictions?",
-         tag="Consumer Privacy", link="topic-privacy.html"),
-    dict(text="How and by whom tech policy issues enter the political agenda?",
-         tag="Information Integrity", link="topic-integrity.html"),
-    dict(text="How does the efficacy of tech policies can be assessed and evaluated?",
-         tag="Cybersecurity", link="topic-cybersecurity.html"),
-    dict(text="What are the politics of tech policy design?",
-         tag="Policy Design", link="research.html"),
-    dict(text="How can we use crowdsourcing to improve tech policies?",
-         tag="Practice", link="index.html#about"),
-    dict(text="How can we teach tech policy through an experiential learning perspective?",
-         tag="Teaching", link="courses.html"),
-]
+# Content lives in build/data/questions.yml -- see README "Editing content".
+QUESTIONS = load_data("questions")
 
 # Ideas We're Reading -- placeholder examples for the Phronesis + Tech
 # Policy Press list ("Field Pulse" on the homepage -- a static 3-column
@@ -642,43 +474,13 @@ QUESTIONS = [
 # holds the SINGULAR form each kicker actually displays -- a direct user
 # correction ("the category should be singular not plural"), since one
 # card is tagging one piece, not a whole collection.
-READING_TYPES = {
-    "Research Papers": "https://phronesisresearch.org/research",
-    "Policy Artifacts": "https://phronesisresearch.org/policy",
-    "Legal Analyses":   "https://phronesisresearch.org/legal",
-    "Essays":           "https://phronesisresearch.org/essays",
-    "Articles":         "https://phronesisresearch.org/articles",
-    "Reports":          "https://phronesisresearch.org/reports",
-}
-READING_TYPE_LABELS = {
-    "Research Papers": "Research Paper",
-    "Policy Artifacts": "Policy Artifact",
-    "Legal Analyses":   "Legal Analysis",
-    "Essays":           "Essay",
-    "Articles":         "Article",
-    "Reports":          "Report",
-}
+# Content lives in build/data/reading_types.yml -- see README "Editing content".
+READING_TYPES = load_data("reading_types")
+# Content lives in build/data/reading_type_labels.yml -- see README "Editing content".
+READING_TYPE_LABELS = load_data("reading_type_labels")
 
-READING_ITEMS = [
-    dict(source="Tech Policy Press", type="Articles", title="Why Platform Transparency Reports Still Fall Short",
-         summary="A look at what current disclosure requirements do and don't reveal about content moderation at scale.",
-         meta="6 min read", link="#"),
-    dict(source="The Phronesis Institute", type="Reports", title="The State of AI Governance, Three Years In",
-         summary="A field scan of regulatory approaches emerging across the U.S., EU, and Asia.",
-         meta="8 min read", link="#"),
-    dict(source="Tech Policy Press", type="Articles", title="Cookies Are Dying. What Comes Next for Ad Tracking?",
-         summary="An explainer on the identification methods rushing to fill the gap.",
-         meta="5 min read", link="#"),
-    dict(source="The Phronesis Institute", type="Essays", title="County Governments Are the New Cybersecurity Frontline",
-         summary="Why local governments face outsized cyber risk with the fewest resources to manage it.",
-         meta="7 min read", link="#"),
-    dict(source="Tech Policy Press", type="Legal Analyses", title="How the EU's AI Act Is Reshaping Global Compliance",
-         summary="What multinational platforms are actually changing in response to Brussels' risk-tiered rules.",
-         meta="9 min read", link="#"),
-    dict(source="The Phronesis Institute", type="Policy Artifacts", title="Congress Weighs a Federal Preemption Standard for AI",
-         summary="A rundown of the competing proposals to override the current patchwork of state AI laws.",
-         meta="6 min read", link="#"),
-]
+# Content lives in build/data/reading_items.yml -- see README "Editing content".
+READING_ITEMS = load_data("reading_items")
 
 def ticker_html(items):
     """Each item is badged with its jurisdiction (DC/MD/VA/FED) instead of

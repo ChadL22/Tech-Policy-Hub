@@ -1,0 +1,55 @@
+name: Rebuild site on content change
+
+# Regenerates docs/ whenever the site's content data changes on main --
+# the missing piece that makes a future CMS commit (see README "Content
+# management": Sveltia CMS editing build/data/*.yml and committing
+# straight to this repo) actually go live without anyone running
+# build_all.py by hand. Also covers a hand-edited YAML file pushed
+# directly, so this isn't CMS-specific.
+#
+# Scoped to build/data/** so an unrelated commit (a CSS tweak, a commit
+# that already includes a regenerated docs/) doesn't trigger a redundant
+# rebuild. This can't loop on itself: its own commit only touches
+# docs/**, which isn't in the `paths` filter above, so that commit never
+# re-triggers this workflow -- no [skip ci] or bot-identity workaround
+# needed. (Separately, GitHub also never re-triggers push-triggered
+# workflows from a GITHUB_TOKEN-authored commit at all, which is why
+# refresh-ticker.yml's own build/data/ticker.json commit doesn't ALSO
+# fire this workflow -- that's fine, since refresh-ticker.yml already
+# rebuilds and commits docs/ itself in the same run.)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'build/data/**'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install build dependencies
+        run: pip install -r requirements.txt
+        working-directory: build
+
+      - name: Rebuild the site
+        run: python3 build_all.py
+        working-directory: build
+
+      - name: Commit if changed
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'Rebuild site from updated content (build/data/**)'
+          file_pattern: 'docs/**'
+          commit_user_name: 'github-actions[bot]'
+          commit_user_email: 'github-actions[bot]@users.noreply.github.com'

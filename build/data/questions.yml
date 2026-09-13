@@ -1,0 +1,25 @@
+- text: How do we deal with the social problems of computing through top-down and bottom-up policymaking
+    & implementation?
+  tag: Trustworthy ML
+  link: topic-ml.html
+- text: What can we learn from the history of policymaking across technology issues?
+  tag: Information Integrity
+  link: topic-integrity.html
+- text: What can we learn about tech policy from a comparative perspective? Across sectors? Across jurisdictions?
+  tag: Consumer Privacy
+  link: topic-privacy.html
+- text: How and by whom tech policy issues enter the political agenda?
+  tag: Information Integrity
+  link: topic-integrity.html
+- text: How does the efficacy of tech policies can be assessed and evaluated?
+  tag: Cybersecurity
+  link: topic-cybersecurity.html
+- text: What are the politics of tech policy design?
+  tag: Policy Design
+  link: research.html
+- text: How can we use crowdsourcing to improve tech policies?
+  tag: Practice
+  link: index.html#about
+- text: How can we teach tech policy through an experiential learning perspective?
+  tag: Teaching
+  link: courses.html

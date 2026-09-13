@@ -1,0 +1,12 @@
+cybersecurity:
+  code: CY
+  color: '#E21833'
+privacy:
+  code: CP
+  color: '#7A1F3D'
+integrity:
+  code: II
+  color: '#52565A'
+ml:
+  code: ML
+  color: '#B8860B'

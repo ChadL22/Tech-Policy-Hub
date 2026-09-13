@@ -118,52 +118,12 @@ g.write("index.html", g.page("index.html", "Home", "The University of Maryland T
 # for a publications search that covers "author, year, title, conference
 # etc.", which needs the author byline as its own real field rather than
 # folded into a description string.
-TOPIC_DETAIL = {
-    "cybersecurity": dict(
-        projects=[
-            ("Cyber Risk Mapping for U.S. Counties", "Quantifying exposed attack surface and cyber risk across all 50 states and thousands of county governments."),
-            ("Critical Infrastructure Resilience", "Working with practitioners to translate attack-surface research into actionable defense priorities."),
-        ],
-        pubs=[
-            dict(venue="Journal of Cybersecurity", year=2026, title="Size, diversity, and severity of exposed attack surface across U.S. county governments.", authors=["Dr. Charlie Harry"]),
-            dict(venue="Maryland Today", year=2026, title="UMD researchers calculate cyberattack risk for all 50 states.", authors=["Dr. Charlie Harry", "Jordan Diaz"]),
-        ],
-        people=["Dr. Charlie Harry", "Jordan Diaz"],
-    ),
-    "privacy": dict(
-        projects=[
-            ("Cookie-less Identification Tracking", "Studying how identification methods are evolving as third-party cookies are phased out, and what it means for privacy."),
-            ("Watchdog Accountability", "Assessing the powers of formal and informal U.S. privacy regulators."),
-        ],
-        pubs=[
-            dict(venue="Internet Policy Review", year=2026, title="Cookie-less identification: for and against privacy.", authors=["Dr. Ido Sivan-Sevilla"]),
-            dict(venue="Privacy Law Scholars Conference", year=2026, title="Accountability powers of formal and informal U.S. privacy watchdogs.", authors=["Dr. Ido Sivan-Sevilla", "Amara Mensah"]),
-        ],
-        people=["Dr. Ido Sivan-Sevilla", "Amara Mensah"],
-    ),
-    "integrity": dict(
-        projects=[
-            ("Trustworthy Content Classification", "Classifying trustworthy content on the web using third-party site structure."),
-            ("Platform Transparency Tracker", "Monitoring platform disclosures and their real-world enforcement."),
-        ],
-        pubs=[
-            dict(venue="FOCI Workshop @ PETs", year=2026, title="Classifying trustworthy content on the web based on third-party structure.", authors=["Jordan Diaz"]),
-            dict(venue="Policy Brief", year=2026, title="What platform transparency reports do and don't tell us.", authors=["Dr. Ido Sivan-Sevilla"]),
-        ],
-        people=["Jordan Diaz", "Dr. Ido Sivan-Sevilla"],
-    ),
-    "ml": dict(
-        projects=[
-            ("Algorithmic Accountability Framework", "Developing standards for evaluating machine learning systems used in public decision-making."),
-            ("AI Governance Roundtables", "Convening researchers and policymakers on the governance of emerging AI systems."),
-        ],
-        pubs=[
-            dict(venue="arXiv", year=2026, title="Applying Contextual Integrity to measure algorithmic decision-making.", authors=["Dr. Katie Shilton"]),
-            dict(venue="Roundtable Summary", year=2025, title="Tech Policy Hub & VCAI roundtable on AI policy.", authors=["Lee Tiedrich"]),
-        ],
-        people=["Dr. Katie Shilton", "Lee Tiedrich"],
-    ),
-}
+# Content lives in build/data/topic_detail.yml -- see README "Editing
+# content". `projects` entries are 2-element [name, description] lists
+# now rather than Python tuples (YAML has no tuple type); every place
+# that reads them just does `for n, d in ...["projects"]`, which
+# unpacks a 2-item list exactly the same as a 2-item tuple.
+TOPIC_DETAIL = g.load_data("topic_detail")
 
 # Follow-up 7 (direct user request, replacing the click-to-select single-
 # card explorer, guided by a hand-drawn sketch the user shared): the page

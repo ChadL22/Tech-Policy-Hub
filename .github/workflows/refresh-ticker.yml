@@ -29,6 +29,10 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Install build dependencies
+        run: pip install -r requirements.txt
+        working-directory: build
+
       - name: Fetch fresh ticker data
         run: python3 refresh_ticker.py
         working-directory: build

@@ -1,0 +1,35 @@
+- y: 2026
+  m: SEP
+  d: 09
+  cat: Speaker Series
+  title: 'Speaker Series: Platform Design & the Law'
+  meta: 4:00 PM · College Park, MD & Zoom
+  link: speaker-series.html
+- y: 2026
+  m: OCT
+  d: '14'
+  cat: Workshop
+  title: 'Workshop: Measuring Algorithmic Harm'
+  meta: 1:00 PM · Iribe Center, Room 3137
+  link: events.html
+- y: 2026
+  m: NOV
+  d: '18'
+  cat: Roundtable
+  title: 'Roundtable: AI Policy in the States'
+  meta: 10:00 AM · Virtual
+  link: events.html
+- y: 2027
+  m: MAR
+  d: '23'
+  cat: Conference
+  title: IAPP Global Summit 2027
+  meta: Washington, DC · Hosted by the IAPP
+  link: https://iapp.org/conference/iapp-global-summit
+- y: 2027
+  m: APR
+  d: 09
+  cat: Annual Event
+  title: Tech Policy Hub Annual Event 2027
+  meta: All day · University of Maryland
+  link: annual-event.html

@@ -1,0 +1,61 @@
+- initials: IS
+  name: Dr. Ido Sivan-Sevilla
+  role: Founder & Director
+  focus: Privacy law, regulatory enforcement, comparative tech policy
+  role_types:
+  - leadership
+  bio: Founder and director of the Tech Policy Hub, setting its research agenda and studying privacy law,
+    regulatory enforcement, and tech policy from a comparative, cross-jurisdictional perspective.
+  website: https://idonibrasco.github.io/
+  linkedin: null
+- initials: CH
+  name: Dr. Charlie Harry
+  role: Affiliate, Cybersecurity Lead
+  focus: Cyber risk measurement, critical infrastructure
+  role_types:
+  - affiliate
+  - lead
+  bio: Leads the Hub's cybersecurity research, measuring cyber risk and exposed attack surface across
+    critical infrastructure and government systems.
+  website: null
+  linkedin: null
+- initials: KS
+  name: Dr. Katie Shilton
+  role: Affiliate, Trustworthy ML Lead
+  focus: Data ethics, responsible AI research practice
+  role_types:
+  - affiliate
+  - lead
+  bio: Leads the Hub's trustworthy machine learning research, focusing on data ethics and standards for
+    responsible AI research practice.
+  website: null
+  linkedin: null
+- initials: LT
+  name: Lee Tiedrich
+  role: AI Fellow
+  focus: AI governance, emerging technology law
+  role_types:
+  - fellow
+  bio: The Hub's AI Fellow, bringing expertise in AI governance and emerging technology law to its research
+    and programming.
+  website: null
+  linkedin: null
+- initials: JD
+  name: Jordan Diaz
+  role: Graduate Research Fellow
+  focus: Platform transparency, information integrity
+  role_types:
+  - grad-fellow
+  bio: Graduate research fellow studying platform transparency and information integrity, with additional
+    work on measuring cybersecurity attack surface.
+  website: null
+  linkedin: null
+- initials: AM
+  name: Amara Mensah
+  role: Graduate Research Fellow
+  focus: Consumer privacy, algorithmic accountability
+  role_types:
+  - grad-fellow
+  bio: Graduate research fellow focused on consumer privacy and algorithmic accountability.
+  website: null
+  linkedin: null

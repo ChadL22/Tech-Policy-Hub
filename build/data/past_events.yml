@@ -1,0 +1,25 @@
+- y: 2026
+  m: APR
+  cat: Annual Event
+  title: A Record Turnout
+  summary: Our most recent event drew practitioners, scholars, and students for a full day of programming
+    -- summary and photos in the news archive.
+  link: annual-event.html
+- y: 2026
+  m: FEB
+  cat: Speaker Series
+  title: DeepSeek and AI Governance
+  summary: An academic and a practitioner unpack what DeepSeek means for global AI policy.
+  link: speaker-series.html
+- y: 2025
+  m: MAR
+  cat: Speaker Series
+  title: Privacy Research to Regulation
+  summary: How academic privacy research can inform real-world privacy regulation.
+  link: speaker-series.html
+- y: 2024
+  m: NOV
+  cat: Roundtable
+  title: AI Policy Roundtable
+  summary: A joint session with VCAI on the state of AI policy debates.
+  link: speaker-series.html
