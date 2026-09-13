@@ -12,13 +12,14 @@
 - initials: SL
   name: Sipho C. Langa
   role: Co-Lead
-  focus: Technology law and policy, computational approaches to governance
+  focus: Mechanism design, welfare economics, consumer protection, HCI
   role_types:
   - co-lead
-  bio: Sipho C. Langa co-leads the Tech Policy Hub. He is a Research Engineer at SAS Institute and founder of the
-    Phronesis Research Institute, an independent research entity focused on technology law and policy, and is affiliated
-    with MIT Sloan. His work draws on an interdisciplinary background spanning economics, computational science,
-    and policy.
+  bio: Sipho C. Langa (co-lead, M.S.) is a research engineer at SAS with experience spanning industry, academia,
+    and government, including MIT, Princeton's Center for Information Technology Policy, the Federal Reserve Board,
+    and the Consumer Financial Protection Bureau. His research examines questions at the intersection of technology,
+    law, and policy through the lens of mechanism design, drawing particularly from welfare economics, consumer
+    protection, and human-computer interaction.
   website: https://chadl22.github.io
   linkedin: null
 - initials: CH
