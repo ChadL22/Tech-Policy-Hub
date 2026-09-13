@@ -165,98 +165,137 @@ TOPIC_DETAIL = {
     ),
 }
 
+# Follow-up 7 (direct user request, replacing the click-to-select single-
+# card explorer, guided by a hand-drawn sketch the user shared): the page
+# is now a faceted layout -- multi-select area filter pills (any
+# combination at once; none selected means "show everything") plus one
+# shared search box (.area-controls) control three always-visible
+# sections stacked below in this order: People tiles, Project tiles
+# (both collapsible via their <h2> header button -- see
+# .subsection-toggle in main.js), and a Publications list styled after a
+# reference screenshot the user shared of Princeton's CoCoSci lab site
+# (a small colored area code to the left of each citation-style row,
+# grouped under a year heading). Selecting e.g. Consumer Privacy AND
+# Trustworthy ML shows the union of both areas' people, projects, and
+# papers across all three sections at once. AREA_META gives each area
+# its own accent color, reused for: the filter pill's active-state fill,
+# and the small .area-tag on every tile/row -- since every person,
+# project, and publication belongs to exactly one area in this data
+# model, that one tag is enough to tell entries apart once multiple
+# areas are shown together. main.js's researchExplorer closure does the
+# actual show/hide (every tile/row carries data-area + data-search-row);
+# a pill's own id (area-panel-<key>, the site's existing deep-link
+# target from the nav, footer, homepage matrix and spotlight) lets it
+# select just that one area and scroll here on load, same as before.
+AREA_META = {
+    "cybersecurity": dict(code="CY", color="#E21833"),
+    "privacy": dict(code="CP", color="#7A1F3D"),
+    "integrity": dict(code="II", color="#52565A"),
+    "ml": dict(code="ML", color="#B8860B"),
+}
 
-# Shared per-topic table renderers -- one Excel-style <table> per
-# category, used inside each research.html area card below. (Each
-# research area used to also get its own standalone page reusing an
-# earlier card-based version of these same renderers; direct user
-# request removed those pages since the area card already shows
-# everything inline. A later direct user request replaced that
-# card-based Projects/Publications/People tab strip with these tables,
-# shown/hidden together across all four cards by the global People/
-# Projects/Publications selector in main.js -- see areaCategory there.)
-def _topic_people_table_html(d):
-    rows = "".join(f'<tr data-search-row><td>{n}</td></tr>' for n in d["people"])
-    return f'<table class="area-table"><thead><tr><th>Name</th></tr></thead><tbody>{rows}</tbody></table>'
+# PEOPLE_ITEMS (generate.py) already carries a real role + one-line focus
+# for everyone on the People page -- reused here as each person tile's
+# description rather than inventing separate copy for the same person.
+_PEOPLE_BY_NAME = {p["name"]: p for p in g.PEOPLE_ITEMS}
 
 
-def _topic_projects_table_html(d):
-    rows = "".join(f'<tr data-search-row><td>{n}</td><td>{desc}</td></tr>' for n, desc in d["projects"])
-    return f'<table class="area-table"><thead><tr><th>Project</th><th>Description</th></tr></thead><tbody>{rows}</tbody></table>'
+def _area_tag_html(key):
+    m = AREA_META[key]
+    return f'<span class="area-tag" style="--area-color:{m["color"]}">{m["code"]}</span>'
 
 
-def _topic_pubs_table_html(d):
-    rows = "".join(
-        f"""<tr data-search-row><td>{p['title']}</td><td>{p['venue']}</td><td>{p['year']}</td><td>{', '.join(p['authors'])}</td></tr>"""
-        for p in d["pubs"]
-    )
-    return f'<table class="area-table"><thead><tr><th>Title</th><th>Venue</th><th>Year</th><th>Authors</th></tr></thead><tbody>{rows}</tbody></table>'
+def _person_tile_html(name, key):
+    p = _PEOPLE_BY_NAME.get(name, {})
+    initials = p.get("initials") or "".join(w[0] for w in name.split() if w[0].isalpha())[:2].upper()
+    return f"""
+      <div class="rp-tile" data-area="{key}" data-search-row>
+        {_area_tag_html(key)}
+        <div class="rp-avatar">{initials}</div>
+        <h3>{name}</h3>
+        <div class="rp-role">{p.get("role", "")}</div>
+        <p class="rp-desc">{p.get("focus", "")}</p>
+      </div>"""
 
 
-# Follow-up: the old flat "Where we work" link-grid + a separately
-# filterable "Current projects" grid became one set of cards, one per
-# research area, each expanding to reveal that area's own content.
-# Follow-up 2: the standalone per-topic pages these used to also power
-# are gone too (direct user request -- no research area needs its own
-# page now that this card shows everything), so every link that used to
-# point to e.g. topic-cybersecurity.html now points to
-# research.html#area-panel-cybersecurity instead (see TOPICS in
-# generate.py). Follow-up 3: card visuals restyled off a reference
-# screenshot (MIT Media Lab's "Initiatives and Programs" grid). Follow-up
-# 4: added a People/Projects/Publications selector above the whole grid
-# plus a search box, folding the standalone "Recent publications"
-# section that used to live further down the page into this instead of
-# keeping two separate search UIs. Follow-up 5 (direct user request):
-# clicking a category alone no longer opens every card's table at once
-# -- now you click a SPECIFIC area card to select it, which enlarges
-# that card, shrinks the other three into a gapped 2x2 grid
-# (.area-list.has-selection), and populates ONE table -- for the
-# selected area, in whichever category is active -- in the
-# #area-detail section directly beneath the grid. Every (area, category)
-# combination is pre-rendered as its own hidden .area-detail-table (this
-# is a static site -- there's no data to fetch client-side), and
-# main.js's areaExplorer closure just toggles which single one is
-# visible. main.js still opens + scrolls to the right card (or the list
-# in general, for a bare category hash) on load when a matching hash is
-# present, so this stays a real deep-linkable, bookmarkable destination
-# for every link above that points here. Follow-up 6 (direct user
-# request): dropped the page-hero title/breadcrumb/lede above the grid
-# entirely -- the card grid is now the first thing on the page, MIT
-# Media Lab style. Also reordered the category tabs to
-# Publications/Projects/People (Publications stays the default open
-# category, matching this new tab order) and re-checked the card visuals
-# against the MIT reference.
-area_cards = []
-area_detail_tables = []
-for t in g.TOPICS:
-    d = TOPIC_DETAIL[t["key"]]
-    area_cards.append(f"""
-      <button type="button" class="area-card" id="area-panel-{t['key']}" data-area="{t['key']}">
-        <span class="area-card-top"><span class="area-card-index">{t['index']}</span></span>
-        <span class="area-card-title"><h3>{t['name']}</h3><p>{t['blurb']}</p></span>
-      </button>""")
-    area_detail_tables.append(f'<div class="area-detail-table" data-area="{t["key"]}" data-category="people" hidden>{_topic_people_table_html(d)}</div>')
-    area_detail_tables.append(f'<div class="area-detail-table" data-area="{t["key"]}" data-category="projects" hidden>{_topic_projects_table_html(d)}</div>')
-    area_detail_tables.append(f'<div class="area-detail-table" data-area="{t["key"]}" data-category="publications" hidden>{_topic_pubs_table_html(d)}</div>')
+def _project_tile_html(name, desc, key):
+    return f"""
+      <div class="rp-tile" data-area="{key}" data-search-row>
+        {_area_tag_html(key)}
+        <h3>{name}</h3>
+        <p class="rp-desc">{desc}</p>
+      </div>"""
 
-area_tabs = "".join(
-    f'<button type="button" class="filter-pill area-tab" data-category="{cat}">{label}</button>'
-    for cat, label in [("publications", "Publications"), ("projects", "Projects"), ("people", "People")]
+
+def _format_authors(authors):
+    if len(authors) == 1:
+        return authors[0]
+    return ", ".join(authors[:-1]) + " &amp; " + authors[-1]
+
+
+def _pub_row_html(p):
+    return f"""
+      <div class="pub-row" data-area="{p['area']}" data-search-row>
+        {_area_tag_html(p['area'])}
+        <p class="pub-cite"><span class="pub-cite-authors">{_format_authors(p['authors'])}</span> ({p['year']}). {p['title']} <span class="pub-cite-venue">{p['venue']}.</span></p>
+      </div>"""
+
+
+def _pubs_list_html():
+    rows = []
+    for t in g.TOPICS:
+        for p in TOPIC_DETAIL[t["key"]]["pubs"]:
+            rows.append(dict(p, area=t["key"]))
+    rows.sort(key=lambda p: (-p["year"], p["title"]))
+    out = []
+    current_year = None
+    for p in rows:
+        if p["year"] != current_year:
+            current_year = p["year"]
+            out.append(f'<h3 class="pub-year">{current_year}</h3>')
+        out.append(_pub_row_html(p))
+    return "".join(out)
+
+
+area_filter_pills = "".join(
+    f'<button type="button" class="filter-pill area-filter-pill" id="area-panel-{t["key"]}" data-area="{t["key"]}" style="--area-color:{AREA_META[t["key"]]["color"]}" aria-pressed="false">{t["name"]}</button>'
+    for t in g.TOPICS
 )
+people_tiles = "".join(_person_tile_html(n, t["key"]) for t in g.TOPICS for n in TOPIC_DETAIL[t["key"]]["people"])
+project_tiles = "".join(_project_tile_html(n, d, t["key"]) for t in g.TOPICS for n, d in TOPIC_DETAIL[t["key"]]["projects"])
+pubs_list = _pubs_list_html()
 
 research_body = f"""
 <section class="soft-bg">
   <div class="container">
     <div class="area-controls">
-      <div class="filter-bar">{area_tabs}</div>
-      {g.search_box_html("Search by name, title, venue&hellip;", "Search research areas")}
+      <div class="area-filter-bar" role="group" aria-label="Filter by research area">{area_filter_pills}</div>
+      {g.search_box_html("Search people, projects, publications&hellip;", "Search research")}
     </div>
-    <div class="area-list" id="area-list">{"".join(area_cards)}</div>
-    <div class="area-detail" id="area-detail" hidden>
-      <div class="area-detail-head"><h3 id="area-detail-title"></h3></div>
-      {"".join(area_detail_tables)}
-      <p class="list-empty" data-empty-for="area-detail" hidden>No results match your search.</p>
-    </div>
+
+    <section class="research-subsection" id="people">
+      <button type="button" class="subsection-toggle" aria-expanded="true" aria-controls="people-panel">
+        <h2>People</h2>
+        <span class="subsection-caret" aria-hidden="true"></span>
+      </button>
+      <div class="rp-grid" id="people-panel">{people_tiles}</div>
+      <p class="list-empty" data-empty-for="people-panel" hidden>No people match your filters.</p>
+    </section>
+
+    <section class="research-subsection" id="projects">
+      <button type="button" class="subsection-toggle" aria-expanded="true" aria-controls="projects-panel">
+        <h2>Projects</h2>
+        <span class="subsection-caret" aria-hidden="true"></span>
+      </button>
+      <div class="rp-grid" id="projects-panel">{project_tiles}</div>
+      <p class="list-empty" data-empty-for="projects-panel" hidden>No projects match your filters.</p>
+    </section>
+
+    <section class="research-subsection" id="publications">
+      <h2>Publications</h2>
+      <div class="pub-list" id="publications-panel">{pubs_list}</div>
+      <p class="list-empty" data-empty-for="publications-panel" hidden>No publications match your filters.</p>
+    </section>
   </div>
 </section>
 <section class="soft-bg">

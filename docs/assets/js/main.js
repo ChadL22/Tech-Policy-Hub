@@ -70,117 +70,127 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  // Research-area explorer (Research page) -- direct user request,
-  // second iteration: click a SPECIFIC area card to select it. The
-  // selected card enlarges (.is-selected), its three siblings shrink
-  // into a gapped 2x2 grid (.is-other, list gains .has-selection), and
-  // ONE table -- for the selected area, in whichever
-  // People/Projects/Publications tab is active -- populates directly
-  // beneath the grid in #area-detail. Every (area, category) pair is
-  // pre-rendered as its own hidden .area-detail-table (a static site
-  // has nothing to fetch client-side), so this closure just decides
-  // which single one is visible. Clicking the selected card again
-  // deselects it, returning to the plain lattice grid and hiding the
-  // detail panel. The search box filters that one visible table's rows
-  // by text match, using the same [data-empty-for] "no results" pattern
-  // as the other search boxes on the site.
-  var areaExplorer = (function () {
-    var list = document.getElementById('area-list');
-    var detail = document.getElementById('area-detail');
-    var detailTitle = document.getElementById('area-detail-title');
-    var cards = Array.prototype.slice.call(document.querySelectorAll('.area-card'));
-    var tabs = Array.prototype.slice.call(document.querySelectorAll('.area-tab'));
-    if (!list || !detail || !cards.length || !tabs.length) return { select: function () {} };
+  // Research page: faceted explorer (direct user request, replacing the
+  // earlier click-to-select single-card version, built per a hand-drawn
+  // sketch the user shared) -- multi-select area filter pills (any
+  // combination at once; none selected means "show everything") plus
+  // one shared search box control three always-visible sections: People
+  // tiles, Project tiles (both collapsible via their <h2> header
+  // button), and a Publications list. Every tile/row carries
+  // data-area + data-search-row; render() just toggles [hidden] on each
+  // one against the active area set and the search text, then flips
+  // each section's "no results" message ([data-empty-for]) when nothing
+  // in it is left visible (or hides it outright while that section is
+  // collapsed, so a collapsed panel never shows a stray "no results"
+  // line). A pill's own id (area-panel-<key>, the site's existing
+  // deep-link target from the nav, footer, homepage matrix and
+  // spotlight) lets openResearchHashTarget() below select just that one
+  // area and scroll here on load; a bare #people / #projects /
+  // #publications hash just scrolls to that section without touching
+  // the filter.
+  var researchExplorer = (function () {
+    var controls = document.querySelector('.area-controls');
+    var pills = Array.prototype.slice.call(document.querySelectorAll('.area-filter-pill'));
+    if (!controls || !pills.length) return { selectArea: function () {} };
 
-    var searchInput = document.querySelector('.area-controls .filter-search-input');
-    var emptyMsg = document.querySelector('[data-empty-for="area-detail"]');
-    var selectedArea = null;
-    var selectedCategory = 'publications';
+    var rows = Array.prototype.slice.call(document.querySelectorAll('[data-search-row]'));
+    var emptyMsgs = Array.prototype.slice.call(document.querySelectorAll('[data-empty-for]'));
+    var searchInput = controls.querySelector('.filter-search-input');
+    var selected = new Set();
 
     function render() {
       var query = ((searchInput && searchInput.value) || '').trim().toLowerCase();
-      list.classList.toggle('has-selection', !!selectedArea);
-      tabs.forEach(function (tab) {
-        tab.classList.toggle('active', !!selectedArea && tab.getAttribute('data-category') === selectedCategory);
+      pills.forEach(function (pill) {
+        var on = selected.has(pill.getAttribute('data-area'));
+        pill.classList.toggle('active', on);
+        pill.setAttribute('aria-pressed', String(on));
       });
-      cards.forEach(function (card) {
-        var isSelected = card.getAttribute('data-area') === selectedArea;
-        card.classList.toggle('is-selected', isSelected);
-        card.classList.toggle('is-other', !!selectedArea && !isSelected);
+      rows.forEach(function (row) {
+        var matchesArea = selected.size === 0 || selected.has(row.getAttribute('data-area'));
+        var matchesSearch = !query || row.textContent.toLowerCase().indexOf(query) !== -1;
+        row.hidden = !(matchesArea && matchesSearch);
       });
-
-      detail.hidden = !selectedArea;
-      if (!selectedArea) return;
-
-      var nameEl = list.querySelector('.area-card[data-area="' + selectedArea + '"] h3');
-      if (detailTitle) detailTitle.textContent = (nameEl ? nameEl.textContent : '') + ' — ' + selectedCategory;
-
-      var anyVisible = false;
-      detail.querySelectorAll('.area-detail-table').forEach(function (panel) {
-        var match = panel.getAttribute('data-area') === selectedArea && panel.getAttribute('data-category') === selectedCategory;
-        panel.hidden = !match;
-        if (!match) return;
-        panel.querySelectorAll('tr[data-search-row]').forEach(function (row) {
-          var rowMatch = !query || row.textContent.toLowerCase().indexOf(query) !== -1;
-          row.hidden = !rowMatch;
-          if (rowMatch) anyVisible = true;
-        });
+      // A publication year heading has no data-area/data-search-row of
+      // its own -- hide it only when every row under it (up to the next
+      // heading) is hidden, so a year with some-but-not-all rows
+      // filtered out keeps its heading.
+      document.querySelectorAll('.pub-year').forEach(function (heading) {
+        var anyVisible = false;
+        var sib = heading.nextElementSibling;
+        while (sib && !sib.classList.contains('pub-year')) {
+          if (!sib.hidden) anyVisible = true;
+          sib = sib.nextElementSibling;
+        }
+        heading.hidden = !anyVisible;
       });
-      if (emptyMsg) emptyMsg.hidden = !(query && !anyVisible);
+      emptyMsgs.forEach(function (msg) {
+        var panel = document.getElementById(msg.getAttribute('data-empty-for'));
+        if (!panel) return;
+        if (panel.hidden) { msg.hidden = true; return; }
+        var anyVisible = Array.prototype.slice.call(panel.querySelectorAll('[data-search-row]'))
+          .some(function (row) { return !row.hidden; });
+        msg.hidden = anyVisible;
+      });
     }
 
-    cards.forEach(function (card) {
-      card.addEventListener('click', function () {
-        var area = card.getAttribute('data-area');
-        selectedArea = selectedArea === area ? null : area;
-        render();
-        if (selectedArea) detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      });
-    });
-    tabs.forEach(function (tab) {
-      tab.addEventListener('click', function () {
-        selectedCategory = tab.getAttribute('data-category');
+    pills.forEach(function (pill) {
+      pill.addEventListener('click', function () {
+        var area = pill.getAttribute('data-area');
+        if (selected.has(area)) selected.delete(area); else selected.add(area);
         render();
       });
     });
     if (searchInput) searchInput.addEventListener('input', render);
+
+    // Collapsible People/Projects sections -- Publications has no
+    // toggle button, so it's always shown and never touched here.
+    document.querySelectorAll('.subsection-toggle').forEach(function (btn) {
+      var panel = document.getElementById(btn.getAttribute('aria-controls'));
+      if (!panel) return;
+      btn.addEventListener('click', function () {
+        var open = btn.getAttribute('aria-expanded') !== 'true';
+        btn.setAttribute('aria-expanded', String(open));
+        panel.hidden = !open;
+        render();
+      });
+    });
+
     render();
 
     return {
-      select: function (area, category) {
-        if (category) selectedCategory = category;
-        selectedArea = area;
+      selectArea: function (area) {
+        selected.clear();
+        if (area) selected.add(area);
         render();
       }
     };
   })();
 
-  // Open + scroll to a category or a specific area card from a URL
-  // hash, e.g. research.html#publications or
+  // Open + scroll to a category section or a specific area filter pill
+  // from a URL hash, e.g. research.html#publications or
   // research.html#area-panel-cybersecurity -- direct user request: no
-  // research area has its own page anymore, so the nav dropdown,
-  // footer, homepage research matrix, spotlight "Explore" buttons, and
+  // research area has its own page, so the nav dropdown, footer,
+  // homepage research matrix, spotlight "Explore" buttons, and
   // publication titles all deep-link here instead. A bare category name
-  // just pre-picks that tab and scrolls to the list (there's no longer
-  // an "every card at once" state to open); a specific area card's id
-  // selects that one card, defaulting to its Publications table, and
-  // scrolls straight to it.
-  function openAreaFromHash() {
+  // just scrolls to that section as-is; a specific area's id selects
+  // only that one filter pill (clearing any others) and scrolls to the
+  // controls at the top of the page.
+  function openResearchHashTarget() {
     var id = window.location.hash.slice(1);
     if (!id) return;
     if (id === 'people' || id === 'projects' || id === 'publications') {
-      areaExplorer.select(null, id);
-      var list = document.getElementById('area-list');
-      if (list) list.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      var section = document.getElementById(id);
+      if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
       return;
     }
-    var card = document.getElementById(id);
-    if (!card || !card.classList.contains('area-card')) return;
-    areaExplorer.select(card.getAttribute('data-area'), 'publications');
-    card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    var pill = document.getElementById(id);
+    if (!pill || !pill.classList.contains('area-filter-pill')) return;
+    researchExplorer.selectArea(pill.getAttribute('data-area'));
+    var controls = document.querySelector('.area-controls');
+    if (controls) controls.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
-  openAreaFromHash();
-  window.addEventListener('hashchange', openAreaFromHash);
+  openResearchHashTarget();
+  window.addEventListener('hashchange', openResearchHashTarget);
 
   // Filter pills (Research: by focus area / Events: by category) -- see
   // filter_pills_html() in generate.py. One filter bar per page today, so

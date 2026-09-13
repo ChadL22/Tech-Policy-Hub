@@ -681,115 +681,95 @@ li.has-dropdown.open .dropdown{ display:block; }
 .feed-item h3 a:hover{ color: var(--umd-red); text-decoration:none; }
 .pub-authors{ font-size:.85rem; color: var(--ink-soft); margin-top:2px; }
 
-/* ---------- Research areas (People / Projects / Publications explorer)
+/* ---------- Research page (People / Projects / Publications explorer)
    ----------
-   Card visuals are off a reference screenshot (MIT Media Lab's
-   "Initiatives and Programs" grid): a hairline-bordered lattice of
-   square-cornered cards -- small numbered index in the corner, a bold
-   (lowercased, matching the reference's typographic voice) multi-line
-   title, a lighter description. Exactly 4 areas means the grid is
-   always fully filled at every column count below (4/2/1), so the
-   border-top+left on the container plus border-right+bottom on each
-   card forms a complete lattice with no gaps to patch with nth-child
-   rules. That's .area-list's plain (no selection) state.
-   Direct user request, second reference from the same site: a
-   People/Projects/Publications selector (.area-tab, reusing the site's
-   existing .filter-pill look) plus a search box sit above the grid
-   (.area-controls). Clicking one of the four cards selects it --
-   .area-list gains .has-selection and switches from a grid.
-   Follow-up (direct user request): the enlarge/shrink used to be faked
-   with per-state padding and font-size bumps, which meant the card's
-   own style changed depending on selection. It doesn't anymore -- every
-   .area-card keeps identical padding, type sizes and border treatment
-   regardless of .is-selected/.is-other. Only actual layout size
-   changes: .is-selected takes the wide left column and spans all three
-   row tracks, while the other three (.is-other) shrink into a single
-   narrow column on the right, stacked in their original order --
-   "moving to the side" is a grid-column placement, not a style swap.
-   Exactly one (area, category) combination is pre-rendered per
-   .area-detail-table -- this is a static site, nothing to fetch
-   client-side -- and main.js's areaExplorer closure shows only the one
-   matching the selected card and the active category tab in
-   #area-detail, directly below the grid. Clicking the selected card
-   again deselects it, returning to the plain lattice and hiding
-   #area-detail. */
+   Follow-up 7 (direct user request, per a hand-drawn sketch replacing
+   the earlier click-to-select single-card explorer): multi-select area
+   filter pills (.area-filter-pill -- any combination at once, none
+   selected shows everything) plus a shared search box (.area-controls)
+   sit above three always-visible sections -- People tiles (.rp-grid of
+   .rp-tile, each with an avatar since these are real people),
+   Project tiles (.rp-grid of .rp-tile, no avatar), and a Publications
+   list (.pub-list) styled after a reference screenshot of Princeton's
+   CoCoSci lab site: a small colored area code (.area-tag, one of
+   AREA_META's four colors in build_all.py, set inline via --area-color
+   since these are per-area, not something a class alone can express)
+   to the left of each citation-style row, grouped under a year heading
+   (.pub-year). People and Projects are collapsible (.subsection-toggle,
+   wired in main.js); Publications has no toggle -- it's a plain <h2>.
+   main.js's researchExplorer closure shows/hides every [data-search-row]
+   (tiles AND publication rows alike) against the active area-pill
+   selection and the search text. */
 .area-controls{
   display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
 }
 .area-controls .search-box{ margin:0; max-width:320px; flex:1 1 260px; }
-.area-list{
-  display:grid; grid-template-columns: repeat(4, 1fr);
-  border-top: 1px solid var(--line); border-left: 1px solid var(--line);
-}
-.area-list.has-selection{
-  grid-template-columns: 2fr 1fr; grid-auto-rows: min-content; gap: 16px;
-  border-top: none; border-left: none;
-}
-.area-card{
-  display:flex; flex-direction:column; align-items:flex-start; width:100%; min-height: 190px;
-  padding: 26px 22px; gap: 14px;
-  border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
-  background:#fff; text-align:left; cursor:pointer; font-family: var(--font-body);
-  transition: padding .15s ease, min-height .15s ease;
-  /* Deep-linked from the nav, footer, homepage matrix, spotlight, and
-     publication titles (research.html#area-panel-<key>, or a bare
-     research.html#publications / #projects / #people for the category
-     itself) now that each research area no longer has its own page --
-     this keeps the card clear of the sticky header when main.js scrolls
-     a hash target into view on load. */
-  scroll-margin-top: 100px;
-}
-.has-selection .area-card{
-  border: 1px solid var(--line); border-radius: var(--radius);
-}
-.area-card-top{ display:flex; justify-content:flex-end; width:100%; }
-.area-card-index{
-  font-family: var(--font-nav); font-size:.72rem; font-weight:700; letter-spacing:.03em;
-  color: var(--umd-red);
-}
-.area-card-title h3{ font-size:1.3rem; font-weight:800; line-height:1.18; margin-bottom:10px; text-transform: lowercase; }
-.area-card-title p{ margin:0; color: var(--ink-soft); font-size:.92rem; line-height:1.5; }
-
-.area-list.has-selection .area-card.is-selected{
-  grid-column: 1; grid-row: 1 / span 3;
-}
-.area-list.has-selection .area-card.is-other{
-  grid-column: 2;
+.area-filter-bar{ display:flex; flex-wrap:wrap; gap:10px; }
+.area-filter-pill.active{
+  background: var(--area-color, var(--umd-red)); border-color: var(--area-color, var(--umd-red)); color:#fff;
 }
 
-.area-detail{ margin-top: 20px; border: 1px solid var(--line); border-radius: var(--radius); padding: 24px 22px; background:#fff; }
-.area-detail[hidden]{ display:none; }
-.area-detail-head h3{ font-size:1.1rem; font-weight:800; text-transform: lowercase; margin-bottom: 16px; }
-.area-detail-table[hidden]{ display:none; }
-.area-detail-table{ overflow-x:auto; }
-.area-table{ width:100%; border-collapse:collapse; font-size:.88rem; }
-.area-table th{
-  text-align:left; font-family: var(--font-nav); font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.03em;
-  color: var(--ink-soft); padding: 8px 16px 8px 0; border-bottom: 1.5px solid var(--ink); white-space:nowrap;
+.research-subsection{ padding-top: 44px; }
+.research-subsection:first-of-type{ padding-top: 0; }
+.research-subsection > h2{
+  font-size:1.25rem; padding-bottom:12px; margin-bottom:26px; border-bottom: 1px solid var(--ink);
 }
-.area-table td{ padding: 10px 16px 10px 0; border-bottom: 1px solid var(--line); color: var(--ink); vertical-align:top; }
-.area-table tr:last-child td{ border-bottom:none; }
-.area-table tr[hidden]{ display:none; }
+.subsection-toggle{
+  display:flex; align-items:center; justify-content:space-between; width:100%;
+  background:none; border:none; padding:0 0 12px; margin-bottom:26px; border-bottom: 1px solid var(--ink);
+  cursor:pointer; text-align:left; font: inherit; color: inherit;
+}
+.subsection-toggle h2{ font-size:1.25rem; margin:0; }
+.subsection-caret{
+  width:9px; height:9px; flex:0 0 auto; margin-left:12px;
+  border-right:2px solid var(--ink); border-bottom:2px solid var(--ink);
+  transform: rotate(45deg); transition: transform .15s ease;
+}
+.subsection-toggle[aria-expanded="false"] .subsection-caret{ transform: rotate(-135deg); }
+
+.area-tag{
+  display:inline-block; font-family: var(--font-nav); font-size:.66rem; font-weight:700; letter-spacing:.03em;
+  color:#fff; background: var(--area-color, var(--umd-red)); padding:2px 7px; border-radius: var(--radius);
+}
+
+.rp-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 32px 24px; }
+.rp-grid[hidden]{ display:none; }
+.rp-tile[hidden]{ display:none; }
+.rp-tile .area-tag{ margin-bottom:10px; }
+.rp-avatar{
+  width:52px; height:52px; background: var(--ink); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-family: var(--font-nav); font-weight:700; font-size:1.05rem; margin-bottom:12px;
+}
+.rp-tile h3{ font-size:1.02rem; margin-bottom:2px; }
+.rp-role{
+  font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:.02em;
+  color: var(--ink-soft); font-family: var(--font-nav); margin-bottom:6px;
+}
+.rp-desc{ font-size:.9rem; color: var(--ink-soft); line-height:1.5; margin:0; }
+
+.pub-year{
+  font-family: var(--font-nav); font-size:1rem; font-weight:700;
+  margin: 28px 0 6px; padding-top:20px; border-top:1px solid var(--line);
+}
+.pub-year:first-child{ margin-top:0; padding-top:0; border-top:none; }
+.pub-row{ display:flex; gap:14px; align-items:flex-start; padding:12px 0; border-top:1px solid var(--line); }
+.pub-year + .pub-row{ border-top:none; }
+.pub-row[hidden]{ display:none; }
+.pub-row .area-tag{ flex:0 0 auto; margin-top:3px; }
+.pub-cite{ margin:0; font-size:.92rem; line-height:1.55; color: var(--ink); }
+.pub-cite-authors{ font-weight:700; }
+.pub-cite-venue{ font-style:italic; color: var(--ink-soft); }
 
 @media (max-width: 900px){
-  .area-list{ grid-template-columns: repeat(2, 1fr); }
-  /* Below the width where a 2fr/1fr split still reads as "big card,
-     small sidebar," has-selection drops to a single stacked column --
-     .is-selected/.is-other fall back to auto placement (source order)
-     so nothing depends on the two-column grid-row spanning above. */
-  .area-list.has-selection{ grid-template-columns: 1fr; }
-  .area-list.has-selection .area-card.is-selected,
-  .area-list.has-selection .area-card.is-other{
-    grid-column: 1; grid-row: auto;
-  }
+  .rp-grid{ grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 560px){
-  .area-list, .area-list.has-selection{ grid-template-columns: 1fr; gap: 12px; }
-  .area-card{ padding: 20px; min-height: 0; gap: 12px; }
-  .area-detail{ padding: 20px 18px; }
-  .area-table{ font-size:.82rem; }
+  .rp-grid{ grid-template-columns: 1fr; gap: 24px; }
+  .pub-row{ gap:10px; }
 }
+
 
 /* ---------- Section header row ---------- */
 .section-head{ display:flex; align-items:flex-end; justify-content:space-between; margin-bottom: 28px; gap: 16px; flex-wrap:wrap; padding-bottom: 16px; border-bottom: 2px solid var(--ink); }
