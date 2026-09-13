@@ -195,8 +195,13 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     if (searchInput) searchInput.addEventListener('input', render);
 
-    // Collapsible People/Projects sections -- Publications has no
-    // toggle button, so it's always shown and never touched here.
+    // Collapsible People/Projects sections on research.html (open by
+    // default) and the Filters panel on people.html (collapsed by
+    // default -- see people_body in build_all.py) -- same
+    // .subsection-toggle/.subsection-caret component either way, keyed
+    // off whatever aria-expanded/hidden state the page ships with.
+    // Publications has no toggle button, so it's always shown and never
+    // touched here.
     document.querySelectorAll('.subsection-toggle').forEach(function (btn) {
       var panel = document.getElementById(btn.getAttribute('aria-controls'));
       if (!panel) return;

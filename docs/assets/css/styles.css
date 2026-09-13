@@ -922,6 +922,15 @@ li.has-dropdown.open .dropdown{ display:block; }
    researchExplorer's `data-roles` facet in main.js for the filtering
    itself (same closure that already filtered research.html's tiles). */
 .people-controls{ flex-direction: column; align-items: stretch; gap: 18px; }
+/* .area-controls sets `display:flex` as an author rule, which beats the
+   browser's default (user-agent-origin) `[hidden]{display:none}` even
+   though it isn't more specific -- author styles always win over UA
+   styles regardless of specificity. Same gotcha as .rp-tile[hidden] /
+   .person-row[hidden] elsewhere in this file: anything toggled via the
+   `hidden` attribute needs its OWN explicit override once something
+   else sets its `display`. This is what makes the People page's
+   collapsed-by-default Filters panel actually collapse. */
+.people-controls[hidden]{ display: none; }
 /* .area-controls .search-box (styles.css, research page) sets
    `flex: 1 1 260px` for its ROW-direction container, where that
    flex-basis sizes WIDTH. .people-controls flips to a COLUMN direction,

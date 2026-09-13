@@ -595,7 +595,30 @@ people_body = f"""
 </section>
 <section>
   <div class="container">
-    <div class="area-controls people-controls">
+    <!-- Follow-up (direct user request): the Role/Research Area filter
+         pills + search box are now collapsed by default behind a
+         "Filters" toggle, reusing the exact .subsection-toggle/
+         .subsection-caret component research.html's People/Projects
+         sections already use -- same markup shape (button with
+         aria-expanded + aria-controls, followed by the panel it
+         controls), so main.js's existing generic
+         document.querySelectorAll('.subsection-toggle') wiring picks
+         this up with no JS changes. Starting collapsed is just the
+         opposite initial aria-expanded/hidden state from how
+         research.html's sections start (open); the caret CSS already
+         points down for aria-expanded="false" (the "points where it
+         will go" fix from earlier this session), so it reads correctly
+         collapsed. The panel being toggled IS `.area-controls` itself
+         (id'd directly, no extra wrapper div) -- hiding it doesn't
+         remove it from the DOM, so researchExplorer's one-time
+         `document.querySelector('.area-controls')` lookup at page load
+         still finds the search input/pills inside it regardless of
+         collapsed state. -->
+    <button type="button" class="subsection-toggle" aria-expanded="false" aria-controls="people-filters-panel">
+      <h2>Filters</h2>
+      <span class="subsection-caret" aria-hidden="true"></span>
+    </button>
+    <div class="area-controls people-controls" id="people-filters-panel" hidden>
       <div class="people-filter-groups">
         <div class="people-filter-group">
           <span class="people-filter-label">Role</span>
