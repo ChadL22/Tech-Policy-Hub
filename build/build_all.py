@@ -618,15 +618,35 @@ people_body = f"""
       <h2>Filters</h2>
       <span class="subsection-caret" aria-hidden="true"></span>
     </button>
-    <div class="area-controls people-controls" id="people-filters-panel" hidden>
-      <div class="people-filter-groups">
-        <div class="people-filter-group">
-          <span class="people-filter-label">Role</span>
-          <div class="area-filter-bar" role="group" aria-label="Filter by role">{role_filter_pills_people}</div>
+    <!-- Follow-up (direct user request: the two full pill rows read as
+         "too big" -- "a more consolidated way to house this
+         information" for what's now two filter dimensions, with room
+         for more later). Role and Research Area are each folded into a
+         small dropdown button (.filter-dropdown) that reveals its pills
+         as a compact vertical checklist on click, instead of laying
+         every option out inline. The pills THEMSELVES are unchanged --
+         still real .role-filter-pill/.area-filter-pill buttons with the
+         same data-role/data-area attributes -- so researchExplorer in
+         main.js keeps working exactly as before with no changes; only a
+         small, separate dropdown-open/close script (also in main.js)
+         governs showing/hiding the menu and the selected-count badge on
+         each toggle button. Scales to a future third filter by adding
+         one more .filter-dropdown, not another full-width pill row. -->
+    <div class="area-controls" id="people-filters-panel" hidden>
+      <div class="people-filter-dropdowns">
+        <div class="filter-dropdown">
+          <button type="button" class="filter-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+            <span>Role</span><span class="filter-dropdown-count" hidden></span>
+            <span class="filter-dropdown-caret" aria-hidden="true"></span>
+          </button>
+          <div class="filter-dropdown-menu" hidden role="group" aria-label="Filter by role">{role_filter_pills_people}</div>
         </div>
-        <div class="people-filter-group">
-          <span class="people-filter-label">Research Area</span>
-          <div class="area-filter-bar" role="group" aria-label="Filter by research area">{area_filter_pills_people}</div>
+        <div class="filter-dropdown">
+          <button type="button" class="filter-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+            <span>Research Area</span><span class="filter-dropdown-count" hidden></span>
+            <span class="filter-dropdown-caret" aria-hidden="true"></span>
+          </button>
+          <div class="filter-dropdown-menu" hidden role="group" aria-label="Filter by research area">{area_filter_pills_people}</div>
         </div>
       </div>
       {g.search_box_html("Search people&hellip;", "Search people")}

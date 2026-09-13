@@ -921,31 +921,69 @@ li.has-dropdown.open .dropdown{ display:block; }
    build/build_all.py + build/generate.py for the data side, and
    researchExplorer's `data-roles` facet in main.js for the filtering
    itself (same closure that already filtered research.html's tiles). */
-.people-controls{ flex-direction: column; align-items: stretch; gap: 18px; }
 /* .area-controls sets `display:flex` as an author rule, which beats the
    browser's default (user-agent-origin) `[hidden]{display:none}` even
    though it isn't more specific -- author styles always win over UA
    styles regardless of specificity. Same gotcha as .rp-tile[hidden] /
    .person-row[hidden] elsewhere in this file: anything toggled via the
    `hidden` attribute needs its OWN explicit override once something
-   else sets its `display`. This is what makes the People page's
-   collapsed-by-default Filters panel actually collapse. */
-.people-controls[hidden]{ display: none; }
-/* .area-controls .search-box (styles.css, research page) sets
-   `flex: 1 1 260px` for its ROW-direction container, where that
-   flex-basis sizes WIDTH. .people-controls flips to a COLUMN direction,
-   where the same still-inherited flex-basis instead sizes HEIGHT --
-   stretching the box to 260px+ tall and detaching the absolutely-
-   positioned search icon (centered at top:50% of that tall box) from
-   the input it's supposed to sit inside. `flex: 0 0 auto` here resets
-   that so the box sizes to its actual content again. */
-.people-controls .search-box{ margin: 0; max-width: 360px; flex: 0 0 auto; }
-.people-filter-groups{ display:flex; flex-wrap:wrap; gap: 28px 40px; }
-.people-filter-group{ display:flex; flex-direction:column; gap:10px; }
-.people-filter-label{
-  font-family: var(--font-nav); font-size:.7rem; font-weight:700; text-transform:uppercase;
-  letter-spacing:.04em; color: var(--ink-soft);
+   else sets its `display`. General on `.area-controls` itself (not a
+   people.html-only class) since any collapsible controls bar hits the
+   same issue -- this is what makes the People page's collapsed-by-
+   default Filters panel actually collapse. */
+.area-controls[hidden]{ display: none; }
+
+/* Follow-up (direct user request, replacing two full-width pill rows
+   that read as "too big" once there were two filter dimensions): Role
+   and Research Area each collapse into a small .filter-dropdown button
+   that reveals its pills as a compact checklist menu on click -- see
+   people_body in build/build_all.py for why the pills themselves are
+   untouched (still plain .role-filter-pill/.area-filter-pill buttons
+   with the same data-role/data-area attributes; only their container
+   changed). Opening/closing the menu and the selected-count badge are
+   handled by a small dedicated script in main.js, kept separate from
+   researchExplorer's own filtering logic so that logic didn't need to
+   change at all. Scales to a future third filter by adding one more
+   .filter-dropdown rather than another full-width pill row. */
+.people-filter-dropdowns{ display:flex; flex-wrap:wrap; gap:12px; }
+.filter-dropdown{ position:relative; }
+.filter-dropdown-toggle{
+  display:flex; align-items:center; gap:8px; padding:10px 16px;
+  border: 1.5px solid var(--ink-soft); border-radius: var(--radius); background:#fff;
+  font-family: var(--font-nav); font-weight:700; font-size:.8rem; letter-spacing:.03em; text-transform:uppercase;
+  color: var(--ink-soft); cursor:pointer; transition: color .15s ease, border-color .15s ease;
 }
+.filter-dropdown-toggle:hover,
+.filter-dropdown-toggle[aria-expanded="true"]{ border-color: var(--ink); color: var(--ink); }
+.filter-dropdown-count{
+  display:inline-flex; align-items:center; justify-content:center; min-width:17px; height:17px; padding:0 4px;
+  background: var(--umd-red); color:#fff; border-radius:999px; font-size:.66rem; font-weight:700;
+}
+/* Same author-display-beats-[hidden] gotcha as .area-controls[hidden]
+   above -- this badge sets its own `display` via the class rule right
+   above, so it needs the same explicit [hidden] override or a 0-count
+   badge (hidden=true, no selection yet) shows an empty/zero pill. */
+.filter-dropdown-count[hidden]{ display:none; }
+.filter-dropdown-caret{
+  width:7px; height:7px; flex:0 0 auto; margin-top:-3px;
+  border-right:2px solid currentColor; border-bottom:2px solid currentColor;
+  transform: rotate(45deg); transition: transform .15s ease;
+}
+.filter-dropdown-toggle[aria-expanded="true"] .filter-dropdown-caret{ transform: rotate(-135deg); margin-top:2px; }
+.filter-dropdown-menu{
+  position:absolute; top:calc(100% + 8px); left:0; z-index:20; min-width:230px;
+  display:flex; flex-direction:column; gap:2px;
+  background:#fff; border:1px solid var(--line); border-radius: var(--radius);
+  box-shadow: 0 12px 28px rgba(20,20,20,.14); padding:8px;
+}
+.filter-dropdown-menu[hidden]{ display:none; }
+.filter-dropdown-menu .filter-pill{
+  border:none; border-radius: var(--radius); padding:9px 10px; width:100%; text-align:left;
+  font-family: var(--font-body); font-weight:600; font-size:.85rem; letter-spacing:normal; text-transform:none;
+  color: var(--ink); background:none;
+}
+.filter-dropdown-menu .filter-pill:hover{ background: var(--sidebar-band); color: var(--ink); }
+.filter-dropdown-menu .filter-pill.active{ background: var(--umd-red); color:#fff; }
 .people-list{ margin-top: 8px; }
 .person-row{ padding: 40px 0; border-top: 1px solid var(--line); }
 .person-row:first-child{ border-top:none; padding-top:0; }

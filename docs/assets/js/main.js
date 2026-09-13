@@ -250,6 +250,73 @@ document.addEventListener('DOMContentLoaded', function () {
   openResearchHashTarget();
   window.addEventListener('hashchange', openResearchHashTarget);
 
+  // People page: compact dropdown menus for the Role/Research Area
+  // filters (direct user request -- two full pill rows read as "too
+  // big" for what's now two filter dimensions, with room for more
+  // later). This is purely presentational -- open/close the menu, show
+  // a selected-count badge -- and deliberately doesn't touch
+  // researchExplorer above: the pills inside each .filter-dropdown-menu
+  // are still ordinary .role-filter-pill/.area-filter-pill buttons that
+  // closure already listens to directly, so clicking one both toggles
+  // its filter (via researchExplorer's own listener, which runs first
+  // since it's bound to the pill itself) and refreshes this button's
+  // badge (via the delegated listener below, which runs after as the
+  // click bubbles up). No-op on any page without a .filter-dropdown.
+  document.querySelectorAll('.filter-dropdown').forEach(function (dd) {
+    var toggle = dd.querySelector('.filter-dropdown-toggle');
+    var menu = dd.querySelector('.filter-dropdown-menu');
+    var countEl = toggle && toggle.querySelector('.filter-dropdown-count');
+    if (!toggle || !menu) return;
+
+    function updateCount() {
+      if (!countEl) return;
+      var n = menu.querySelectorAll('.filter-pill.active').length;
+      countEl.textContent = String(n);
+      countEl.hidden = !n;
+    }
+
+    function closeMenu() {
+      menu.hidden = true;
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+
+    toggle.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var opening = menu.hidden;
+      // Only one dropdown open at a time.
+      document.querySelectorAll('.filter-dropdown').forEach(function (other) {
+        if (other !== dd) {
+          var m = other.querySelector('.filter-dropdown-menu');
+          var t = other.querySelector('.filter-dropdown-toggle');
+          if (m) m.hidden = true;
+          if (t) t.setAttribute('aria-expanded', 'false');
+        }
+      });
+      menu.hidden = !opening;
+      toggle.setAttribute('aria-expanded', String(opening));
+    });
+
+    // A pill click bubbles here after researchExplorer's own listener
+    // (bound directly on the pill) has already toggled its .active
+    // class, so the count read here is always up to date.
+    menu.addEventListener('click', updateCount);
+    updateCount();
+  });
+  document.addEventListener('click', function (e) {
+    document.querySelectorAll('.filter-dropdown').forEach(function (dd) {
+      if (dd.contains(e.target)) return;
+      var menu = dd.querySelector('.filter-dropdown-menu');
+      var toggle = dd.querySelector('.filter-dropdown-toggle');
+      if (menu) menu.hidden = true;
+      if (toggle) toggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    document.querySelectorAll('.filter-dropdown-menu').forEach(function (m) { m.hidden = true; });
+    document.querySelectorAll('.filter-dropdown-toggle').forEach(function (t) { t.setAttribute('aria-expanded', 'false'); });
+  });
+
   // Filter pills (Research: by focus area / Events: by category) -- see
   // filter_pills_html() in generate.py. One filter bar per page today, so
   // this doesn't scope items to a specific bar; it just shows/hides every
