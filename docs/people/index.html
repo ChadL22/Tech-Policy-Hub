@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>People | Tech Policy Hub</title>
 <meta name="description" content="Faculty, affiliates, and fellows of the Tech Policy Hub.">
-<link rel="stylesheet" href="../assets/css/styles.css?v=2026091403">
+<link rel="stylesheet" href="../assets/css/styles.css?v=2026091404">
 </head>
 <body>
 
@@ -13,7 +13,7 @@
   <div class="container header-inner">
     <div class="brand-lockup">
       <a href="../" class="brand" aria-label="Tech Policy Hub, University of Maryland School of Public Policy">
-        <img src="../assets/img/sopp-tph-lockup.png?v=2026091403" alt="University of Maryland School of Public Policy &ndash; Tech Policy Hub" class="brand-mark">
+        <img src="../assets/img/sopp-tph-lockup.png?v=2026091404" alt="University of Maryland School of Public Policy &ndash; Tech Policy Hub" class="brand-mark">
       </a>
     </div>
     <nav class="primary-nav" aria-label="Primary">
@@ -71,58 +71,21 @@
 </section>
 <section>
   <div class="container container-narrow">
-    <!-- Follow-up (direct user request): the Role/Research Area filter
-         pills + search box are now collapsed by default behind a
-         "Filters" toggle, reusing the exact .subsection-toggle/
-         .subsection-caret component research.html's People/Projects
-         sections already use -- same markup shape (button with
-         aria-expanded + aria-controls, followed by the panel it
-         controls), so main.js's existing generic
-         document.querySelectorAll('.subsection-toggle') wiring picks
-         this up with no JS changes. Starting collapsed is just the
-         opposite initial aria-expanded/hidden state from how
-         research.html's sections start (open); the caret CSS already
-         points down for aria-expanded="false" (the "points where it
-         will go" fix from earlier this session), so it reads correctly
-         collapsed. The panel being toggled IS `.area-controls` itself
-         (id'd directly, no extra wrapper div) -- hiding it doesn't
-         remove it from the DOM, so researchExplorer's one-time
-         `document.querySelector('.area-controls')` lookup at page load
-         still finds the search input/pills inside it regardless of
-         collapsed state. -->
-    <button type="button" class="subsection-toggle subsection-toggle--filters" aria-expanded="false" aria-controls="people-filters-panel">
-      <h2>Filters</h2>
-      <span class="subsection-caret" aria-hidden="true"></span>
-    </button>
-    <!-- Follow-up (direct user request: the two full pill rows read as
-         "too big" -- "a more consolidated way to house this
-         information" for what's now two filter dimensions, with room
-         for more later). Role and Research Area are each folded into a
-         small dropdown button (.filter-dropdown) that reveals its pills
-         as a compact vertical checklist on click, instead of laying
-         every option out inline. The pills THEMSELVES are unchanged --
-         still real .role-filter-pill/.area-filter-pill buttons with the
-         same data-role/data-area attributes -- so researchExplorer in
-         main.js keeps working exactly as before with no changes; only a
-         small, separate dropdown-open/close script (also in main.js)
-         governs showing/hiding the menu and the selected-count badge on
-         each toggle button. Scales to a future third filter by adding
-         one more .filter-dropdown, not another full-width pill row. -->
-    <div class="area-controls" id="people-filters-panel" hidden>
+    <!-- Follow-up (direct user request): the "Filters" toggle label and
+         its underline are gone (it read as an orphaned heading with no
+         content header to pair with -- see the .subsection-toggle--
+         filters follow-up above), and so is the Research Area dropdown
+         -- just the Role dropdown + search box remain, always visible,
+         no collapsing panel. The .area-controls div itself (and its
+         search/role-pill wiring in main.js) is unchanged. -->
+    <div class="area-controls">
       <div class="filter-dropdowns-row">
         <div class="filter-dropdown">
           <button type="button" class="filter-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
             <span>Role</span><span class="filter-dropdown-count" hidden></span>
             <span class="filter-dropdown-caret" aria-hidden="true"></span>
           </button>
-          <div class="filter-dropdown-menu" hidden role="group" aria-label="Filter by role"><button type="button" class="filter-pill role-filter-pill" data-role="founder-director" aria-pressed="false">Founder & Director</button><button type="button" class="filter-pill role-filter-pill" data-role="co-lead" aria-pressed="false">Co-Lead</button><button type="button" class="filter-pill role-filter-pill" data-role="affiliate" aria-pressed="false">Affiliate</button></div>
-        </div>
-        <div class="filter-dropdown">
-          <button type="button" class="filter-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
-            <span>Research Area</span><span class="filter-dropdown-count" hidden></span>
-            <span class="filter-dropdown-caret" aria-hidden="true"></span>
-          </button>
-          <div class="filter-dropdown-menu" hidden role="group" aria-label="Filter by research area"><button type="button" class="filter-pill area-filter-pill" data-area="cybersecurity" style="--area-color:#E21833" aria-pressed="false">Cybersecurity</button><button type="button" class="filter-pill area-filter-pill" data-area="privacy" style="--area-color:#7A1F3D" aria-pressed="false">Consumer Privacy</button><button type="button" class="filter-pill area-filter-pill" data-area="integrity" style="--area-color:#52565A" aria-pressed="false">Information Integrity</button><button type="button" class="filter-pill area-filter-pill" data-area="ml" style="--area-color:#B8860B" aria-pressed="false">Trustworthy ML</button></div>
+          <div class="filter-dropdown-menu" hidden role="group" aria-label="Filter by role"><button type="button" class="filter-pill role-filter-pill" data-role="core-member" aria-pressed="false">Core Member</button><button type="button" class="filter-pill role-filter-pill" data-role="affiliate" aria-pressed="false">Affiliate</button></div>
         </div>
       </div>
       
@@ -134,9 +97,21 @@
         <input type="text" class="search-box-input filter-search-input" placeholder="Search people&hellip;" aria-label="Search people">
       </div>
     </div>
-    <div class="people-list" id="people-list">
-      
-      <div class="person-row" data-areas="cybersecurity privacy integrity ml" data-roles="founder-director" data-search-row>
+    <!-- Follow-up (direct user request): Core Members and Affiliates
+         each get their own .section-head (same component as Events'
+         "Upcoming Events"/"Past Events") -- id="people-list" moves to
+         this outer wrapper so the existing data-empty-for="people-list"
+         "No people match your filters" message still checks every row
+         across BOTH groups; each group's own [data-people-group-panel]
+         is hidden by main.js (same idea as research.html's .pub-year
+         headings) when a filter/search leaves nothing visible inside
+         it, so an empty group doesn't leave a heading floating over
+         nothing. -->
+    <div id="people-list">
+      <div class="section-head"><div><h2>Core Members</h2></div></div>
+      <div class="people-list" data-people-group-panel>
+        
+      <div class="person-row" data-areas="cybersecurity privacy integrity ml" data-roles="core-member" data-search-row>
         <div class="person-body">
           <div class="person-media">
             <div class="person-avatar">IS</div>
@@ -150,7 +125,7 @@
           </div>
         </div>
       </div>
-      <div class="person-row" data-areas="" data-roles="co-lead" data-search-row>
+      <div class="person-row" data-areas="" data-roles="core-member" data-search-row>
         <div class="person-body">
           <div class="person-media">
             <div class="person-avatar">SL</div>
@@ -164,6 +139,10 @@
           </div>
         </div>
       </div>
+      </div>
+      <div class="section-head" style="margin-top:48px;"><div><h2>Affiliates</h2></div></div>
+      <div class="people-list" data-people-group-panel>
+        
       <div class="person-row" data-areas="cybersecurity" data-roles="affiliate" data-search-row>
         <div class="person-body">
           <div class="person-media">
@@ -346,6 +325,7 @@
           </div>
         </div>
       </div>
+      </div>
     </div>
     <p class="list-empty" data-empty-for="people-list" hidden>No people match your filters.</p>
   </div>
@@ -357,19 +337,19 @@
       <div>
         <div class="footer-social">
           <a href="https://sclanga.substack.com/" target="_blank" rel="noopener" aria-label="Substack">
-            <img src="../assets/img/social/substack.png?v=2026091403" alt="" loading="lazy">
+            <img src="../assets/img/social/substack.png?v=2026091404" alt="" loading="lazy">
           </a>
           <a href="https://x.com/phronesisres" target="_blank" rel="noopener" aria-label="X">
-            <img src="../assets/img/social/x.png?v=2026091403" alt="" loading="lazy">
+            <img src="../assets/img/social/x.png?v=2026091404" alt="" loading="lazy">
           </a>
           <a href="https://www.instagram.com/phronesisres" target="_blank" rel="noopener" aria-label="Instagram">
-            <img src="../assets/img/social/instagram.png?v=2026091403" alt="" loading="lazy">
+            <img src="../assets/img/social/instagram.png?v=2026091404" alt="" loading="lazy">
           </a>
           <a href="https://www.threads.com/@phronesisres" target="_blank" rel="noopener" aria-label="Threads">
-            <img src="../assets/img/social/threads.png?v=2026091403" alt="" loading="lazy">
+            <img src="../assets/img/social/threads.png?v=2026091404" alt="" loading="lazy">
           </a>
           <a href="https://www.tiktok.com/@phronesis.research" target="_blank" rel="noopener" aria-label="TikTok">
-            <img src="../assets/img/social/tiktok.png?v=2026091403" alt="" loading="lazy">
+            <img src="../assets/img/social/tiktok.png?v=2026091404" alt="" loading="lazy">
           </a>
         </div>
         <ul class="footer-legal">
@@ -414,6 +394,6 @@
     </div>
   </div>
 </footer>
-<script src="../assets/js/main.js?v=2026091403"></script>
+<script src="../assets/js/main.js?v=2026091404"></script>
 </body>
 </html>

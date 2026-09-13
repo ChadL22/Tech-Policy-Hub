@@ -115,7 +115,18 @@ document.addEventListener('DOMContentLoaded', function () {
   var researchExplorer = (function () {
     var controls = document.querySelector('.area-controls');
     var pills = Array.prototype.slice.call(document.querySelectorAll('.area-filter-pill'));
-    if (!controls || !pills.length) return { selectArea: function () {}, refresh: function () {} };
+    // Follow-up (direct user request: people.html's Research Area
+    // dropdown is gone, leaving Role as its only filter dimension) --
+    // this used to bail out into a no-op stub whenever there were no
+    // .area-filter-pill elements on the page, which would have quietly
+    // killed the Role filter AND search on people.html now that it has
+    // no area pills at all (same class of bug as the .subsection-toggle
+    // one fixed earlier this session: a guard scoped to one specific
+    // filter facet, standing in for "is there anything to filter on
+    // this page at all"). .area-controls only ever renders on pages
+    // that want this whole explorer (research/events/people), so its
+    // presence alone is the right guard.
+    if (!controls) return { selectArea: function () {}, refresh: function () {} };
 
     var rows = Array.prototype.slice.call(document.querySelectorAll('[data-search-row]'));
     var emptyMsgs = Array.prototype.slice.call(document.querySelectorAll('[data-empty-for]'));
@@ -182,6 +193,20 @@ document.addEventListener('DOMContentLoaded', function () {
           sib = sib.nextElementSibling;
         }
         heading.hidden = !anyVisible;
+      });
+      // Same idea as the .pub-year handling above, for people.html's
+      // Core Members / Affiliates groups (direct user request): each
+      // group's rows sit in their own [data-people-group-panel], with
+      // its .section-head ("Core Members"/"Affiliates") as the
+      // immediately preceding sibling -- hide both together whenever a
+      // filter or search leaves nothing visible inside that group, so a
+      // heading never sits over an empty section.
+      document.querySelectorAll('[data-people-group-panel]').forEach(function (panel) {
+        var anyVisible = Array.prototype.slice.call(panel.querySelectorAll('[data-search-row]'))
+          .some(function (row) { return !row.hidden; });
+        panel.hidden = !anyVisible;
+        var head = panel.previousElementSibling;
+        if (head && head.classList.contains('section-head')) head.hidden = !anyVisible;
       });
       emptyMsgs.forEach(function (msg) {
         var panel = document.getElementById(msg.getAttribute('data-empty-for'));

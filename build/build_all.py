@@ -458,11 +458,15 @@ events_body = f"""
 <section>
   <div class="container with-sidebar events-layout">
     <div>
-      <button type="button" class="subsection-toggle subsection-toggle--filters" aria-expanded="false" aria-controls="events-filters-panel">
-        <h2>Filters</h2>
-        <span class="subsection-caret" aria-hidden="true"></span>
-      </button>
-      <div class="area-controls" id="events-filters-panel" hidden>
+      <!-- Follow-up (direct user request): the "Filters" toggle label
+           and its collapsing behavior are gone -- Category + Search now
+           sit directly at the top of the main column, always visible,
+           so their top edge lines up with the sidebar's "Calendar"
+           heading instead of sitting below an extra label first. The
+           .area-controls div itself (and its search/pills wiring in
+           main.js) is unchanged; it's just no longer wrapped in a
+           hidden panel behind a button. -->
+      <div class="area-controls">
         <div class="filter-dropdowns-row">
           <div class="filter-dropdown">
             <button type="button" class="filter-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
@@ -578,11 +582,18 @@ role_filter_pills_people = "".join(
     f'<button type="button" class="filter-pill role-filter-pill" data-role="{key}" aria-pressed="false">{label}</button>'
     for key, label in g.ROLE_TYPES.items()
 )
-area_filter_pills_people = "".join(
-    f'<button type="button" class="filter-pill area-filter-pill" data-area="{t["key"]}" style="--area-color:{g.AREA_META[t["key"]]["color"]}" aria-pressed="false">{t["name"]}</button>'
-    for t in g.TOPICS
-)
-people_rows = "".join(_person_row_html(p) for p in g.PEOPLE_ITEMS)
+# Follow-up (direct user request): "type" (role_types.yml) is now
+# strictly Core Member vs Affiliate -- everything that used to double as
+# a role *type* (Founder & Director, Co-Lead, etc.) is really a
+# per-person *position*, which already lives in `role` and shows under
+# their name (_person_row_html) regardless of this grouping. Core
+# members and affiliates are split into their own section-headed groups
+# below instead of one flat list, in People.yml's existing order within
+# each group.
+_core_people = [p for p in g.PEOPLE_ITEMS if "core-member" in p["role_types"]]
+_affiliate_people = [p for p in g.PEOPLE_ITEMS if "core-member" not in p["role_types"]]
+core_people_rows = "".join(_person_row_html(p) for p in _core_people)
+affiliate_people_rows = "".join(_person_row_html(p) for p in _affiliate_people)
 
 people_body = f"""
 <section class="page-hero">
@@ -595,44 +606,14 @@ people_body = f"""
 </section>
 <section>
   <div class="container container-narrow">
-    <!-- Follow-up (direct user request): the Role/Research Area filter
-         pills + search box are now collapsed by default behind a
-         "Filters" toggle, reusing the exact .subsection-toggle/
-         .subsection-caret component research.html's People/Projects
-         sections already use -- same markup shape (button with
-         aria-expanded + aria-controls, followed by the panel it
-         controls), so main.js's existing generic
-         document.querySelectorAll('.subsection-toggle') wiring picks
-         this up with no JS changes. Starting collapsed is just the
-         opposite initial aria-expanded/hidden state from how
-         research.html's sections start (open); the caret CSS already
-         points down for aria-expanded="false" (the "points where it
-         will go" fix from earlier this session), so it reads correctly
-         collapsed. The panel being toggled IS `.area-controls` itself
-         (id'd directly, no extra wrapper div) -- hiding it doesn't
-         remove it from the DOM, so researchExplorer's one-time
-         `document.querySelector('.area-controls')` lookup at page load
-         still finds the search input/pills inside it regardless of
-         collapsed state. -->
-    <button type="button" class="subsection-toggle subsection-toggle--filters" aria-expanded="false" aria-controls="people-filters-panel">
-      <h2>Filters</h2>
-      <span class="subsection-caret" aria-hidden="true"></span>
-    </button>
-    <!-- Follow-up (direct user request: the two full pill rows read as
-         "too big" -- "a more consolidated way to house this
-         information" for what's now two filter dimensions, with room
-         for more later). Role and Research Area are each folded into a
-         small dropdown button (.filter-dropdown) that reveals its pills
-         as a compact vertical checklist on click, instead of laying
-         every option out inline. The pills THEMSELVES are unchanged --
-         still real .role-filter-pill/.area-filter-pill buttons with the
-         same data-role/data-area attributes -- so researchExplorer in
-         main.js keeps working exactly as before with no changes; only a
-         small, separate dropdown-open/close script (also in main.js)
-         governs showing/hiding the menu and the selected-count badge on
-         each toggle button. Scales to a future third filter by adding
-         one more .filter-dropdown, not another full-width pill row. -->
-    <div class="area-controls" id="people-filters-panel" hidden>
+    <!-- Follow-up (direct user request): the "Filters" toggle label and
+         its underline are gone (it read as an orphaned heading with no
+         content header to pair with -- see the .subsection-toggle--
+         filters follow-up above), and so is the Research Area dropdown
+         -- just the Role dropdown + search box remain, always visible,
+         no collapsing panel. The .area-controls div itself (and its
+         search/role-pill wiring in main.js) is unchanged. -->
+    <div class="area-controls">
       <div class="filter-dropdowns-row">
         <div class="filter-dropdown">
           <button type="button" class="filter-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
@@ -641,18 +622,28 @@ people_body = f"""
           </button>
           <div class="filter-dropdown-menu" hidden role="group" aria-label="Filter by role">{role_filter_pills_people}</div>
         </div>
-        <div class="filter-dropdown">
-          <button type="button" class="filter-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
-            <span>Research Area</span><span class="filter-dropdown-count" hidden></span>
-            <span class="filter-dropdown-caret" aria-hidden="true"></span>
-          </button>
-          <div class="filter-dropdown-menu" hidden role="group" aria-label="Filter by research area">{area_filter_pills_people}</div>
-        </div>
       </div>
       {g.search_box_html("Search people&hellip;", "Search people")}
     </div>
-    <div class="people-list" id="people-list">
-      {people_rows}
+    <!-- Follow-up (direct user request): Core Members and Affiliates
+         each get their own .section-head (same component as Events'
+         "Upcoming Events"/"Past Events") -- id="people-list" moves to
+         this outer wrapper so the existing data-empty-for="people-list"
+         "No people match your filters" message still checks every row
+         across BOTH groups; each group's own [data-people-group-panel]
+         is hidden by main.js (same idea as research.html's .pub-year
+         headings) when a filter/search leaves nothing visible inside
+         it, so an empty group doesn't leave a heading floating over
+         nothing. -->
+    <div id="people-list">
+      <div class="section-head"><div><h2>Core Members</h2></div></div>
+      <div class="people-list" data-people-group-panel>
+        {core_people_rows}
+      </div>
+      <div class="section-head" style="margin-top:48px;"><div><h2>Affiliates</h2></div></div>
+      <div class="people-list" data-people-group-panel>
+        {affiliate_people_rows}
+      </div>
     </div>
     <p class="list-empty" data-empty-for="people-list" hidden>No people match your filters.</p>
   </div>

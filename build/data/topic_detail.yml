@@ -15,7 +15,6 @@ cybersecurity:
     title: UMD researchers calculate cyberattack risk for all 50 states.
     authors:
     - Dr. Charles Harry
-    - Jordan Diaz
   people:
   - Dr. Ido Sivan-Sevilla
   - Dr. Charles Harry
@@ -41,7 +40,6 @@ privacy:
     title: Accountability powers of formal and informal U.S. privacy watchdogs.
     authors:
     - Dr. Ido Sivan-Sevilla
-    - Amara Mensah
   people:
   - Dr. Ido Sivan-Sevilla
   - Dr. Jessica Vitak
@@ -54,11 +52,6 @@ integrity:
   - - Platform Transparency Tracker
     - Monitoring platform disclosures and their real-world enforcement.
   pubs:
-  - venue: FOCI Workshop @ PETs
-    year: 2026
-    title: Classifying trustworthy content on the web based on third-party structure.
-    authors:
-    - Jordan Diaz
   - venue: Policy Brief
     year: 2026
     title: What platform transparency reports do and don't tell us.
@@ -82,11 +75,6 @@ ml:
     title: Applying Contextual Integrity to measure algorithmic decision-making.
     authors:
     - Dr. Katie Shilton
-  - venue: Roundtable Summary
-    year: 2025
-    title: Tech Policy Hub & VCAI roundtable on AI policy.
-    authors:
-    - Lee Tiedrich
   people:
   - Dr. Ido Sivan-Sevilla
   - Dr. Katie Shilton

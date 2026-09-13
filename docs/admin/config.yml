@@ -57,16 +57,15 @@ collections:
             fields:
               - { name: initials, label: "Initials (avatar)", widget: string, pattern: ['^.{1,3}$', 'Use 1–3 characters'] }
               - { name: name, label: Name, widget: string }
-              - { name: role, label: "Title / Role", widget: string, hint: "Shown as this person's section header on the People page." }
+              - { name: role, label: "Title / Position", widget: string, hint: "This person's position (e.g. \"Founder & Director\", \"Co-Lead\", \"Affiliate\") -- shown under their name on the People page." }
               - { name: focus, label: "Focus (short, one line)", widget: string }
               - name: role_types
-                label: "Role Type(s)"
+                label: "Type"
                 widget: select
                 multiple: true
-                hint: "Drives the People page's Role filter. See build/data/role_types.yml for the current labels."
+                hint: "Core Member or Affiliate -- drives which People page section (and the Role filter) this person appears under. Positions like Founder & Director or Co-Lead go in Title/Position above, not here. See build/data/role_types.yml."
                 options:
-                  - { label: "Founder & Director", value: founder-director }
-                  - { label: "Co-Lead", value: co-lead }
+                  - { label: "Core Member", value: core-member }
                   - { label: Affiliate, value: affiliate }
               - { name: bio, label: Bio, widget: text }
               - { name: email, label: Email, widget: string, required: false, pattern: ['^[^@]+@[^@]+\.[^@]+$', 'Enter a valid email address'] }

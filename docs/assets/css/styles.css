@@ -990,6 +990,12 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    same issue -- this is what makes the People page's collapsed-by-
    default Filters panel actually collapse. */
 .area-controls[hidden]{ display: none; }
+/* Same author-display-beats-[hidden] gotcha as .area-controls[hidden]
+   just above: .section-head sets `display:flex`, so main.js hiding a
+   Core Members/Affiliates section-head via the `hidden` attribute (see
+   the people-group-panel handling in main.js) needs this explicit
+   override too, or the UA default alone won't actually hide it. */
+.section-head[hidden]{ display: none; }
 
 /* Follow-up (direct user request, replacing two full-width pill rows
    that read as "too big" once there were two filter dimensions): Role
