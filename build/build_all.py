@@ -462,6 +462,21 @@ _ics_webcal_url = _ics_url.replace("https://", "webcal://")
 # page (which drops straight into its filter row + search box right
 # under the nav) rather than restating "Tech Policy Hub Calendar" above
 # a tool the EVENTS nav item already led the visitor to.
+# Follow-up (direct user request): the calendar (.events-sidebar-sticky
+# -- legend + widget + subscribe buttons) is sticky on desktop -- see
+# the `min-width: 901px` rule in styles.css -- so it travels with the
+# viewport as the visitor scrolls the (possibly much longer) events
+# list beside it, instead of scrolling out of view after the first
+# screenful. Sticky sits on an INNER div, not the grid item itself
+# (.events-sidebar, the plain outer column): a grid item that's also
+# the sticky element has zero room to move once it's stretched to the
+# row's full height (its containing block and its own box become the
+# same size, so there's no scroll range left to be sticky *within* --
+# confirmed by direct testing, not just a spec reading). Nesting the
+# sticky content inside a plain block gives it a real (taller, grid-
+# stretched) containing block to float inside, which is what lets it
+# stay pinned for the list's whole scroll instead of not sticking at
+# all, or detaching after only its own short height's worth of scroll.
 events_body = f"""
 <section>
   <div class="container with-sidebar events-layout">
@@ -483,12 +498,14 @@ events_body = f"""
       </div>
       <p class="list-empty" data-empty-for="past-events-list" hidden>No past events match your search or filter.</p>
     </div>
-    <div>
-      <h4 style="font-family:var(--font-body); font-size:.95rem; font-weight:700; margin-bottom:14px;">Calendar</h4>
-      <div class="cal-legend">{g.calendar_legend_html(g.EVENT_CATEGORIES)}</div>
-      {g.calendar_widget_html(g.EVENTS_ITEMS, g.EVENT_CATEGORIES)}
-      <a href="{_ics_webcal_url}" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:18px;">Subscribe to Calendar</a>
-      <a href="{_ics_url}" class="btn btn-ghost" style="width:100%; justify-content:center; margin-top:10px; font-size:.82rem;">Download .ics file</a>
+    <div class="events-sidebar">
+      <div class="events-sidebar-sticky">
+        <h4 style="font-family:var(--font-body); font-size:.95rem; font-weight:700; margin-bottom:14px;">Calendar</h4>
+        <div class="cal-legend">{g.calendar_legend_html(g.EVENT_CATEGORIES)}</div>
+        {g.calendar_widget_html(g.EVENTS_ITEMS, g.EVENT_CATEGORIES)}
+        <a href="{_ics_webcal_url}" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:18px;">Subscribe to Calendar</a>
+        <a href="{_ics_url}" class="btn btn-ghost" style="width:100%; justify-content:center; margin-top:10px; font-size:.82rem;">Download .ics file</a>
+      </div>
     </div>
   </div>
 </section>

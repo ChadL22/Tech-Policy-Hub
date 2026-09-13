@@ -993,6 +993,31 @@ li.has-dropdown.open .dropdown{ display:block; }
    still overridden by the 900px .with-sidebar mobile rule below since
    that one comes later in the file. */
 .events-layout{ grid-template-columns: minmax(0, 620px) 1fr; }
+/* Follow-up (direct user request): the calendar travels with the
+   viewport on desktop instead of scrolling away. .events-sidebar is
+   the plain grid column (left at .with-sidebar's default
+   align-items:stretch, so it's stretched to the full height of the
+   taller events-list column beside it); .events-sidebar-sticky, the
+   actual calendar content, is nested one level inside it and is what
+   carries position:sticky. That nesting is required, not cosmetic --
+   putting position:sticky directly on the grid item itself (tested and
+   confirmed) gives it zero effective range to move in, since a
+   stretched grid item's own box is by definition exactly as tall as
+   its containing block; there's no "slack" left for it to stick
+   *within*, so nothing visibly happens. Nesting the sticky element one
+   level down gives it a real, shorter box inside a real, taller (grid-
+   stretched) containing block, which is what lets it float and stay
+   pinned for the whole scroll instead of just moving with the page.
+   The site header is itself position:sticky (top:0, see
+   header.site-header above), so the 104px top offset here clears it
+   rather than sticking the calendar directly under the viewport edge,
+   behind the header. Desktop-only (matches the 900px breakpoint the
+   .with-sidebar mobile rule below switches at) -- below that width the
+   layout stacks into a single column, where a sticky sidebar would
+   just sit awkwardly between two stacked lists. */
+@media (min-width: 901px){
+  .events-sidebar-sticky{ position: sticky; top: 104px; }
+}
 
 /* ---------- Homepage calendar (replaces the old Recent News feed) --
    real month-grid, Sun-Sat, correct weekday math from the stdlib
