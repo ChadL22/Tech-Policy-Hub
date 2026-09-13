@@ -261,7 +261,7 @@ year_filter_pills = _year_filter_pills_html()
 
 research_body = f"""
 <section>
-  <div class="container">
+  <div class="container container-narrow">
     <button type="button" class="subsection-toggle" aria-expanded="false" aria-controls="research-filters-panel">
       <h2>Filters</h2>
       <span class="subsection-caret" aria-hidden="true"></span>
@@ -549,18 +549,21 @@ def _person_links_html(p):
 
 
 def _person_row_html(p):
-    # Follow-up (direct user request): the old full-width bordered
-    # "FOUNDER & DIRECTOR" / "AFFILIATE" header row per person read as
-    # one long underline repeated down the page. Role now sits inline
-    # next to the name instead (e.g. "Dr. X, Affiliate"), closer to the
-    # plain academic-lab-page style the user pointed to as a reference.
+    # Follow-up (direct user request): content under the photo, in
+    # order -- Name, Position, then contact links (email, website(s),
+    # LinkedIn via _person_links_html). Replaces an earlier inline
+    # "Name, Role" treatment; the old full-width bordered "FOUNDER &
+    # DIRECTOR" header row it replaced (before that) read as one long
+    # underline repeated down the page, which is why role isn't a
+    # section-header divider at all anymore -- just a plain line.
     areas = _person_areas.get(p["name"], [])
     return f"""
       <div class="person-row" data-areas="{' '.join(areas)}" data-roles="{' '.join(p['role_types'])}" data-search-row>
         <div class="person-body">
           <div class="person-media">
             <div class="person-avatar">{p['initials']}</div>
-            <h3>{p['name']}<span class="person-role">, {p['role']}</span></h3>
+            <h3>{p['name']}</h3>
+            <div class="person-role">{p['role']}</div>
             {_person_links_html(p)}
           </div>
           <div class="person-bio">
@@ -591,7 +594,7 @@ people_body = f"""
   </div>
 </section>
 <section>
-  <div class="container">
+  <div class="container container-narrow">
     <!-- Follow-up (direct user request): the Role/Research Area filter
          pills + search box are now collapsed by default behind a
          "Filters" toggle, reusing the exact .subsection-toggle/

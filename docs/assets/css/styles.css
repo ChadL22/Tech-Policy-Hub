@@ -62,6 +62,20 @@ a:hover{ text-decoration: underline; }
 img{ max-width:100%; display:block; }
 ul{ padding-left: 1.2em; }
 .container{ max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+/* Follow-up (direct user request): Research and People were called out
+   as looking "stretched" next to Home and Events. Home and Events don't
+   actually use a smaller .container -- they just happen to keep their
+   main content in a narrower internal column (Home's middle lead-grid
+   column, Events' with-sidebar main column both land around 620-630px)
+   because those pages are built as rail/sidebar layouts. Research's
+   People/Projects/Publications lists and People's person rows have no
+   such sidebar, so they were filling the full 1272px inner width, which
+   reads as noticeably wider/emptier-feeling than the other pages even
+   though the outer container is identical. .container-narrow gives just
+   those two pages' main content sections a matching narrower ceiling
+   without touching Home, Events, or the page-hero bands (breadcrumb/
+   title) which stay full width for visual consistency across all pages. */
+.container-narrow{ max-width: 1080px; }
 section{ padding: 56px 0; }
 .section-tight{ padding: 34px 0; }
 .eyebrow{
@@ -740,14 +754,23 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 .pub-section-head h2{ font-size:1.25rem; margin:0; padding:0; border:0; }
 .year-filter-bar{ display:flex; flex-wrap:wrap; gap:8px; }
 .year-filter-pill{ padding: 6px 14px; font-size:.72rem; }
+/* Follow-up (direct user request, applies to every .subsection-toggle
+   site-wide -- "Filters" on People/Research/Events, "People"/"Projects"
+   on Research): the button used to be width:100% with
+   justify-content:space-between, which stretched its border-bottom
+   underline across the whole container and pushed the caret to the far
+   right edge, away from the word it belongs to. inline-flex makes the
+   button (and its underline) only as wide as "Filters" + the caret,
+   with the caret sitting directly beside the text via `gap` instead of
+   being shoved to the opposite end of the row. */
 .subsection-toggle{
-  display:flex; align-items:center; justify-content:space-between; width:100%;
-  background:none; border:none; padding:0 0 12px; margin-bottom:20px; border-bottom: 1px solid var(--ink);
+  display:inline-flex; align-items:center; gap:10px;
+  background:none; border:none; padding:0 0 8px; margin-bottom:20px; border-bottom: 1px solid var(--ink);
   cursor:pointer; text-align:left; font: inherit; color: inherit;
 }
 .subsection-toggle h2{ font-size:1.25rem; margin:0; }
 .subsection-caret{
-  width:9px; height:9px; flex:0 0 auto; margin-left:12px;
+  width:9px; height:9px; flex:0 0 auto;
   border-right:2px solid var(--ink); border-bottom:2px solid var(--ink);
   /* Follow-up (direct user request): expanded points UP, collapsed
      points DOWN -- i.e. the caret shows the direction the section will
@@ -1009,12 +1032,23 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   color: #fff; font-family: var(--font-nav); font-size: 2rem; font-weight:700;
   margin-bottom: 16px;
 }
-.person-media h3{ font-size:1.05rem; margin-bottom:8px; font-weight:700; }
-.person-role{ font-style:italic; font-weight:400; color: var(--ink-soft); }
+.person-media h3{ font-size:1.05rem; margin-bottom:4px; font-weight:700; }
+/* Follow-up (direct user request): role/position is now its own stacked
+   line under the name (was an inline ", Role" span before) -- give it a
+   bit of bottom margin so it doesn't crowd the contact links right below
+   it. Kept italic since that's the conventional way academic bios set off
+   a title/position line, just no longer squeezed into the h3 itself. */
+.person-role{ font-style:italic; font-weight:400; color: var(--ink-soft); margin-bottom:10px; }
 .person-links{ display:flex; flex-direction:column; gap:4px; }
 .person-links a{ font-size:.82rem; font-weight:700; color: var(--umd-red); }
 .person-links a:hover{ text-decoration:underline; }
 .person-bio .rp-tags{ margin-bottom:12px; }
+/* Follow-up (direct user request, referencing Princeton CoCoSci's people
+   page): the bio column used to stretch to fill the full 1fr grid track,
+   which at our container's 1320px max-width made lines of bio text quite
+   long and hard to read. Capping it keeps line length reasonable while
+   the avatar column stays fixed-width beside it. */
+.person-bio{ max-width: 640px; }
 .person-bio p{ font-size:.95rem; line-height:1.6; color: var(--ink-soft); margin:0; }
 
 @media (max-width: 700px){
