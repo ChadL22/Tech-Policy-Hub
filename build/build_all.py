@@ -108,7 +108,7 @@ home_body = f"""
   </div>
 </section>
 """
-g.write("index.html", g.page("index.html", "Home", "The University of Maryland Tech Policy Hub studies the bridge between computer science and public policy.", home_body, ticker=True))
+g.write("index.html", g.page("index.html", "Home", "The University of Maryland Tech Policy Hub studies the bridge between computer science and public policy.", home_body))
 
 # ===========================================================================
 # RESEARCH HUB + TOPIC DETAIL DATA
@@ -205,12 +205,16 @@ def _area_tag_html(key):
     return f'<span class="area-tag" style="--area-color:{m["color"]}">{m["code"]}</span>'
 
 
-def _person_tile_html(name, key):
+def _area_tags_html(keys):
+    return f'<div class="rp-tags">{"".join(_area_tag_html(k) for k in keys)}</div>'
+
+
+def _person_tile_html(name, keys):
     p = _PEOPLE_BY_NAME.get(name, {})
     initials = p.get("initials") or "".join(w[0] for w in name.split() if w[0].isalpha())[:2].upper()
     return f"""
-      <div class="rp-tile" data-area="{key}" data-search-row>
-        {_area_tag_html(key)}
+      <div class="rp-tile" data-areas="{' '.join(keys)}" data-search-row>
+        {_area_tags_html(keys)}
         <div class="rp-avatar">{initials}</div>
         <h3>{name}</h3>
         <div class="rp-role">{p.get("role", "")}</div>
@@ -220,8 +224,8 @@ def _person_tile_html(name, key):
 
 def _project_tile_html(name, desc, key):
     return f"""
-      <div class="rp-tile" data-area="{key}" data-search-row>
-        {_area_tag_html(key)}
+      <div class="rp-tile" data-areas="{key}" data-search-row>
+        {_area_tags_html([key])}
         <h3>{name}</h3>
         <p class="rp-desc">{desc}</p>
       </div>"""
@@ -235,8 +239,8 @@ def _format_authors(authors):
 
 def _pub_row_html(p):
     return f"""
-      <div class="pub-row" data-area="{p['area']}" data-search-row>
-        {_area_tag_html(p['area'])}
+      <div class="pub-row" data-areas="{p['area']}" data-search-row>
+        {_area_tags_html([p['area']])}
         <p class="pub-cite"><span class="pub-cite-authors">{_format_authors(p['authors'])}</span> ({p['year']}). {p['title']} <span class="pub-cite-venue">{p['venue']}.</span></p>
       </div>"""
 
@@ -261,12 +265,27 @@ area_filter_pills = "".join(
     f'<button type="button" class="filter-pill area-filter-pill" id="area-panel-{t["key"]}" data-area="{t["key"]}" style="--area-color:{AREA_META[t["key"]]["color"]}" aria-pressed="false">{t["name"]}</button>'
     for t in g.TOPICS
 )
-people_tiles = "".join(_person_tile_html(n, t["key"]) for t in g.TOPICS for n in TOPIC_DETAIL[t["key"]]["people"])
+
+# Follow-up 8 (direct user request): a person listed under more than one
+# research area -- Jordan Diaz (Cybersecurity + Information Integrity),
+# Dr. Ido Sivan-Sevilla (Consumer Privacy + Information Integrity) --
+# used to render as a separate tile per area (a straight loop over each
+# area's people list). Now every unique name gets exactly one tile, with
+# one .area-tag per area they belong to (in TOPICS order), and
+# data-areas carries all of them space-separated so selecting ANY one of
+# those areas still matches the tile. _person_areas below collects that
+# per-name area list once, in first-seen order, before building tiles.
+_person_areas = {}
+for t in g.TOPICS:
+    for n in TOPIC_DETAIL[t["key"]]["people"]:
+        _person_areas.setdefault(n, []).append(t["key"])
+
+people_tiles = "".join(_person_tile_html(name, keys) for name, keys in _person_areas.items())
 project_tiles = "".join(_project_tile_html(n, d, t["key"]) for t in g.TOPICS for n, d in TOPIC_DETAIL[t["key"]]["projects"])
 pubs_list = _pubs_list_html()
 
 research_body = f"""
-<section class="soft-bg">
+<section>
   <div class="container">
     <div class="area-controls">
       <div class="area-filter-bar" role="group" aria-label="Filter by research area">{area_filter_pills}</div>

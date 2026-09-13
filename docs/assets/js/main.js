@@ -106,11 +106,16 @@ document.addEventListener('DOMContentLoaded', function () {
         pill.setAttribute('aria-pressed', String(on));
       });
       rows.forEach(function (row) {
-        var matchesArea = selected.size === 0 || selected.has(row.getAttribute('data-area'));
+        // data-areas is space-separated -- usually one area, but a
+        // person listed under more than one research area (direct user
+        // request: one tile per person, not one per area) carries all
+        // of them, and matches if ANY is in the active selection.
+        var areas = (row.getAttribute('data-areas') || '').split(/\s+/).filter(Boolean);
+        var matchesArea = selected.size === 0 || areas.some(function (a) { return selected.has(a); });
         var matchesSearch = !query || row.textContent.toLowerCase().indexOf(query) !== -1;
         row.hidden = !(matchesArea && matchesSearch);
       });
-      // A publication year heading has no data-area/data-search-row of
+      // A publication year heading has no data-areas/data-search-row of
       // its own -- hide it only when every row under it (up to the next
       // heading) is hidden, so a year with some-but-not-all rows
       // filtered out keeps its heading.

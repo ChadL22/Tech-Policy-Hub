@@ -24,7 +24,7 @@ SITE_URL = "https://chadl22.github.io/Tech-Policy-Hub/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026091301"
+ASSET_VERSION = "2026091302"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -186,9 +186,10 @@ def affiliation_strip():
 
 
 def ticker_section():
-    """NYSE-tape-style signal rail, homepage only, one line tall: the
-    "Policy Updates" label and the scrolling lane sit in the same flex
-    row (see .signal-ticker in styles.css). Scope is deliberately narrow
+    """NYSE-tape-style signal rail, one line tall, present on every page
+    (direct user request) right under the header: the "Policy Updates"
+    label and the scrolling lane sit in the same flex row (see
+    .signal-ticker in styles.css). Scope is deliberately narrow
     -- real, tracked tech policy activity in the DMV (DC/MD/VA) and at
     the federal level only, each item badged with its jurisdiction (see
     TICKER_ITEMS below). Streams continuously (main.js drives a
@@ -281,12 +282,12 @@ def footer():
 """
 
 
-def page(active, title, description, body, ticker=False):
-    out = head(title, description) + header(active)
-    if ticker:
-        out += ticker_section()
-    out += body + footer()
-    return out
+def page(active, title, description, body):
+    # Follow-up (direct user request): the Policy Updates ticker used to
+    # be homepage-only (an explicit ticker=True on that one g.page()
+    # call) -- it's unconditional now, right under the header on every
+    # page, not just the home page.
+    return head(title, description) + header(active) + ticker_section() + body + footer()
 
 
 def write(name, content):

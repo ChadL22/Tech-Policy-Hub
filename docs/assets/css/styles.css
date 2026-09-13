@@ -732,11 +732,15 @@ li.has-dropdown.open .dropdown{ display:block; }
   display:inline-block; font-family: var(--font-nav); font-size:.66rem; font-weight:700; letter-spacing:.03em;
   color:#fff; background: var(--area-color, var(--umd-red)); padding:2px 7px; border-radius: var(--radius);
 }
+/* Wraps one .area-tag per area a tile/row belongs to -- usually just
+   one, but a person listed under more than one research area (direct
+   user request: one tile per person, not one per area) gets a tag for
+   each, in flex-wrap so 3-4 tags on a narrow tile still reads cleanly. */
+.rp-tags{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
 
 .rp-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 32px 24px; }
 .rp-grid[hidden]{ display:none; }
 .rp-tile[hidden]{ display:none; }
-.rp-tile .area-tag{ margin-bottom:10px; }
 .rp-avatar{
   width:52px; height:52px; background: var(--ink); color:#fff;
   display:flex; align-items:center; justify-content:center;
@@ -757,7 +761,7 @@ li.has-dropdown.open .dropdown{ display:block; }
 .pub-row{ display:flex; gap:14px; align-items:flex-start; padding:12px 0; border-top:1px solid var(--line); }
 .pub-year + .pub-row{ border-top:none; }
 .pub-row[hidden]{ display:none; }
-.pub-row .area-tag{ flex:0 0 auto; margin-top:3px; }
+.pub-row .rp-tags{ flex:0 0 auto; flex-direction:column; margin-bottom:0; margin-top:3px; }
 .pub-cite{ margin:0; font-size:.92rem; line-height:1.55; color: var(--ink); }
 .pub-cite-authors{ font-weight:700; }
 .pub-cite-venue{ font-style:italic; color: var(--ink-soft); }
