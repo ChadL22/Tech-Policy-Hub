@@ -998,15 +998,10 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 .filter-dropdown-menu .filter-pill:hover{ background: var(--sidebar-band); color: var(--ink); }
 .filter-dropdown-menu .filter-pill.active{ background: var(--umd-red); color:#fff; }
 .people-list{ margin-top: 8px; }
-.person-row{ padding: 40px 0; border-top: 1px solid var(--line); }
+.person-row{ padding: 32px 0; border-top: 1px solid var(--line); }
 .person-row:first-child{ border-top:none; padding-top:0; }
 .person-row[hidden]{ display:none; }
-.person-title{
-  font-family: var(--font-nav); font-size:.92rem; font-weight:700; text-transform:uppercase;
-  letter-spacing:.03em; color: var(--umd-red);
-  padding-bottom:14px; margin-bottom:24px; border-bottom: 1px solid var(--ink);
-}
-.person-body{ display:grid; grid-template-columns: 160px 1fr; gap: 32px; align-items:start; }
+.person-body{ display:grid; grid-template-columns: 200px 1fr; gap: 32px; align-items:start; }
 .person-media{ display:flex; flex-direction:column; align-items:flex-start; }
 .person-avatar{
   width:120px; height:120px; background: var(--umd-red);
@@ -1014,7 +1009,8 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   color: #fff; font-family: var(--font-nav); font-size: 2rem; font-weight:700;
   margin-bottom: 16px;
 }
-.person-media h3{ font-size:1.02rem; margin-bottom:8px; }
+.person-media h3{ font-size:1.05rem; margin-bottom:8px; font-weight:700; }
+.person-role{ font-style:italic; font-weight:400; color: var(--ink-soft); }
 .person-links{ display:flex; flex-direction:column; gap:4px; }
 .person-links a{ font-size:.82rem; font-weight:700; color: var(--umd-red); }
 .person-links a:hover{ text-decoration:underline; }

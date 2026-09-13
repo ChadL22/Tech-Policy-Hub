@@ -7,7 +7,10 @@
   bio: Founder and director of the Tech Policy Hub. Ido is an assistant professor in UMD's College of Information
     and an affiliate professor in the School of Public Policy, studying the governance of digital technologies through
     methods spanning process tracing, computational text analysis, and vulnerability analysis.
-  website: https://idonibrasco.github.io/
+  email: sevilla@umd.edu
+  websites:
+  - label: Website
+    url: https://idonibrasco.github.io/
   linkedin: null
 - initials: SL
   name: Sipho C. Langa
@@ -20,7 +23,12 @@
     and the Consumer Financial Protection Bureau. His research examines questions at the intersection of technology,
     law, and policy through the lens of mechanism design, drawing particularly from welfare economics, consumer
     protection, and human-computer interaction.
-  website: https://chadl22.github.io
+  email: null
+  websites:
+  - label: Personal Website
+    url: https://chadl22.github.io
+  - label: Phronesis Research Institute
+    url: https://phronesisresearch.org
   linkedin: null
 - initials: CH
   name: Dr. Charles Harry
@@ -32,7 +40,8 @@
     cyber operations. He directs the Center for Governance of Technology and Systems (GoTech) and is an Associate
     Research Professor in UMD's School of Public Policy, researching how to measure the effects of cyberattacks
     to help policymakers assess strategic risk.
-  website: null
+  email: null
+  websites: []
   linkedin: null
 - initials: MM
   name: Mark McDermott
@@ -43,7 +52,8 @@
   bio: Mark McDermott is a researcher and engineer with over 15 years of experience spanning cybersecurity, disinformation,
     machine learning, and big data. His work crosses mathematics, engineering, and analysis, from U.S. defense applications
     to international research collaborations.
-  website: null
+  email: null
+  websites: []
   linkedin: null
 - initials: MZ
   name: Dr. Michelle Mazurek
@@ -54,7 +64,8 @@
   bio: Michelle Mazurek is an associate professor of computer science at the University of Maryland and Director
     of the Maryland Cybersecurity Center. Her research focuses on human-centered computer security, understanding
     and improving how professionals and everyday users learn, adopt, and experience security and privacy practices.
-  website: null
+  email: null
+  websites: []
   linkedin: null
 - initials: GK
   name: Dr. Gabriel Kaptchuk
@@ -65,7 +76,8 @@
   bio: Gabriel Kaptchuk is an assistant professor in UMD's Department of Computer Science, with a joint appointment
     in the University of Maryland Institute for Advanced Computer Studies (UMIACS). His research centers on human-centered
     cryptography, making privacy-preserving systems intuitive and accessible.
-  website: null
+  email: null
+  websites: []
   linkedin: null
 - initials: PP
   name: Parthav Poudel
@@ -77,7 +89,8 @@
     and a Department of Defense SMART Scholarship recipient. He conducts research at UMD's College of Information
     on data infrastructure, web privacy, and misinformation, building web-crawling and data pipelines that inform
     cybersecurity and misinformation policy.
-  website: null
+  email: null
+  websites: []
   linkedin: null
 - initials: JV
   name: Dr. Jessica Vitak
@@ -88,7 +101,8 @@
   bio: Jessica Vitak is a professor in UMD's iSchool and an affiliate professor in the Communication Department
     and the Joint Program in Survey Methodology. She runs the Privacy Education and Research Lab (PEARL), studying
     how privacy concerns shape technology adoption and developing tools for more informed data-sharing decisions.
-  website: null
+  email: null
+  websites: []
   linkedin: null
 - initials: PA
   name: Patrick Parham
@@ -99,7 +113,8 @@
   bio: Patrick Parham is a Ph.D. student at UMD's College of Information studying advertising and media technology,
     with a focus on proposals for a post-third-party-cookie web. He previously worked in the programmatic advertising
     industry.
-  website: null
+  email: null
+  websites: []
   linkedin: null
 - initials: GC
   name: Giovanni Luca Ciampaglia
@@ -110,7 +125,8 @@
   bio: Giovanni Luca Ciampaglia is an assistant professor at UMD's College of Information, where he leads the Computational
     Socio-dynamics Laboratory. His research examines how information quality and propagation shape trust and reliability
     in social computing systems.
-  website: null
+  email: null
+  websites: []
   linkedin: null
 - initials: IP
   name: Dr. Irene Pasquetto
@@ -121,7 +137,8 @@
   bio: Irene Pasquetto is an assistant professor at UMD's College of Information. Her research spans data governance
     and open data practices, mis- and disinformation studies, and related questions in algorithmic fairness, digital
     labor, and open science.
-  website: null
+  email: null
+  websites: []
   linkedin: null
 - initials: CB
   name: Dr. Cody Buntain
@@ -132,7 +149,8 @@
   bio: Cody Buntain is an assistant professor at UMD's College of Information, studying how people use online information
     spaces during crises and political unrest. He is a research affiliate at NYU's Center for Social Media and Politics,
     and his work has been covered by outlets including the New York Times and WIRED.
-  website: null
+  email: null
+  websites: []
   linkedin: null
 - initials: KS
   name: Dr. Katie Shilton
@@ -143,7 +161,8 @@
   bio: Katie Shilton is a professor at UMD's College of Information studying technology and data ethics. She leads
     the Ethics & Values in Design (EViD) Lab and co-directs the NSF/NIST-funded TRAILS Institute on trustworthy
     AI, with recent work spanning content moderation and data ethics education.
-  website: null
+  email: null
+  websites: []
   linkedin: null
 - initials: LF
   name: Dr. Laura Fichtner
@@ -155,7 +174,8 @@
     particularly generative AI, can be developed and governed in a participatory, democratic manner. She earned
     her doctorate from the University of Hamburg with a thesis on platform governance and content moderation regulation
     in Germany.
-  website: null
+  email: null
+  websites: []
   linkedin: null
 - initials: AW
   name: Dr. Amy Winecoff
@@ -167,5 +187,6 @@
     developing technically informed strategies for AI governance and measurement. She previously worked as a data
     scientist building recommendation systems and was a research fellow at Princeton's Center for Information Technology
     Policy.
-  website: null
+  email: null
+  websites: []
   linkedin: null

@@ -65,13 +65,19 @@ collections:
                 multiple: true
                 hint: "Drives the People page's Role filter. See build/data/role_types.yml for the current labels."
                 options:
-                  - { label: Leadership, value: leadership }
-                  - { label: "Area Lead", value: lead }
+                  - { label: "Founder & Director", value: founder-director }
+                  - { label: "Co-Lead", value: co-lead }
                   - { label: Affiliate, value: affiliate }
-                  - { label: Fellow, value: fellow }
-                  - { label: "Graduate Fellow", value: grad-fellow }
               - { name: bio, label: Bio, widget: text }
-              - { name: website, label: Website, widget: string, required: false }
+              - { name: email, label: Email, widget: string, required: false, pattern: ['^[^@]+@[^@]+\.[^@]+$', 'Enter a valid email address'] }
+              - name: websites
+                label: "Website(s)"
+                widget: list
+                required: false
+                hint: "One or more sites for this person -- each gets its own labeled link (e.g. a personal site and a lab/org site)."
+                fields:
+                  - { name: label, label: "Link label", widget: string, hint: "Shown as the link text, e.g. \"Website\" or \"Phronesis Research Institute\"." }
+                  - { name: url, label: URL, widget: string }
               - { name: linkedin, label: LinkedIn, widget: string, required: false }
 
   - name: events

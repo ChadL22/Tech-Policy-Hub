@@ -505,9 +505,16 @@ g.write_raw("events.ics", g.events_ics(g.EVENTS_ITEMS))
 # "Known placeholders". A person with no website/linkedin set gets no
 # links block at all rather than an empty one.
 def _person_links_html(p):
+    # Order follows a direct user request: contact info (email) sits
+    # right under the photo/name, above any website links, which in turn
+    # come before LinkedIn. `websites` is a list of {label, url} so a
+    # person with more than one site (e.g. a personal site + an org
+    # site) can list both, each under its own label.
     links = []
-    if p.get("website"):
-        links.append(f'<a href="{p["website"]}" target="_blank" rel="noopener">Website</a>')
+    if p.get("email"):
+        links.append(f'<a href="mailto:{p["email"]}">Email</a>')
+    for w in p.get("websites") or []:
+        links.append(f'<a href="{w["url"]}" target="_blank" rel="noopener">{w["label"]}</a>')
     if p.get("linkedin"):
         links.append(f'<a href="{p["linkedin"]}" target="_blank" rel="noopener">LinkedIn</a>')
     if not links:
@@ -516,14 +523,18 @@ def _person_links_html(p):
 
 
 def _person_row_html(p):
+    # Follow-up (direct user request): the old full-width bordered
+    # "FOUNDER & DIRECTOR" / "AFFILIATE" header row per person read as
+    # one long underline repeated down the page. Role now sits inline
+    # next to the name instead (e.g. "Dr. X, Affiliate"), closer to the
+    # plain academic-lab-page style the user pointed to as a reference.
     areas = _person_areas.get(p["name"], [])
     return f"""
       <div class="person-row" data-areas="{' '.join(areas)}" data-roles="{' '.join(p['role_types'])}" data-search-row>
-        <div class="person-title">{p['role']}</div>
         <div class="person-body">
           <div class="person-media">
             <div class="person-avatar">{p['initials']}</div>
-            <h3>{p['name']}</h3>
+            <h3>{p['name']}<span class="person-role">, {p['role']}</span></h3>
             {_person_links_html(p)}
           </div>
           <div class="person-bio">
