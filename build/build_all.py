@@ -262,8 +262,20 @@ year_filter_pills = _year_filter_pills_html()
 research_body = f"""
 <section>
   <div class="container">
-    <div class="area-controls">
-      <div class="area-filter-bar" role="group" aria-label="Filter by research area">{area_filter_pills}</div>
+    <button type="button" class="subsection-toggle" aria-expanded="false" aria-controls="research-filters-panel">
+      <h2>Filters</h2>
+      <span class="subsection-caret" aria-hidden="true"></span>
+    </button>
+    <div class="area-controls" id="research-filters-panel" hidden>
+      <div class="filter-dropdowns-row">
+        <div class="filter-dropdown">
+          <button type="button" class="filter-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+            <span>Research Area</span><span class="filter-dropdown-count" hidden></span>
+            <span class="filter-dropdown-caret" aria-hidden="true"></span>
+          </button>
+          <div class="filter-dropdown-menu" hidden role="group" aria-label="Filter by research area">{area_filter_pills}</div>
+        </div>
+      </div>
       {g.search_box_html("Search people, projects, publications&hellip;", "Search research")}
     </div>
 
@@ -446,8 +458,22 @@ events_body = f"""
 <section>
   <div class="container with-sidebar events-layout">
     <div>
-      {g.filter_pills_html(list(g.EVENT_CATEGORIES.keys()), 'events')}
-      {g.search_box_html("Search events&hellip;", "Search events")}
+      <button type="button" class="subsection-toggle" aria-expanded="false" aria-controls="events-filters-panel">
+        <h2>Filters</h2>
+        <span class="subsection-caret" aria-hidden="true"></span>
+      </button>
+      <div class="area-controls" id="events-filters-panel" hidden>
+        <div class="filter-dropdowns-row">
+          <div class="filter-dropdown">
+            <button type="button" class="filter-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+              <span>Category</span><span class="filter-dropdown-count" hidden></span>
+              <span class="filter-dropdown-caret" aria-hidden="true"></span>
+            </button>
+            <div class="filter-dropdown-menu" hidden role="group" aria-label="Filter by category">{g.filter_pills_html(list(g.EVENT_CATEGORIES.keys()), 'events')}</div>
+          </div>
+        </div>
+        {g.search_box_html("Search events&hellip;", "Search events")}
+      </div>
       <div class="section-head" style="margin-top:28px;"><div><h2>Upcoming Events</h2></div></div>
       <div class="rail-scroll-wrap events-list-wrap">
         <div class="rail-scroll events-scroll" id="upcoming-events-list">
@@ -604,7 +630,7 @@ people_body = f"""
          each toggle button. Scales to a future third filter by adding
          one more .filter-dropdown, not another full-width pill row. -->
     <div class="area-controls" id="people-filters-panel" hidden>
-      <div class="people-filter-dropdowns">
+      <div class="filter-dropdowns-row">
         <div class="filter-dropdown">
           <button type="button" class="filter-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
             <span>Role</span><span class="filter-dropdown-count" hidden></span>

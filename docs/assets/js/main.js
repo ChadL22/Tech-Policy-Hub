@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var researchExplorer = (function () {
     var controls = document.querySelector('.area-controls');
     var pills = Array.prototype.slice.call(document.querySelectorAll('.area-filter-pill'));
-    if (!controls || !pills.length) return { selectArea: function () {} };
+    if (!controls || !pills.length) return { selectArea: function () {}, refresh: function () {} };
 
     var rows = Array.prototype.slice.call(document.querySelectorAll('[data-search-row]'));
     var emptyMsgs = Array.prototype.slice.call(document.querySelectorAll('[data-empty-for]'));
@@ -219,21 +219,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // Collapsible People/Projects sections on research.html (open by
     // default) and the Filters panel on people.html (collapsed by
     // default -- see people_body in build_all.py) -- same
-    // .subsection-toggle/.subsection-caret component either way, keyed
-    // off whatever aria-expanded/hidden state the page ships with.
+    // .subsection-toggle/.subsection-caret component itself is wired
+    // generically below (outside this closure) so it works on any page,
+    // not just ones with area-filter-pills -- see that block for why.
     // Publications has no toggle button, so it's always shown and never
     // touched here.
-    document.querySelectorAll('.subsection-toggle').forEach(function (btn) {
-      var panel = document.getElementById(btn.getAttribute('aria-controls'));
-      if (!panel) return;
-      btn.addEventListener('click', function () {
-        var open = btn.getAttribute('aria-expanded') !== 'true';
-        btn.setAttribute('aria-expanded', String(open));
-        panel.hidden = !open;
-        render();
-      });
-    });
-
     render();
 
     return {
@@ -241,9 +231,31 @@ document.addEventListener('DOMContentLoaded', function () {
         selected.clear();
         if (area) selected.add(area);
         render();
-      }
+      },
+      refresh: render
     };
   })();
+
+  // Generic collapsible-section toggle (.subsection-toggle/.subsection-
+  // caret, keyed off whatever aria-expanded/hidden state the page ships
+  // with) -- used for research.html's People/Projects sections and every
+  // page's collapsed-by-default "Filters" panel (people.html, research.html,
+  // events.html). Deliberately NOT nested inside researchExplorer above:
+  // that closure bails out early (a no-op stub) on any page without
+  // .area-filter-pill elements -- events.html filters by category pills
+  // instead, so its Filters toggle would otherwise never get wired up.
+  // researchExplorer.refresh() is a safe no-op via that same stub on
+  // pages where it doesn't apply.
+  document.querySelectorAll('.subsection-toggle').forEach(function (btn) {
+    var panel = document.getElementById(btn.getAttribute('aria-controls'));
+    if (!panel) return;
+    btn.addEventListener('click', function () {
+      var open = btn.getAttribute('aria-expanded') !== 'true';
+      btn.setAttribute('aria-expanded', String(open));
+      panel.hidden = !open;
+      researchExplorer.refresh();
+    });
+  });
 
   // Open + scroll to a category section or a specific area filter pill
   // from a URL hash, e.g. research.html#publications or
@@ -291,7 +303,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function updateCount() {
       if (!countEl) return;
-      var n = menu.querySelectorAll('.filter-pill.active').length;
+      // :not([data-filter="all"]) excludes single-select filter bars'
+      // default "All" pill (events.html's category filter) from the
+      // count -- it's always active by default, so counting it would
+      // show a permanent "1" badge even when no real filter is applied.
+      // Multi-select pills (role/area, no "all" pill at all) are
+      // unaffected by this exclusion.
+      var n = menu.querySelectorAll('.filter-pill.active:not([data-filter="all"])').length;
       countEl.textContent = String(n);
       countEl.hidden = !n;
     }

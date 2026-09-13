@@ -958,7 +958,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    researchExplorer's own filtering logic so that logic didn't need to
    change at all. Scales to a future third filter by adding one more
    .filter-dropdown rather than another full-width pill row. */
-.people-filter-dropdowns{ display:flex; flex-wrap:wrap; gap:12px; }
+.filter-dropdowns-row{ display:flex; flex-wrap:wrap; gap:12px; }
 .filter-dropdown{ position:relative; }
 .filter-dropdown-toggle{
   display:flex; align-items:center; gap:8px; padding:10px 16px;
