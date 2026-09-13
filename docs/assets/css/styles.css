@@ -710,14 +710,26 @@ li.has-dropdown.open .dropdown{ display:block; }
   background: var(--area-color, var(--umd-red)); border-color: var(--area-color, var(--umd-red)); color:#fff;
 }
 
-.research-subsection{ padding-top: 44px; }
+.research-subsection{ padding-top: 20px; }
 .research-subsection:first-of-type{ padding-top: 0; }
 .research-subsection > h2{
-  font-size:1.25rem; padding-bottom:12px; margin-bottom:26px; border-bottom: 1px solid var(--ink);
+  font-size:1.25rem; padding-bottom:12px; margin-bottom:20px; border-bottom: 1px solid var(--ink);
 }
+/* Publications' header row: the plain h2 above is now paired with a
+   year-filter pill row on the same line (data-year on each .pub-row,
+   matched in main.js alongside the existing area filter/search --
+   direct user request). .pub-section-head carries the border/spacing
+   instead of the h2 itself so the pills sit flush with the divider. */
+.pub-section-head{
+  display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  padding-bottom:12px; margin-bottom:20px; border-bottom: 1px solid var(--ink);
+}
+.pub-section-head h2{ font-size:1.25rem; margin:0; padding:0; border:0; }
+.year-filter-bar{ display:flex; flex-wrap:wrap; gap:8px; }
+.year-filter-pill{ padding: 6px 14px; font-size:.72rem; }
 .subsection-toggle{
   display:flex; align-items:center; justify-content:space-between; width:100%;
-  background:none; border:none; padding:0 0 12px; margin-bottom:26px; border-bottom: 1px solid var(--ink);
+  background:none; border:none; padding:0 0 12px; margin-bottom:20px; border-bottom: 1px solid var(--ink);
   cursor:pointer; text-align:left; font: inherit; color: inherit;
 }
 .subsection-toggle h2{ font-size:1.25rem; margin:0; }

@@ -87,7 +87,10 @@ document.addEventListener('DOMContentLoaded', function () {
   // spotlight) lets openResearchHashTarget() below select just that one
   // area and scroll here on load; a bare #people / #projects /
   // #publications hash just scrolls to that section without touching
-  // the filter.
+  // the filter. Follow-up (direct user request): a second multi-select
+  // pill row (.year-filter-pill) filters Publications by year the same
+  // way -- only .pub-row elements carry data-year, so a row without one
+  // (every People/Project tile) always passes the year check.
   var researchExplorer = (function () {
     var controls = document.querySelector('.area-controls');
     var pills = Array.prototype.slice.call(document.querySelectorAll('.area-filter-pill'));
@@ -96,12 +99,19 @@ document.addEventListener('DOMContentLoaded', function () {
     var rows = Array.prototype.slice.call(document.querySelectorAll('[data-search-row]'));
     var emptyMsgs = Array.prototype.slice.call(document.querySelectorAll('[data-empty-for]'));
     var searchInput = controls.querySelector('.filter-search-input');
+    var yearPills = Array.prototype.slice.call(document.querySelectorAll('.year-filter-pill'));
     var selected = new Set();
+    var selectedYears = new Set();
 
     function render() {
       var query = ((searchInput && searchInput.value) || '').trim().toLowerCase();
       pills.forEach(function (pill) {
         var on = selected.has(pill.getAttribute('data-area'));
+        pill.classList.toggle('active', on);
+        pill.setAttribute('aria-pressed', String(on));
+      });
+      yearPills.forEach(function (pill) {
+        var on = selectedYears.has(pill.getAttribute('data-year'));
         pill.classList.toggle('active', on);
         pill.setAttribute('aria-pressed', String(on));
       });
@@ -112,8 +122,13 @@ document.addEventListener('DOMContentLoaded', function () {
         // of them, and matches if ANY is in the active selection.
         var areas = (row.getAttribute('data-areas') || '').split(/\s+/).filter(Boolean);
         var matchesArea = selected.size === 0 || areas.some(function (a) { return selected.has(a); });
+        // Only .pub-row elements carry data-year -- a People/Project
+        // tile has none, so it always matches regardless of the year
+        // selection (the year filter only ever narrows Publications).
+        var year = row.getAttribute('data-year');
+        var matchesYear = !year || selectedYears.size === 0 || selectedYears.has(year);
         var matchesSearch = !query || row.textContent.toLowerCase().indexOf(query) !== -1;
-        row.hidden = !(matchesArea && matchesSearch);
+        row.hidden = !(matchesArea && matchesYear && matchesSearch);
       });
       // A publication year heading has no data-areas/data-search-row of
       // its own -- hide it only when every row under it (up to the next
@@ -142,6 +157,13 @@ document.addEventListener('DOMContentLoaded', function () {
       pill.addEventListener('click', function () {
         var area = pill.getAttribute('data-area');
         if (selected.has(area)) selected.delete(area); else selected.add(area);
+        render();
+      });
+    });
+    yearPills.forEach(function (pill) {
+      pill.addEventListener('click', function () {
+        var year = pill.getAttribute('data-year');
+        if (selectedYears.has(year)) selectedYears.delete(year); else selectedYears.add(year);
         render();
       });
     });

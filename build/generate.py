@@ -24,7 +24,7 @@ SITE_URL = "https://chadl22.github.io/Tech-Policy-Hub/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026091302"
+ASSET_VERSION = "2026091303"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -76,34 +76,19 @@ def clean_stale_pages():
 # NAV -- top-level tabs per follow-up 33: Home / Research / Events /
 # People (News and About dropped from the primary nav -- both are still
 # reachable via the footer's link list, see footer() below, so nothing
-# is orphaned). Publications and Teaching stay folded into Research as
-# dropdown children (unchanged from the original redesign brief). Each
-# entry is (label, href, children); children is None for a plain link,
-# or a list of (label, href) for a dropdown. The parent href is a real
-# page (not "#"), so clicking "Research" or "Events" itself navigates to
-# that section's index -- the dropdown is an additional hover/tap
-# affordance, not the only way in.
+# is orphaned). Follow-up (direct user request): Research and Events no
+# longer have dropdown submenus -- each is now a plain link straight to
+# its section page. The section pages themselves already offer the finer
+# navigation the dropdowns used to (research.html's filter pills reach the
+# individual focus areas and Publications; events.html links out to
+# Speaker Series / Annual Event), so nothing the dropdowns offered is
+# actually lost. Each entry is (label, href, children); children stays
+# None for every item now, but the tuple shape (and nav_html()'s dropdown
+# branch) is left in place in case a future item needs one again.
 NAV = [
     ("Home", "index.html", None),
-    ("Research", "research.html", [
-        # No "All Research" entry -- clicking the "Research" label itself
-        # (the <a href="research.html"> the dropdown is attached to) already
-        # goes there, so a duplicate first child was pure redundancy. That
-        # page is now filterable in-place (see filter_pills_html()) instead
-        # of needing a nav entry to reach the unfiltered view.
-        ("Cybersecurity", "research.html#area-panel-cybersecurity"),
-        ("Consumer Privacy", "research.html#area-panel-privacy"),
-        ("Information Integrity", "research.html#area-panel-integrity"),
-        ("Trustworthy ML", "research.html#area-panel-ml"),
-        ("Publications", "research.html#publications"),
-        ("Teaching", "courses.html"),
-    ]),
-    ("Events", "events.html", [
-        # Same reasoning as Research above -- "Events" itself already links
-        # to events.html; that page is now filterable in-place.
-        ("Speaker Series", "speaker-series.html"),
-        ("Annual Event", "annual-event.html"),
-    ]),
+    ("Research", "research.html", None),
+    ("Events", "events.html", None),
     ("People", "people.html", None),
 ]
 

@@ -238,8 +238,11 @@ def _format_authors(authors):
 
 
 def _pub_row_html(p):
+    # data-year (alongside the existing data-areas) lets researchExplorer's
+    # render() in main.js filter Publications by year the same way it
+    # already filters by area -- see the year-filter-pill row built below.
     return f"""
-      <div class="pub-row" data-areas="{p['area']}" data-search-row>
+      <div class="pub-row" data-areas="{p['area']}" data-year="{p['year']}" data-search-row>
         {_area_tags_html([p['area']])}
         <p class="pub-cite"><span class="pub-cite-authors">{_format_authors(p['authors'])}</span> ({p['year']}). {p['title']} <span class="pub-cite-venue">{p['venue']}.</span></p>
       </div>"""
@@ -259,6 +262,21 @@ def _pubs_list_html():
             out.append(f'<h3 class="pub-year">{current_year}</h3>')
         out.append(_pub_row_html(p))
     return "".join(out)
+
+
+def _pub_years():
+    """Distinct publication years, newest first -- drives the year-filter
+    pill row above the Publications list (multi-select, same pattern as
+    the area filter pills: none selected shows every year)."""
+    years = {p["year"] for t in g.TOPICS for p in TOPIC_DETAIL[t["key"]]["pubs"]}
+    return sorted(years, reverse=True)
+
+
+def _year_filter_pills_html():
+    return "".join(
+        f'<button type="button" class="filter-pill year-filter-pill" data-year="{y}" aria-pressed="false">{y}</button>'
+        for y in _pub_years()
+    )
 
 
 area_filter_pills = "".join(
@@ -283,6 +301,7 @@ for t in g.TOPICS:
 people_tiles = "".join(_person_tile_html(name, keys) for name, keys in _person_areas.items())
 project_tiles = "".join(_project_tile_html(n, d, t["key"]) for t in g.TOPICS for n, d in TOPIC_DETAIL[t["key"]]["projects"])
 pubs_list = _pubs_list_html()
+year_filter_pills = _year_filter_pills_html()
 
 research_body = f"""
 <section>
@@ -311,7 +330,10 @@ research_body = f"""
     </section>
 
     <section class="research-subsection" id="publications">
-      <h2>Publications</h2>
+      <div class="pub-section-head">
+        <h2>Publications</h2>
+        <div class="year-filter-bar" role="group" aria-label="Filter publications by year">{year_filter_pills}</div>
+      </div>
       <div class="pub-list" id="publications-panel">{pubs_list}</div>
       <p class="list-empty" data-empty-for="publications-panel" hidden>No publications match your filters.</p>
     </section>
