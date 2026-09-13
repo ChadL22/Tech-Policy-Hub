@@ -854,14 +854,23 @@ li.has-dropdown.open .dropdown{ display:block; }
 
 /* ---------- Events ---------- */
 /* Follow-up: scroll-capped Upcoming/Past lists, added at direct user
-   request modeled on SCOTUSblog's "Supreme Court Calendar" page -- see
-   events_body in build_all.py. .events-scroll shares .rail-scroll's
-   fade/scrollbar treatment (see .rail-scroll-wrap above) but caps
+   request modeled on SCOTUSblog's "Supreme Court Calendar" page (and,
+   per later direct feedback, the same fixed-height/fade-out cap as the
+   homepage's Hub News rail -- see events_body in build_all.py and
+   .rail-scroll below) so a long Past Events history never turns into
+   an endless scroll down the page. .events-scroll shares .rail-scroll's
+   fade/scrollbar treatment (see .rail-scroll-wrap below) but caps
    taller, since event rows (date + title + meta + button) run taller
    than the compact .rail-item headline rows that component was built
-   for -- same class pair either way (.rail-scroll-wrap wrapping
-   .rail-scroll), just this extra class to bump the max-height. */
-.events-scroll{ max-height: 480px; }
+   for. Written as `.rail-scroll.events-scroll` (not a bare
+   `.events-scroll`) so this max-height reliably wins over the plain
+   `.rail-scroll` rule below regardless of the two rules' order in this
+   file -- a bare single-class override here previously lost that tie
+   silently (equal specificity, and `.rail-scroll` happens to be
+   declared later), capping events at 420px instead of the intended
+   480px without anyone noticing, since neither list yet had enough
+   rows to actually overflow either height. */
+.rail-scroll.events-scroll{ max-height: 480px; }
 
 .event-row{
   display:grid; grid-template-columns: 90px 1fr auto; gap: 22px; align-items:center;

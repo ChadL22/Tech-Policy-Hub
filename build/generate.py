@@ -24,7 +24,7 @@ SITE_URL = "https://chadl22.github.io/Tech-Policy-Hub/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026091306"
+ASSET_VERSION = "2026091307"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -429,13 +429,21 @@ NEWS_ITEMS = [
 
 # Category -> color for the homepage calendar's legend/dots (see
 # calendar_widget_html() / calendar_legend_html()). Kept in Hub brand
-# colors (red/gold/ink) plus one added teal accent for a 4th category,
-# since the site otherwise only defines red/gold/ink.
+# colors (red/gold/ink/teal) plus --slate-gray for the 5th category,
+# since the site otherwise only defines those four.
+# Follow-up (direct user request): "Conference" is a category for
+# events the Hub did NOT organize -- field-wide technology policy
+# conferences it wants visitors to know about, in support of the field
+# more broadly rather than only its own programming (Speaker Series,
+# Workshop, Roundtable, Annual Event). See EVENTS_ITEMS below for how
+# that shows up in practice, and events_rows_html()'s docstring for why
+# those rows open in a new tab.
 EVENT_CATEGORIES = {
     "Speaker Series": "var(--umd-red)",
     "Workshop": "var(--umd-gold)",
     "Roundtable": "var(--accent-teal)",
     "Annual Event": "var(--ink)",
+    "Conference": "var(--slate-gray)",
 }
 
 EVENTS_ITEMS = [
@@ -445,6 +453,16 @@ EVENTS_ITEMS = [
          meta="1:00 PM · Iribe Center, Room 3137", link="events.html"),
     dict(y=2026, m="NOV", d="18", cat="Roundtable", title="Roundtable: AI Policy in the States",
          meta="10:00 AM · Virtual", link="events.html"),
+    # "Conference" entry, not a Hub-organized event -- the IAPP Global
+    # Summit is a real, independently-run conference (privacy, AI
+    # governance, and cybersecurity law -- squarely the Hub's four
+    # research areas) that happens to land in the Hub's own backyard;
+    # flagging it is exactly the "support the field, not just our own
+    # events" use case this category exists for. Verified dates/venue
+    # via iapp.org as of Sep 2026 -- reconfirm before relying on them,
+    # the way any 3rd-party listing should be.
+    dict(y=2027, m="MAR", d="23", cat="Conference", title="IAPP Global Summit 2027",
+         meta="Washington, DC · Hosted by the IAPP", link="https://iapp.org/conference/iapp-global-summit"),
     dict(y=2027, m="APR", d="09", cat="Annual Event", title="Tech Policy Hub Annual Event 2027",
          meta="All day · University of Maryland", link="annual-event.html"),
 ]
@@ -1042,14 +1060,25 @@ def events_rows_html(items, limit=None, with_btn=True):
     """Each row carries data-filter-target="{category}" so events.html's
     filter_pills_html() bar can show/hide rows by category client-side --
     harmless on the other call sites (speaker-series.html, annual-event.html)
-    that render a subset of events without a filter bar present."""
+    that render a subset of events without a filter bar present.
+
+    Follow-up (direct user request): events.html now also carries
+    "Conference" entries -- field conferences the Hub didn't organize but
+    wants visitors to know about, in support of the tech policy field
+    more broadly (not just the Hub's own Speaker Series/Workshop/
+    Roundtable/Annual Event programming). Those rows point at a real
+    external site (e.g. the conference's own registration page), so
+    link_attrs() -- the same helper reading_cards_html() uses for its
+    off-site links -- opens them in a new tab instead of navigating the
+    visitor away from the Hub."""
     out = []
     for e in (items[:limit] if limit else items):
-        btn = f'<a class="btn btn-ghost" href="{e["link"]}" style="padding:8px 16px; font-size:.82rem;">Details</a>' if with_btn else ""
+        attrs = link_attrs(e["link"])
+        btn = f'<a class="btn btn-ghost" href="{e["link"]}"{attrs} style="padding:8px 16px; font-size:.82rem;">Details</a>' if with_btn else ""
         out.append(f"""
         <div class="event-row" data-filter-target="{e['cat']}">
           <div class="event-date"><div class="d">{e['d']}</div><div class="m">{e['m']}</div></div>
-          <div><h3><a href="{e['link']}">{e['title']}</a></h3><div class="meta">{e['meta']}</div></div>
+          <div><h3><a href="{e['link']}"{attrs}>{e['title']}</a></h3><div class="meta">{e['meta']}</div></div>
           {btn}
         </div>""")
     return "".join(out)
