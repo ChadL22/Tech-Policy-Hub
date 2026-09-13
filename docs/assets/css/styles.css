@@ -736,9 +736,15 @@ li.has-dropdown.open .dropdown{ display:block; }
 .subsection-caret{
   width:9px; height:9px; flex:0 0 auto; margin-left:12px;
   border-right:2px solid var(--ink); border-bottom:2px solid var(--ink);
-  transform: rotate(45deg); transition: transform .15s ease;
+  /* Follow-up (direct user request): expanded points UP, collapsed
+     points DOWN -- i.e. the caret shows the direction the section will
+     move/reveal from, not (as it did before) the direction clicking it
+     will point next. rotate(-135deg) on this border-right+border-bottom
+     corner is the up-pointing chevron; rotate(45deg) is the down-
+     pointing one -- swapped from their original assignment below. */
+  transform: rotate(-135deg); transition: transform .15s ease;
 }
-.subsection-toggle[aria-expanded="false"] .subsection-caret{ transform: rotate(-135deg); }
+.subsection-toggle[aria-expanded="false"] .subsection-caret{ transform: rotate(45deg); }
 
 .area-tag{
   display:inline-block; font-family: var(--font-nav); font-size:.66rem; font-weight:700; letter-spacing:.03em;
