@@ -453,16 +453,6 @@ research_body = f"""
     </section>
   </div>
 </section>
-<section class="soft-bg">
-  <div class="container grid grid-2" style="align-items:center;">
-    <div>
-      <span class="eyebrow">Teaching</span>
-      <h2>Bring tech policy into the classroom</h2>
-      <p>Cross-listed courses pair computer science and public policy students to study technology governance.</p>
-    </div>
-    <div class="teaching-cta"><a href="courses.html" class="btn btn-primary btn-arrow">Explore Courses</a></div>
-  </div>
-</section>
 {g.newsletter_band_html()}
 """
 g.write("research.html", g.page("research.html", "Research", "Cybersecurity, consumer privacy, information integrity, and trustworthy ML research from the Tech Policy Hub.", research_body))

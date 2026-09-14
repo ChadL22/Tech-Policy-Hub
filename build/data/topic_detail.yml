@@ -145,12 +145,7 @@ ml:
     - Developing standards for evaluating machine learning systems used in public decision-making.
   - - AI Governance Roundtables
     - Convening researchers and policymakers on the governance of emerging AI systems.
-  pubs:
-  - venue: arXiv
-    year: 2026
-    title: Applying Contextual Integrity to measure algorithmic decision-making.
-    authors:
-    - Dr. Katie Shilton
+  pubs: []
   people:
   - Dr. Ido Sivan-Sevilla
   - Dr. Katie Shilton

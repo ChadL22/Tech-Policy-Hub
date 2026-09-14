@@ -44,7 +44,7 @@ SITE_URL = "https://chadl22.github.io/Tech-Policy-Hub/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026091460"
+ASSET_VERSION = "2026091461"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -145,6 +145,18 @@ def head(title, description):
 """
 
 
+# Pages that render their own newsletter_band_html() (see build_all.py) --
+# i.e. have a real #subscribe section to scroll to on that same page.
+# header()'s persistent Subscribe button used to always point at
+# "index.html#subscribe", so clicking it from e.g. research.html or
+# people.html navigated you away to the homepage instead of just
+# scrolling down to the section already sitting right there on the page
+# you were on (direct user request to fix this). courses.html,
+# speaker-series.html, and annual-event.html have no newsletter band of
+# their own, so those still fall back to index.html#subscribe.
+PAGES_WITH_SUBSCRIBE_SECTION = {"index.html", "research.html", "events.html", "people.html"}
+
+
 def header(active):
     # Follow-up (direct user request, after seeing the mobile/narrow-
     # screen nav take over the entire viewport with no visible way out):
@@ -157,6 +169,16 @@ def header(active):
     # closing it (see main.js). `.nav-backdrop` sits here, a sibling of
     # `.primary-nav`/`.header-actions`, purely because position:fixed
     # makes its DOM position irrelevant to where it renders.
+    # subscribe_href: a bare "#subscribe" fragment is left completely
+    # alone by _rewrite_links (it only rewrites values starting with
+    # "index.html", never a plain "#..." anchor), so it always resolves
+    # to the CURRENT page's own #subscribe section regardless of how
+    # deep that page's own URL is -- exactly what we want when this page
+    # has one. Only the pages without their own section still go through
+    # _rewrite_links' "index.html#subscribe" handling, which correctly
+    # prefixes it back up to the real homepage from wherever this page
+    # lives.
+    subscribe_href = "#subscribe" if active in PAGES_WITH_SUBSCRIBE_SECTION else "index.html#subscribe"
     return f"""
 <header class="site-header">
   <div class="container header-inner">
@@ -175,7 +197,7 @@ def header(active):
     </nav>
     <div class="nav-backdrop"></div>
     <div class="header-actions">
-      <a href="index.html#subscribe" class="btn btn-primary">Subscribe</a>
+      <a href="{subscribe_href}" class="btn btn-primary">Subscribe</a>
       <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
