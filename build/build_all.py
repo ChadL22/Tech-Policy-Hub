@@ -672,16 +672,19 @@ def _person_websites_html(p):
 
 
 def _person_row_html(p):
-    # Follow-up (direct user request, referencing Princeton CoCoSci's and
-    # the Brady Lab's people pages as density models): name/position/
-    # contact links used to sit stranded in their own narrow column under
-    # the photo, disconnected from the bio -- for anyone with a short bio
-    # that left a lot of dead white space in the row, since the two
-    # columns had no reason to end at the same height. Everything but the
-    # photo itself now flows in one column beside it (name, position,
-    # area tags, bio, then links last) the way both reference sites lay
-    # a person out, which is also what let .person-row's own padding and
-    # .person-avatar's size come down without anything feeling cramped.
+    # Follow-up (direct user request, modeled on research.html's own
+    # People-tile cards -- see _person_tile_html/.rp-tile-photo--person):
+    # the photo is no longer a small initials square floating over a
+    # thin links column. It's now a full card -- photo on top (same
+    # silhouette placeholder/markup as the research.html tile, reused
+    # verbatim so both pages render the identical component), a divider,
+    # then Email/Website/research-area badges stacked below -- sized to
+    # match the height of the name/role/bio column beside it (.person-
+    # body below goes align-items:stretch specifically so this card's
+    # height always equals its row's tallest content, per "the card
+    # should be as tall as the information... next to it"). The content
+    # column itself now carries ONLY name/role/bio, per the same request
+    # -- badges and links moved into the card.
     areas = _person_areas.get(p["name"], [])
     # id="person-<slug>" is a direct-linkable anchor -- research.html's
     # People tiles (see _person_tile_html) link straight here instead of
@@ -690,15 +693,22 @@ def _person_row_html(p):
       <div class="person-row" id="person-{_slugify(p['name'])}" data-areas="{' '.join(areas)}" data-roles="{' '.join(p['role_types'])}" data-search-row>
         <div class="person-body">
           <div class="person-media">
-            <div class="person-avatar">{p['initials']}</div>
-            {_person_contact_html(p)}
+            <div class="rp-tile-photo rp-tile-photo--person">
+              <svg class="rp-tile-photo-silhouette" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+                <circle cx="50" cy="36" r="18"/>
+                <path d="M50 60c-23 0-39 15-39 38h78c0-23-16-38-39-38z"/>
+              </svg>
+            </div>
+            <div class="person-media-caption">
+              {_person_contact_html(p)}
+              {_person_websites_html(p)}
+              {_area_tags_html(areas) if areas else ""}
+            </div>
           </div>
           <div class="person-content">
             <h3>{p['name']}</h3>
             <div class="person-role">{p['role']}</div>
-            {_area_tags_html(areas) if areas else ""}
             <div class="person-bio"><p>{p['bio']}</p></div>
-            {_person_websites_html(p)}
           </div>
         </div>
       </div>"""
@@ -766,8 +776,23 @@ people_body = f"""
         {core_people_rows}
       </div>
       <div class="section-head" style="margin-top:48px;"><div><h2>Affiliates</h2></div></div>
-      <div class="people-list" data-people-group-panel>
-        {affiliate_people_rows}
+      <!-- Follow-up (direct user request): "The list of them should be
+           scrollable like the Hub News section on the homepage" -- reusing
+           the same .rail-scroll-wrap/.rail-scroll fade-bottom component as
+           the homepage rail and events.html's Upcoming/Past lists (see
+           HUB_NEWS_RAIL above and events_body). data-people-group-panel
+           moves to the OUTER .rail-scroll-wrap (not the inner scrolling
+           .rail-scroll div) so it stays the .section-head's immediate
+           next sibling -- main.js's group-visibility toggle
+           (panel.previousElementSibling) depends on that adjacency; the
+           panel's querySelectorAll('[data-search-row]') still finds every
+           row regardless of the extra nesting. Core Members is
+           deliberately left as a plain flat list -- only Affiliates was
+           asked for here, and it's short enough not to need capping. -->
+      <div class="people-list rail-scroll-wrap" data-people-group-panel>
+        <div class="rail-scroll affiliates-scroll">
+          {affiliate_people_rows}
+        </div>
       </div>
     </div>
     <p class="list-empty" data-empty-for="people-list" hidden>No people match your filters.</p>

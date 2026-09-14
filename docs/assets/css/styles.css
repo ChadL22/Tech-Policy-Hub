@@ -1328,47 +1328,99 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 .person-row{ padding: 16px 0; border-top: 1px solid var(--line); }
 .person-row:first-child{ border-top:none; padding-top:0; }
 .person-row[hidden]{ display:none; }
-.person-body{ display:grid; grid-template-columns: 96px 1fr; gap: 20px; align-items:start; }
-.person-media{ display:flex; flex-direction:column; align-items:flex-start; gap:10px; }
-.person-avatar{
-  width:96px; height:96px; background: var(--umd-red);
-  display:flex; align-items:center; justify-content:center;
-  color: #fff; font-family: var(--font-nav); font-size: 1.6rem; font-weight:700;
-  flex: none;
+/* Follow-up (direct user request, modeled on research.html's own
+   People-tile cards -- "we should look like the tiles/cards we have in
+   the people section of the research page. The card should be as tall
+   as the information... next to it"): .person-media is now a proper
+   photo card (border/radius/overflow-hidden, same visual language as
+   .rp-tile) instead of a bare 96px avatar square -- see .person-media
+   below. align-items:stretch (was start) is what makes the card match
+   the text column's height: with the row now a 2-col grid, each row's
+   height is set by its tallest cell (the bio column), and stretch
+   makes the shorter card cell grow to fill that same height instead of
+   sizing to its own (shorter) content. The first column widens from
+   96px to 240px to hold a real photo + a caption stack (email/website/
+   area badges), matching the width research.html's own People tiles
+   use (.rp-carousel--people .rp-grid > .rp-tile's flex-basis: 220px). */
+.person-body{ display:grid; grid-template-columns: 240px 1fr; gap: 24px; align-items:stretch; }
+/* The photo itself reuses research.html's People-tile photo/silhouette
+   markup and classes verbatim (.rp-tile-photo.rp-tile-photo--person +
+   .rp-tile-photo-silhouette, defined earlier alongside research.html's
+   carousels) -- same placeholder, same "locked character" look, on
+   both pages. .person-media is the bordered/rounded card wrapping it;
+   flex-direction:column + the photo's own fixed aspect-ratio (16/10,
+   from .rp-tile-photo) is what lets .person-media-caption below grow
+   with flex:1 to fill however tall align-items:stretch has made the
+   card, per "card should be as tall as the information... next to
+   it". */
+.person-media{
+  display:flex; flex-direction:column;
+  background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg);
+  overflow:hidden;
 }
-/* Direct user request: email and social-media links (LinkedIn, etc.)
-   sit under the photo, stacked, rather than mixed into the bio column's
-   link row -- personal/lab websites stay in .person-links below. */
+/* "___________ / Email / Website / [badges]" (direct user request,
+   matching the user's own mockup order) -- the border-top is the
+   mockup's divider between photo and caption, same idea as research.
+   html's .rp-tile--person .rp-tile-caption. flex:1 is what lets this
+   caption stretch to fill any extra height align-items:stretch adds to
+   the card, so short caption content (e.g. no email, no websites) just
+   leaves breathing room at the bottom of the card rather than the card
+   itself refusing to grow. */
+.person-media-caption{
+  flex: 1 1 auto; display:flex; flex-direction:column; gap:8px;
+  padding: 12px 14px; border-top: 1px solid var(--line);
+}
 .person-contact{ display:flex; flex-direction:column; gap:4px; }
 .person-contact a{ font-size:.78rem; font-weight:700; color: var(--umd-red); }
 .person-contact a:hover{ text-decoration:underline; }
-.person-content h3{ font-size:1.05rem; margin-bottom:2px; font-weight:700; }
-/* Follow-up (direct user request): role/position sits right under the
-   name with just enough margin to separate it from the area tags/bio
-   that now follow immediately after, in the same column -- was margin-
-   bottom:10px when it had to also clear the .person-links block
-   directly below it; that block moved to the end of this column (after
-   the bio) so this can be tighter. */
-.person-role{ font-style:italic; font-weight:400; color: var(--ink-soft); margin-bottom:6px; }
-/* Direct user request: personal/lab websites stay at the end of the bio
-   column (as an inline-wrapped row), while email and social accounts
-   moved to .person-contact under the photo instead -- see above. */
-.person-links{ display:flex; flex-wrap:wrap; gap:4px 16px; margin-top:6px; }
-.person-links a{ font-size:.82rem; font-weight:700; color: var(--umd-red); }
+/* Follow-up (direct user request): personal/lab website links moved
+   into the photo card's caption (stacked, matching Email above them)
+   instead of sitting inline in the bio column -- see .person-contact
+   above, which they're now styled to match. */
+.person-links{ display:flex; flex-direction:column; gap:4px; }
+.person-links a{ font-size:.78rem; font-weight:700; color: var(--umd-red); }
 .person-links a:hover{ text-decoration:underline; }
-.person-content .rp-tags{ margin-bottom:8px; }
+.person-media-caption .rp-tags{ margin-top:2px; margin-bottom:0; }
+.person-content h3{ font-size:1.05rem; margin-bottom:2px; font-weight:700; }
+/* Follow-up (direct user request): the content column is now just
+   Name/Role/Bio -- area badges and website/contact links both moved
+   into the photo card's caption (see .person-media-caption above), so
+   .person-role only needs to clear the bio directly below it. */
+.person-role{ font-style:italic; font-weight:400; color: var(--ink-soft); margin-bottom:8px; }
 /* Follow-up (direct user request, referencing Princeton CoCoSci's people
    page): the bio column used to stretch to fill the full 1fr grid track,
    which at our container's max-width made lines of bio text quite long
    and hard to read. Capping it keeps line length reasonable while the
-   avatar column stays fixed-width beside it. */
+   photo-card column stays fixed-width beside it. */
 .person-bio{ max-width: 640px; }
 .person-bio p{ font-size:.95rem; line-height:1.5; color: var(--ink-soft); margin:0; }
 
 @media (max-width: 700px){
-  .person-body{ grid-template-columns: 72px 1fr; gap: 14px; }
-  .person-avatar{ width:72px; height:72px; font-size:1.2rem; }
+  /* Follow-up (direct user request): the photo card grew considerably
+     (96px -> 240px, a bare avatar -> photo+caption card) to match
+     research.html's tiles, which no longer suits sitting narrowed
+     beside the text at phone widths the way the old small square avatar
+     did -- stack the card above the name/role/bio instead, capped to a
+     comfortable width rather than stretching edge-to-edge. */
+  .person-body{ grid-template-columns: 1fr; gap: 16px; }
+  .person-media{ max-width: 280px; }
 }
+
+/* Follow-up (direct user request, modeled on the homepage's Hub News
+   rail): "The list of them [Affiliates] should be scrollable like the
+   Hub News section on the homepage" -- reusing .rail-scroll/.rail-
+   scroll-wrap's fade-bottom + capped-height + thin-scrollbar component
+   (see people_body in build/build_all.py for the markup, and the fuller
+   explanation of .rail-scroll-wrap/.rail-scroll further down this
+   file). Written as `.rail-scroll.affiliates-scroll` (not a bare
+   `.affiliates-scroll`) for the same cascade-order reason as events.
+   html's `.rail-scroll.events-scroll` above -- a bare single-class
+   override here would lose the specificity tie against the plain
+   `.rail-scroll` rule silently, depending on file order. Deliberately
+   taller than Events' 480px: each Affiliate row is now a much taller
+   photo-card row than a one-line event, so a shorter cap would leave
+   almost nothing showing before the fade/scroll kicks in. */
+.rail-scroll.affiliates-scroll{ max-height: 900px; }
 
 /* ---------- Page hero (interior pages) ---------- */
 .page-hero{ background: var(--paper); border-bottom:1px solid var(--line); padding: 40px 0 36px; }

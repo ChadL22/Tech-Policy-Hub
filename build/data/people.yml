@@ -32,7 +32,7 @@
   linkedin: null
 - initials: CH
   name: Dr. Charles Harry
-  role: Affiliate
+  role: Faculty
   focus: Cyber risk measurement, critical infrastructure, strategic cyber policy
   role_types:
   - affiliate
@@ -45,7 +45,7 @@
   linkedin: null
 - initials: MM
   name: Mark McDermott
-  role: Affiliate
+  role: Practitioner
   focus: Cybersecurity, disinformation, machine learning, data science
   role_types:
   - affiliate
@@ -57,7 +57,7 @@
   linkedin: null
 - initials: MZ
   name: Dr. Michelle Mazurek
-  role: Affiliate
+  role: Faculty
   focus: Human-centered computer security, usable privacy
   role_types:
   - affiliate
@@ -69,7 +69,7 @@
   linkedin: null
 - initials: GK
   name: Dr. Gabriel Kaptchuk
-  role: Affiliate
+  role: Faculty
   focus: Human-centered cryptography, privacy-preserving systems
   role_types:
   - affiliate
@@ -81,7 +81,7 @@
   linkedin: null
 - initials: PP
   name: Parthav Poudel
-  role: Affiliate
+  role: Fellow
   focus: Web privacy, data infrastructure, misinformation policy
   role_types:
   - affiliate
@@ -94,7 +94,7 @@
   linkedin: null
 - initials: JV
   name: Dr. Jessica Vitak
-  role: Affiliate
+  role: Faculty
   focus: Consumer privacy, technology adoption, privacy education
   role_types:
   - affiliate
@@ -106,7 +106,7 @@
   linkedin: null
 - initials: PA
   name: Patrick Parham
-  role: Affiliate
+  role: Fellow
   focus: Ad tech, cookie deprecation, consumer privacy
   role_types:
   - affiliate
@@ -118,7 +118,7 @@
   linkedin: null
 - initials: GC
   name: Giovanni Luca Ciampaglia
-  role: Affiliate
+  role: Faculty
   focus: Information quality, social network dynamics
   role_types:
   - affiliate
@@ -130,7 +130,7 @@
   linkedin: null
 - initials: IP
   name: Dr. Irene Pasquetto
-  role: Affiliate
+  role: Faculty
   focus: Data governance, misinformation, open science
   role_types:
   - affiliate
@@ -142,7 +142,7 @@
   linkedin: null
 - initials: CB
   name: Dr. Cody Buntain
-  role: Affiliate
+  role: Faculty
   focus: Information quality, crisis informatics, social media
   role_types:
   - affiliate
@@ -154,7 +154,7 @@
   linkedin: null
 - initials: KS
   name: Dr. Katie Shilton
-  role: Affiliate
+  role: Faculty
   focus: Data ethics, trustworthy AI, responsible research practice
   role_types:
   - affiliate
@@ -166,7 +166,7 @@
   linkedin: null
 - initials: LF
   name: Dr. Laura Fichtner
-  role: Affiliate
+  role: Fellow
   focus: AI governance, platform governance, participatory design
   role_types:
   - affiliate
@@ -179,7 +179,7 @@
   linkedin: null
 - initials: AW
   name: Dr. Amy Winecoff
-  role: Affiliate
+  role: Practitioner
   focus: AI governance, algorithmic measurement, responsible AI
   role_types:
   - affiliate
