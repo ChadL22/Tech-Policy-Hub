@@ -1352,8 +1352,19 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    bio/links all now flow in one column beside the photo, instead of
    name/role/links being stranded in their own column under it) that's
    most of why the old rows read as having "too much white space". */
-.person-row{ padding: 16px 0; border-top: 1px solid var(--line); }
-.person-row:first-child{ border-top:none; padding-top:0; }
+/* Follow-up (direct user request): "we need greater distinction and
+   contour between entries" -- a thin 1px top border read as too subtle
+   once each row grew into a full photo-card layout on the .people-group
+   grey background (see below). Each row is now its own white/paper
+   card (same border/radius as the group panel and the photo card
+   inside it), with a gap between rows standing in for the old divider
+   line, so entries read as clearly separate cards sitting on the grey
+   background rather than one continuous list. */
+.person-row{
+  background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg);
+  padding: 20px 24px;
+}
+.person-row + .person-row{ margin-top: 16px; }
 .person-row[hidden]{ display:none; }
 /* Follow-up (direct user request, modeled on research.html's own
    People-tile cards -- "we should look like the tiles/cards we have in
