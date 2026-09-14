@@ -851,7 +851,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   position: relative;
   margin-bottom: 40px;
   background: var(--paper-soft); border: 1.5px solid var(--ink-soft); border-radius: var(--radius-lg);
-  padding: 33px 24px 12px;
+  padding: 20px 24px 12px;
 }
 /* Follow-up (direct user request): "the filter by text should be
    aligned with the text in the filter button" -- left:29px was a manual
@@ -894,7 +894,21 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    normal laptop viewport on load. Font sizes themselves (set two rounds
    above, per direct request) are left alone -- only the space around and
    between lines is trimmed. */
-#people-main .area-controls{ margin-bottom: 8px; padding: 33px 24px 10px; }
+#people-main .area-controls{ margin-bottom: 8px; padding: 20px 24px 10px; }
+/* Below ~505px the filter-dropdowns-row and search-box wrap onto separate
+   lines (.area-controls-row's flex-wrap kicks in once they no longer fit
+   side by side). Once wrapped, the dropdown button sits directly at the
+   row's own top edge instead of being pushed down by align-items:flex-end
+   (that offset only exists when it shares a flex line with the taller
+   search box) -- so the reduced 20px padding-top above, which relies on
+   that offset for clearance under the absolutely-positioned "FILTER BY"
+   label, is no longer enough and the button overlaps the label. Restoring
+   the original 33px padding-top just for this range keeps the tightened
+   spacing everywhere the row stays unwrapped. */
+@media (max-width: 520px){
+  .area-controls{ padding-top: 33px; }
+  #people-main .area-controls{ padding-top: 33px; }
+}
 #people-list .subsection-toggle{ margin-bottom: 4px; }
 
 .area-filter-bar{ display:flex; flex-wrap:wrap; gap:10px; }
