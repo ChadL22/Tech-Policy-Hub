@@ -968,9 +968,16 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 }
 .rp-carousel-viewport{ overflow: hidden; }
 .rp-grid{ display:flex; flex-wrap:nowrap; align-items:stretch; gap: 20px; }
+/* Follow-up (direct user request): "the cards/tiles on the research
+   page should have rounded corners like the container they sit in" --
+   var(--radius) (2px, near-square) swapped for var(--radius-lg), the
+   same corner radius .rp-carousel-panel (the grey container) uses.
+   People/Project tiles' own overflow:hidden (see .rp-carousel--people/
+   --projects below) already clips their photo's square corners to
+   whatever radius is set here, so this "just works" for those too. */
 .rp-grid > .rp-tile{
   flex: 0 0 250px;
-  background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px;
+  background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 16px;
 }
 .rp-tile[hidden]{ display:none; }
 /* People tiles are links (straight to people.html#person-<slug>) --
