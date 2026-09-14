@@ -6,15 +6,38 @@ cybersecurity:
     - Working with practitioners to translate attack-surface research into actionable defense priorities.
   pubs:
   - venue: Journal of Cybersecurity
-    year: 2026
-    title: Size, diversity, and severity of exposed attack surface across U.S. county governments.
+    year: 2025
+    title: Measuring the size and severity of the integrated cyber attack surface across US county governments.
+    link: https://academic.oup.com/cybersecurity/article/11/1/tyae032/7959399
     authors:
     - Dr. Charles Harry
-  - venue: Maryland Today
-    year: 2026
-    title: UMD researchers calculate cyberattack risk for all 50 states.
+    - Dr. Ido Sivan-Sevilla
+    - Mark McDermott
+  - venue: Journal of European Public Policy
+    year: 2023
+    title: "Supranational Security States for National Security Problems: Governing by Rules and Capacities in Tech-Driven Security Spaces."
+    link: https://www.tandfonline.com/doi/abs/10.1080/13501763.2023.2172063
     authors:
-    - Dr. Charles Harry
+    - Dr. Ido Sivan-Sevilla
+  - venue: 'Regulation in Israel: Values, Effectiveness, Methods (Springer)'
+    year: 2021
+    title: "When Cybersecurity Meets the Regulatory State: Case-Study Analysis of the Israeli Cybersecurity Regulatory Regime."
+    link: https://link.springer.com/chapter/10.1007/978-3-030-56247-2_8
+    authors:
+    - Dr. Ido Sivan-Sevilla
+    - Shani Sharvit
+  - venue: Journal of Public Policy
+    year: 2021
+    title: "Europeanisation on demand: the EU cybersecurity certification regime between market integration and core state powers (1997–2019)."
+    link: https://www.cambridge.org/core/journals/journal-of-public-policy/article/abs/europeanisation-on-demand-the-eu-cybersecurity-certification-regime-between-market-integration-and-core-state-powers-19972019/D285DB69CA3F282F0C2F63CF2D79E37B
+    authors:
+    - Dr. Ido Sivan-Sevilla
+  - venue: Journal of Risk Research
+    year: 2021
+    title: "Framing and governing cyber risks: comparative analysis of U.S. Federal policies [1996–2018]."
+    link: https://www.tandfonline.com/doi/abs/10.1080/13669877.2019.1673797
+    authors:
+    - Dr. Ido Sivan-Sevilla
   people:
   - Dr. Ido Sivan-Sevilla
   - Dr. Charles Harry
@@ -30,14 +53,65 @@ privacy:
   - - Watchdog Accountability
     - Assessing the powers of formal and informal U.S. privacy regulators.
   pubs:
-  - venue: Internet Policy Review
+  - venue: IEEE Security & Privacy
     year: 2026
-    title: 'Cookie-less identification: for and against privacy.'
+    title: "Regulatory Contextual Integrity: Adaptively Regulating Privacy as Contextual Integrity."
+    link: https://ieeexplore.ieee.org/document/11475055/
     authors:
     - Dr. Ido Sivan-Sevilla
-  - venue: Privacy Law Scholars Conference
-    year: 2026
-    title: Accountability powers of formal and informal U.S. privacy watchdogs.
+  - venue: Internet Policy Review
+    year: 2025
+    title: "'Cookie-less' identification for/against privacy?"
+    link: https://policyreview.info/articles/analysis/cookie-less-identification-foragainst-privacy
+    authors:
+    - Dr. Ido Sivan-Sevilla
+    - Patrick Parham
+    - Lee McGuigan
+  - venue: New Media & Society
+    year: 2023
+    title: "Private attributes: The meanings and mechanisms of \"privacy-preserving\" adtech."
+    link: https://journals.sagepub.com/doi/10.1177/14614448231213267
+    authors:
+    - Lee McGuigan
+    - Dr. Ido Sivan-Sevilla
+    - Patrick Parham
+    - Yan Shvartzshnaider
+  - venue: Big Data & Society
+    year: 2023
+    title: "The after party: Cynical resignation in Adtech's pivot to privacy."
+    link: https://journals.sagepub.com/doi/10.1177/20539517231203665
+    authors:
+    - Lee McGuigan
+    - Sarah Myers West
+    - Dr. Ido Sivan-Sevilla
+    - Patrick Parham
+  - venue: West European Politics
+    year: 2023
+    title: The civic transformation of data privacy implementation in Europe.
+    link: https://www.tandfonline.com/doi/full/10.1080/01402382.2023.2184108
+    authors:
+    - Itamar Mizrahi-Borohovitch
+    - Abraham Newman
+    - Dr. Ido Sivan-Sevilla
+  - venue: Journal of European Public Policy
+    year: 2022
+    title: "Varieties of Enforcement Strategies post-GDPR: A fuzzy-set qualitative comparative analysis (fsQCA) across data protection authorities."
+    link: https://www.tandfonline.com/doi/abs/10.1080/13501763.2022.2147578
+    authors:
+    - Dr. Ido Sivan-Sevilla
+  - venue: FTC PrivacyCon
+    year: 2020
+    title: "Unaccounted Privacy Violation: A Comparative Analysis of Persistent Identification of Users Across Social Contexts."
+    link: https://www.ftc.gov/system/files/documents/public_events/1548288/privacycon-2020-ido_sivan-sevilla.pdf
+    authors:
+    - Dr. Ido Sivan-Sevilla
+    - Wenyi Chu
+    - Xiaoyu Liang
+    - Helen Nissenbaum
+  - venue: Policy & Internet
+    year: 2019
+    title: "Complementaries and Contradictions: National Security and Privacy Risks in U.S. Federal Policy, 1968–2018."
+    link: https://onlinelibrary.wiley.com/doi/abs/10.1002/poi3.189
     authors:
     - Dr. Ido Sivan-Sevilla
   people:
@@ -52,11 +126,13 @@ integrity:
   - - Platform Transparency Tracker
     - Monitoring platform disclosures and their real-world enforcement.
   pubs:
-  - venue: Policy Brief
-    year: 2026
-    title: What platform transparency reports do and don't tell us.
+  - venue: Free and Open Communications on the Internet (FOCI)
+    year: 2025
+    title: Probing the third-party infrastructure of digital news on the Web.
+    link: https://petsymposium.org/foci/2025/foci-2025-0017.pdf
     authors:
     - Dr. Ido Sivan-Sevilla
+    - Parthav Poudel
   people:
   - Dr. Ido Sivan-Sevilla
   - Giovanni Luca Ciampaglia

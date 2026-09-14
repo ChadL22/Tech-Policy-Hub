@@ -251,10 +251,22 @@ def _pub_row_html(p):
     # data-year (alongside the existing data-areas) lets researchExplorer's
     # render() in main.js filter Publications by year the same way it
     # already filters by area -- see the year-filter-pill row built below.
+    # Follow-up (direct user request): populated the list with Ido's real
+    # published papers (pulled from idonibrasco.github.io's own "Published
+    # Research Papers" list + his CV for exact author order/venue/year),
+    # replacing the earlier placeholder citations. Real papers have a real
+    # DOI/landing-page URL, so the title now links out to it -- same
+    # link_attrs() new-tab treatment reading_card_html already uses for
+    # off-site links -- while an entry with no `link` (still possible for
+    # future hand-entered pubs) falls back to the old plain-text title.
+    title_html = (
+        f'<a href="{p["link"]}"{g.link_attrs(p["link"])}>{p["title"]}</a>'
+        if p.get("link") else p["title"]
+    )
     return f"""
       <div class="pub-row" data-areas="{p['area']}" data-year="{p['year']}" data-search-row>
         {_area_tags_html([p['area']])}
-        <p class="pub-cite"><span class="pub-cite-authors">{_format_authors(p['authors'])}</span> ({p['year']}). {p['title']} <span class="pub-cite-venue">{p['venue']}.</span></p>
+        <p class="pub-cite"><span class="pub-cite-authors">{_format_authors(p['authors'])}</span> ({p['year']}). {title_html} <span class="pub-cite-venue">{p['venue']}.</span></p>
       </div>"""
 
 
