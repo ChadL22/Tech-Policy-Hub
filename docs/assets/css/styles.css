@@ -1522,37 +1522,65 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    .rp-tile-photo-silhouette, defined earlier alongside research.html's
    carousels) -- same placeholder, same "locked character" look, on
    both pages. .person-media is the bordered/rounded card wrapping it;
-   flex-direction:column + the photo's own fixed aspect-ratio (16/10,
-   from .rp-tile-photo) is what lets .person-media-caption below grow
-   with flex:1 to fill however tall align-items:stretch has made the
-   card, per "card should be as tall as the information... next to
-   it". */
+   flex-direction:column lets .person-media-caption below grow to fill
+   however tall align-items:stretch has made the card, per "card should
+   be as tall as the information... next to it".
+   Follow-up (direct user request): a fixed-height photo (aspect-ratio
+   16/10) + a flex:1 caption meant the photo:caption SPLIT wasn't
+   constant -- a longer bio stretched the row taller, which the photo
+   (fixed height) couldn't absorb, so the extra height all went into
+   the caption and the ratio drifted from card to card (e.g. Ido's
+   longer bio vs. Sipho's shorter one). Direct request: "we want the
+   ratio to be the same across all people's cards." Fixed by giving the
+   photo and caption proportional flex-grow shares (64:36, both
+   flex-basis 0) of .person-media's stretched height instead of a fixed
+   photo height + a caption that absorbs the remainder -- now both
+   scale together, so the split is the same 64%/36% on every row
+   regardless of bio length. See the scoped override on
+   .rp-tile-photo--person below (aspect-ratio doesn't apply once the
+   photo's main-axis size comes from flex-grow instead). */
 .person-media{
   display:flex; flex-direction:column;
   background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg);
   overflow:hidden;
 }
+/* Scoped override (see the .person-media comment above): people.html's
+   photo card gives up the base rule's fixed 16/10 aspect-ratio in favor
+   of a flex-grow share of the card's stretched height, so photo:caption
+   stays a constant 64:36 split on every row regardless of bio length. */
+/* min-height:0 overrides the flex default (min-height:auto), which
+   otherwise refuses to shrink a flex item below its own content's
+   min-content size -- without it, the caption's own Email/Website/tag
+   content was taller than its "fair" 36% share on shorter rows, so it
+   grew past that share and threw off the ratio the flex-grow split was
+   supposed to guarantee. */
+.person-media .rp-tile-photo--person{ aspect-ratio: auto; flex: 64 1 0; min-height: 0; }
 /* "___________ / Email / Website / [badges]" (direct user request,
-   matching the user's own mockup order) -- the border-top is the
-   mockup's divider between photo and caption, same idea as research.
-   html's .rp-tile--person .rp-tile-caption. flex:1 is what lets this
-   caption stretch to fill any extra height align-items:stretch adds to
-   the card, so short caption content (e.g. no email, no websites) just
-   leaves breathing room at the bottom of the card rather than the card
-   itself refusing to grow.
+   matching the user's own mockup order) -- same idea as research.
+   html's .rp-tile--person .rp-tile-caption. flex:64 1 0 on the photo
+   above + flex:36 1 0 here (both flex-basis 0) is what keeps the
+   photo:caption split at a constant 64%/36% of .person-media's
+   stretched height on every row, regardless of bio length (see the
+   .person-media comment above) -- replacing the earlier flex:1 "fill
+   whatever's left over" rule, which let a longer bio's extra height
+   all land in the caption instead of being shared proportionally.
    Follow-up (direct user request): caption background switched from
    white/paper to black (var(--ink), matching the photo placeholder's
    own background so the two halves of the card read as one dark unit)
    -- text/link colors below were already legible-on-dark (white
    links... actually red links, see .person-contact/.person-links) so
-   only the background and the now-redundant paper/line divider needed
-   to change; border-top dropped since there's no longer a color jump
-   between photo and caption to divide. Gap between the stacked Email/
+   only the background needed to change. Gap between the stacked Email/
    Website lines tightened 5px -> 3px per direct request to reduce the
-   white space between them. */
+   white space between them.
+   Follow-up (direct user request): "add a red bar to the bottom of the
+   photos... at the top of the black bottom section" -- a 4px red
+   border-top, same accent-bar thickness used elsewhere on the site
+   (.reading-panel, .events-list-wrap), just in the brand red instead
+   of gold since this divides a photo from a name-card-style caption
+   rather than framing a whole panel. */
 .person-media-caption{
-  flex: 1 1 auto; display:flex; flex-direction:column; gap:3px;
-  padding: 8px 10px; background: var(--ink);
+  flex: 36 1 0; min-height: 0; display:flex; flex-direction:column; gap:3px;
+  padding: 8px 10px; background: var(--ink); border-top: 4px solid var(--umd-red);
 }
 /* Follow-up (direct user request, black caption background): the
    red link color read too dark against var(--ink) to stay comfortably
@@ -1575,7 +1603,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    link's white so it visibly reads as "not yet available" rather than
    a broken link. Reuses the search placeholder's existing muted grey. */
 .person-link-static{ font-size:.78rem; font-weight:700; color:#9a9d9f; cursor:default; }
-.person-media-caption .rp-tags{ margin-top:2px; margin-bottom:0; }
+.person-media-caption .rp-tags{ margin-top:0; margin-bottom:0; } /* the flex `gap` on .person-media-caption already spaces this from the line above it -- an extra margin-top here just stacked on top of that gap and ate into the caption's tight flex-grow budget, occasionally overflowing by a few px on shorter rows. */
 /* Follow-up (direct user request): "increase the font size that we
    don't have this much white space... for the entries." Name/role/bio
    all sized up (h3 1.05rem->1.3rem, role gets an explicit size instead
@@ -1617,6 +1645,21 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
      comfortable width rather than stretching edge-to-edge. */
   .person-body{ grid-template-columns: 1fr; gap: 16px; }
   .person-media{ max-width: 280px; }
+  /* Follow-up (direct user request, "same ratio on every card"): the
+     64:36 flex-grow split above only produces a consistent ratio when
+     .person-media has a definite height to divide up, which it gets on
+     desktop from align-items:stretch matching it to the bio column's
+     height (both in the same grid row). At this width .person-body
+     stacks into separate rows, so .person-media is no longer stretched
+     to anything and has no definite height to split -- flex-grow alone
+     would collapse the photo to ~0. Falls back to a fixed 16/10
+     aspect-ratio (giving the photo a definite height again) with the
+     caption filling whatever's left, same as before the ratio fix;
+     each stacked card is judged on its own at this width, not lined up
+     against its neighbor, so a fixed ratio here doesn't reopen the
+     card-to-card inconsistency the desktop fix addresses. */
+  .person-media .rp-tile-photo--person{ aspect-ratio: 16/10; flex: 0 0 auto; }
+  .person-media-caption{ flex: 1 1 auto; }
 }
 
 /* Follow-up (direct user request, modeled on the homepage's Hub News
