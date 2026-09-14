@@ -808,11 +808,18 @@ people_body = f"""
            deliberately left as a plain flat list -- only Affiliates was
            asked for here, and it's short enough not to need capping. -->
       <section class="research-subsection" id="affiliates">
-        <button type="button" class="subsection-toggle" aria-expanded="true" aria-controls="affiliates-panel">
+        <!-- Follow-up (direct user request): Affiliates now starts
+             collapsed -- Core Members above stays expanded by default,
+             only this one starts closed. main.js's subsection-toggle
+             wiring (see near the top of this file) is keyed off
+             whatever aria-expanded/hidden state ships in the markup, so
+             aria-expanded="false" + the panel's own `hidden` attribute
+             here is the entire change; no JS edits needed. -->
+        <button type="button" class="subsection-toggle" aria-expanded="false" aria-controls="affiliates-panel">
           <h2>Affiliates</h2>
           <span class="subsection-caret" aria-hidden="true"></span>
         </button>
-        <div class="people-group" id="affiliates-panel">
+        <div class="people-group" id="affiliates-panel" hidden>
           <div class="people-list rail-scroll-wrap" data-people-group-panel>
             <div class="rail-scroll affiliates-scroll">
               {affiliate_people_rows}

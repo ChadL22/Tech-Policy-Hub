@@ -818,10 +818,22 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 .area-controls{
   display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;
   margin-bottom: 40px;
-  background: var(--paper-soft); border: 1px solid var(--line); border-radius: var(--radius-lg);
+  background: var(--paper-soft); border: 1.5px solid var(--ink-soft); border-radius: var(--radius-lg);
   padding: 20px 24px;
 }
 .area-controls .search-box{ margin:0; max-width:320px; flex:1 1 260px; }
+/* Follow-up (direct user request): "when the people page loads we want to
+   see the full entry for the first 2 people in the core members list" --
+   a chain of small, people.html-scoped reductions (filter-bar spacing,
+   subsection-heading margin, panel padding, row padding/gap, and the
+   text block's own margins/line-height) that together claw back enough
+   vertical space for both of Core Members' first two rows to clear a
+   normal laptop viewport on load. Font sizes themselves (set two rounds
+   above, per direct request) are left alone -- only the space around and
+   between lines is trimmed. */
+#people-main .area-controls{ margin-bottom: 16px; padding: 12px 24px; }
+#people-list .subsection-toggle{ margin-bottom: 6px; }
+
 .area-filter-bar{ display:flex; flex-wrap:wrap; gap:10px; }
 .area-filter-pill.active{
   background: var(--area-color, var(--umd-red)); border-color: var(--area-color, var(--umd-red)); color:#fff;
@@ -1014,6 +1026,11 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    the way a game's locked slots all render identically until a real
    photo/headshot replaces it. */
 .rp-tile-photo.rp-tile-photo--person{ background: var(--ink); aspect-ratio: 16/10; }
+/* Scoped override (direct user request, see #people-main tightening note
+   above): people.html's photo card can run shorter than research.html's
+   People tiles without hurting the silhouette placeholder -- only this
+   page's usage (.person-media ancestor) is affected. */
+.person-media .rp-tile-photo--person{ aspect-ratio: 16/6; }
 .rp-tile-photo-silhouette{
   position:absolute; left:50%; top:50%; transform: translate(-50%, -50%);
   width:auto; height:58%; fill: rgba(255,255,255,.3);
@@ -1358,7 +1375,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    Projects pairing, not two full bordered boxes like these). */
 .people-group{
   background: var(--paper-soft); border: 1.5px solid var(--ink-soft); border-radius: var(--radius-lg);
-  padding: 28px;
+  padding: 16px;
 }
 #people-list .research-subsection + .research-subsection{ padding-top: 32px; }
 .people-list{ margin-top: 8px; }
@@ -1388,9 +1405,9 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    background rather than one continuous list. */
 .person-row{
   background: var(--paper); border: 1.5px solid var(--ink-soft); border-radius: var(--radius-lg);
-  padding: 20px 24px;
+  padding: 14px 18px;
 }
-.person-row + .person-row{ margin-top: 16px; }
+.person-row + .person-row{ margin-top: 10px; }
 .person-row[hidden]{ display:none; }
 /* Follow-up (direct user request, modeled on research.html's own
    People-tile cards -- "we should look like the tiles/cards we have in
@@ -1447,8 +1464,8 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    leaves breathing room at the bottom of the card rather than the card
    itself refusing to grow. */
 .person-media-caption{
-  flex: 1 1 auto; display:flex; flex-direction:column; gap:8px;
-  padding: 12px 14px; border-top: 1px solid var(--line);
+  flex: 1 1 auto; display:flex; flex-direction:column; gap:5px;
+  padding: 8px 10px; border-top: 1px solid var(--line);
 }
 .person-contact{ display:flex; flex-direction:column; gap:4px; }
 .person-contact a{ font-size:.78rem; font-weight:700; color: var(--umd-red); }
@@ -1477,8 +1494,8 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    generously-set block rather than a tight cluster up top with a stark
    gap before the (still bottom-aligned, per the gold-line request)
    bio. */
-.person-content h3{ font-size:1.4rem; margin-bottom:6px; font-weight:700; }
-.person-role{ font-style:italic; font-weight:400; font-size:1.2rem; color: var(--ink-soft); margin-bottom:18px; }
+.person-content h3{ font-size:1.4rem; margin-bottom:3px; font-weight:700; }
+.person-role{ font-style:italic; font-weight:400; font-size:1.2rem; color: var(--ink-soft); margin-bottom:8px; }
 /* Follow-up (direct user request, referencing Princeton CoCoSci's people
    page): the bio column used to stretch to fill the full 1fr grid track,
    which at our container's max-width made lines of bio text quite long
@@ -1491,7 +1508,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    border-left that spans it), for any row height, instead of centering
    with unequal gaps above/below. */
 .person-bio{ max-width: 640px; flex: 1 1 auto; display:flex; align-items:flex-end; }
-.person-bio p{ font-size:1.25rem; line-height:1.8; color: var(--ink-soft); margin:0; }
+.person-bio p{ font-size:1.25rem; line-height:1.5; color: var(--ink-soft); margin:0; }
 
 @media (max-width: 700px){
   /* Follow-up (direct user request): the photo card grew considerably
@@ -1536,7 +1553,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    research.html/events.html's own top spacing is untouched. Only the
    top half is shrunk -- bottom stays 56px for the usual gap before the
    footer. */
-#people-main{ padding-top: 20px; padding-bottom: 56px; }
+#people-main{ padding-top: 12px; padding-bottom: 56px; }
 .breadcrumb{ font-size:.82rem; color: var(--ink-soft); margin-bottom: 16px; }
 .breadcrumb a{ color: var(--ink-soft); }
 .page-hero p.lede{ max-width: 68ch; font-size: 1.05rem; }
