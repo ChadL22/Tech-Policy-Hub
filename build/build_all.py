@@ -553,19 +553,29 @@ g.write_raw("events.ics", g.events_ics(g.EVENTS_ITEMS))
 # blank pending real copy and links from each person -- see README
 # "Known placeholders". A person with no website/linkedin set gets no
 # links block at all rather than an empty one.
-def _person_links_html(p):
-    # Order follows a direct user request: contact info (email) sits
-    # right under the photo/name, above any website links, which in turn
-    # come before LinkedIn. `websites` is a list of {label, url} so a
-    # person with more than one site (e.g. a personal site + an org
-    # site) can list both, each under its own label.
+def _person_contact_html(p):
+    # Direct user request: email and social-media accounts (LinkedIn,
+    # etc.) sit under the photo itself, while personal/lab websites stay
+    # with the bio in the content column (see _person_websites_html).
     links = []
     if p.get("email"):
         links.append(f'<a href="mailto:{p["email"]}">Email</a>')
-    for w in p.get("websites") or []:
-        links.append(f'<a href="{w["url"]}" target="_blank" rel="noopener">{w["label"]}</a>')
     if p.get("linkedin"):
         links.append(f'<a href="{p["linkedin"]}" target="_blank" rel="noopener">LinkedIn</a>')
+    if not links:
+        return ""
+    return f'<div class="person-contact">{"".join(links)}</div>'
+
+
+def _person_websites_html(p):
+    # `websites` is a list of {label, url} so a person with more than one
+    # site (e.g. a personal site + a research/org site) can list both,
+    # each under its own label. These stay below the bio, where the
+    # combined links block used to live.
+    links = [
+        f'<a href="{w["url"]}" target="_blank" rel="noopener">{w["label"]}</a>'
+        for w in (p.get("websites") or [])
+    ]
     if not links:
         return ""
     return f'<div class="person-links">{"".join(links)}</div>'
@@ -588,13 +598,14 @@ def _person_row_html(p):
         <div class="person-body">
           <div class="person-media">
             <div class="person-avatar">{p['initials']}</div>
+            {_person_contact_html(p)}
           </div>
           <div class="person-content">
             <h3>{p['name']}</h3>
             <div class="person-role">{p['role']}</div>
             {_area_tags_html(areas) if areas else ""}
             <div class="person-bio"><p>{p['bio']}</p></div>
-            {_person_links_html(p)}
+            {_person_websites_html(p)}
           </div>
         </div>
       </div>"""

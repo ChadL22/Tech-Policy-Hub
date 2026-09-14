@@ -296,8 +296,27 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    below (.rail-head, .spotlight-slide, .spotlight-footer,
    .rail-head--stacked, .research-matrix--rail .matrix-cell,
    .lead-secondary p) to reclaim that height. */
-.lead-section{ padding: 12px 0 14px; border-bottom: 1px solid var(--line); }
-.lead-grid{ display:grid; grid-template-columns: 280px 1fr 280px; gap: 40px; align-items: start; }
+/* Follow-up (direct user request): the 12px top padding above was too
+   tight against the signal ticker right above this section -- restored
+   some breathing room here (28px->12px->24px) even though it eats back
+   into the above-the-fold slack the tighter value bought; the user
+   flagged the crowding as the more pressing problem on the live site. */
+.lead-section{ padding: 24px 0 14px; border-bottom: 1px solid var(--line); }
+/* Follow-up (direct user request): dropped the explicit align-items:
+   start so the three columns stretch to match the tallest one (the
+   Research Spotlight, .lead-story) again -- with `start`, the two side
+   columns' own boxes (and their border-right/border-left divider lines)
+   only ran as tall as their OWN content, stopping well short of the
+   spotlight's bottom instead of reaching it, which read as the vertical
+   dividers and the Hub News rail's bottom line not lining up with the
+   rest of the row. Reverting to the grid default (stretch) makes both
+   side columns' boxes -- and their divider borders -- extend the full
+   row height. The Hub News scroll box's own capped height (set by the
+   IIFE in main.js, just below) is unaffected: that JS now measures
+   .research-matrix--rail's own content bottom directly rather than
+   .lead-secondary's box, so it isn't thrown off by .lead-secondary's
+   box now being taller than its content. */
+.lead-grid{ display:grid; grid-template-columns: 280px 1fr 280px; gap: 40px; }
 .lead-secondary{ grid-column: 1; border-right: 1px solid var(--line); padding-right: 28px; }
 /* Follow-up: briefly matched to .rail-item h4's darkness/weight (Hub
    News headlines), then walked back per direct user request -- back to
@@ -1162,13 +1181,19 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 .person-row:first-child{ border-top:none; padding-top:0; }
 .person-row[hidden]{ display:none; }
 .person-body{ display:grid; grid-template-columns: 96px 1fr; gap: 20px; align-items:start; }
-.person-media{ display:flex; }
+.person-media{ display:flex; flex-direction:column; align-items:flex-start; gap:10px; }
 .person-avatar{
   width:96px; height:96px; background: var(--umd-red);
   display:flex; align-items:center; justify-content:center;
   color: #fff; font-family: var(--font-nav); font-size: 1.6rem; font-weight:700;
   flex: none;
 }
+/* Direct user request: email and social-media links (LinkedIn, etc.)
+   sit under the photo, stacked, rather than mixed into the bio column's
+   link row -- personal/lab websites stay in .person-links below. */
+.person-contact{ display:flex; flex-direction:column; gap:4px; }
+.person-contact a{ font-size:.78rem; font-weight:700; color: var(--umd-red); }
+.person-contact a:hover{ text-decoration:underline; }
 .person-content h3{ font-size:1.05rem; margin-bottom:2px; font-weight:700; }
 /* Follow-up (direct user request): role/position sits right under the
    name with just enough margin to separate it from the area tags/bio
@@ -1177,12 +1202,9 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    directly below it; that block moved to the end of this column (after
    the bio) so this can be tighter. */
 .person-role{ font-style:italic; font-weight:400; color: var(--ink-soft); margin-bottom:6px; }
-/* Follow-up (direct user request): contact links used to be their own
-   stacked column under the photo; now a small inline-wrapped row at the
-   end of the bio column instead -- matches how both reference sites
-   (CoCoSci, Brady Lab) fold a "(webpage)" link into the flow of text
-   near a person's bio rather than setting contact info off in its own
-   block. */
+/* Direct user request: personal/lab websites stay at the end of the bio
+   column (as an inline-wrapped row), while email and social accounts
+   moved to .person-contact under the photo instead -- see above. */
 .person-links{ display:flex; flex-wrap:wrap; gap:4px 16px; margin-top:6px; }
 .person-links a{ font-size:.82rem; font-weight:700; color: var(--umd-red); }
 .person-links a:hover{ text-decoration:underline; }

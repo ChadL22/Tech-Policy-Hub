@@ -703,7 +703,14 @@ document.addEventListener('DOMContentLoaded', function () {
   // an explicit max-height in px is the only way to actually cap one to
   // the other.
   (function () {
-    var left = document.querySelector('.lead-secondary');
+    // Measure the actual content bottom (the Research Areas matrix),
+    // not .lead-secondary's own box -- .lead-grid now stretches all
+    // three columns to the tallest one (see styles.css), so
+    // .lead-secondary's rendered box can be taller than its content;
+    // using that box's bottom as the target would size the news list
+    // to match the *stretched* column instead of where its content
+    // actually ends.
+    var left = document.querySelector('.research-matrix--rail');
     var wrap = document.querySelector('.lead-rail .rail-scroll-wrap');
     var scroll = document.querySelector('.lead-rail .rail-scroll');
     // Closing divider below the scroll box (mirrors the one above
