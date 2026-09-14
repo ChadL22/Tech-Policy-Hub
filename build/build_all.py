@@ -58,7 +58,6 @@ home_body = f"""
         <div class="rail-scroll-wrap">
           <div class="rail-scroll">{g.rail_html(HUB_NEWS_RAIL)}</div>
         </div>
-        <div class="rail-head--stacked"></div>
       </div>
     </div>
   </div>

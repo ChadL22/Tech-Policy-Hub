@@ -839,12 +839,6 @@ document.addEventListener('DOMContentLoaded', function () {
     var left = document.querySelector('.research-matrix--rail');
     var wrap = document.querySelector('.lead-rail .rail-scroll-wrap');
     var scroll = document.querySelector('.lead-rail .rail-scroll');
-    // Closing divider below the scroll box (mirrors the one above
-    // Research Areas in .lead-secondary) -- empty, exists purely for
-    // its border-top/margin-top/padding-top, so its own rendered space
-    // has to come out of the scroll box's budget or .lead-rail would
-    // run past .lead-secondary's bottom by that amount.
-    var foot = document.querySelector('.lead-rail .rail-head--stacked');
     if (!left || !wrap || !scroll) return;
 
     function sync() {
@@ -856,14 +850,16 @@ document.addEventListener('DOMContentLoaded', function () {
         scroll.style.maxHeight = '';
         return;
       }
+      // Follow-up (direct user request): the news list used to stop
+      // ~25px short of the target, reserved for a closing divider
+      // below the scroll box that's since been removed (it just added
+      // dead space between where the list visibly faded out and where
+      // the vertical dividers/Spotlight actually end) -- the list now
+      // gets the full available space, so its fade-out lands flush
+      // with the vertical partition's bottom.
       var target = left.getBoundingClientRect().bottom;
       var top = wrap.getBoundingClientRect().top;
-      var footSpace = 0;
-      if (foot) {
-        var footMarginTop = parseFloat(window.getComputedStyle(foot).marginTop) || 0;
-        footSpace = foot.getBoundingClientRect().height + footMarginTop;
-      }
-      var available = target - top - footSpace;
+      var available = target - top;
       if (available > 40) scroll.style.maxHeight = available + 'px';
     }
 
