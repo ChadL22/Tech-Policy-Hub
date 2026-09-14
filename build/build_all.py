@@ -166,29 +166,51 @@ def _area_tags_html(keys):
     return f'<div class="rp-tags">{"".join(_area_tag_html(k) for k in keys)}</div>'
 
 
+# name -> full people.yml record, so tile-building code that only
+# passes a name/key pair around (see _person_areas below) can still look
+# up that person's photo without threading it through every call site.
+_people_by_name = {p["name"]: p for p in g.PEOPLE_ITEMS}
+
+
+def _person_photo_html(name):
+    # Shared by both photo-card contexts (research.html's People tiles
+    # and people.html's full rows, see _person_tile_html/_person_row_html)
+    # so a real headshot (people.yml's optional `photo` field) and the
+    # silhouette placeholder are always kept in sync between the two
+    # pages. Most people don't have a real headshot yet, so this falls
+    # back to the same generic person-silhouette icon as before --
+    # "like a locked character in a video game" -- until people.yml
+    # gives them a `photo` path.
+    photo = (_people_by_name.get(name) or {}).get("photo")
+    if photo:
+        return f'<img class="rp-tile-photo-img" src="{photo}" alt="{name}" loading="lazy">'
+    return """<svg class="rp-tile-photo-silhouette" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+            <circle cx="50" cy="36" r="18"/>
+            <path d="M50 60c-23 0-39 15-39 38h78c0-23-16-38-39-38z"/>
+          </svg>"""
+
+
 def _person_tile_html(name, keys):
     # Direct user request, modeled on Bloomberg.com's "Bloomberg
     # Originals" card: a photo on top, then name + research-area badges
     # in a plain white section below -- no bio, no role text, per the
-    # user's own mockup ("[Picture] _________ Name [badges]"). No real
-    # headshots yet, so the "photo" is a solid --ink placeholder --
-    # previously the person's initials centered, now (direct user
-    # request) a generic person silhouette instead, "like you might see
-    # in a video game for locked characters" -- every placeholder tile
-    # deliberately looks identical, the same way a game's locked-
-    # character slots all show the same silhouette until unlocked. The
-    # tile is itself a link to their full listing on people.html
-    # (id="person-<slug>" on that page's .person-row, see
-    # _person_row_html), rather than repeating their bio a second time
-    # in a smaller space.
+    # user's own mockup ("[Picture] _________ Name [badges]"). Most
+    # people don't have a real headshot yet, so the "photo" falls back
+    # to a solid --ink placeholder -- previously the person's initials
+    # centered, now (direct user request) a generic person silhouette
+    # instead, "like you might see in a video game for locked
+    # characters" -- every placeholder tile deliberately looks
+    # identical, the same way a game's locked-character slots all show
+    # the same silhouette until unlocked. See _person_photo_html for the
+    # real-headshot/silhouette switch itself. The tile is itself a link
+    # to their full listing on people.html (id="person-<slug>" on that
+    # page's .person-row, see _person_row_html), rather than repeating
+    # their bio a second time in a smaller space.
     slug = _slugify(name)
     return f"""
       <a class="rp-tile rp-tile--link rp-tile--person" href="people.html#person-{slug}" data-areas="{' '.join(keys)}" data-search-row>
         <div class="rp-tile-photo rp-tile-photo--person">
-          <svg class="rp-tile-photo-silhouette" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
-            <circle cx="50" cy="36" r="18"/>
-            <path d="M50 60c-23 0-39 15-39 38h78c0-23-16-38-39-38z"/>
-          </svg>
+          {_person_photo_html(name)}
         </div>
         <div class="rp-tile-caption">
           <h3>{name}</h3>
@@ -709,10 +731,7 @@ def _person_row_html(p):
         <div class="person-body">
           <div class="person-media">
             <div class="rp-tile-photo rp-tile-photo--person">
-              <svg class="rp-tile-photo-silhouette" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
-                <circle cx="50" cy="36" r="18"/>
-                <path d="M50 60c-23 0-39 15-39 38h78c0-23-16-38-39-38z"/>
-              </svg>
+              {_person_photo_html(p['name'])}
             </div>
             <div class="person-media-caption">
               {_person_contact_html(p)}
