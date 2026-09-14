@@ -869,16 +869,20 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 }
 /* Follow-up (direct user request): "the search bar is too low -- just
    match up the center line of the filter button and the center line of
-   the search bar." Reverts the previous round's decoupled/absolute
-   positioning (which pushed the search box down toward the box's
-   bottom edge, independent of the dropdown) back to simple shared
-   center alignment -- the search box and the Role dropdown are plain
-   flex siblings again, centered together on the same line, same as
-   before that round. .area-controls' padding-bottom also reverts
-   (31px -> 12px) now that there's no independently-positioned search
-   box needing extra room below it. */
+   the search bar." Reverted the previous round's decoupled/absolute
+   positioning back to plain flex siblings, centered together -- the
+   search box and the Role dropdown are plain flex siblings again.
+   .area-controls' padding-bottom also reverts (31px -> 12px) now that
+   there's no independently-positioned search box needing extra room
+   below it.
+   Follow-up (direct user request): "align the bottom of the search bar
+   with the bottom of the filter button." align-items:center -> flex-end
+   -- the search box (taller, ~52px) already fills the row's full
+   cross-axis height either way, so this only moves the (shorter, ~37px)
+   dropdown: from centered within that space down to flush with the
+   search box's own bottom edge. */
 .area-controls-row{
-  display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;
+  display:flex; align-items:flex-end; justify-content:space-between; gap:20px; flex-wrap:wrap;
 }
 .area-controls-row .search-box{ margin:0; max-width:380px; flex:1 1 300px; }
 /* Follow-up (direct user request): "when the people page loads we want to
