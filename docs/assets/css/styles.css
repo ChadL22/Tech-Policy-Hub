@@ -851,7 +851,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   position: relative;
   margin-bottom: 40px;
   background: var(--paper-soft); border: 1.5px solid var(--ink-soft); border-radius: var(--radius-lg);
-  padding: 33px 24px 31px;
+  padding: 33px 24px 12px;
 }
 /* Follow-up (direct user request): "the filter by text should be
    aligned with the text in the filter button" -- left:29px was a manual
@@ -867,41 +867,20 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   font-family: var(--font-nav); font-size:.64rem; font-weight:700;
   letter-spacing:.05em; text-transform: uppercase; color: var(--ink-soft);
 }
-/* Follow-up (direct user request): "decouple [the search box and the
-   Role dropdown], then move the search bar down, while keeping the
-   filter button and 'filter by' text" where they are. The search box
-   used to share this row's own centered alignment with the dropdown,
-   so the two could only ever move together -- pulling the search box
-   out of flow (see .search-box below) is what actually decouples them,
-   but that would also shrink this row down to just the dropdown's own
-   height, which would in turn shift the (still center-aligned) dropdown
-   -- min-height:52px keeps the row exactly the size it was rendering at
-   before (when the now-taller search box was still what set that size),
-   so the dropdown's own centered position doesn't move by a pixel. */
+/* Follow-up (direct user request): "the search bar is too low -- just
+   match up the center line of the filter button and the center line of
+   the search bar." Reverts the previous round's decoupled/absolute
+   positioning (which pushed the search box down toward the box's
+   bottom edge, independent of the dropdown) back to simple shared
+   center alignment -- the search box and the Role dropdown are plain
+   flex siblings again, centered together on the same line, same as
+   before that round. .area-controls' padding-bottom also reverts
+   (31px -> 12px) now that there's no independently-positioned search
+   box needing extra room below it. */
 .area-controls-row{
-  display:flex; align-items:center; justify-content:flex-start; gap:20px; flex-wrap:wrap;
-  min-height: 52px;
+  display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;
 }
-/* Taken out of the row's flow entirely (position:absolute, against
-   .area-controls' own position:relative) so it can sit at its own,
-   independent vertical position lower in the box -- closer to the
-   bottom edge -- without dragging the Role dropdown down with it via
-   shared row alignment (see the .area-controls-row comment above).
-   .area-controls' own padding-bottom was grown (12px -> 31px) to give
-   it the room to actually land there rather than overflowing past the
-   box's bottom edge. right:24px matches the box's own padding-right,
-   keeping its right edge flush where it always was. Falls back to
-   normal in-flow stacking at the 700px breakpoint below, where there
-   isn't room for an independently-floated search box beside/under a
-   possibly-wrapped dropdown row. */
-.area-controls-row .search-box{
-  margin:0; width:380px; max-width: calc(100% - 24px);
-  position: absolute; top: 50px; right: 24px;
-}
-@media (max-width: 700px){
-  .area-controls-row{ min-height: 0; }
-  .area-controls-row .search-box{ position: static; width:auto; max-width:none; margin-top:16px; }
-}
+.area-controls-row .search-box{ margin:0; max-width:380px; flex:1 1 300px; }
 /* Follow-up (direct user request): "when the people page loads we want to
    see the full entry for the first 2 people in the core members list" --
    a chain of small, people.html-scoped reductions (filter-bar spacing,
@@ -911,7 +890,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    normal laptop viewport on load. Font sizes themselves (set two rounds
    above, per direct request) are left alone -- only the space around and
    between lines is trimmed. */
-#people-main .area-controls{ margin-bottom: 8px; padding: 33px 24px 29px; }
+#people-main .area-controls{ margin-bottom: 8px; padding: 33px 24px 10px; }
 #people-list .subsection-toggle{ margin-bottom: 4px; }
 
 .area-filter-bar{ display:flex; flex-wrap:wrap; gap:10px; }
@@ -1139,11 +1118,14 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    badges black... like we see on the people page tiles/cards" -- swaps
    this from the original white "bottom section" to var(--ink), matching
    people.html's own person-card caption (.person-media-caption); the
-   now-redundant light border-top divider (a light-on-light separator
-   that doesn't read against a dark background) is dropped, and the
    name needs an explicit white color since h3's global default
-   (var(--ink)) is illegible on black. */
-.rp-tile--person .rp-tile-caption{ background: var(--ink); padding: 12px 14px; }
+   (var(--ink)) is illegible on black.
+   Follow-up (direct user request): "the tile/cards for people should
+   have a red border that mirrors what we see on the tiles/cards of the
+   people page" -- the same 4px red border-top people.html's own card
+   caption uses at the photo/caption boundary (.person-media-caption),
+   now added here too so both pages' person cards match. */
+.rp-tile--person .rp-tile-caption{ background: var(--ink); padding: 12px 14px; border-top: 4px solid var(--umd-red); }
 .rp-tile--person .rp-tile-caption h3{ color:#fff; }
 .rp-tile--person .rp-tags{ margin-bottom: 0; }
 
