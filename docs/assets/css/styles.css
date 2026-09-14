@@ -799,9 +799,21 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    main.js's researchExplorer closure shows/hides every [data-search-row]
    (tiles AND publication rows alike) against the active area-pill
    selection and the search text. */
+/* Direct user request: the Role/Category/Research Area dropdown +
+   search-box row (shared across People, Events, and Research via this
+   one .area-controls class) reads as loose, unbounded controls
+   floating in open space -- wrapped it in its own rounded box.
+   var(--paper-soft) (a warm light grey already used for the Research
+   carousels' panel background) was picked over black (reads too close
+   to the policy-updates ticker and forces white text), red (jarring
+   for a plain utility bar, also needs white text), or gold (odd fit)
+   -- grey needs no text-color changes at all, and the dropdown/search
+   controls keep their own white pill backgrounds nested inside it. */
 .area-controls{
   display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;
   margin-bottom: 40px;
+  background: var(--paper-soft); border: 1px solid var(--line); border-radius: var(--radius-lg);
+  padding: 20px 24px;
 }
 .area-controls .search-box{ margin:0; max-width:320px; flex:1 1 260px; }
 .area-filter-bar{ display:flex; flex-wrap:wrap; gap:10px; }
