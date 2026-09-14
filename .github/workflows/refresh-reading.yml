@@ -1,0 +1,55 @@
+name: Refresh "What we're reading"
+
+# Keeps the homepage's "What we're reading" cards (READING_ITEMS) current
+# without manual curation. Pulls the most recent curated (non-Phronesis-
+# Original, non-placeholder) entry from each of Phronesis's six outside-
+# reading categories straight from phronesisresearch.org's own public
+# content JSON (see build/refresh_reading.py's docstring for exactly what
+# this reads and why), rebuilds the static site, and commits the result
+# if anything changed. Runs weekly on Sundays, plus on-demand via the
+# Actions tab (workflow_dispatch) -- direct user request: "this content
+# is variable and changes regularly ... able to be updated ... weekly on
+# Sundays."
+#
+# No secrets/API keys required -- refresh_reading.py reads
+# phronesisresearch.org's own public, unauthenticated content JSON (the
+# same files its homepage fetches client-side), not a private API or a
+# credential of ours.
+
+on:
+  schedule:
+    - cron: '0 13 * * 0' # Sunday 13:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install build dependencies
+        run: pip install -r requirements.txt
+        working-directory: build
+
+      - name: Fetch fresh "What we're reading" data
+        run: python3 refresh_reading.py
+        working-directory: build
+
+      - name: Rebuild the site
+        run: python3 build_all.py
+        working-directory: build
+
+      - name: Commit if changed
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'Auto-refresh "What we''re reading" from Phronesis'
+          file_pattern: 'build/data/reading_items.yml docs/**'
+          commit_user_name: 'github-actions[bot]'
+          commit_user_email: 'github-actions[bot]@users.noreply.github.com'

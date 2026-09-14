@@ -834,15 +834,30 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    it exactly -- true vertical centering, not something that has to
    share space with a label sitting above it. padding-top just needs to
    clear the label's own (small) height, which it does with room to
-   spare. */
+   spare.
+
+   Follow-up (direct user request): a later round ("reduce the white
+   space below the filter button") dropped padding-bottom to 12px/10px
+   while leaving padding-top at 33px -- reintroducing exactly the
+   asymmetry this comment describes fixing, just via padding instead of
+   margin:auto. Measured on the built pages: with top=33/bottom=12 the
+   search bar's own center sat ~10.5px below the box's true center
+   (offset = (top-bottom)/2), same idea for people.html's 33/10 variant
+   (~11.5px). Restored true centering by making padding symmetric again
+   (26px top and bottom) and tightening the label's own `top` (18px ->
+   10px) so a smaller, still-symmetric value clears it -- net effect is
+   less padding above, a bit more below, meeting close to where the old
+   33px top used to sit rather than reopening the full ~40-45px of
+   bottom space this component had before that whitespace-reduction
+   round. */
 .area-controls{
   position: relative;
   margin-bottom: 40px;
   background: var(--paper-soft); border: 1.5px solid var(--ink-soft); border-radius: var(--radius-lg);
-  padding: 33px 24px 12px;
+  padding: 26px 24px;
 }
 .area-controls-label{
-  position: absolute; top:18px; left:29px; line-height:1;
+  position: absolute; top:10px; left:29px; line-height:1;
   font-family: var(--font-nav); font-size:.64rem; font-weight:700;
   letter-spacing:.05em; text-transform: uppercase; color: var(--ink-soft);
 }
@@ -859,7 +874,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    normal laptop viewport on load. Font sizes themselves (set two rounds
    above, per direct request) are left alone -- only the space around and
    between lines is trimmed. */
-#people-main .area-controls{ margin-bottom: 8px; padding: 33px 24px 10px; }
+#people-main .area-controls{ margin-bottom: 8px; padding: 26px 24px; }
 #people-list .subsection-toggle{ margin-bottom: 4px; }
 
 .area-filter-bar{ display:flex; flex-wrap:wrap; gap:10px; }

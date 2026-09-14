@@ -1,43 +1,44 @@
+# Auto-refreshed weekly by build/refresh_reading.py from phronesisresearch.org's own public content feed --
+# see that script's docstring. Hand edits here will be overwritten by the next scheduled run.
 - source: arXiv
   type: Research Papers
-  title: 'AI Tokenomics: The Economics of Tokens, Computation, and Pricing in Foundation
-    Models'
-  summary: A framework for how AI tokens are generated, priced, and allocated -- and why
-    token spend and economic value aren't the same thing.
+  title: 'AI Tokenomics: The Economics of Tokens, Computation, and Pricing in Foundation Models'
+  summary: A framework connecting token-level technical costs to economic value and market design
+    in foundation model services.
   meta: Oct 6
   link: https://arxiv.org/abs/2606.24616v1
 - source: Consumer Reports
   type: Policy Artifacts
-  title: New Jersey Becomes Third State to Curb Personalized Pricing
-  summary: New Jersey's new Fair Price Protection Act bans personalized pricing on groceries
-    -- and lets consumers sue directly.
+  title: New Jersey becomes third state to curb personalized pricing
+  summary: New Jersey Governor signs the Fair Price Protection Act, enabling consumers to directly
+    enforce rights against personalized pricing in grocery sales.
   meta: Jul 23
   link: https://advocacy.consumerreports.org/press_release/new-jersey-becomes-third-state-to-curb-personalized-pricing/?EXTKEY=YSOCIAL_TW
-- source: The National Law Review
+- source: Bradley Arant Boult Cummings LLP
   type: Legal Analyses
   title: Alabama's New AI Ethical Guidance and Its Impact on Legal Departments
-  summary: The Alabama State Bar clarifies how existing duties -- competence, verification,
-    accountability -- apply to lawyers using AI.
+  summary: Analysis of the Alabama State Bar's updated guidance on ethical AI use and its implications
+    for legal practice and organizational risk management.
   meta: Jul 21
   link: https://natlawreview.com/article/alabamas-new-ai-ethical-guidance-and-its-impact-legal-departments
-- source: Americans for Responsible Innovation
+- source: Americans for Responsible Innovation (ARI)
   type: Essays
   title: The Path for Federal Frontier AI Governance
-  summary: Six minimum requirements for a rules-based federal framework to govern frontier
-    AI, in place of developer self-regulation.
+  summary: An argument for minimum conditions that federal AI legislation must satisfy to protect
+    the public interest while enabling innovation.
   meta: Jul 27
   link: https://ari.us/policy-bytes/the-path-for-federal-frontier-ai-governance/
 - source: Bloomberg Law
   type: Articles
   title: Geofence Ruling Brings New Risks for Sensitive Data Collection
-  summary: After Chatrie v. United States, companies face new obligations to rethink how
-    they collect, retain, and disclose location data.
+  summary: A Supreme Court decision requiring warrants for location data access has broader implications
+    for how companies handle sensitive consumer information and comply with government demands.
   meta: Jul 29
   link: https://news.bloomberglaw.com/litigation/geofence-ruling-brings-new-risks-for-sensitive-data-collection?taid=6a6a613271891d00011429bd
 - source: Concordia AI
   type: Reports
   title: 'State of AI Safety in China: Annual Report (July 2025 - June 2026)'
-  summary: Concordia AI's annual look at how China's AI governance is shifting from content
-    control toward action control.
+  summary: Comprehensive tracking of China's evolving approach to AI safety governance across domestic
+    policy, international coordination, technical research, and industry regulation.
   meta: Jul 20
   link: https://aisafetychina.com/
