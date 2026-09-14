@@ -68,7 +68,7 @@ home_body = f"""
     <div class="reading-panel">
       <div class="carousel-head">
         <h2>What we're reading</h2>
-        <a href="https://phronesisresearch.org" target="_blank" rel="noopener" class="btn btn-ghost btn-arrow">More</a>
+        <a href="https://phronesisresearch.org/#:~:text=on%20specific%20topics-,Recently%20Added,-PHRONESIS%20ORIGINAL" target="_blank" rel="noopener" class="btn btn-ghost btn-arrow">More</a>
       </div>
       <div class="grid grid-3 reading-grid">
         {g.reading_cards_html(g.READING_ITEMS)}

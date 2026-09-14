@@ -472,11 +472,19 @@ TICKER_ITEMS = _load_ticker_items()
 # Content lives in build/data/questions.yml -- see README "Editing content".
 QUESTIONS = load_data("questions")
 
-# Ideas We're Reading -- placeholder examples for the Phronesis + Tech
-# Policy Press list ("Field Pulse" on the homepage -- a static 3-column
-# grid as of follow-up 46, not a scrolling carousel). NOT real published
-# articles; swap for the Hub's actual picks before launch (see README
-# "Known placeholders"). No longer feeds the signal ticker, which is now
+# Ideas We're Reading -- the Phronesis "Field Pulse" list ("Field Pulse" on
+# the homepage -- a static 3-column grid as of follow-up 46, not a
+# scrolling carousel). Follow-up 53: real content -- the first (most
+# recent) card from each of Phronesis's 6 non-original content-format
+# carousels on phronesisresearch.org's own "Recently Added" section
+# (Research Papers, Policy Artifacts, Legal Analyses, Essays, Articles,
+# Reports; "Phronesis Original" and "Canon" are excluded per direct user
+# request), pulled by hand -- title/summary/link/date sourced from that
+# page, `link` pointing at the ORIGINAL document Phronesis links out to
+# (not phronesisresearch.org itself), `source` the original outlet
+# (arXiv, Consumer Reports, etc.), `meta` the date Phronesis shows. Needs
+# a periodic manual refresh as Phronesis's Recently Added rotates -- not
+# a live feed. No longer feeds the signal ticker, which is now
 # DMV/federal policy tracking only (see TICKER_ITEMS above).
 #
 # Follow-up 49: each item now carries a `type` field -- ONE of Phronesis's
@@ -705,11 +713,11 @@ def reading_cards_html(items):
     EMPIRICAL SCOTUS, ...) as plain italic caption text, no box. Renders
     as `.reading-type` instead (italic, uppercase, no border/background).
 
-    `summary` and `link` are written as if pulled directly from Phronesis:
-    `summary` is Phronesis's own dek for the piece, and `link` points at
-    the ORIGINAL document (not phronesisresearch.org) -- Phronesis is
-    the source of the metadata, not the destination. Still placeholder
-    text/`#` links until real Phronesis data replaces READING_ITEMS."""
+    `summary` and `link` are pulled from Phronesis's own "Recently Added"
+    section: `summary` is a short original dek (not a copy of Phronesis's
+    full paragraph -- see copyright guidance) and `link` points at the
+    ORIGINAL document (not phronesisresearch.org) -- Phronesis is the
+    source of the metadata, not the destination."""
     out = []
     for r in items:
         type_url = READING_TYPES[r["type"]]

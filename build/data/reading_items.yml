@@ -1,37 +1,43 @@
-- source: Tech Policy Press
-  type: Articles
-  title: Why Platform Transparency Reports Still Fall Short
-  summary: A look at what current disclosure requirements do and don't reveal about content moderation
-    at scale.
-  meta: 6 min read
-  link: '#'
-- source: The Phronesis Institute
-  type: Reports
-  title: The State of AI Governance, Three Years In
-  summary: A field scan of regulatory approaches emerging across the U.S., EU, and Asia.
-  meta: 8 min read
-  link: '#'
-- source: Tech Policy Press
-  type: Articles
-  title: Cookies Are Dying. What Comes Next for Ad Tracking?
-  summary: An explainer on the identification methods rushing to fill the gap.
-  meta: 5 min read
-  link: '#'
-- source: The Phronesis Institute
-  type: Essays
-  title: County Governments Are the New Cybersecurity Frontline
-  summary: Why local governments face outsized cyber risk with the fewest resources to manage it.
-  meta: 7 min read
-  link: '#'
-- source: Tech Policy Press
-  type: Legal Analyses
-  title: How the EU's AI Act Is Reshaping Global Compliance
-  summary: What multinational platforms are actually changing in response to Brussels' risk-tiered rules.
-  meta: 9 min read
-  link: '#'
-- source: The Phronesis Institute
+- source: arXiv
+  type: Research Papers
+  title: 'AI Tokenomics: The Economics of Tokens, Computation, and Pricing in Foundation
+    Models'
+  summary: A framework for how AI tokens are generated, priced, and allocated -- and why
+    token spend and economic value aren't the same thing.
+  meta: Oct 6
+  link: https://arxiv.org/abs/2606.24616v1
+- source: Consumer Reports
   type: Policy Artifacts
-  title: Congress Weighs a Federal Preemption Standard for AI
-  summary: A rundown of the competing proposals to override the current patchwork of state AI laws.
-  meta: 6 min read
-  link: '#'
+  title: New Jersey Becomes Third State to Curb Personalized Pricing
+  summary: New Jersey's new Fair Price Protection Act bans personalized pricing on groceries
+    -- and lets consumers sue directly.
+  meta: Jul 23
+  link: https://advocacy.consumerreports.org/press_release/new-jersey-becomes-third-state-to-curb-personalized-pricing/?EXTKEY=YSOCIAL_TW
+- source: The National Law Review
+  type: Legal Analyses
+  title: Alabama's New AI Ethical Guidance and Its Impact on Legal Departments
+  summary: The Alabama State Bar clarifies how existing duties -- competence, verification,
+    accountability -- apply to lawyers using AI.
+  meta: Jul 21
+  link: https://natlawreview.com/article/alabamas-new-ai-ethical-guidance-and-its-impact-legal-departments
+- source: Americans for Responsible Innovation
+  type: Essays
+  title: The Path for Federal Frontier AI Governance
+  summary: Six minimum requirements for a rules-based federal framework to govern frontier
+    AI, in place of developer self-regulation.
+  meta: Jul 27
+  link: https://ari.us/policy-bytes/the-path-for-federal-frontier-ai-governance/
+- source: Bloomberg Law
+  type: Articles
+  title: Geofence Ruling Brings New Risks for Sensitive Data Collection
+  summary: After Chatrie v. United States, companies face new obligations to rethink how
+    they collect, retain, and disclose location data.
+  meta: Jul 29
+  link: https://news.bloomberglaw.com/litigation/geofence-ruling-brings-new-risks-for-sensitive-data-collection?taid=6a6a613271891d00011429bd
+- source: Concordia AI
+  type: Reports
+  title: 'State of AI Safety in China: Annual Report (July 2025 - June 2026)'
+  summary: Concordia AI's annual look at how China's AI governance is shifting from content
+    control toward action control.
+  meta: Jul 20
+  link: https://aisafetychina.com/
