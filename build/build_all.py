@@ -182,21 +182,24 @@ def _person_tile_html(name, keys):
     # Originals" card: a photo on top, then name + research-area badges
     # in a plain white section below -- no bio, no role text, per the
     # user's own mockup ("[Picture] _________ Name [badges]"). No real
-    # headshots yet, so the "photo" is a solid --ink placeholder with
-    # the person's initials centered, the same "reuse the Spotlight's
-    # placeholder convention" approach as Project tiles' colored photo
-    # (see _project_tile_html), just not area-tinted since one person
-    # can carry several areas. The tile is itself a link to their full
-    # listing on people.html (id="person-<slug>" on that page's
-    # .person-row, see _person_row_html), rather than repeating their
-    # bio a second time in a smaller space.
-    p = _PEOPLE_BY_NAME.get(name, {})
-    initials = p.get("initials") or "".join(w[0] for w in name.split() if w[0].isalpha())[:2].upper()
+    # headshots yet, so the "photo" is a solid --ink placeholder --
+    # previously the person's initials centered, now (direct user
+    # request) a generic person silhouette instead, "like you might see
+    # in a video game for locked characters" -- every placeholder tile
+    # deliberately looks identical, the same way a game's locked-
+    # character slots all show the same silhouette until unlocked. The
+    # tile is itself a link to their full listing on people.html
+    # (id="person-<slug>" on that page's .person-row, see
+    # _person_row_html), rather than repeating their bio a second time
+    # in a smaller space.
     slug = _slugify(name)
     return f"""
       <a class="rp-tile rp-tile--link rp-tile--person" href="people.html#person-{slug}" data-areas="{' '.join(keys)}" data-search-row>
         <div class="rp-tile-photo rp-tile-photo--person">
-          <span class="rp-tile-photo-initials">{initials}</span>
+          <svg class="rp-tile-photo-silhouette" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+            <circle cx="50" cy="36" r="18"/>
+            <path d="M50 60c-23 0-39 15-39 38h78c0-23-16-38-39-38z"/>
+          </svg>
         </div>
         <div class="rp-tile-caption">
           <h3>{name}</h3>
@@ -330,9 +333,9 @@ research_body = f"""
     </div>
 
     <section class="research-subsection" id="people">
-      <!-- Follow-up (direct user request): People starts collapsed --
-           Projects (below) stays expanded by default, unchanged. -->
-      <button type="button" class="subsection-toggle" aria-expanded="false" aria-controls="people-panel">
+      <!-- Follow-up (direct user request): People now starts expanded,
+           matching Projects below -- it no longer starts collapsed. -->
+      <button type="button" class="subsection-toggle" aria-expanded="true" aria-controls="people-panel">
         <h2>People</h2>
         <span class="subsection-caret" aria-hidden="true"></span>
       </button>
@@ -359,7 +362,7 @@ research_body = f"""
            that count naturally. `.rp-carousel--people` tiles are a
            photo + name + area badges, no bio/role -- see
            _person_tile_html. -->
-      <div class="rp-carousel rp-carousel--people" id="people-panel" hidden data-carousel data-max-per-page="4">
+      <div class="rp-carousel rp-carousel--people" id="people-panel" data-carousel data-max-per-page="4">
         <div class="rp-carousel-panel">
           <div class="rp-carousel-viewport">
             <div class="rp-grid">{people_tiles}</div>

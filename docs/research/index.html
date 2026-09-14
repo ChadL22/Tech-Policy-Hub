@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Research | Tech Policy Hub</title>
 <meta name="description" content="Cybersecurity, consumer privacy, information integrity, and trustworthy ML research from the Tech Policy Hub.">
-<link rel="stylesheet" href="../assets/css/styles.css?v=2026091420">
+<link rel="stylesheet" href="../assets/css/styles.css?v=2026091421">
 </head>
 <body>
 
@@ -13,7 +13,7 @@
   <div class="container header-inner">
     <div class="brand-lockup">
       <a href="../" class="brand" aria-label="Tech Policy Hub, University of Maryland School of Public Policy">
-        <img src="../assets/img/sopp-tph-lockup.png?v=2026091420" alt="University of Maryland School of Public Policy &ndash; Tech Policy Hub" class="brand-mark">
+        <img src="../assets/img/sopp-tph-lockup.png?v=2026091421" alt="University of Maryland School of Public Policy &ndash; Tech Policy Hub" class="brand-mark">
       </a>
     </div>
     <nav class="primary-nav" aria-label="Primary">
@@ -98,9 +98,9 @@
     </div>
 
     <section class="research-subsection" id="people">
-      <!-- Follow-up (direct user request): People starts collapsed --
-           Projects (below) stays expanded by default, unchanged. -->
-      <button type="button" class="subsection-toggle" aria-expanded="false" aria-controls="people-panel">
+      <!-- Follow-up (direct user request): People now starts expanded,
+           matching Projects below -- it no longer starts collapsed. -->
+      <button type="button" class="subsection-toggle" aria-expanded="true" aria-controls="people-panel">
         <h2>People</h2>
         <span class="subsection-caret" aria-hidden="true"></span>
       </button>
@@ -127,13 +127,16 @@
            that count naturally. `.rp-carousel--people` tiles are a
            photo + name + area badges, no bio/role -- see
            _person_tile_html. -->
-      <div class="rp-carousel rp-carousel--people" id="people-panel" hidden data-carousel data-max-per-page="4">
+      <div class="rp-carousel rp-carousel--people" id="people-panel" data-carousel data-max-per-page="4">
         <div class="rp-carousel-panel">
           <div class="rp-carousel-viewport">
             <div class="rp-grid">
       <a class="rp-tile rp-tile--link rp-tile--person" href="../people/#person-dr-ido-sivan-sevilla" data-areas="cybersecurity privacy integrity ml" data-search-row>
         <div class="rp-tile-photo rp-tile-photo--person">
-          <span class="rp-tile-photo-initials">IS</span>
+          <svg class="rp-tile-photo-silhouette" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+            <circle cx="50" cy="36" r="18"/>
+            <path d="M50 60c-23 0-39 15-39 38h78c0-23-16-38-39-38z"/>
+          </svg>
         </div>
         <div class="rp-tile-caption">
           <h3>Dr. Ido Sivan-Sevilla</h3>
@@ -142,7 +145,10 @@
       </a>
       <a class="rp-tile rp-tile--link rp-tile--person" href="../people/#person-dr-charles-harry" data-areas="cybersecurity" data-search-row>
         <div class="rp-tile-photo rp-tile-photo--person">
-          <span class="rp-tile-photo-initials">CH</span>
+          <svg class="rp-tile-photo-silhouette" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+            <circle cx="50" cy="36" r="18"/>
+            <path d="M50 60c-23 0-39 15-39 38h78c0-23-16-38-39-38z"/>
+          </svg>
         </div>
         <div class="rp-tile-caption">
           <h3>Dr. Charles Harry</h3>
@@ -151,7 +157,10 @@
       </a>
       <a class="rp-tile rp-tile--link rp-tile--person" href="../people/#person-mark-mcdermott" data-areas="cybersecurity" data-search-row>
         <div class="rp-tile-photo rp-tile-photo--person">
-          <span class="rp-tile-photo-initials">MM</span>
+          <svg class="rp-tile-photo-silhouette" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+            <circle cx="50" cy="36" r="18"/>
+            <path d="M50 60c-23 0-39 15-39 38h78c0-23-16-38-39-38z"/>
+          </svg>
         </div>
         <div class="rp-tile-caption">
           <h3>Mark McDermott</h3>
@@ -160,7 +169,10 @@
       </a>
       <a class="rp-tile rp-tile--link rp-tile--person" href="../people/#person-dr-michelle-mazurek" data-areas="cybersecurity privacy" data-search-row>
         <div class="rp-tile-photo rp-tile-photo--person">
-          <span class="rp-tile-photo-initials">MZ</span>
+          <svg class="rp-tile-photo-silhouette" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+            <circle cx="50" cy="36" r="18"/>
+            <path d="M50 60c-23 0-39 15-39 38h78c0-23-16-38-39-38z"/>
+          </svg>
         </div>
         <div class="rp-tile-caption">
           <h3>Dr. Michelle Mazurek</h3>
@@ -169,7 +181,10 @@
       </a>
       <a class="rp-tile rp-tile--link rp-tile--person" href="../people/#person-dr-gabriel-kaptchuk" data-areas="cybersecurity" data-search-row>
         <div class="rp-tile-photo rp-tile-photo--person">
-          <span class="rp-tile-photo-initials">GK</span>
+          <svg class="rp-tile-photo-silhouette" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+            <circle cx="50" cy="36" r="18"/>
+            <path d="M50 60c-23 0-39 15-39 38h78c0-23-16-38-39-38z"/>
+          </svg>
         </div>
         <div class="rp-tile-caption">
           <h3>Dr. Gabriel Kaptchuk</h3>
@@ -178,7 +193,10 @@
       </a>
       <a class="rp-tile rp-tile--link rp-tile--person" href="../people/#person-parthav-poudel" data-areas="cybersecurity integrity" data-search-row>
         <div class="rp-tile-photo rp-tile-photo--person">
-          <span class="rp-tile-photo-initials">PP</span>
+          <svg class="rp-tile-photo-silhouette" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+            <circle cx="50" cy="36" r="18"/>
+            <path d="M50 60c-23 0-39 15-39 38h78c0-23-16-38-39-38z"/>
+          </svg>
         </div>
         <div class="rp-tile-caption">
           <h3>Parthav Poudel</h3>
@@ -187,7 +205,10 @@
       </a>
       <a class="rp-tile rp-tile--link rp-tile--person" href="../people/#person-dr-jessica-vitak" data-areas="privacy" data-search-row>
         <div class="rp-tile-photo rp-tile-photo--person">
-          <span class="rp-tile-photo-initials">JV</span>
+          <svg class="rp-tile-photo-silhouette" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+            <circle cx="50" cy="36" r="18"/>
+            <path d="M50 60c-23 0-39 15-39 38h78c0-23-16-38-39-38z"/>
+          </svg>
         </div>
         <div class="rp-tile-caption">
           <h3>Dr. Jessica Vitak</h3>
@@ -196,7 +217,10 @@
       </a>
       <a class="rp-tile rp-tile--link rp-tile--person" href="../people/#person-patrick-parham" data-areas="privacy" data-search-row>
         <div class="rp-tile-photo rp-tile-photo--person">
-          <span class="rp-tile-photo-initials">PA</span>
+          <svg class="rp-tile-photo-silhouette" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+            <circle cx="50" cy="36" r="18"/>
+            <path d="M50 60c-23 0-39 15-39 38h78c0-23-16-38-39-38z"/>
+          </svg>
         </div>
         <div class="rp-tile-caption">
           <h3>Patrick Parham</h3>
@@ -205,7 +229,10 @@
       </a>
       <a class="rp-tile rp-tile--link rp-tile--person" href="../people/#person-giovanni-luca-ciampaglia" data-areas="integrity" data-search-row>
         <div class="rp-tile-photo rp-tile-photo--person">
-          <span class="rp-tile-photo-initials">GC</span>
+          <svg class="rp-tile-photo-silhouette" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+            <circle cx="50" cy="36" r="18"/>
+            <path d="M50 60c-23 0-39 15-39 38h78c0-23-16-38-39-38z"/>
+          </svg>
         </div>
         <div class="rp-tile-caption">
           <h3>Giovanni Luca Ciampaglia</h3>
@@ -214,7 +241,10 @@
       </a>
       <a class="rp-tile rp-tile--link rp-tile--person" href="../people/#person-dr-irene-pasquetto" data-areas="integrity" data-search-row>
         <div class="rp-tile-photo rp-tile-photo--person">
-          <span class="rp-tile-photo-initials">IP</span>
+          <svg class="rp-tile-photo-silhouette" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+            <circle cx="50" cy="36" r="18"/>
+            <path d="M50 60c-23 0-39 15-39 38h78c0-23-16-38-39-38z"/>
+          </svg>
         </div>
         <div class="rp-tile-caption">
           <h3>Dr. Irene Pasquetto</h3>
@@ -223,7 +253,10 @@
       </a>
       <a class="rp-tile rp-tile--link rp-tile--person" href="../people/#person-dr-cody-buntain" data-areas="integrity" data-search-row>
         <div class="rp-tile-photo rp-tile-photo--person">
-          <span class="rp-tile-photo-initials">CB</span>
+          <svg class="rp-tile-photo-silhouette" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+            <circle cx="50" cy="36" r="18"/>
+            <path d="M50 60c-23 0-39 15-39 38h78c0-23-16-38-39-38z"/>
+          </svg>
         </div>
         <div class="rp-tile-caption">
           <h3>Dr. Cody Buntain</h3>
@@ -232,7 +265,10 @@
       </a>
       <a class="rp-tile rp-tile--link rp-tile--person" href="../people/#person-dr-katie-shilton" data-areas="ml" data-search-row>
         <div class="rp-tile-photo rp-tile-photo--person">
-          <span class="rp-tile-photo-initials">KS</span>
+          <svg class="rp-tile-photo-silhouette" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+            <circle cx="50" cy="36" r="18"/>
+            <path d="M50 60c-23 0-39 15-39 38h78c0-23-16-38-39-38z"/>
+          </svg>
         </div>
         <div class="rp-tile-caption">
           <h3>Dr. Katie Shilton</h3>
@@ -241,7 +277,10 @@
       </a>
       <a class="rp-tile rp-tile--link rp-tile--person" href="../people/#person-dr-laura-fichtner" data-areas="ml" data-search-row>
         <div class="rp-tile-photo rp-tile-photo--person">
-          <span class="rp-tile-photo-initials">LF</span>
+          <svg class="rp-tile-photo-silhouette" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+            <circle cx="50" cy="36" r="18"/>
+            <path d="M50 60c-23 0-39 15-39 38h78c0-23-16-38-39-38z"/>
+          </svg>
         </div>
         <div class="rp-tile-caption">
           <h3>Dr. Laura Fichtner</h3>
@@ -250,7 +289,10 @@
       </a>
       <a class="rp-tile rp-tile--link rp-tile--person" href="../people/#person-dr-amy-winecoff" data-areas="ml" data-search-row>
         <div class="rp-tile-photo rp-tile-photo--person">
-          <span class="rp-tile-photo-initials">AW</span>
+          <svg class="rp-tile-photo-silhouette" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+            <circle cx="50" cy="36" r="18"/>
+            <path d="M50 60c-23 0-39 15-39 38h78c0-23-16-38-39-38z"/>
+          </svg>
         </div>
         <div class="rp-tile-caption">
           <h3>Dr. Amy Winecoff</h3>
@@ -413,19 +455,19 @@
       <div>
         <div class="footer-social">
           <a href="https://sclanga.substack.com/" target="_blank" rel="noopener" aria-label="Substack">
-            <img src="../assets/img/social/substack.png?v=2026091420" alt="" loading="lazy">
+            <img src="../assets/img/social/substack.png?v=2026091421" alt="" loading="lazy">
           </a>
           <a href="https://x.com/phronesisres" target="_blank" rel="noopener" aria-label="X">
-            <img src="../assets/img/social/x.png?v=2026091420" alt="" loading="lazy">
+            <img src="../assets/img/social/x.png?v=2026091421" alt="" loading="lazy">
           </a>
           <a href="https://www.instagram.com/phronesisres" target="_blank" rel="noopener" aria-label="Instagram">
-            <img src="../assets/img/social/instagram.png?v=2026091420" alt="" loading="lazy">
+            <img src="../assets/img/social/instagram.png?v=2026091421" alt="" loading="lazy">
           </a>
           <a href="https://www.threads.com/@phronesisres" target="_blank" rel="noopener" aria-label="Threads">
-            <img src="../assets/img/social/threads.png?v=2026091420" alt="" loading="lazy">
+            <img src="../assets/img/social/threads.png?v=2026091421" alt="" loading="lazy">
           </a>
           <a href="https://www.tiktok.com/@phronesis.research" target="_blank" rel="noopener" aria-label="TikTok">
-            <img src="../assets/img/social/tiktok.png?v=2026091420" alt="" loading="lazy">
+            <img src="../assets/img/social/tiktok.png?v=2026091421" alt="" loading="lazy">
           </a>
         </div>
         <ul class="footer-legal">
@@ -470,6 +512,6 @@
     </div>
   </div>
 </footer>
-<script src="../assets/js/main.js?v=2026091420"></script>
+<script src="../assets/js/main.js?v=2026091421"></script>
 </body>
 </html>

@@ -827,7 +827,15 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   background: var(--area-color, var(--umd-red)); border-color: var(--area-color, var(--umd-red)); color:#fff;
 }
 
-.research-subsection{ padding-top: 12px; }
+/* Bug fix (direct user request -- "too much white space between the
+   bottom of the People section and the top of Projects"): the generic
+   `section{ padding: 56px 0; }` rule up top applies to EVERY <section>,
+   including these -- only padding-top was ever overridden here, so
+   each of People/Projects/Publications was still carrying that 56px of
+   padding-BOTTOM, stacking on top of the next subsection's own 12px
+   padding-top. Zeroed it out; spacing between subsections is meant to
+   come from padding-top alone. */
+.research-subsection{ padding-top: 12px; padding-bottom: 0; }
 .research-subsection:first-of-type{ padding-top: 0; }
 .research-subsection > h2{
   font-size:1.25rem; padding-bottom:12px; margin-bottom:20px; border-bottom: 1px solid var(--ink);
@@ -980,14 +988,16 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   flex-basis: 220px; padding:0; overflow:hidden; display:flex; flex-direction:column;
 }
 /* No real headshots yet -- solid --ink placeholder (not area-tinted
-   like Projects' photo, since one person can carry several areas) with
-   their initials centered, same idea as the old small .rp-avatar just
-   scaled up to fill the whole photo area instead of sitting in a
-   corner. */
+   like Projects' photo, since one person can carry several areas).
+   Follow-up (direct user request): replaced the centered initials with
+   a generic person-silhouette icon, "like a locked character in a
+   video game" -- every tile deliberately shows the exact same shape,
+   the way a game's locked slots all render identically until a real
+   photo/headshot replaces it. */
 .rp-tile-photo.rp-tile-photo--person{ background: var(--ink); aspect-ratio: 16/10; }
-.rp-tile-photo-initials{
-  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-  color:#fff; font-family: var(--font-nav); font-weight:700; font-size:2.1rem;
+.rp-tile-photo-silhouette{
+  position:absolute; left:50%; top:50%; transform: translate(-50%, -50%);
+  width:auto; height:58%; fill: rgba(255,255,255,.3);
 }
 /* "bottom 'white section'" (direct user request, vs. Projects' shaded
    .rp-tile-caption below) -- the border-top is the mockup's
