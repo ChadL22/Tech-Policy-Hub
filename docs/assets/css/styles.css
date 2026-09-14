@@ -835,9 +835,15 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    button (and its underline) only as wide as "Filters" + the caret,
    with the caret sitting directly beside the text via `gap` instead of
    being shoved to the opposite end of the row. */
+/* Direct user request, modeled on Bloomberg's section headers ("Today's
+   Videos", "Bloomberg Originals" etc, which run plain with no rule
+   under them): dropped the border-bottom that used to underline
+   "People"/"Projects" here (the only two pages still using the plain,
+   non---filters variant of this toggle -- see the --filters modifier
+   below, unaffected and still underlined, for "Filters" elsewhere). */
 .subsection-toggle{
   display:inline-flex; align-items:center; gap:10px;
-  background:none; border:none; padding:0 0 8px; margin-bottom:12px; border-bottom: 1px solid var(--ink);
+  background:none; border:none; padding:0; margin-bottom:12px;
   cursor:pointer; text-align:left; font: inherit; color: inherit;
 }
 .subsection-toggle h2{ font-size:1.25rem; margin:0; }
@@ -869,7 +875,12 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    site -- so it clearly reads as secondary to whatever content headers
    follow it, without touching the base .subsection-toggle look that
    People/Projects/Publications still use. */
-.subsection-toggle--filters{ padding-bottom:6px; margin-bottom:24px; border-bottom-color: var(--line); }
+/* Follow-up: the base .subsection-toggle rule above no longer sets its
+   own border-bottom (People/Projects' underline was dropped, direct
+   user request) -- "Filters" still wants its own underline, so this
+   modifier now sets the full border-bottom itself instead of just
+   overriding its color. */
+.subsection-toggle--filters{ padding-bottom:6px; margin-bottom:24px; border-bottom: 1px solid var(--line); }
 .subsection-toggle--filters h2{
   font-family: var(--font-nav); font-size:.78rem; font-weight:700; letter-spacing:.06em;
   text-transform: uppercase; color: var(--ink-soft);
@@ -912,11 +923,11 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 /* Direct user request: the panel itself now carries a visible border
    too (was background-only) -- "a distinct outline both for the tiles
    and the section/rectangle holding them." */
-.rp-carousel{
+.rp-carousel[hidden]{ display:none; }
+.rp-carousel-panel{
   background: var(--paper-soft); border: 1px solid var(--line);
   border-radius: var(--radius-lg); padding: 20px;
 }
-.rp-carousel[hidden]{ display:none; }
 .rp-carousel-viewport{ overflow: hidden; }
 .rp-grid{ display:flex; flex-wrap:nowrap; align-items:stretch; gap: 20px; }
 .rp-grid > .rp-tile{

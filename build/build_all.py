@@ -361,8 +361,10 @@ research_body = f"""
            photo + name + area badges, no bio/role -- see
            _person_tile_html. -->
       <div class="rp-carousel rp-carousel--people" id="people-panel" hidden data-carousel data-max-per-page="4">
-        <div class="rp-carousel-viewport">
-          <div class="rp-grid">{people_tiles}</div>
+        <div class="rp-carousel-panel">
+          <div class="rp-carousel-viewport">
+            <div class="rp-grid">{people_tiles}</div>
+          </div>
         </div>
         <div class="rp-carousel-footer">
           <div class="rp-carousel-arrows">
@@ -380,8 +382,10 @@ research_body = f"""
         <span class="subsection-caret" aria-hidden="true"></span>
       </button>
       <div class="rp-carousel rp-carousel--projects" id="projects-panel" data-carousel>
-        <div class="rp-carousel-viewport">
-          <div class="rp-grid">{project_tiles}</div>
+        <div class="rp-carousel-panel">
+          <div class="rp-carousel-viewport">
+            <div class="rp-grid">{project_tiles}</div>
+          </div>
         </div>
         <div class="rp-carousel-footer">
           <div class="rp-carousel-arrows">

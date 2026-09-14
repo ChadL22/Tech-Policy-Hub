@@ -22,6 +22,14 @@ document.addEventListener('DOMContentLoaded', function () {
     var grid = root.querySelector('.rp-grid');
     var prevBtn = root.querySelector('.rp-carousel-prev');
     var nextBtn = root.querySelector('.rp-carousel-next');
+    // The bordered/background box (.rp-carousel-panel) is now just the
+    // viewport's own wrapper -- .rp-carousel-footer (the arrows) sits
+    // outside it as a sibling, direct user request modeled on
+    // Bloomberg's "Today's Videos" row (arrows below the card, not
+    // inside its border). Its padding is what the tile-width math below
+    // needs to measure against, not root's own (root carries none of
+    // its own box styling now).
+    var panel = root.querySelector('.rp-carousel-panel') || root;
     if (!viewport || !grid) return { refresh: function () {} };
 
     // Optional hard cap on tiles-per-page (data-max-per-page="4" on
@@ -56,9 +64,9 @@ document.addEventListener('DOMContentLoaded', function () {
       var nominal = tiles[0].getBoundingClientRect().width;
       if (!nominal) return { gap: gap, step: 0, perPage: 0, pages: 1, tiles: tiles };
 
-      var rootStyle = getComputedStyle(root);
-      var available = root.getBoundingClientRect().width
-        - (parseFloat(rootStyle.paddingLeft) || 0) - (parseFloat(rootStyle.paddingRight) || 0);
+      var panelStyle = getComputedStyle(panel);
+      var available = panel.getBoundingClientRect().width
+        - (parseFloat(panelStyle.paddingLeft) || 0) - (parseFloat(panelStyle.paddingRight) || 0);
       // How many tiles WOULD fit one page at their natural width -- kept
       // separate from `perPage` below (which is capped to however many
       // tiles actually exist) so the stretch decision always compares
