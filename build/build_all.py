@@ -42,20 +42,24 @@ home_body = f"""
   <div class="container lead-grid">
     <div class="lead-secondary">
       <div class="rail-head">What We Do</div>
-      <p>The University of Maryland&rsquo;s Tech Policy Hub studies tech policy from a socio&#8209;technical&nbsp;perspective, building the bridge between computer science &amp; public policy to understand how policy is designed and implemented for, by, and with tech. Our hub spans the forefront of tech policy across four research areas, bringing together DMV&#8209;based practitioners, scholars, and civil activists to shape the future of technology in society.</p>
-      <p class="lead-join"><strong>Interested in becoming affiliated with us?</strong> Please email our founder, <a href="https://idonibrasco.github.io/" target="_blank" rel="noopener">Dr.&nbsp;Sivan&#8209;Sevilla</a>, to discuss further.</p>
-      <div class="rail-head rail-head--stacked">Research Areas</div>
-      <div class="research-matrix research-matrix--rail">{g.research_matrix_html()}</div>
+      <div class="lead-secondary-body">
+        <p>The University of Maryland&rsquo;s Tech Policy Hub studies tech policy from a socio&#8209;technical&nbsp;perspective, building the bridge between computer science &amp; public policy to understand how policy is designed and implemented for, by, and with tech. Our hub spans the forefront of tech policy across four research areas, bringing together DMV&#8209;based practitioners, scholars, and civil activists to shape the future of technology in society.</p>
+        <p class="lead-join"><strong>Interested in becoming affiliated with us?</strong> Please email our founder, <a href="https://idonibrasco.github.io/" target="_blank" rel="noopener">Dr.&nbsp;Sivan&#8209;Sevilla</a>, to discuss further.</p>
+        <div class="rail-head rail-head--stacked">Research Areas</div>
+        <div class="research-matrix research-matrix--rail">{g.research_matrix_html()}</div>
+      </div>
     </div>
     <div class="lead-story">
       {g.spotlight_html(g.SPOTLIGHT_ITEMS)}
     </div>
     <div class="lead-rail">
       <div class="rail-head">Hub News</div>
-      <div class="rail-scroll-wrap">
-        <div class="rail-scroll">{g.rail_html(HUB_NEWS_RAIL)}</div>
+      <div class="lead-rail-body">
+        <div class="rail-scroll-wrap">
+          <div class="rail-scroll">{g.rail_html(HUB_NEWS_RAIL)}</div>
+        </div>
+        <div class="rail-head--stacked"></div>
       </div>
-      <div class="rail-head--stacked"></div>
     </div>
   </div>
 </section>

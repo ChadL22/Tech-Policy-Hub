@@ -317,7 +317,9 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    .lead-secondary's box, so it isn't thrown off by .lead-secondary's
    box now being taller than its content. */
 .lead-grid{ display:grid; grid-template-columns: 280px 1fr 280px; gap: 40px; }
-.lead-secondary{ grid-column: 1; border-right: 1px solid var(--line); padding-right: 28px; }
+.lead-secondary{ grid-column: 1; display:flex; flex-direction:column; }
+.lead-secondary > .rail-head{ padding-right: 28px; }
+.lead-secondary-body{ flex: 1 1 auto; display:flex; flex-direction:column; border-right: 1px solid var(--line); padding-right: 28px; }
 /* Follow-up: briefly matched to .rail-item h4's darkness/weight (Hub
    News headlines), then walked back per direct user request -- back to
    the plain sitewide p{ color: var(--ink-soft) } weight/color. */
@@ -331,7 +333,9 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 .lead-join strong{ color: var(--ink); }
 .lead-join a{ font-weight:700; }
 .lead-story{ grid-column: 2; }
-.lead-rail{ grid-column: 3; border-left: 1px solid var(--line); padding-left: 28px; }
+.lead-rail{ grid-column: 3; display:flex; flex-direction:column; }
+.lead-rail > .rail-head{ padding-left: 28px; }
+.lead-rail-body{ flex: 1 1 auto; display:flex; flex-direction:column; border-left: 1px solid var(--line); padding-left: 28px; }
 .lead-media{
   aspect-ratio: 16/7; margin-bottom: 18px; position: relative; overflow: hidden;
   background: linear-gradient(135deg, var(--ink) 0%, var(--ink) 42%, var(--umd-red) 42%, var(--umd-red) 100%);
@@ -489,8 +493,11 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 @media (max-width: 1150px){
   .lead-grid{ grid-template-columns: 1fr; }
   .lead-secondary, .lead-story, .lead-rail{ grid-column: 1; }
-  .lead-secondary{ border-right:none; padding-right:0; }
-  .lead-secondary, .lead-rail{ border-left:none; padding-left:0; border-top: 2px solid var(--ink); padding-top: 24px; }
+  .lead-secondary > .rail-head{ padding-right:0; }
+  .lead-rail > .rail-head{ padding-left:0; }
+  .lead-secondary-body{ border-right:none; padding-right:0; }
+  .lead-rail-body{ border-left:none; padding-left:0; }
+  .lead-secondary, .lead-rail{ border-top: 2px solid var(--ink); padding-top: 24px; }
   .lead-story{ order: -1; }
 }
 
@@ -751,7 +758,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
      not a cosmetic tightening -- `overflow-wrap`/`hyphens` on h3 stay in
      place as a fallback for any future topic name that's still too wide
      even at this padding. */
-  padding: 14px 10px; min-height: 84px;
+  padding: 30px 10px; min-height: 116px;
   display:flex; flex-direction:column; justify-content:flex-start;
 }
 .research-matrix--rail .matrix-cell .index{ font-size:.76rem; margin-bottom: 6px; }
