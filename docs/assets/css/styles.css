@@ -32,7 +32,20 @@
   --font-body: 'Source Sans 3', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-nav: 'Roboto Condensed', 'Source Sans 3', sans-serif;
   --font-accent: 'Crimson Text', Georgia, serif;
-  --maxw: 1320px;
+  /* Follow-up (direct user request): the user compared a screenshot of
+     the site zoomed to 110% against the default 100% render and asked
+     for the default to fill the window the way the zoomed-in version
+     did. Measuring both screenshots pixel-for-pixel, the zoomed-in
+     content column was consistently ~10% wider relative to the window
+     than the default -- exactly what 110% browser zoom does (it scales
+     the whole rendered page, container included, without changing the
+     physical screenshot size). Rather than anything zoom-related, the
+     fix is to widen the site's own content container by that same
+     ~10% so every visitor gets the fuller layout by default: 1320px
+     was the sole full-width value in the initial reference design; the
+     nearest clean number to +10% is 1440px, a standard content-width
+     figure in its own right. */
+  --maxw: 1440px;
 }
 
 *{ box-sizing: border-box; }
@@ -75,7 +88,12 @@ ul{ padding-left: 1.2em; }
    those two pages' main content sections a matching narrower ceiling
    without touching Home, Events, or the page-hero bands (breadcrumb/
    title) which stay full width for visual consistency across all pages. */
-.container-narrow{ max-width: 1080px; }
+/* Scaled up with the --maxw bump above (1320px -> 1440px, a +~9%
+   change) so Research/People keep the same ~0.82 ratio to the main
+   container that fixed their "stretched next to Home/Events" look --
+   otherwise widening --maxw alone would have reopened that gap from
+   the other direction. */
+.container-narrow{ max-width: 1180px; }
 section{ padding: 56px 0; }
 .section-tight{ padding: 34px 0; }
 .eyebrow{
