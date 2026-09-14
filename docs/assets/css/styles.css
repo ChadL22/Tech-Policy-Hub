@@ -839,10 +839,10 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   position: relative;
   margin-bottom: 40px;
   background: var(--paper-soft); border: 1.5px solid var(--ink-soft); border-radius: var(--radius-lg);
-  padding: 26px 24px;
+  padding: 34px 24px;
 }
 .area-controls-label{
-  position: absolute; top:12px; left:24px;
+  position: absolute; top:10px; left:24px; line-height:1;
   font-family: var(--font-nav); font-size:.64rem; font-weight:700;
   letter-spacing:.05em; text-transform: uppercase; color: var(--ink-soft);
 }
@@ -859,8 +859,8 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    normal laptop viewport on load. Font sizes themselves (set two rounds
    above, per direct request) are left alone -- only the space around and
    between lines is trimmed. */
-#people-main .area-controls{ margin-bottom: 16px; padding: 22px 24px; }
-#people-list .subsection-toggle{ margin-bottom: 6px; }
+#people-main .area-controls{ margin-bottom: 8px; padding: 30px 24px; }
+#people-list .subsection-toggle{ margin-bottom: 4px; }
 
 .area-filter-bar{ display:flex; flex-wrap:wrap; gap:10px; }
 .area-filter-pill.active{
@@ -1066,7 +1066,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    above): people.html's photo card can run shorter than research.html's
    People tiles without hurting the silhouette placeholder -- only this
    page's usage (.person-media ancestor) is affected. */
-.person-media .rp-tile-photo--person{ aspect-ratio: 16/6; }
+.person-media .rp-tile-photo--person{ aspect-ratio: 16/8; }
 .rp-tile-photo-silhouette{
   position:absolute; left:50%; top:50%; transform: translate(-50%, -50%);
   width:auto; height:58%; fill: rgba(255,255,255,.3);
@@ -1610,7 +1610,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    research.html/events.html's own top spacing is untouched. Only the
    top half is shrunk -- bottom stays 56px for the usual gap before the
    footer. */
-#people-main{ padding-top: 12px; padding-bottom: 56px; }
+#people-main{ padding-top: 8px; padding-bottom: 56px; }
 .breadcrumb{ font-size:.82rem; color: var(--ink-soft); margin-bottom: 16px; }
 .breadcrumb a{ color: var(--ink-soft); }
 .page-hero p.lede{ max-width: 68ch; font-size: 1.05rem; }
