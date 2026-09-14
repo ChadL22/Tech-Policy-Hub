@@ -875,9 +875,13 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    matched in main.js alongside the existing area filter/search --
    direct user request). .pub-section-head carries the border/spacing
    instead of the h2 itself so the pills sit flush with the divider. */
+/* Follow-up (direct user request): dropped the border-bottom that used
+   to underline the "Publications" heading/year-pill row -- padding-
+   bottom (which existed only to keep text off that line) drops with
+   it; margin-bottom alone now carries the gap before .pub-panel. */
 .pub-section-head{
   display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
-  padding-bottom:12px; margin-bottom:20px; border-bottom: 1px solid var(--ink);
+  margin-bottom:20px;
 }
 .pub-section-head h2{ font-size:1.25rem; margin:0; padding:0; border:0; }
 .year-filter-bar{ display:flex; flex-wrap:wrap; gap:6px; }
@@ -1082,7 +1086,11 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.14) 0 2px, transparent 2px 16px);
 }
 .rp-tile-photo-badge{ position:absolute; left:12px; top:12px; }
-.rp-tile-caption{ background: var(--paper-soft); padding: 16px; flex: 1 1 auto; }
+/* Follow-up (direct user request): Projects' caption strip now matches
+   People's own caption background (.rp-tile--person .rp-tile-caption,
+   further up) -- plain white instead of the paper-soft grey, so both
+   tile variants read consistently. */
+.rp-tile-caption{ background: var(--paper); padding: 16px; flex: 1 1 auto; }
 .rp-carousel--projects .rp-tile h3{ font-size:1.05rem; margin-bottom:8px; }
 .rp-carousel--projects .rp-desc{ font-size:.92rem; }
 
@@ -1134,7 +1142,15 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   margin: 28px 0 6px; padding-top:20px; border-top:1px solid var(--line);
 }
 .pub-year:first-child{ margin-top:0; padding-top:0; border-top:none; }
-.pub-row{ display:flex; gap:14px; align-items:flex-start; padding:12px 0; border-top:1px solid var(--line); }
+/* Direct user request: "each publication entry should be alternate,
+   between grey and white... no matter how the content is filtered."
+   The background lives here (white by default); .pub-row--alt (grey)
+   is toggled by main.js's researchExplorer render() every time it
+   recomputes which rows are hidden, walking only the currently-
+   visible ones in order -- so the stripe always alternates cleanly
+   against what's actually on screen, never raw DOM position. */
+.pub-row{ display:flex; gap:14px; align-items:flex-start; padding:12px 0; border-top:1px solid var(--line); background: var(--paper); }
+.pub-row--alt{ background: var(--paper-soft); }
 .pub-year + .pub-row{ border-top:none; }
 .pub-row[hidden]{ display:none; }
 .pub-row .rp-tags{ flex:0 0 auto; flex-direction:column; margin-bottom:0; margin-top:3px; }

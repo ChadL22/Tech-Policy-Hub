@@ -300,6 +300,20 @@ document.addEventListener('DOMContentLoaded', function () {
         var matchesSearch = !query || row.textContent.toLowerCase().indexOf(query) !== -1;
         row.hidden = !(matchesArea && matchesYear && matchesRole && matchesSearch);
       });
+      // Direct user request: Publications rows alternate white/grey, and
+      // that alternation has to hold "no matter how the content is
+      // filtered" -- a plain CSS :nth-child can't do that (it counts DOM
+      // position, not visible position, so a filtered-out row would
+      // throw the on-screen pattern off). Re-walk just the visible
+      // .pub-row elements, in order, every time render() runs (filter,
+      // search, or the initial load below) and toggle .pub-row--alt onto
+      // every other one.
+      var visiblePubIndex = 0;
+      document.querySelectorAll('.pub-row').forEach(function (row) {
+        if (row.hidden) return;
+        row.classList.toggle('pub-row--alt', visiblePubIndex % 2 === 1);
+        visiblePubIndex++;
+      });
       // A publication year heading has no data-areas/data-search-row of
       // its own -- hide it only when every row under it (up to the next
       // heading) is hidden, so a year with some-but-not-all rows
