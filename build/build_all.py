@@ -175,20 +175,30 @@ def _area_tags_html(keys):
 
 
 def _person_tile_html(name, keys):
-    # Direct user request: no bio here -- the tile is just enough to
-    # place someone (photo/initials, name, role, area) and is itself a
-    # link to their full listing on people.html (id="person-<slug>" on
-    # that page's .person-row, see _person_row_html), rather than
-    # repeating their bio a second time in a smaller space.
+    # Direct user request, modeled on Bloomberg.com's "Bloomberg
+    # Originals" card: a photo on top, then name + research-area badges
+    # in a plain white section below -- no bio, no role text, per the
+    # user's own mockup ("[Picture] _________ Name [badges]"). No real
+    # headshots yet, so the "photo" is a solid --ink placeholder with
+    # the person's initials centered, the same "reuse the Spotlight's
+    # placeholder convention" approach as Project tiles' colored photo
+    # (see _project_tile_html), just not area-tinted since one person
+    # can carry several areas. The tile is itself a link to their full
+    # listing on people.html (id="person-<slug>" on that page's
+    # .person-row, see _person_row_html), rather than repeating their
+    # bio a second time in a smaller space.
     p = _PEOPLE_BY_NAME.get(name, {})
     initials = p.get("initials") or "".join(w[0] for w in name.split() if w[0].isalpha())[:2].upper()
     slug = _slugify(name)
     return f"""
-      <a class="rp-tile rp-tile--link" href="people.html#person-{slug}" data-areas="{' '.join(keys)}" data-search-row>
-        {_area_tags_html(keys)}
-        <div class="rp-avatar">{initials}</div>
-        <h3>{name}</h3>
-        <div class="rp-role">{p.get("role", "")}</div>
+      <a class="rp-tile rp-tile--link rp-tile--person" href="people.html#person-{slug}" data-areas="{' '.join(keys)}" data-search-row>
+        <div class="rp-tile-photo rp-tile-photo--person">
+          <span class="rp-tile-photo-initials">{initials}</span>
+        </div>
+        <div class="rp-tile-caption">
+          <h3>{name}</h3>
+          {_area_tags_html(keys)}
+        </div>
       </a>"""
 
 
@@ -338,10 +348,15 @@ research_body = f"""
            ("if there are less tiles... the open space is fine"). No
            page dots -- direct user request to drop them and rely on the
            arrows alone (greyed out via :disabled at either end).
-           `.rp-carousel--people` keeps tiles small (photo/name/role
-           only, no bio -- see _person_tile_html); `.rp-carousel--
-           projects` below is the taller variant. -->
-      <div class="rp-carousel rp-carousel--people" id="people-panel" hidden data-carousel>
+           `data-max-per-page="4"` caps how many tiles initTileCarousel()
+           will ever show on one page here regardless of how wide the
+           row is -- direct user request, matching Bloomberg's own
+           "Bloomberg Originals" row (4 across); `.rp-carousel--projects`
+           below has no cap, since its wider tiles already land near
+           that count naturally. `.rp-carousel--people` tiles are a
+           photo + name + area badges, no bio/role -- see
+           _person_tile_html. -->
+      <div class="rp-carousel rp-carousel--people" id="people-panel" hidden data-carousel data-max-per-page="4">
         <div class="rp-carousel-viewport">
           <div class="rp-grid">{people_tiles}</div>
         </div>

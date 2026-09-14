@@ -902,7 +902,13 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    "Watch" row/"Today's Videos" card -- a photo on top with the title/
    description below in a shaded caption strip, see .rp-tile-photo/
    .rp-tile-caption further down. */
-.rp-carousel{ background: var(--paper-soft); border-radius: var(--radius-lg); padding: 20px; }
+/* Direct user request: the panel itself now carries a visible border
+   too (was background-only) -- "a distinct outline both for the tiles
+   and the section/rectangle holding them." */
+.rp-carousel{
+  background: var(--paper-soft); border: 1px solid var(--line);
+  border-radius: var(--radius-lg); padding: 20px;
+}
 .rp-carousel[hidden]{ display:none; }
 .rp-carousel-viewport{ overflow: hidden; }
 .rp-grid{ display:flex; flex-wrap:nowrap; align-items:stretch; gap: 20px; }
@@ -921,25 +927,44 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 }
 .rp-tile--link:hover{ border-color: var(--umd-red); }
 .rp-tile--link:hover h3{ color: var(--umd-red); }
-.rp-avatar{
-  width:52px; height:52px; background: var(--ink); color:#fff;
-  display:flex; align-items:center; justify-content:center;
-  font-family: var(--font-nav); font-weight:700; font-size:1.05rem; margin-bottom:12px;
-}
 .rp-tile h3{ font-size:1.02rem; margin-bottom:2px; }
-.rp-role{
-  font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:.02em;
-  color: var(--ink-soft); font-family: var(--font-nav); margin-bottom:6px;
-}
 .rp-desc{ font-size:.9rem; color: var(--ink-soft); line-height:1.5; margin:0; }
 
-/* Small/compact variant (direct user request: "small like Bloomberg
-   Originals") -- People tiles carry no bio, just photo/name/role, so a
-   narrower tile with tighter padding and a smaller avatar reads right
-   instead of leaving a lot of empty space below the role line. */
-.rp-carousel--people .rp-grid > .rp-tile{ flex-basis: 180px; padding: 14px; }
-.rp-carousel--people .rp-avatar{ width:40px; height:40px; font-size:.82rem; margin-bottom:8px; }
-.rp-carousel--people .rp-role{ margin-bottom:0; }
+/* Small/photo-card variant (direct user request, modeled on Bloomberg's
+   "Bloomberg Originals" cards): "[Picture] _________ Name [badges]" --
+   a photo on top, name + research-area badges in a plain white section
+   below, no bio/role text. The tile itself goes edge-to-edge (no
+   padding of its own; overflow:hidden clips the photo's square corners
+   to the tile's rounded ones) same structural pattern as the taller
+   Project tiles below, just capped at 4 per page regardless of row
+   width (data-max-per-page="4" in research_body, read by
+   initTileCarousel() in main.js) to match Bloomberg's own 4-across
+   Originals row. */
+.rp-carousel--people .rp-grid > .rp-tile{
+  flex-basis: 220px; padding:0; overflow:hidden; display:flex; flex-direction:column;
+}
+/* No real headshots yet -- solid --ink placeholder (not area-tinted
+   like Projects' photo, since one person can carry several areas) with
+   their initials centered, same idea as the old small .rp-avatar just
+   scaled up to fill the whole photo area instead of sitting in a
+   corner. */
+.rp-tile-photo.rp-tile-photo--person{ background: var(--ink); aspect-ratio: 16/10; }
+.rp-tile-photo-initials{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  color:#fff; font-family: var(--font-nav); font-weight:700; font-size:2.1rem;
+}
+/* "bottom 'white section'" (direct user request, vs. Projects' shaded
+   .rp-tile-caption below) -- the border-top is the mockup's
+   "_________" divider between photo and text. Badges sit last (after
+   the name), matching the mockup's stacking order; the shared .rp-tags
+   rule's trailing margin-bottom is wasted space once they're the last
+   thing in the card, so it's zeroed here. */
+.rp-tile--person .rp-tile-caption{ background: var(--paper); border-top: 1px solid var(--line); padding: 12px 14px; }
+.rp-tile--person .rp-tags{ margin-bottom: 0; }
+
+@media (max-width: 560px){
+  .rp-carousel--people .rp-grid > .rp-tile{ flex-basis: 170px; }
+}
 
 /* Tall variant (direct user request: "projects can be taller like the
    Watch section", with "a photo and a description... the title... in
@@ -1013,7 +1038,6 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 .pub-cite-venue{ font-style:italic; color: var(--ink-soft); }
 
 @media (max-width: 560px){
-  .rp-carousel--people .rp-grid > .rp-tile{ flex-basis: 150px; }
   .rp-carousel--projects .rp-grid > .rp-tile{ flex-basis: 220px; }
   .pub-row{ gap:10px; }
 }

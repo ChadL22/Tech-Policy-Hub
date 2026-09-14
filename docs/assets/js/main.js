@@ -24,6 +24,12 @@ document.addEventListener('DOMContentLoaded', function () {
     var nextBtn = root.querySelector('.rp-carousel-next');
     if (!viewport || !grid) return { refresh: function () {} };
 
+    // Optional hard cap on tiles-per-page (data-max-per-page="4" on
+    // research.html's People carousel -- direct user request to match
+    // Bloomberg's own "Bloomberg Originals" row, 4 across, regardless of
+    // how much wider the row itself is).
+    var maxPerPage = parseInt(root.getAttribute('data-max-per-page'), 10) || 0;
+
     var page = 0;
 
     // Follow-up (direct user request -- "get rid of that [gap], it is
@@ -59,6 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
       // against the full page capacity, not against a count that's
       // already been shrunk to match a short, filtered list.
       var nominalPerPage = Math.max(1, Math.floor((available + gap) / (nominal + gap)));
+      if (maxPerPage > 0) nominalPerPage = Math.min(nominalPerPage, maxPerPage);
       var perPage = Math.min(nominalPerPage, tiles.length);
       var pages = Math.max(1, Math.ceil(tiles.length / perPage));
 

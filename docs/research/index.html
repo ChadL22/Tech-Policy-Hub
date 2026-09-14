@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Research | Tech Policy Hub</title>
 <meta name="description" content="Cybersecurity, consumer privacy, information integrity, and trustworthy ML research from the Tech Policy Hub.">
-<link rel="stylesheet" href="../assets/css/styles.css?v=2026091415">
+<link rel="stylesheet" href="../assets/css/styles.css?v=2026091416">
 </head>
 <body>
 
@@ -13,7 +13,7 @@
   <div class="container header-inner">
     <div class="brand-lockup">
       <a href="../" class="brand" aria-label="Tech Policy Hub, University of Maryland School of Public Policy">
-        <img src="../assets/img/sopp-tph-lockup.png?v=2026091415" alt="University of Maryland School of Public Policy &ndash; Tech Policy Hub" class="brand-mark">
+        <img src="../assets/img/sopp-tph-lockup.png?v=2026091416" alt="University of Maryland School of Public Policy &ndash; Tech Policy Hub" class="brand-mark">
       </a>
     </div>
     <nav class="primary-nav" aria-label="Primary">
@@ -119,95 +119,142 @@
            ("if there are less tiles... the open space is fine"). No
            page dots -- direct user request to drop them and rely on the
            arrows alone (greyed out via :disabled at either end).
-           `.rp-carousel--people` keeps tiles small (photo/name/role
-           only, no bio -- see _person_tile_html); `.rp-carousel--
-           projects` below is the taller variant. -->
-      <div class="rp-carousel rp-carousel--people" id="people-panel" hidden data-carousel>
+           `data-max-per-page="4"` caps how many tiles initTileCarousel()
+           will ever show on one page here regardless of how wide the
+           row is -- direct user request, matching Bloomberg's own
+           "Bloomberg Originals" row (4 across); `.rp-carousel--projects`
+           below has no cap, since its wider tiles already land near
+           that count naturally. `.rp-carousel--people` tiles are a
+           photo + name + area badges, no bio/role -- see
+           _person_tile_html. -->
+      <div class="rp-carousel rp-carousel--people" id="people-panel" hidden data-carousel data-max-per-page="4">
         <div class="rp-carousel-viewport">
           <div class="rp-grid">
-      <a class="rp-tile rp-tile--link" href="../people/#person-dr-ido-sivan-sevilla" data-areas="cybersecurity privacy integrity ml" data-search-row>
-        <div class="rp-tags"><span class="area-tag" style="--area-color:#E21833">CY</span><span class="area-tag" style="--area-color:#7A1F3D">CP</span><span class="area-tag" style="--area-color:#52565A">II</span><span class="area-tag" style="--area-color:#B8860B">ML</span></div>
-        <div class="rp-avatar">IS</div>
-        <h3>Dr. Ido Sivan-Sevilla</h3>
-        <div class="rp-role">Founder & Director</div>
+      <a class="rp-tile rp-tile--link rp-tile--person" href="../people/#person-dr-ido-sivan-sevilla" data-areas="cybersecurity privacy integrity ml" data-search-row>
+        <div class="rp-tile-photo rp-tile-photo--person">
+          <span class="rp-tile-photo-initials">IS</span>
+        </div>
+        <div class="rp-tile-caption">
+          <h3>Dr. Ido Sivan-Sevilla</h3>
+          <div class="rp-tags"><span class="area-tag" style="--area-color:#E21833">CY</span><span class="area-tag" style="--area-color:#7A1F3D">CP</span><span class="area-tag" style="--area-color:#52565A">II</span><span class="area-tag" style="--area-color:#B8860B">ML</span></div>
+        </div>
       </a>
-      <a class="rp-tile rp-tile--link" href="../people/#person-dr-charles-harry" data-areas="cybersecurity" data-search-row>
-        <div class="rp-tags"><span class="area-tag" style="--area-color:#E21833">CY</span></div>
-        <div class="rp-avatar">CH</div>
-        <h3>Dr. Charles Harry</h3>
-        <div class="rp-role">Affiliate</div>
+      <a class="rp-tile rp-tile--link rp-tile--person" href="../people/#person-dr-charles-harry" data-areas="cybersecurity" data-search-row>
+        <div class="rp-tile-photo rp-tile-photo--person">
+          <span class="rp-tile-photo-initials">CH</span>
+        </div>
+        <div class="rp-tile-caption">
+          <h3>Dr. Charles Harry</h3>
+          <div class="rp-tags"><span class="area-tag" style="--area-color:#E21833">CY</span></div>
+        </div>
       </a>
-      <a class="rp-tile rp-tile--link" href="../people/#person-mark-mcdermott" data-areas="cybersecurity" data-search-row>
-        <div class="rp-tags"><span class="area-tag" style="--area-color:#E21833">CY</span></div>
-        <div class="rp-avatar">MM</div>
-        <h3>Mark McDermott</h3>
-        <div class="rp-role">Affiliate</div>
+      <a class="rp-tile rp-tile--link rp-tile--person" href="../people/#person-mark-mcdermott" data-areas="cybersecurity" data-search-row>
+        <div class="rp-tile-photo rp-tile-photo--person">
+          <span class="rp-tile-photo-initials">MM</span>
+        </div>
+        <div class="rp-tile-caption">
+          <h3>Mark McDermott</h3>
+          <div class="rp-tags"><span class="area-tag" style="--area-color:#E21833">CY</span></div>
+        </div>
       </a>
-      <a class="rp-tile rp-tile--link" href="../people/#person-dr-michelle-mazurek" data-areas="cybersecurity privacy" data-search-row>
-        <div class="rp-tags"><span class="area-tag" style="--area-color:#E21833">CY</span><span class="area-tag" style="--area-color:#7A1F3D">CP</span></div>
-        <div class="rp-avatar">MZ</div>
-        <h3>Dr. Michelle Mazurek</h3>
-        <div class="rp-role">Affiliate</div>
+      <a class="rp-tile rp-tile--link rp-tile--person" href="../people/#person-dr-michelle-mazurek" data-areas="cybersecurity privacy" data-search-row>
+        <div class="rp-tile-photo rp-tile-photo--person">
+          <span class="rp-tile-photo-initials">MZ</span>
+        </div>
+        <div class="rp-tile-caption">
+          <h3>Dr. Michelle Mazurek</h3>
+          <div class="rp-tags"><span class="area-tag" style="--area-color:#E21833">CY</span><span class="area-tag" style="--area-color:#7A1F3D">CP</span></div>
+        </div>
       </a>
-      <a class="rp-tile rp-tile--link" href="../people/#person-dr-gabriel-kaptchuk" data-areas="cybersecurity" data-search-row>
-        <div class="rp-tags"><span class="area-tag" style="--area-color:#E21833">CY</span></div>
-        <div class="rp-avatar">GK</div>
-        <h3>Dr. Gabriel Kaptchuk</h3>
-        <div class="rp-role">Affiliate</div>
+      <a class="rp-tile rp-tile--link rp-tile--person" href="../people/#person-dr-gabriel-kaptchuk" data-areas="cybersecurity" data-search-row>
+        <div class="rp-tile-photo rp-tile-photo--person">
+          <span class="rp-tile-photo-initials">GK</span>
+        </div>
+        <div class="rp-tile-caption">
+          <h3>Dr. Gabriel Kaptchuk</h3>
+          <div class="rp-tags"><span class="area-tag" style="--area-color:#E21833">CY</span></div>
+        </div>
       </a>
-      <a class="rp-tile rp-tile--link" href="../people/#person-parthav-poudel" data-areas="cybersecurity integrity" data-search-row>
-        <div class="rp-tags"><span class="area-tag" style="--area-color:#E21833">CY</span><span class="area-tag" style="--area-color:#52565A">II</span></div>
-        <div class="rp-avatar">PP</div>
-        <h3>Parthav Poudel</h3>
-        <div class="rp-role">Affiliate</div>
+      <a class="rp-tile rp-tile--link rp-tile--person" href="../people/#person-parthav-poudel" data-areas="cybersecurity integrity" data-search-row>
+        <div class="rp-tile-photo rp-tile-photo--person">
+          <span class="rp-tile-photo-initials">PP</span>
+        </div>
+        <div class="rp-tile-caption">
+          <h3>Parthav Poudel</h3>
+          <div class="rp-tags"><span class="area-tag" style="--area-color:#E21833">CY</span><span class="area-tag" style="--area-color:#52565A">II</span></div>
+        </div>
       </a>
-      <a class="rp-tile rp-tile--link" href="../people/#person-dr-jessica-vitak" data-areas="privacy" data-search-row>
-        <div class="rp-tags"><span class="area-tag" style="--area-color:#7A1F3D">CP</span></div>
-        <div class="rp-avatar">JV</div>
-        <h3>Dr. Jessica Vitak</h3>
-        <div class="rp-role">Affiliate</div>
+      <a class="rp-tile rp-tile--link rp-tile--person" href="../people/#person-dr-jessica-vitak" data-areas="privacy" data-search-row>
+        <div class="rp-tile-photo rp-tile-photo--person">
+          <span class="rp-tile-photo-initials">JV</span>
+        </div>
+        <div class="rp-tile-caption">
+          <h3>Dr. Jessica Vitak</h3>
+          <div class="rp-tags"><span class="area-tag" style="--area-color:#7A1F3D">CP</span></div>
+        </div>
       </a>
-      <a class="rp-tile rp-tile--link" href="../people/#person-patrick-parham" data-areas="privacy" data-search-row>
-        <div class="rp-tags"><span class="area-tag" style="--area-color:#7A1F3D">CP</span></div>
-        <div class="rp-avatar">PA</div>
-        <h3>Patrick Parham</h3>
-        <div class="rp-role">Affiliate</div>
+      <a class="rp-tile rp-tile--link rp-tile--person" href="../people/#person-patrick-parham" data-areas="privacy" data-search-row>
+        <div class="rp-tile-photo rp-tile-photo--person">
+          <span class="rp-tile-photo-initials">PA</span>
+        </div>
+        <div class="rp-tile-caption">
+          <h3>Patrick Parham</h3>
+          <div class="rp-tags"><span class="area-tag" style="--area-color:#7A1F3D">CP</span></div>
+        </div>
       </a>
-      <a class="rp-tile rp-tile--link" href="../people/#person-giovanni-luca-ciampaglia" data-areas="integrity" data-search-row>
-        <div class="rp-tags"><span class="area-tag" style="--area-color:#52565A">II</span></div>
-        <div class="rp-avatar">GC</div>
-        <h3>Giovanni Luca Ciampaglia</h3>
-        <div class="rp-role">Affiliate</div>
+      <a class="rp-tile rp-tile--link rp-tile--person" href="../people/#person-giovanni-luca-ciampaglia" data-areas="integrity" data-search-row>
+        <div class="rp-tile-photo rp-tile-photo--person">
+          <span class="rp-tile-photo-initials">GC</span>
+        </div>
+        <div class="rp-tile-caption">
+          <h3>Giovanni Luca Ciampaglia</h3>
+          <div class="rp-tags"><span class="area-tag" style="--area-color:#52565A">II</span></div>
+        </div>
       </a>
-      <a class="rp-tile rp-tile--link" href="../people/#person-dr-irene-pasquetto" data-areas="integrity" data-search-row>
-        <div class="rp-tags"><span class="area-tag" style="--area-color:#52565A">II</span></div>
-        <div class="rp-avatar">IP</div>
-        <h3>Dr. Irene Pasquetto</h3>
-        <div class="rp-role">Affiliate</div>
+      <a class="rp-tile rp-tile--link rp-tile--person" href="../people/#person-dr-irene-pasquetto" data-areas="integrity" data-search-row>
+        <div class="rp-tile-photo rp-tile-photo--person">
+          <span class="rp-tile-photo-initials">IP</span>
+        </div>
+        <div class="rp-tile-caption">
+          <h3>Dr. Irene Pasquetto</h3>
+          <div class="rp-tags"><span class="area-tag" style="--area-color:#52565A">II</span></div>
+        </div>
       </a>
-      <a class="rp-tile rp-tile--link" href="../people/#person-dr-cody-buntain" data-areas="integrity" data-search-row>
-        <div class="rp-tags"><span class="area-tag" style="--area-color:#52565A">II</span></div>
-        <div class="rp-avatar">CB</div>
-        <h3>Dr. Cody Buntain</h3>
-        <div class="rp-role">Affiliate</div>
+      <a class="rp-tile rp-tile--link rp-tile--person" href="../people/#person-dr-cody-buntain" data-areas="integrity" data-search-row>
+        <div class="rp-tile-photo rp-tile-photo--person">
+          <span class="rp-tile-photo-initials">CB</span>
+        </div>
+        <div class="rp-tile-caption">
+          <h3>Dr. Cody Buntain</h3>
+          <div class="rp-tags"><span class="area-tag" style="--area-color:#52565A">II</span></div>
+        </div>
       </a>
-      <a class="rp-tile rp-tile--link" href="../people/#person-dr-katie-shilton" data-areas="ml" data-search-row>
-        <div class="rp-tags"><span class="area-tag" style="--area-color:#B8860B">ML</span></div>
-        <div class="rp-avatar">KS</div>
-        <h3>Dr. Katie Shilton</h3>
-        <div class="rp-role">Affiliate</div>
+      <a class="rp-tile rp-tile--link rp-tile--person" href="../people/#person-dr-katie-shilton" data-areas="ml" data-search-row>
+        <div class="rp-tile-photo rp-tile-photo--person">
+          <span class="rp-tile-photo-initials">KS</span>
+        </div>
+        <div class="rp-tile-caption">
+          <h3>Dr. Katie Shilton</h3>
+          <div class="rp-tags"><span class="area-tag" style="--area-color:#B8860B">ML</span></div>
+        </div>
       </a>
-      <a class="rp-tile rp-tile--link" href="../people/#person-dr-laura-fichtner" data-areas="ml" data-search-row>
-        <div class="rp-tags"><span class="area-tag" style="--area-color:#B8860B">ML</span></div>
-        <div class="rp-avatar">LF</div>
-        <h3>Dr. Laura Fichtner</h3>
-        <div class="rp-role">Affiliate</div>
+      <a class="rp-tile rp-tile--link rp-tile--person" href="../people/#person-dr-laura-fichtner" data-areas="ml" data-search-row>
+        <div class="rp-tile-photo rp-tile-photo--person">
+          <span class="rp-tile-photo-initials">LF</span>
+        </div>
+        <div class="rp-tile-caption">
+          <h3>Dr. Laura Fichtner</h3>
+          <div class="rp-tags"><span class="area-tag" style="--area-color:#B8860B">ML</span></div>
+        </div>
       </a>
-      <a class="rp-tile rp-tile--link" href="../people/#person-dr-amy-winecoff" data-areas="ml" data-search-row>
-        <div class="rp-tags"><span class="area-tag" style="--area-color:#B8860B">ML</span></div>
-        <div class="rp-avatar">AW</div>
-        <h3>Dr. Amy Winecoff</h3>
-        <div class="rp-role">Affiliate</div>
+      <a class="rp-tile rp-tile--link rp-tile--person" href="../people/#person-dr-amy-winecoff" data-areas="ml" data-search-row>
+        <div class="rp-tile-photo rp-tile-photo--person">
+          <span class="rp-tile-photo-initials">AW</span>
+        </div>
+        <div class="rp-tile-caption">
+          <h3>Dr. Amy Winecoff</h3>
+          <div class="rp-tags"><span class="area-tag" style="--area-color:#B8860B">ML</span></div>
+        </div>
       </a></div>
         </div>
         <div class="rp-carousel-footer">
@@ -362,19 +409,19 @@
       <div>
         <div class="footer-social">
           <a href="https://sclanga.substack.com/" target="_blank" rel="noopener" aria-label="Substack">
-            <img src="../assets/img/social/substack.png?v=2026091415" alt="" loading="lazy">
+            <img src="../assets/img/social/substack.png?v=2026091416" alt="" loading="lazy">
           </a>
           <a href="https://x.com/phronesisres" target="_blank" rel="noopener" aria-label="X">
-            <img src="../assets/img/social/x.png?v=2026091415" alt="" loading="lazy">
+            <img src="../assets/img/social/x.png?v=2026091416" alt="" loading="lazy">
           </a>
           <a href="https://www.instagram.com/phronesisres" target="_blank" rel="noopener" aria-label="Instagram">
-            <img src="../assets/img/social/instagram.png?v=2026091415" alt="" loading="lazy">
+            <img src="../assets/img/social/instagram.png?v=2026091416" alt="" loading="lazy">
           </a>
           <a href="https://www.threads.com/@phronesisres" target="_blank" rel="noopener" aria-label="Threads">
-            <img src="../assets/img/social/threads.png?v=2026091415" alt="" loading="lazy">
+            <img src="../assets/img/social/threads.png?v=2026091416" alt="" loading="lazy">
           </a>
           <a href="https://www.tiktok.com/@phronesis.research" target="_blank" rel="noopener" aria-label="TikTok">
-            <img src="../assets/img/social/tiktok.png?v=2026091415" alt="" loading="lazy">
+            <img src="../assets/img/social/tiktok.png?v=2026091416" alt="" loading="lazy">
           </a>
         </div>
         <ul class="footer-legal">
@@ -419,6 +466,6 @@
     </div>
   </div>
 </footer>
-<script src="../assets/js/main.js?v=2026091415"></script>
+<script src="../assets/js/main.js?v=2026091416"></script>
 </body>
 </html>
