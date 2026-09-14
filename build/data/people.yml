@@ -13,22 +13,19 @@
     url: https://idonibrasco.github.io/
   linkedin: null
 - initials: SL
-  name: Sipho C. Langa
+  name: Sipho C. Langa, M.S.
   role: Co-Lead
   focus: Mechanism design, welfare economics, consumer protection, HCI
   role_types:
   - core-member
-  bio: Sipho C. Langa (co-lead, M.S.) is a research engineer at SAS with experience spanning industry, academia,
-    and government, including MIT, Princeton's Center for Information Technology Policy, the Federal Reserve Board,
-    and the Consumer Financial Protection Bureau. His research examines questions at the intersection of technology,
-    law, and policy through the lens of mechanism design, drawing particularly from welfare economics, consumer
-    protection, and human-computer interaction.
-  email: null
+  bio: Sipho is a research engineer whose professional work focuses on Causal Inference and Artificial Intelligence.
+    His academic work explores topics at the intersection of technology, law, and policy through the lens of
+    mechanism design. He is also the Founder and Executive Director of the <a href="https://phronesisresearch.org/"
+    target="_blank" rel="noopener">Phronesis Institute</a>.
+  email: sclanga@proton.me
   websites:
-  - label: Personal Website
-    url: https://chadl22.github.io
-  - label: Research Website
-    url: https://phronesisresearch.org
+  - label: Website
+    url: https://chadl22.github.io/
   linkedin: null
 - initials: CH
   name: Dr. Charles Harry
@@ -45,7 +42,7 @@
   linkedin: null
 - initials: MM
   name: Mark McDermott
-  role: Practitioner
+  role: Practitioner (Tech/Government)
   focus: Cybersecurity, disinformation, machine learning, data science
   role_types:
   - affiliate
@@ -179,7 +176,7 @@
   linkedin: null
 - initials: AW
   name: Dr. Amy Winecoff
-  role: Practitioner
+  role: Practitioner (Tech/Government)
   focus: AI governance, algorithmic measurement, responsible AI
   role_types:
   - affiliate
