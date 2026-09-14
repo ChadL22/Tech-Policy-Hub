@@ -860,10 +860,17 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    16px text padding + 1.5px border, so the label's text start and the
    button's text start didn't actually line up. left:42px = the
    dropdown row's own 24px inset + the button's 1.5px border + the
-   button's 16px text padding, i.e. the label now starts at the exact
-   same x as "ROLE" itself. */
+   button's 16px text padding, i.e. the label started at the exact same
+   x as "ROLE" itself.
+   Follow-up (direct user request): "align the vertical line of the 'F'
+   in 'Filter by' with the leftmost edge of the filter button" -- a
+   different alignment target than the request above (the button's own
+   outer edge, not its inner text start), so left:42px reverts to
+   left:24px, matching .area-controls' own 24px left padding, which is
+   exactly where .area-controls-row (and the button that starts it)
+   begins. */
 .area-controls-label{
-  position: absolute; top:18px; left:42px; line-height:1;
+  position: absolute; top:18px; left:24px; line-height:1;
   font-family: var(--font-nav); font-size:.64rem; font-weight:700;
   letter-spacing:.05em; text-transform: uppercase; color: var(--ink-soft);
 }
@@ -1600,15 +1607,22 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 }
 /* Scoped override (see the .person-media comment above): people.html's
    photo card gives up the base rule's fixed 16/10 aspect-ratio in favor
-   of a flex-grow share of the card's stretched height, so photo:caption
-   stays a constant 64:36 split on every row regardless of bio length. */
-/* min-height:0 overrides the flex default (min-height:auto), which
-   otherwise refuses to shrink a flex item below its own content's
-   min-content size -- without it, the caption's own Email/Website/tag
-   content was taller than its "fair" 36% share on shorter rows, so it
-   grew past that share and threw off the ratio the flex-grow split was
-   supposed to guarantee. */
-.person-media .rp-tile-photo--person{ aspect-ratio: auto; flex: 64 1 0; min-height: 0; }
+   of flex-grow, filling whatever height the caption below doesn't use.
+   Follow-up (direct user request): "the padding below the content on
+   the black section should be reduced... there is no additional
+   information -- the desktop version should look more like mobile."
+   The earlier fixed 64:36 photo:caption split (see below) kept the
+   ratio constant across cards, but forced the caption to always claim
+   36% of the row's height even when its own content (Email/Website,
+   0-4 badges) needed far less -- people with no badges (e.g. Sipho)
+   ended up with a lot of empty black space below their content. Caption
+   is now flex:0 0 auto (sized to its own content, like the @media
+   (max-width:700px) override below already does) and the photo takes
+   flex:1 1 0 to absorb 100% of whatever height that leaves -- bio
+   length now varies the photo's crop instead of the caption's empty
+   space, which reads better since the photo is already cropped via
+   object-fit regardless. */
+.person-media .rp-tile-photo--person{ aspect-ratio: auto; flex: 1 1 0; min-height: 0; }
 /* "___________ / Email / Website / [badges]" (direct user request,
    matching the user's own mockup order) -- same idea as research.
    html's .rp-tile--person .rp-tile-caption. flex:64 1 0 on the photo
@@ -1633,7 +1647,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    of gold since this divides a photo from a name-card-style caption
    rather than framing a whole panel. */
 .person-media-caption{
-  flex: 36 1 0; min-height: 0; display:flex; flex-direction:row; align-items:flex-start;
+  flex: 0 0 auto; display:flex; flex-direction:row; align-items:flex-start;
   justify-content:space-between; gap:8px;
   padding: 6px 10px 8px; background: var(--ink); border-top: 4px solid var(--umd-red);
 }
