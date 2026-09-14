@@ -193,11 +193,24 @@ def _person_tile_html(name, keys):
 
 
 def _project_tile_html(name, desc, key):
+    # Direct user request, modeled on Bloomberg.com's "Today's Videos"
+    # card: a photo area on top (no real project photos yet, so this is
+    # the same colored/textured placeholder treatment as the homepage
+    # Research Spotlight's .lead-media, recolored per the project's
+    # research area -- see AREA_META/g.AREA_META) with that area's badge
+    # in the corner, then the title + description in a shaded caption
+    # strip below (.rp-tile-caption) rather than floating directly on
+    # white -- "the title... is in the grey section of the tile."
+    m = g.AREA_META[key]
     return f"""
-      <div class="rp-tile" data-areas="{key}" data-search-row>
-        {_area_tags_html([key])}
-        <h3>{name}</h3>
-        <p class="rp-desc">{desc}</p>
+      <div class="rp-tile rp-tile--project" data-areas="{key}" data-search-row>
+        <div class="rp-tile-photo" style="--area-color:{m['color']}">
+          <span class="area-tag rp-tile-photo-badge">{m['code']}</span>
+        </div>
+        <div class="rp-tile-caption">
+          <h3>{name}</h3>
+          <p class="rp-desc">{desc}</p>
+        </div>
       </div>"""
 
 
@@ -314,19 +327,25 @@ research_body = f"""
            "Bloomberg Originals"/"Watch" rows): this used to be a free
            `overflow-x:auto` scroll strip, which could leave a tile
            half-cut-off at the right edge. Now a fixed-width `.rp-carousel-
-           viewport` clips `.rp-grid` to a JS-computed width that's an
-           exact multiple of one tile's width (see initTileCarousel() in
-           main.js), so only whole tiles are ever visible, paged with the
-           prev/next arrows + dots below rather than free-scrolled/
-           dragged. `.rp-carousel--people` keeps tiles small (photo/name/
-           role only, no bio -- see _person_tile_html); `.rp-carousel--
+           viewport` clips `.rp-grid` to a JS-computed width, paged with
+           the prev/next arrows below (see initTileCarousel() in main.js)
+           rather than free-scrolled/dragged -- so only whole tiles are
+           ever visible. That same JS also stretches every tile to
+           exactly fill the row whenever there are enough of them (no
+           leftover gap at the row's edge); when a filter/search leaves
+           fewer tiles than fit one page, they keep their natural width
+           and the row is allowed to fall short -- direct user request
+           ("if there are less tiles... the open space is fine"). No
+           page dots -- direct user request to drop them and rely on the
+           arrows alone (greyed out via :disabled at either end).
+           `.rp-carousel--people` keeps tiles small (photo/name/role
+           only, no bio -- see _person_tile_html); `.rp-carousel--
            projects` below is the taller variant. -->
       <div class="rp-carousel rp-carousel--people" id="people-panel" hidden data-carousel>
         <div class="rp-carousel-viewport">
           <div class="rp-grid">{people_tiles}</div>
         </div>
         <div class="rp-carousel-footer">
-          <div class="rp-carousel-dots"></div>
           <div class="rp-carousel-arrows">
             <button type="button" class="rp-carousel-arrow rp-carousel-prev" aria-label="Previous people"></button>
             <button type="button" class="rp-carousel-arrow rp-carousel-next" aria-label="Next people"></button>
@@ -346,7 +365,6 @@ research_body = f"""
           <div class="rp-grid">{project_tiles}</div>
         </div>
         <div class="rp-carousel-footer">
-          <div class="rp-carousel-dots"></div>
           <div class="rp-carousel-arrows">
             <button type="button" class="rp-carousel-arrow rp-carousel-prev" aria-label="Previous projects"></button>
             <button type="button" class="rp-carousel-arrow rp-carousel-next" aria-label="Next projects"></button>

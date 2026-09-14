@@ -887,16 +887,21 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    rounded panel (the --paper-soft + --radius-lg "contour instead of a
    wall of white" treatment, same reasoning as .guiding-section
    .container); `.rp-carousel-viewport` clips to a JS-computed width
-   that's an exact multiple of one tile's width so only whole tiles are
-   ever visible (see initTileCarousel() in main.js); `.rp-grid` is the
-   flex track that gets paged inside it via scrollLeft, controlled only
-   by the prev/next arrows + dots in `.rp-carousel-footer` below -- no
+   so only whole tiles are ever visible (see initTileCarousel() in
+   main.js, which also stretches tiles to fill that width edge-to-edge
+   whenever there are enough of them -- direct user request to remove
+   the leftover gap a fixed tile width could leave at the row's end);
+   `.rp-grid` is the flex track that gets paged inside it via
+   scrollLeft, controlled only by the prev/next arrows in
+   `.rp-carousel-footer` below (no dots -- direct user request) -- no
    native scrollbar/drag, so there's never a mid-scroll partial frame at
    rest either. `.rp-carousel--people` keeps tiles small, like
    Bloomberg's "Originals" row (no bio -- see _person_tile_html, each
    tile links straight to that person's full listing on people.html);
    `.rp-carousel--projects` is the taller variant, like Bloomberg's
-   "Watch" row. */
+   "Watch" row/"Today's Videos" card -- a photo on top with the title/
+   description below in a shaded caption strip, see .rp-tile-photo/
+   .rp-tile-caption further down. */
 .rp-carousel{ background: var(--paper-soft); border-radius: var(--radius-lg); padding: 20px; }
 .rp-carousel[hidden]{ display:none; }
 .rp-carousel-viewport{ overflow: hidden; }
@@ -937,29 +942,43 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 .rp-carousel--people .rp-role{ margin-bottom:0; }
 
 /* Tall variant (direct user request: "projects can be taller like the
-   Watch section") -- Project tiles keep their description, so more
-   padding and a slightly larger heading give that text room to breathe
-   the way Bloomberg's taller "Watch" cards do next to its more compact
-   "Originals" row. */
-.rp-carousel--projects .rp-grid > .rp-tile{ flex-basis: 270px; padding: 24px; min-height: 190px; }
-.rp-carousel--projects .rp-tile h3{ font-size:1.1rem; margin-bottom:8px; }
+   Watch section", with "a photo and a description... the title... in
+   the grey section of the tile", modeled on Bloomberg's "Today's
+   Videos" card) -- the tile itself goes edge-to-edge (no padding/
+   min-height of its own; overflow:hidden clips the photo's square
+   corners to the tile's rounded ones), a fixed-aspect-ratio photo area
+   on top, and a shaded caption strip below holding the title +
+   description. No real project photos exist yet, so .rp-tile-photo
+   reuses the homepage Research Spotlight's colored/textured
+   placeholder treatment (.lead-media), recolored per the project's own
+   research area via --area-color rather than the Spotlight's fixed
+   ink/red split. */
+.rp-carousel--projects .rp-grid > .rp-tile{
+  flex-basis: 280px; padding:0; overflow:hidden; display:flex; flex-direction:column;
+}
+.rp-tile-photo{
+  aspect-ratio: 16/10; position:relative; overflow:hidden; flex:none;
+  background: var(--area-color, var(--umd-red));
+}
+.rp-tile-photo::before{
+  content:''; position:absolute; inset:0;
+  background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.14) 0 2px, transparent 2px 16px);
+}
+.rp-tile-photo-badge{ position:absolute; left:12px; top:12px; }
+.rp-tile-caption{ background: var(--paper-soft); padding: 16px; flex: 1 1 auto; }
+.rp-carousel--projects .rp-tile h3{ font-size:1.05rem; margin-bottom:8px; }
 .rp-carousel--projects .rp-desc{ font-size:.92rem; }
 
-/* Footer bar below each carousel -- dots (current page) on the left,
-   prev/next arrows on the right, the same paired layout and CSS-drawn
-   chevron/dot styling as the homepage Research Spotlight's
-   .spotlight-footer/.spotlight-dot/.spotlight-arrow (kept as separate
-   classes here since that trio is scoped to the spotlight widget in
-   main.js and reusing it directly would risk cross-wiring the two). */
-.rp-carousel-footer{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:16px; }
-.rp-carousel--single .rp-carousel-footer{ display:none; }
-.rp-carousel-dots{ display:flex; gap:8px; }
-.rp-carousel-dot{
-  width:8px; height:8px; padding:0; border-radius:50%; border:1.5px solid var(--ink-soft);
-  background: transparent; cursor:pointer; transition: background .15s ease, border-color .15s ease;
-}
-.rp-carousel-dot:hover{ border-color: var(--umd-red); }
-.rp-carousel-dot.is-active{ background: var(--ink); border-color: var(--ink); }
+/* Footer bar below each carousel -- just the prev/next arrows (direct
+   user request: no page dots -- the arrows greying out via :disabled at
+   either end already shows position well enough), right-aligned. Same
+   CSS-drawn chevron styling as the homepage Research Spotlight's
+   .spotlight-arrow (kept as a separate class since that one is scoped
+   to the spotlight widget in main.js and reusing it directly would risk
+   cross-wiring the two). Always shown, even with only one page (both
+   arrows simply sit disabled) -- direct user request ("if there is
+   only one page then that is fine"). */
+.rp-carousel-footer{ display:flex; align-items:center; justify-content:flex-end; margin-top:16px; }
 .rp-carousel-arrows{ display:flex; gap:8px; }
 .rp-carousel-arrow{
   width:32px; height:32px; padding:0; border-radius:50%;
