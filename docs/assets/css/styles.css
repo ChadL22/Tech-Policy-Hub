@@ -963,7 +963,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    and the section/rectangle holding them." */
 .rp-carousel[hidden]{ display:none; }
 .rp-carousel-panel{
-  background: var(--paper-soft); border: 1px solid var(--line);
+  background: var(--paper-soft); border: 1.5px solid var(--ink-soft);
   border-radius: var(--radius-lg); padding: 20px;
 }
 .rp-carousel-viewport{ overflow: hidden; }
@@ -977,7 +977,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    whatever radius is set here, so this "just works" for those too. */
 .rp-grid > .rp-tile{
   flex: 0 0 250px;
-  background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 16px;
+  background: var(--paper); border: 1.5px solid var(--ink-soft); border-radius: var(--radius-lg); padding: 16px;
 }
 .rp-tile[hidden]{ display:none; }
 /* People tiles are links (straight to people.html#person-<slug>) --
@@ -1089,6 +1089,19 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 .rp-carousel-arrow:disabled:hover{ border-color: var(--ink-soft); background:transparent; }
 .rp-carousel-arrow:disabled:hover::before{ border-color: var(--ink-soft); }
 
+/* Direct user request ("we also need a background for our
+   publications"): Publications used to sit directly on the page's white
+   background with no container at all, unlike People/Projects above it
+   (.rp-carousel-panel) and Core Members/Affiliates on people.html
+   (.people-group). .pub-panel gives it the same paper-soft/ink-soft-
+   border/radius-lg treatment -- wraps just the list (+ its empty-state
+   message), not the "Publications" heading/year-filter row above, same
+   split as People/Projects (.subsection-toggle sits outside
+   .rp-carousel-panel too). */
+.pub-panel{
+  background: var(--paper-soft); border: 1.5px solid var(--ink-soft);
+  border-radius: var(--radius-lg); padding: 8px 28px 24px;
+}
 .pub-year{
   font-family: var(--font-nav); font-size:1rem; font-weight:700;
   margin: 28px 0 6px; padding-top:20px; border-top:1px solid var(--line);

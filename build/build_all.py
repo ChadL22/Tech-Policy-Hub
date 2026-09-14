@@ -404,8 +404,10 @@ research_body = f"""
         <h2>Publications</h2>
         <div class="year-filter-bar" role="group" aria-label="Filter publications by year">{year_filter_pills}</div>
       </div>
-      <div class="pub-list" id="publications-panel">{pubs_list}</div>
-      <p class="list-empty" data-empty-for="publications-panel" hidden>No publications match your filters.</p>
+      <div class="pub-panel">
+        <div class="pub-list" id="publications-panel">{pubs_list}</div>
+        <p class="list-empty" data-empty-for="publications-panel" hidden>No publications match your filters.</p>
+      </div>
     </section>
   </div>
 </section>
