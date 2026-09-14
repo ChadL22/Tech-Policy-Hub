@@ -1228,14 +1228,27 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    border/radius-lg treatment -- wraps just the list (+ its empty-state
    message), not the "Publications" heading/year-filter row above, same
    split as People/Projects (.subsection-toggle sits outside
-   .rp-carousel-panel too). */
+   .rp-carousel-panel too).
+   Follow-up (direct user request): "the background should be black so
+   that the entries when they alternate do not get muted or drowned out
+   by the background." .pub-row--alt's grey (var(--paper-soft)) was
+   exactly the same color as this panel's own background, so an alt row
+   visually vanished into the panel -- only its border gave it away.
+   Switching the panel to var(--ink) (the same near-black used for
+   person-media-caption/.rp-tile--person's caption elsewhere) fixes that
+   directly: both the white default row and the off-white alt row now
+   read clearly against it, no row-color changes needed. What DOES need
+   to change is anything that used to sit straight on the light panel
+   background assuming dark-on-light text -- .pub-year (below) and the
+   empty-state message (.list-empty, scoped to just this panel further
+   down) both get explicit light-on-dark colors for the same reason. */
 .pub-panel{
-  background: var(--paper-soft); border: 1.5px solid var(--ink-soft);
+  background: var(--ink); border: 1.5px solid var(--ink-soft);
   border-radius: var(--radius-lg); padding: 20px 24px;
 }
 .pub-year{
   font-family: var(--font-nav); font-size:1rem; font-weight:700;
-  margin: 20px 0 10px;
+  margin: 20px 0 10px; color: var(--paper);
 }
 .pub-year:first-child{ margin-top:0; }
 /* Follow-up (direct user request): each publication entry is now its
@@ -1346,6 +1359,10 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 .search-box-input::placeholder{ color:#9a9d9f; }
 .search-box-input:focus{ outline: none; border-color: var(--umd-red); }
 .list-empty{ padding: 20px 0; color: var(--ink-soft); font-size:.92rem; border-top: 1px solid var(--line); }
+/* Scoped override: .list-empty is shared with the People/Projects empty
+   states, which still sit on a light panel -- only the Publications one
+   needs light-on-dark text now that .pub-panel's background is ink. */
+.pub-panel .list-empty{ color: var(--paper-soft); }
 
 /* ---------- Events ---------- */
 /* Follow-up: scroll-capped Upcoming/Past lists, added at direct user
