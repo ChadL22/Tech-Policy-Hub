@@ -287,13 +287,22 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 /* ---------- Lead section: SCOTUSblog-style compact 3-column grid --
    secondary headlines / lead story / Hub-updates rail, no oversized
    placeholder art. Replaces the old single-story "featured-hero" block. ---------- */
-.lead-section{ padding: 28px 0 32px; border-bottom: 1px solid var(--line); }
+/* Follow-up (direct user request): the homepage's top section (What
+   We Do / Research Spotlight / Hub News, down through Research Areas)
+   was taller than a typical browser window, so part of it was hidden
+   below the fold on load -- the user wants everything down to "What
+   we're reading" visible without scrolling. Tightened this section's
+   own padding plus a series of internal spacing/line-height trims
+   below (.rail-head, .spotlight-slide, .spotlight-footer,
+   .rail-head--stacked, .research-matrix--rail .matrix-cell,
+   .lead-secondary p) to reclaim that height. */
+.lead-section{ padding: 12px 0 14px; border-bottom: 1px solid var(--line); }
 .lead-grid{ display:grid; grid-template-columns: 280px 1fr 280px; gap: 40px; align-items: start; }
 .lead-secondary{ grid-column: 1; border-right: 1px solid var(--line); padding-right: 28px; }
 /* Follow-up: briefly matched to .rail-item h4's darkness/weight (Hub
    News headlines), then walked back per direct user request -- back to
    the plain sitewide p{ color: var(--ink-soft) } weight/color. */
-.lead-secondary p{ font-size:.88rem; line-height:1.6; }
+.lead-secondary p{ font-size:.88rem; line-height:1.5; }
 /* Follow-up: opening phrase is bold + var(--ink) black, matching the
    Research Areas card titles (.matrix-cell h3) per direct user request
    -- overrides the sitewide p{ color: var(--ink-soft) } rule, which was
@@ -308,6 +317,13 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   aspect-ratio: 16/7; margin-bottom: 18px; position: relative; overflow: hidden;
   background: linear-gradient(135deg, var(--ink) 0%, var(--ink) 42%, var(--umd-red) 42%, var(--umd-red) 100%);
 }
+/* Follow-up (direct user request): lead_media_html() in generate.py can
+   now take a real photo path instead of the abstract diagonal-graphic
+   placeholder. object-fit:cover crops the photo to fill this box at
+   whatever aspect ratio it's shot at -- it never stretches/distorts the
+   photo the way a plain width:100%;height:100% would, regardless of the
+   source image's own proportions. */
+.lead-media img{ position:absolute; inset:0; width:100%; height:100%; object-fit: cover; }
 .lead-media::before{
   content:''; position:absolute; inset:0;
   background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.07) 0 2px, transparent 2px 16px);
@@ -316,7 +332,11 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   position:absolute; left:18px; bottom:14px; font-family: var(--font-nav); font-size:.76rem; font-weight:700;
   letter-spacing:.06em; text-transform:uppercase; color:#fff;
 }
-.lead-story .meta{ font-family: var(--font-nav); font-size:.8rem; letter-spacing:.04em; color: var(--ink-soft); text-transform: uppercase; margin-bottom: 14px; }
+.lead-story .meta{ font-family: var(--font-nav); font-size:.8rem; letter-spacing:.04em; color: var(--ink-soft); text-transform: uppercase; margin-bottom: 6px; }
+/* Scoped override of the shared .hero-actions{margin-top:24px} (also used
+   by .page-hero elsewhere) -- tighter here since this whole card is
+   fighting for vertical space in the above-the-fold homepage layout. */
+.spotlight-slide .hero-actions{ margin-top: 10px; }
 .lead-story h1{ margin-bottom: .4em; font-size: clamp(1.35rem, 2.1vw, 1.85rem); }
 .lead-story h1 a{ color: var(--ink); }
 .lead-story h1 a:hover{ color: var(--umd-red); text-decoration: none; }
@@ -362,7 +382,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 .spotlight-slide{
   grid-area: slide; opacity:0; pointer-events:none;
   transition: opacity .6s ease-in-out;
-  padding: 20px 18px;
+  padding: 10px 18px;
 }
 .spotlight-slide.is-active.is-visible{ opacity:1; pointer-events:auto; }
 /* Fixed-height title/summary via a hard 2-line cap so there's never a
@@ -370,11 +390,11 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    that a title/summary long enough to need a 3rd line is truncated
    with an ellipsis rather than reserving room for it. */
 .spotlight-slide h1{
-  line-height: 1.2; min-height: 2.4em;
+  line-height: 1.2; min-height: 2.2em; margin-bottom: .3em;
   display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
 }
 .spotlight-slide .lede{
-  max-width: none; line-height: 1.5; min-height: 3em;
+  max-width: none; line-height: 1.35; min-height: 2.6em;
   display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
 }
 /* Small filled red chip for the tag word ("Publication"/"Award"/etc). */
@@ -395,7 +415,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    request, even with that strip itself gone now. */
 .spotlight-footer{
   display:flex; align-items:center; justify-content:space-between; gap:12px;
-  padding: 12px 18px; background: var(--paper-soft); border-top: 1px solid var(--line);
+  padding: 6px 18px; background: var(--paper-soft); border-top: 1px solid var(--line);
 }
 .spotlight-dots{ display:flex; gap:8px; }
 .spotlight-dot{
@@ -686,7 +706,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    the note on `.rail-scroll-wrap`/`.rail-scroll` below, and
    syncHubNewsHeight() in main.js, for the runtime-measured approach
    that replaced it. */
-.rail-head--stacked{ margin-top: 16px; padding-top: 24px; border-top: 1px solid var(--line); }
+.rail-head--stacked{ margin-top: 10px; padding-top: 14px; border-top: 1px solid var(--line); }
 .research-matrix--rail{ border-color: var(--line); }
 /* Follow-up 55: `justify-content:center` here vertically centered each
    cell's index+name block WITHIN the row's full height, which is set by
@@ -712,7 +732,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
      not a cosmetic tightening -- `overflow-wrap`/`hyphens` on h3 stay in
      place as a fallback for any future topic name that's still too wide
      even at this padding. */
-  padding: 22px 10px; min-height: 104px;
+  padding: 14px 10px; min-height: 84px;
   display:flex; flex-direction:column; justify-content:flex-start;
 }
 .research-matrix--rail .matrix-cell .index{ font-size:.76rem; margin-bottom: 6px; }
@@ -1158,7 +1178,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 .rail-panel{ border-left: 1px solid var(--line); padding-left: 28px; }
 .rail-head{
   font-family: var(--font-nav); font-size:.72rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
-  color: var(--ink-soft); padding-bottom: 12px; margin-bottom: 4px; border-bottom: 2px solid var(--ink);
+  color: var(--ink-soft); padding-bottom: 8px; margin-bottom: 2px; border-bottom: 2px solid var(--ink);
 }
 /* Follow-up 52: Hub News became the site's only news listing once the
    standalone news.html page was removed, so it now shows every

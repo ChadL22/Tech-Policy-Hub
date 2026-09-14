@@ -44,7 +44,7 @@ SITE_URL = "https://chadl22.github.io/Tech-Policy-Hub/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026091407"
+ASSET_VERSION = "2026091409"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -565,12 +565,21 @@ def guiding_questions_html(items):
     return "".join(out)
 
 
-def lead_media_html(topic_label):
-    """Abstract editorial graphic (brand diagonal + topic label) for the
-    homepage's Featured Publication -- deliberately not a photo, since we
-    don't have real photography for these articles/events on file yet
-    (see follow-up 11). Swap for a real image per-article later if the
-    Hub supplies one."""
+def lead_media_html(topic_label, image=None):
+    """Homepage Research Spotlight art. Defaults to the abstract editorial
+    graphic (brand diagonal + topic label) used since launch, since most
+    entries still don't have real photography on file (see follow-up 11).
+
+    Follow-up (direct user request): once a real photo IS available for
+    an item, pass its path as `image` (see spotlight_items.yml -- add an
+    `image: assets/img/...` key to that item) and it renders here instead,
+    filling the same box via object-fit:cover (see .lead-media img in
+    styles.css) so the photo crops to fit rather than stretching/warping
+    regardless of its native aspect ratio. The topic label still overlays
+    on top either way."""
+    if image:
+        return f"""
+        <div class="lead-media"><img src="{image}" alt="" loading="lazy"><span class="topic-mark">{topic_label}</span></div>"""
     return f"""
         <div class="lead-media"><span class="topic-mark">{topic_label}</span></div>"""
 
@@ -625,7 +634,7 @@ def spotlight_html(items):
         active = " is-active is-visible" if i == 0 else ""
         media_slides.append(f"""
         <div class="spotlight-media-slide{active}" data-slide="{i}">
-          {lead_media_html(it['topic'])}
+          {lead_media_html(it['topic'], it.get('image'))}
         </div>""")
         text_slides.append(f"""
         <div class="spotlight-slide{active}" data-slide="{i}">
