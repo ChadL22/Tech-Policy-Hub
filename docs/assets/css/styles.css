@@ -879,31 +879,43 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    each, in flex-wrap so 3-4 tags on a narrow tile still reads cleanly. */
 .rp-tags{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
 
-/* Follow-up (direct user request): was a wrapping 3-up grid; now a
-   single horizontally-scrollable row (People and Projects tiles alike --
-   Publications' .pub-list is untouched, a plain vertical list). Each
-   .rp-tile gets a fixed flex-basis so tiles keep a readable, consistent
-   width while the row scrolls instead of stretching/shrinking like a
-   flex default would. The --paper-soft background + --radius-lg corners
-   turn this into a visually contained panel -- see the comment above
-   .guiding-section .container for the same "contour instead of a wall
-   of white" reasoning, applied here as a light card rather than a dark
-   full-bleed band. */
-.rp-grid{
-  display:flex; flex-wrap:nowrap; align-items:stretch; gap: 20px;
-  overflow-x:auto; scroll-snap-type: x proximity; -webkit-overflow-scrolling:touch;
-  background: var(--paper-soft); border-radius: var(--radius-lg); padding: 20px;
-  scrollbar-width: thin; scrollbar-color: var(--line) transparent;
-}
-.rp-grid::-webkit-scrollbar{ height:6px; }
-.rp-grid::-webkit-scrollbar-track{ background:transparent; }
-.rp-grid::-webkit-scrollbar-thumb{ background: var(--line); border-radius: var(--radius); }
+/* Follow-up (direct user request, modeled on Bloomberg.com's homepage
+   "Bloomberg Originals"/"Watch" rows): was a free `overflow-x:auto`
+   scroll strip (before that, a wrapping 3-up grid), which could leave a
+   tile half-cut-off at the right edge -- no partial tiles is the whole
+   point of the Bloomberg reference. `.rp-carousel` is the shaded/
+   rounded panel (the --paper-soft + --radius-lg "contour instead of a
+   wall of white" treatment, same reasoning as .guiding-section
+   .container); `.rp-carousel-viewport` clips to a JS-computed width
+   that's an exact multiple of one tile's width so only whole tiles are
+   ever visible (see initTileCarousel() in main.js); `.rp-grid` is the
+   flex track that gets paged inside it via scrollLeft, controlled only
+   by the prev/next arrows + dots in `.rp-carousel-footer` below -- no
+   native scrollbar/drag, so there's never a mid-scroll partial frame at
+   rest either. `.rp-carousel--people` keeps tiles small, like
+   Bloomberg's "Originals" row (no bio -- see _person_tile_html, each
+   tile links straight to that person's full listing on people.html);
+   `.rp-carousel--projects` is the taller variant, like Bloomberg's
+   "Watch" row. */
+.rp-carousel{ background: var(--paper-soft); border-radius: var(--radius-lg); padding: 20px; }
+.rp-carousel[hidden]{ display:none; }
+.rp-carousel-viewport{ overflow: hidden; }
+.rp-grid{ display:flex; flex-wrap:nowrap; align-items:stretch; gap: 20px; }
 .rp-grid > .rp-tile{
-  flex: 0 0 250px; scroll-snap-align:start;
+  flex: 0 0 250px;
   background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px;
 }
-.rp-grid[hidden]{ display:none; }
 .rp-tile[hidden]{ display:none; }
+/* People tiles are links (straight to people.html#person-<slug>) --
+   reset the usual <a> look and add a clear hover affordance in place of
+   the underline, matching how other card-shaped links on the site
+   (.question-card, .signal-card) signal "clickable" without one. */
+.rp-tile--link{
+  display:flex; flex-direction:column; text-decoration:none; color: inherit;
+  transition: border-color .15s ease;
+}
+.rp-tile--link:hover{ border-color: var(--umd-red); }
+.rp-tile--link:hover h3{ color: var(--umd-red); }
 .rp-avatar{
   width:52px; height:52px; background: var(--ink); color:#fff;
   display:flex; align-items:center; justify-content:center;
@@ -915,6 +927,58 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   color: var(--ink-soft); font-family: var(--font-nav); margin-bottom:6px;
 }
 .rp-desc{ font-size:.9rem; color: var(--ink-soft); line-height:1.5; margin:0; }
+
+/* Small/compact variant (direct user request: "small like Bloomberg
+   Originals") -- People tiles carry no bio, just photo/name/role, so a
+   narrower tile with tighter padding and a smaller avatar reads right
+   instead of leaving a lot of empty space below the role line. */
+.rp-carousel--people .rp-grid > .rp-tile{ flex-basis: 180px; padding: 14px; }
+.rp-carousel--people .rp-avatar{ width:40px; height:40px; font-size:.82rem; margin-bottom:8px; }
+.rp-carousel--people .rp-role{ margin-bottom:0; }
+
+/* Tall variant (direct user request: "projects can be taller like the
+   Watch section") -- Project tiles keep their description, so more
+   padding and a slightly larger heading give that text room to breathe
+   the way Bloomberg's taller "Watch" cards do next to its more compact
+   "Originals" row. */
+.rp-carousel--projects .rp-grid > .rp-tile{ flex-basis: 270px; padding: 24px; min-height: 190px; }
+.rp-carousel--projects .rp-tile h3{ font-size:1.1rem; margin-bottom:8px; }
+.rp-carousel--projects .rp-desc{ font-size:.92rem; }
+
+/* Footer bar below each carousel -- dots (current page) on the left,
+   prev/next arrows on the right, the same paired layout and CSS-drawn
+   chevron/dot styling as the homepage Research Spotlight's
+   .spotlight-footer/.spotlight-dot/.spotlight-arrow (kept as separate
+   classes here since that trio is scoped to the spotlight widget in
+   main.js and reusing it directly would risk cross-wiring the two). */
+.rp-carousel-footer{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:16px; }
+.rp-carousel--single .rp-carousel-footer{ display:none; }
+.rp-carousel-dots{ display:flex; gap:8px; }
+.rp-carousel-dot{
+  width:8px; height:8px; padding:0; border-radius:50%; border:1.5px solid var(--ink-soft);
+  background: transparent; cursor:pointer; transition: background .15s ease, border-color .15s ease;
+}
+.rp-carousel-dot:hover{ border-color: var(--umd-red); }
+.rp-carousel-dot.is-active{ background: var(--ink); border-color: var(--ink); }
+.rp-carousel-arrows{ display:flex; gap:8px; }
+.rp-carousel-arrow{
+  width:32px; height:32px; padding:0; border-radius:50%;
+  border: 1.5px solid var(--ink-soft); background: transparent;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition: border-color .15s ease, background .15s ease;
+}
+.rp-carousel-arrow:hover{ border-color: var(--umd-red); background: var(--paper); }
+.rp-carousel-arrow::before{
+  content:''; width:8px; height:8px;
+  border-right:2px solid var(--ink-soft); border-top:2px solid var(--ink-soft);
+  transition: border-color .15s ease;
+}
+.rp-carousel-arrow:hover::before{ border-color: var(--umd-red); }
+.rp-carousel-prev::before{ transform: rotate(-135deg); margin-left:4px; }
+.rp-carousel-next::before{ transform: rotate(45deg); margin-right:4px; }
+.rp-carousel-arrow:disabled{ opacity:.35; cursor:default; }
+.rp-carousel-arrow:disabled:hover{ border-color: var(--ink-soft); background:transparent; }
+.rp-carousel-arrow:disabled:hover::before{ border-color: var(--ink-soft); }
 
 .pub-year{
   font-family: var(--font-nav); font-size:1rem; font-weight:700;
@@ -930,7 +994,8 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 .pub-cite-venue{ font-style:italic; color: var(--ink-soft); }
 
 @media (max-width: 560px){
-  .rp-grid > .rp-tile{ flex-basis: 220px; }
+  .rp-carousel--people .rp-grid > .rp-tile{ flex-basis: 150px; }
+  .rp-carousel--projects .rp-grid > .rp-tile{ flex-basis: 220px; }
   .pub-row{ gap:10px; }
 }
 

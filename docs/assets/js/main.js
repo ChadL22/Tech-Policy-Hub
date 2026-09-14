@@ -1,5 +1,106 @@
 // Tech Policy Hub — shared interactions
 document.addEventListener('DOMContentLoaded', function () {
+  // Direct user request, modeled on Bloomberg.com's homepage "Bloomberg
+  // Originals"/"Watch" rows: research.html's People/Projects tile rows
+  // (.rp-carousel, see research_body in build_all.py) page through
+  // whole tiles only via prev/next arrows + dots -- never a free-scroll
+  // strip that can leave a tile half-cut-off at the right edge. Each
+  // `[data-carousel]` root owns a `.rp-carousel-viewport` (the clipped
+  // window) wrapping a `.rp-grid` (the actual flex track of tiles) plus
+  // a `.rp-carousel-footer` (dots + arrows, populated here since the
+  // page count depends on the viewport's actual rendered width, which
+  // varies by screen size and by how many tiles the area/search filters
+  // have left visible). initTileCarousel() below sets up ONE of these;
+  // tileCarousels collects every instance on the page so the shared
+  // researchExplorer filtering closence (further down this file) can
+  // re-measure all of them after a filter/search change hides or shows
+  // tiles -- see the `tileCarousels.forEach` call inside its render().
+  var tileCarousels = [];
+
+  function initTileCarousel(root) {
+    var viewport = root.querySelector('.rp-carousel-viewport');
+    var grid = root.querySelector('.rp-grid');
+    var dotsWrap = root.querySelector('.rp-carousel-dots');
+    var prevBtn = root.querySelector('.rp-carousel-prev');
+    var nextBtn = root.querySelector('.rp-carousel-next');
+    if (!viewport || !grid) return { refresh: function () {} };
+
+    var page = 0;
+
+    function measure() {
+      var tiles = Array.prototype.slice.call(grid.children).filter(function (t) { return !t.hidden; });
+      var tileWidth = tiles.length ? tiles[0].getBoundingClientRect().width : 0;
+      if (!tiles.length || !tileWidth) {
+        return { gap: 0, step: 0, perPage: 0, pages: 1, tiles: tiles };
+      }
+      var gap = parseFloat(getComputedStyle(grid).columnGap) || 0;
+      var step = tileWidth + gap;
+      // Measure against the carousel root's own width, not the
+      // viewport's (the viewport's width is what THIS function sets,
+      // below -- measuring it back would just echo the last result).
+      var available = root.getBoundingClientRect().width;
+      var perPage = Math.max(1, Math.min(tiles.length, Math.floor((available + gap) / step)));
+      var pages = Math.max(1, Math.ceil(tiles.length / perPage));
+      return { gap: gap, step: step, perPage: perPage, pages: pages, tiles: tiles };
+    }
+
+    function updateArrows(m) {
+      if (prevBtn) prevBtn.disabled = page <= 0;
+      if (nextBtn) nextBtn.disabled = page >= m.pages - 1;
+    }
+
+    function updateDots() {
+      if (!dotsWrap) return;
+      Array.prototype.slice.call(dotsWrap.children).forEach(function (dot, i) {
+        dot.classList.toggle('is-active', i === page);
+      });
+    }
+
+    function renderDots(pages) {
+      if (!dotsWrap) return;
+      if (dotsWrap.childElementCount === pages) return;
+      dotsWrap.innerHTML = '';
+      for (var i = 0; i < pages; i++) {
+        var dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'rp-carousel-dot';
+        dot.setAttribute('aria-label', 'Go to page ' + (i + 1));
+        dot.addEventListener('click', (function (idx) { return function () { goTo(idx); }; })(i));
+        dotsWrap.appendChild(dot);
+      }
+    }
+
+    function goTo(idx) {
+      var m = measure();
+      page = Math.max(0, Math.min(idx, m.pages - 1));
+      viewport.scrollTo({ left: page * m.perPage * m.step, behavior: 'smooth' });
+      updateDots();
+      updateArrows(m);
+    }
+
+    function refresh() {
+      var m = measure();
+      if (m.step > 0) viewport.style.width = (m.perPage * m.step - m.gap) + 'px';
+      renderDots(m.pages);
+      if (page > m.pages - 1) page = Math.max(0, m.pages - 1);
+      viewport.scrollLeft = page * m.perPage * m.step;
+      updateDots();
+      updateArrows(m);
+      root.classList.toggle('rp-carousel--single', m.pages <= 1);
+    }
+
+    if (prevBtn) prevBtn.addEventListener('click', function () { goTo(page - 1); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { goTo(page + 1); });
+    window.addEventListener('resize', refresh);
+    refresh();
+
+    return { refresh: refresh };
+  }
+
+  document.querySelectorAll('[data-carousel]').forEach(function (root) {
+    tileCarousels.push(initTileCarousel(root));
+  });
+
   // Mobile nav toggle -- follow-up (direct user request): the collapsed
   // nav is now a bounded-width drawer + dimmed backdrop instead of a
   // full-screen takeover (see the 1080px breakpoint in styles.css), so
@@ -233,6 +334,13 @@ document.addEventListener('DOMContentLoaded', function () {
           .some(function (row) { return !row.hidden; });
         msg.hidden = anyVisible;
       });
+      // Filtering/search can hide tiles inside a .rp-carousel (or the
+      // People/Projects collapsible toggle can reveal one that was
+      // measured at width:0 while hidden -- see initTileCarousel()
+      // above) -- re-measure every carousel on the page each time this
+      // runs so its page count/viewport width/dots stay correct. A
+      // no-op on pages with no [data-carousel] elements.
+      tileCarousels.forEach(function (c) { c.refresh(); });
     }
 
     pills.forEach(function (pill) {

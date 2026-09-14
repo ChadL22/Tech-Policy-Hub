@@ -1,7 +1,16 @@
 #!/usr/bin/env python3
+import re
 import generate as g
 
 g.clean_stale_pages()
+
+
+def _slugify(text):
+    """Same convention as generate.py's event-title slugs -- used to give
+    each person a stable anchor id (person-<slug>) on people.html so the
+    Research page's People tiles can link straight to that person's full
+    listing instead of repeating their bio in a tile."""
+    return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
 
 # ===========================================================================
 # HOME
@@ -166,16 +175,21 @@ def _area_tags_html(keys):
 
 
 def _person_tile_html(name, keys):
+    # Direct user request: no bio here -- the tile is just enough to
+    # place someone (photo/initials, name, role, area) and is itself a
+    # link to their full listing on people.html (id="person-<slug>" on
+    # that page's .person-row, see _person_row_html), rather than
+    # repeating their bio a second time in a smaller space.
     p = _PEOPLE_BY_NAME.get(name, {})
     initials = p.get("initials") or "".join(w[0] for w in name.split() if w[0].isalpha())[:2].upper()
+    slug = _slugify(name)
     return f"""
-      <div class="rp-tile" data-areas="{' '.join(keys)}" data-search-row>
+      <a class="rp-tile rp-tile--link" href="people.html#person-{slug}" data-areas="{' '.join(keys)}" data-search-row>
         {_area_tags_html(keys)}
         <div class="rp-avatar">{initials}</div>
         <h3>{name}</h3>
         <div class="rp-role">{p.get("role", "")}</div>
-        <p class="rp-desc">{p.get("focus", "")}</p>
-      </div>"""
+      </a>"""
 
 
 def _project_tile_html(name, desc, key):
@@ -296,7 +310,29 @@ research_body = f"""
         <h2>People</h2>
         <span class="subsection-caret" aria-hidden="true"></span>
       </button>
-      <div class="rp-grid" id="people-panel" hidden>{people_tiles}</div>
+      <!-- Follow-up (direct user request, modeled on Bloomberg's homepage
+           "Bloomberg Originals"/"Watch" rows): this used to be a free
+           `overflow-x:auto` scroll strip, which could leave a tile
+           half-cut-off at the right edge. Now a fixed-width `.rp-carousel-
+           viewport` clips `.rp-grid` to a JS-computed width that's an
+           exact multiple of one tile's width (see initTileCarousel() in
+           main.js), so only whole tiles are ever visible, paged with the
+           prev/next arrows + dots below rather than free-scrolled/
+           dragged. `.rp-carousel--people` keeps tiles small (photo/name/
+           role only, no bio -- see _person_tile_html); `.rp-carousel--
+           projects` below is the taller variant. -->
+      <div class="rp-carousel rp-carousel--people" id="people-panel" hidden data-carousel>
+        <div class="rp-carousel-viewport">
+          <div class="rp-grid">{people_tiles}</div>
+        </div>
+        <div class="rp-carousel-footer">
+          <div class="rp-carousel-dots"></div>
+          <div class="rp-carousel-arrows">
+            <button type="button" class="rp-carousel-arrow rp-carousel-prev" aria-label="Previous people"></button>
+            <button type="button" class="rp-carousel-arrow rp-carousel-next" aria-label="Next people"></button>
+          </div>
+        </div>
+      </div>
       <p class="list-empty" data-empty-for="people-panel" hidden>No people match your filters.</p>
     </section>
 
@@ -305,7 +341,18 @@ research_body = f"""
         <h2>Projects</h2>
         <span class="subsection-caret" aria-hidden="true"></span>
       </button>
-      <div class="rp-grid" id="projects-panel">{project_tiles}</div>
+      <div class="rp-carousel rp-carousel--projects" id="projects-panel" data-carousel>
+        <div class="rp-carousel-viewport">
+          <div class="rp-grid">{project_tiles}</div>
+        </div>
+        <div class="rp-carousel-footer">
+          <div class="rp-carousel-dots"></div>
+          <div class="rp-carousel-arrows">
+            <button type="button" class="rp-carousel-arrow rp-carousel-prev" aria-label="Previous projects"></button>
+            <button type="button" class="rp-carousel-arrow rp-carousel-next" aria-label="Next projects"></button>
+          </div>
+        </div>
+      </div>
       <p class="list-empty" data-empty-for="projects-panel" hidden>No projects match your filters.</p>
     </section>
 
@@ -593,8 +640,11 @@ def _person_row_html(p):
     # a person out, which is also what let .person-row's own padding and
     # .person-avatar's size come down without anything feeling cramped.
     areas = _person_areas.get(p["name"], [])
+    # id="person-<slug>" is a direct-linkable anchor -- research.html's
+    # People tiles (see _person_tile_html) link straight here instead of
+    # duplicating a person's bio in the tile itself.
     return f"""
-      <div class="person-row" data-areas="{' '.join(areas)}" data-roles="{' '.join(p['role_types'])}" data-search-row>
+      <div class="person-row" id="person-{_slugify(p['name'])}" data-areas="{' '.join(areas)}" data-roles="{' '.join(p['role_types'])}" data-search-row>
         <div class="person-body">
           <div class="person-media">
             <div class="person-avatar">{p['initials']}</div>
