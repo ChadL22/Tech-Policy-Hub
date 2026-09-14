@@ -290,11 +290,13 @@ research_body = f"""
     </div>
 
     <section class="research-subsection" id="people">
-      <button type="button" class="subsection-toggle" aria-expanded="true" aria-controls="people-panel">
+      <!-- Follow-up (direct user request): People starts collapsed --
+           Projects (below) stays expanded by default, unchanged. -->
+      <button type="button" class="subsection-toggle" aria-expanded="false" aria-controls="people-panel">
         <h2>People</h2>
         <span class="subsection-caret" aria-hidden="true"></span>
       </button>
-      <div class="rp-grid" id="people-panel">{people_tiles}</div>
+      <div class="rp-grid" id="people-panel" hidden>{people_tiles}</div>
       <p class="list-empty" data-empty-for="people-panel" hidden>No people match your filters.</p>
     </section>
 
@@ -570,26 +572,29 @@ def _person_links_html(p):
 
 
 def _person_row_html(p):
-    # Follow-up (direct user request): content under the photo, in
-    # order -- Name, Position, then contact links (email, website(s),
-    # LinkedIn via _person_links_html). Replaces an earlier inline
-    # "Name, Role" treatment; the old full-width bordered "FOUNDER &
-    # DIRECTOR" header row it replaced (before that) read as one long
-    # underline repeated down the page, which is why role isn't a
-    # section-header divider at all anymore -- just a plain line.
+    # Follow-up (direct user request, referencing Princeton CoCoSci's and
+    # the Brady Lab's people pages as density models): name/position/
+    # contact links used to sit stranded in their own narrow column under
+    # the photo, disconnected from the bio -- for anyone with a short bio
+    # that left a lot of dead white space in the row, since the two
+    # columns had no reason to end at the same height. Everything but the
+    # photo itself now flows in one column beside it (name, position,
+    # area tags, bio, then links last) the way both reference sites lay
+    # a person out, which is also what let .person-row's own padding and
+    # .person-avatar's size come down without anything feeling cramped.
     areas = _person_areas.get(p["name"], [])
     return f"""
       <div class="person-row" data-areas="{' '.join(areas)}" data-roles="{' '.join(p['role_types'])}" data-search-row>
         <div class="person-body">
           <div class="person-media">
             <div class="person-avatar">{p['initials']}</div>
+          </div>
+          <div class="person-content">
             <h3>{p['name']}</h3>
             <div class="person-role">{p['role']}</div>
-            {_person_links_html(p)}
-          </div>
-          <div class="person-bio">
             {_area_tags_html(areas) if areas else ""}
-            <p>{p['bio']}</p>
+            <div class="person-bio"><p>{p['bio']}</p></div>
+            {_person_links_html(p)}
           </div>
         </div>
       </div>"""
