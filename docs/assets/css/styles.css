@@ -1131,13 +1131,20 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 .rp-tile-photo-img{
   position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position: center 20%;
 }
-/* "bottom 'white section'" (direct user request, vs. Projects' shaded
-   .rp-tile-caption below) -- the border-top is the mockup's
-   "_________" divider between photo and text. Badges sit last (after
-   the name), matching the mockup's stacking order; the shared .rp-tags
-   rule's trailing margin-bottom is wasted space once they're the last
-   thing in the card, so it's zeroed here. */
-.rp-tile--person .rp-tile-caption{ background: var(--paper); border-top: 1px solid var(--line); padding: 12px 14px; }
+/* Badges sit last (after the name), matching the mockup's stacking
+   order; the shared .rp-tags rule's trailing margin-bottom is wasted
+   space once they're the last thing in the card, so it's zeroed here.
+   Follow-up (direct user request): "make the bottom tile/card
+   information that is white and holds the name and research area
+   badges black... like we see on the people page tiles/cards" -- swaps
+   this from the original white "bottom section" to var(--ink), matching
+   people.html's own person-card caption (.person-media-caption); the
+   now-redundant light border-top divider (a light-on-light separator
+   that doesn't read against a dark background) is dropped, and the
+   name needs an explicit white color since h3's global default
+   (var(--ink)) is illegible on black. */
+.rp-tile--person .rp-tile-caption{ background: var(--ink); padding: 12px 14px; }
+.rp-tile--person .rp-tile-caption h3{ color:#fff; }
 .rp-tile--person .rp-tags{ margin-bottom: 0; }
 
 @media (max-width: 560px){
@@ -1579,9 +1586,16 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    regardless of bio length. See the scoped override on
    .rp-tile-photo--person below (aspect-ratio doesn't apply once the
    photo's main-axis size comes from flex-grow instead). */
+/* Follow-up (direct user request): "outline the tiles/cards on the
+   people page in black like we see in research page people section" --
+   1px var(--line) (a near-invisible light grey, chosen back when this
+   was a plain photo placeholder) swapped for the same 1.5px
+   var(--ink-soft) border research.html's own People tiles use
+   (.rp-grid > .rp-tile), so the two pages' person cards read as the
+   same component. */
 .person-media{
   display:flex; flex-direction:column;
-  background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg);
+  background: var(--paper); border: 1.5px solid var(--ink-soft); border-radius: var(--radius-lg);
   overflow:hidden;
 }
 /* Scoped override (see the .person-media comment above): people.html's
@@ -1657,14 +1671,22 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    link's white so it visibly reads as "not yet available" rather than
    a broken link. Reuses the search placeholder's existing muted grey. */
 .person-link-static{ font-size:.78rem; font-weight:700; color:#9a9d9f; cursor:default; }
+/* Follow-up (direct user request): "the badges should be a 2x2 grid --
+   since there are only 4 research areas at this time that should not
+   be a problem." A CSS grid (rather than the previous flex-wrap +
+   max-width, which wrapped by available width, not a fixed column
+   count) guarantees exactly 2 columns regardless of a given badge's
+   own text width, so badges line up in even columns/rows for anyone
+   with 2-4 of them, rather than wrapping at a slightly different point
+   depending on which codes happen to be present. justify-content:end
+   right-aligns the grid within the caption's row (matching the
+   previous flex-end), and grid-auto-flow's default (row, left to
+   right, wrapping every 2) is what actually produces the 2x2 shape for
+   someone with all 4 areas. */
 .person-media-caption .rp-tags{
-  margin:0; flex-wrap:wrap; justify-content:flex-end; max-width:70px;
+  display:grid; grid-template-columns: repeat(2, auto); gap:6px;
+  margin:0; justify-content:end;
 }
-/* max-width:70px (not just "wraps eventually") is deliberately tight
-   enough to force 2 badges per row for the common 2-4 letter codes here
-   (CY/CP/ML ~29px each, II ~20px) -- matching the direct user mockup of
-   badges landing 2-per-row beside Email/Website, rather than an
-   uneven 3-then-1 wrap a looser max-width would produce. */
 /* Follow-up (direct user request): "increase the font size that we
    don't have this much white space... for the entries." Name/role/bio
    all sized up (h3 1.05rem->1.3rem, role gets an explicit size instead
