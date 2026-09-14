@@ -817,30 +817,37 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    controls keep their own white pill backgrounds nested inside it. */
 /* Direct user request: "Filter By" now sits above the dropdown/search
    row, inside the same grey box, on every page that uses this shared
-   component (People/Research/Events). .area-controls itself no longer
-   carries the flex row layout directly -- that moved to
-   .area-controls-row -- so the label can stack above it as a block
-   while the row keeps its own space-between/wrap behavior unchanged. */
-/* Follow-up (direct user request): "Filter By" inside the box read as
-   too much grey space between the label and the dropdown/search row --
-   padding and the label's own margin-bottom are both trimmed, and
-   .area-controls is now a column flex container with the row's
-   top/bottom margins set to auto so it centers in whatever vertical
-   space is left under the label (rather than just sitting flush at
-   the top with dead air below it). */
+   component (People/Research/Events). */
+/* Follow-up (direct user request, second pass): "Filter By" was still
+   reading as visually equal in weight to the actual controls, and the
+   row wasn't truly vertically centered -- the previous margin-top/
+   bottom:auto attempt on .area-controls-row did nothing, because a
+   flex container that isn't given any height beyond its own content
+   (.area-controls here has none) has zero free space for auto margins
+   to distribute; they always resolved to 0 and the row just sat
+   directly under the label.
+   Fixed properly this time: the label is pulled out of the flow
+   entirely (position:absolute, small/muted, pinned to the box's
+   top-left corner) so it no longer takes a "row" of its own height
+   that the real content has to share space with. .area-controls-row is
+   now the box's only flow child, so equal top/bottom padding centers
+   it exactly -- true vertical centering, not something that has to
+   share space with a label sitting above it. padding-top just needs to
+   clear the label's own (small) height, which it does with room to
+   spare. */
 .area-controls{
-  display:flex; flex-direction:column;
+  position: relative;
   margin-bottom: 40px;
   background: var(--paper-soft); border: 1.5px solid var(--ink-soft); border-radius: var(--radius-lg);
-  padding: 14px 24px;
+  padding: 26px 24px;
 }
 .area-controls-label{
-  display:block; font-family: var(--font-nav); font-size:.78rem; font-weight:700;
-  letter-spacing:.06em; text-transform: uppercase; color: var(--ink-soft); margin-bottom:6px;
+  position: absolute; top:12px; left:24px;
+  font-family: var(--font-nav); font-size:.64rem; font-weight:700;
+  letter-spacing:.05em; text-transform: uppercase; color: var(--ink-soft);
 }
 .area-controls-row{
   display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;
-  margin-top:auto; margin-bottom:auto;
 }
 .area-controls-row .search-box{ margin:0; max-width:320px; flex:1 1 260px; }
 /* Follow-up (direct user request): "when the people page loads we want to
@@ -852,7 +859,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    normal laptop viewport on load. Font sizes themselves (set two rounds
    above, per direct request) are left alone -- only the space around and
    between lines is trimmed. */
-#people-main .area-controls{ margin-bottom: 16px; padding: 10px 24px; }
+#people-main .area-controls{ margin-bottom: 16px; padding: 22px 24px; }
 #people-list .subsection-toggle{ margin-bottom: 6px; }
 
 .area-filter-bar{ display:flex; flex-wrap:wrap; gap:10px; }
