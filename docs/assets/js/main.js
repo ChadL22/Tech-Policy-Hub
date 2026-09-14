@@ -315,17 +315,20 @@ document.addEventListener('DOMContentLoaded', function () {
       });
       // Same idea as the .pub-year handling above, for people.html's
       // Core Members / Affiliates groups (direct user request): each
-      // group's rows sit in their own [data-people-group-panel], with
-      // its .section-head ("Core Members"/"Affiliates") as the
-      // immediately preceding sibling -- hide both together whenever a
-      // filter or search leaves nothing visible inside that group, so a
-      // heading never sits over an empty section.
+      // group's rows sit in their own [data-people-group-panel] --
+      // hide the whole wrapping .research-subsection (its
+      // .subsection-toggle heading and .people-group box together)
+      // whenever a filter or search leaves nothing visible inside that
+      // group, so a heading never sits over an empty section. Walks up
+      // via closest() rather than assuming any particular sibling is
+      // the heading, so this doesn't care how deep the panel is nested
+      // (e.g. Affiliates' extra .rail-scroll-wrap around its rows).
       document.querySelectorAll('[data-people-group-panel]').forEach(function (panel) {
         var anyVisible = Array.prototype.slice.call(panel.querySelectorAll('[data-search-row]'))
           .some(function (row) { return !row.hidden; });
         panel.hidden = !anyVisible;
-        var head = panel.previousElementSibling;
-        if (head && head.classList.contains('section-head')) head.hidden = !anyVisible;
+        var section = panel.closest('.research-subsection');
+        if (section) section.hidden = !anyVisible;
       });
       emptyMsgs.forEach(function (msg) {
         var panel = document.getElementById(msg.getAttribute('data-empty-for'));

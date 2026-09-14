@@ -1327,14 +1327,27 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 /* Follow-up (direct user request): "Core member and affiliate sections
    should have grey backgrounds that have rounded corners... separate
    containers" -- same treatment as .area-controls/.rp-carousel-panel
-   (var(--paper-soft), 1px var(--line) border, var(--radius-lg) corners)
-   so this reads as the same family of boxed panel already used
-   elsewhere on the site, rather than a one-off. */
+   (var(--paper-soft), var(--radius-lg) corners) so this reads as the
+   same family of boxed panel already used elsewhere on the site,
+   rather than a one-off.
+   Follow-up (direct user request): "we need greater distinction and
+   contour between entries [and section]" -- var(--line) (a very light
+   #DDE0E3) barely showed up against var(--paper-soft)'s own light grey;
+   switched to var(--ink-soft) at 1.5px so the box actually reads as
+   outlined rather than almost borderless. Core Members/Affiliates now
+   sit in their own .research-subsection (see people_body in build_all.
+   py, "look at the research section for inspiration") with a plain
+   .subsection-toggle heading above this box instead of inside it, so
+   the old .people-group + .people-group spacing rule is gone --
+   spacing between the two now comes from .research-subsection's own
+   padding-top (bumped further below, scoped to #people-list, since the
+   shared site-wide 12px is tuned for research.html's tighter People/
+   Projects pairing, not two full bordered boxes like these). */
 .people-group{
-  background: var(--paper-soft); border: 1px solid var(--line); border-radius: var(--radius-lg);
+  background: var(--paper-soft); border: 1.5px solid var(--ink-soft); border-radius: var(--radius-lg);
   padding: 28px;
 }
-.people-group + .people-group{ margin-top: 32px; }
+#people-list .research-subsection + .research-subsection{ padding-top: 32px; }
 .people-list{ margin-top: 8px; }
 /* The Affiliates rail's fade-out (.rail-scroll-wrap::after, shared with
    the homepage Hub News rail and events.html's lists) ramps to
@@ -1361,7 +1374,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    line, so entries read as clearly separate cards sitting on the grey
    background rather than one continuous list. */
 .person-row{
-  background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg);
+  background: var(--paper); border: 1.5px solid var(--ink-soft); border-radius: var(--radius-lg);
   padding: 20px 24px;
 }
 .person-row + .person-row{ margin-top: 16px; }
@@ -1435,12 +1448,16 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 .person-links a{ font-size:.78rem; font-weight:700; color: var(--umd-red); }
 .person-links a:hover{ text-decoration:underline; }
 .person-media-caption .rp-tags{ margin-top:2px; margin-bottom:0; }
-.person-content h3{ font-size:1.05rem; margin-bottom:2px; font-weight:700; }
-/* Follow-up (direct user request): the content column is now just
-   Name/Role/Bio -- area badges and website/contact links both moved
-   into the photo card's caption (see .person-media-caption above), so
-   .person-role only needs to clear the bio directly below it. */
-.person-role{ font-style:italic; font-weight:400; color: var(--ink-soft); margin-bottom:8px; }
+/* Follow-up (direct user request): "increase the font size that we
+   don't have this much white space... for the entries." Name/role/bio
+   all sized up (h3 1.05rem->1.3rem, role gets an explicit size instead
+   of inheriting the body default, bio 1.05rem->1.15rem below) -- a
+   short bio next to a taller photo card still bottom-aligns (see
+   .person-bio below), but bigger type wraps to more lines and closes
+   most of the gap that used to sit above it, rather than just widening
+   the empty space below the name/role even further. */
+.person-content h3{ font-size:1.3rem; margin-bottom:4px; font-weight:700; }
+.person-role{ font-style:italic; font-weight:400; font-size:1.1rem; color: var(--ink-soft); margin-bottom:12px; }
 /* Follow-up (direct user request, referencing Princeton CoCoSci's people
    page): the bio column used to stretch to fill the full 1fr grid track,
    which at our container's max-width made lines of bio text quite long
@@ -1453,7 +1470,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    border-left that spans it), for any row height, instead of centering
    with unequal gaps above/below. */
 .person-bio{ max-width: 640px; flex: 1 1 auto; display:flex; align-items:flex-end; }
-.person-bio p{ font-size:1.05rem; line-height:1.65; color: var(--ink-soft); margin:0; }
+.person-bio p{ font-size:1.15rem; line-height:1.65; color: var(--ink-soft); margin:0; }
 
 @media (max-width: 700px){
   /* Follow-up (direct user request): the photo card grew considerably

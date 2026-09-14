@@ -760,56 +760,56 @@ people_body = f"""
       </div>
       {g.search_box_html("Search people&hellip;", "Search people")}
     </div>
-    <!-- Follow-up (direct user request): Core Members and Affiliates
-         each get their own .section-head (same component as Events'
-         "Upcoming Events"/"Past Events") -- id="people-list" moves to
-         this outer wrapper so the existing data-empty-for="people-list"
-         "No people match your filters" message still checks every row
-         across BOTH groups; each group's own [data-people-group-panel]
-         is hidden by main.js (same idea as research.html's .pub-year
-         headings) when a filter/search leaves nothing visible inside
-         it, so an empty group doesn't leave a heading floating over
-         nothing.
-         Follow-up (direct user request): "Core member and affiliate
-         sections should have grey backgrounds that have rounded
-         corners... separate containers" -- each group's .section-head +
-         its people-list panel now sit together inside their own
-         .people-group card (var(--paper-soft), same grey used by
-         .area-controls/.rp-carousel-panel, so this reads as the same
-         family of "boxed" panel already established elsewhere on the
-         site). The old margin-top:48px that used to separate the
-         Affiliates heading from Core Members' last row (when both sat
-         in one flat wrapper) moves to margin between the two cards
-         instead (.people-group + .people-group), since each heading is
-         now the first thing inside its own box. -->
+    <!-- Follow-up (direct user request, "look at the research section
+         for inspiration"): Core Members and Affiliates now use the exact
+         same collapsible-heading component as research.html's People/
+         Projects -- a plain .subsection-toggle button (no underline,
+         sits OUTSIDE the grey box) with a .subsection-caret that flips
+         open/closed, wired by the same generic .subsection-toggle click
+         handler in main.js (keyed off aria-controls, already page-
+         agnostic). id="people-list" stays on the outer wrapper so the
+         existing data-empty-for="people-list" "No people match your
+         filters" message still checks every row across BOTH groups.
+         Each group's [data-people-group-panel] is still hidden by
+         main.js when a filter/search leaves nothing visible inside it
+         (same idea as research.html's .pub-year headings) -- that check
+         now hides the whole .research-subsection (panel.closest(...)),
+         not a sibling-adjacency-dependent heading, so the extra
+         .rail-scroll-wrap nesting around Affiliates' rows (see below)
+         no longer needs to stay in any particular position for it to
+         keep working. -->
     <div id="people-list">
-      <div class="people-group">
-        <div class="section-head"><div><h2>Core Members</h2></div></div>
-        <div class="people-list" data-people-group-panel>
-          {core_people_rows}
+      <section class="research-subsection" id="core-members">
+        <button type="button" class="subsection-toggle" aria-expanded="true" aria-controls="core-members-panel">
+          <h2>Core Members</h2>
+          <span class="subsection-caret" aria-hidden="true"></span>
+        </button>
+        <div class="people-group" id="core-members-panel">
+          <div class="people-list" data-people-group-panel>
+            {core_people_rows}
+          </div>
         </div>
-      </div>
+      </section>
       <!-- Follow-up (direct user request): "The list of them should be
            scrollable like the Hub News section on the homepage" -- reusing
            the same .rail-scroll-wrap/.rail-scroll fade-bottom component as
            the homepage rail and events.html's Upcoming/Past lists (see
-           HUB_NEWS_RAIL above and events_body). data-people-group-panel
-           moves to the OUTER .rail-scroll-wrap (not the inner scrolling
-           .rail-scroll div) so it stays the .section-head's immediate
-           next sibling -- main.js's group-visibility toggle
-           (panel.previousElementSibling) depends on that adjacency; the
-           panel's querySelectorAll('[data-search-row]') still finds every
-           row regardless of the extra nesting. Core Members is
+           HUB_NEWS_RAIL above and events_body). Core Members is
            deliberately left as a plain flat list -- only Affiliates was
            asked for here, and it's short enough not to need capping. -->
-      <div class="people-group">
-        <div class="section-head"><div><h2>Affiliates</h2></div></div>
-        <div class="people-list rail-scroll-wrap" data-people-group-panel>
-          <div class="rail-scroll affiliates-scroll">
-            {affiliate_people_rows}
+      <section class="research-subsection" id="affiliates">
+        <button type="button" class="subsection-toggle" aria-expanded="true" aria-controls="affiliates-panel">
+          <h2>Affiliates</h2>
+          <span class="subsection-caret" aria-hidden="true"></span>
+        </button>
+        <div class="people-group" id="affiliates-panel">
+          <div class="people-list rail-scroll-wrap" data-people-group-panel>
+            <div class="rail-scroll affiliates-scroll">
+              {affiliate_people_rows}
+            </div>
           </div>
         </div>
-      </div>
+      </section>
     </div>
     <p class="list-empty" data-empty-for="people-list" hidden>No people match your filters.</p>
   </div>
