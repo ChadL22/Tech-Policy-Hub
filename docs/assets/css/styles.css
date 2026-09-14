@@ -839,10 +839,10 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   position: relative;
   margin-bottom: 40px;
   background: var(--paper-soft); border: 1.5px solid var(--ink-soft); border-radius: var(--radius-lg);
-  padding: 34px 24px;
+  padding: 38px 24px 20px;
 }
 .area-controls-label{
-  position: absolute; top:10px; left:24px; line-height:1;
+  position: absolute; top:18px; left:29px; line-height:1;
   font-family: var(--font-nav); font-size:.64rem; font-weight:700;
   letter-spacing:.05em; text-transform: uppercase; color: var(--ink-soft);
 }
@@ -859,7 +859,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    normal laptop viewport on load. Font sizes themselves (set two rounds
    above, per direct request) are left alone -- only the space around and
    between lines is trimmed. */
-#people-main .area-controls{ margin-bottom: 8px; padding: 30px 24px; }
+#people-main .area-controls{ margin-bottom: 8px; padding: 38px 24px 18px; }
 #people-list .subsection-toggle{ margin-bottom: 4px; }
 
 .area-filter-bar{ display:flex; flex-wrap:wrap; gap:10px; }
