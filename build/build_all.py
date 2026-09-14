@@ -675,36 +675,60 @@ g.write_raw("events.ics", g.events_ics(g.EVENTS_ITEMS))
 # targets -- giving people.html pills the same ids would just be unused
 # duplicate ids in a different document, so these carry no id at all).
 #
-# Photos are still the initials placeholder (no headshot files yet), and
 # `bio`/`website`/`linkedin` on most PEOPLE_ITEMS entries are placeholder/
 # blank pending real copy and links from each person -- see README
-# "Known placeholders". A person with no website/linkedin set gets no
-# links block at all rather than an empty one.
+# "Known placeholders". A person with no email/website on file still
+# gets an Email/Website line (a static, non-clickable placeholder) --
+# see _person_contact_html/_person_websites_html below.
 def _person_contact_html(p):
     # Direct user request: email and social-media accounts (LinkedIn,
     # etc.) sit under the photo itself, while personal/lab websites stay
     # with the bio in the content column (see _person_websites_html).
-    links = []
+    #
+    # Follow-up (direct user request): "on all cards it should say
+    # 'email' and 'website' -- if the person does not yet have an email
+    # or website url we can just make the button static." Every card now
+    # always shows an Email line -- a real mailto: link when the data
+    # has one, otherwise a non-clickable `.person-link-static` span in
+    # its place -- so the caption layout (and the reader's expectation
+    # of what's there) stays the same across all 15 people rather than
+    # only the 2 who currently have an email on file. LinkedIn stays
+    # conditional/unchanged -- it's an extra, not one of the two
+    # always-shown labels the request calls out.
     if p.get("email"):
-        links.append(f'<a href="mailto:{p["email"]}">Email</a>')
+        email_link = f'<a href="mailto:{p["email"]}">Email</a>'
+    else:
+        email_link = '<span class="person-link-static">Email</span>'
+    links = [email_link]
     if p.get("linkedin"):
         links.append(f'<a href="{p["linkedin"]}" target="_blank" rel="noopener">LinkedIn</a>')
-    if not links:
-        return ""
     return f'<div class="person-contact">{"".join(links)}</div>'
 
 
 def _person_websites_html(p):
     # `websites` is a list of {label, url} so a person with more than one
-    # site (e.g. a personal site + a research/org site) can list both,
-    # each under its own label. These stay below the bio, where the
-    # combined links block used to live.
-    links = [
-        f'<a href="{w["url"]}" target="_blank" rel="noopener">{w["label"]}</a>'
-        for w in (p.get("websites") or [])
-    ]
-    if not links:
-        return ""
+    # site (e.g. a personal site + a research/org site) can list both.
+    # These stay below the bio, where the combined links block used to
+    # live.
+    #
+    # Follow-up (direct user request, same as _person_contact_html
+    # above): every card always shows one "Website" line -- the first
+    # entry in `websites`, with its label standardized to the literal
+    # text "Website" (matching the uniform "email"/"website" wording the
+    # request asks for, rather than each person's own custom label) when
+    # real data exists, else a static `.person-link-static` fallback.
+    # Any additional websites beyond the first keep their own custom
+    # label as real links, appended after.
+    sites = p.get("websites") or []
+    if sites:
+        first, rest = sites[0], sites[1:]
+        links = [f'<a href="{first["url"]}" target="_blank" rel="noopener">Website</a>']
+        links += [
+            f'<a href="{w["url"]}" target="_blank" rel="noopener">{w["label"]}</a>'
+            for w in rest
+        ]
+    else:
+        links = ['<span class="person-link-static">Website</span>']
     return f'<div class="person-links">{"".join(links)}</div>'
 
 

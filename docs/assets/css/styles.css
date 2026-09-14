@@ -838,26 +838,23 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 
    Follow-up (direct user request): a later round ("reduce the white
    space below the filter button") dropped padding-bottom to 12px/10px
-   while leaving padding-top at 33px -- reintroducing exactly the
-   asymmetry this comment describes fixing, just via padding instead of
-   margin:auto. Measured on the built pages: with top=33/bottom=12 the
-   search bar's own center sat ~10.5px below the box's true center
-   (offset = (top-bottom)/2), same idea for people.html's 33/10 variant
-   (~11.5px). Restored true centering by making padding symmetric again
-   (26px top and bottom) and tightening the label's own `top` (18px ->
-   10px) so a smaller, still-symmetric value clears it -- net effect is
-   less padding above, a bit more below, meeting close to where the old
-   33px top used to sit rather than reopening the full ~40-45px of
-   bottom space this component had before that whitespace-reduction
-   round. */
+   while leaving padding-top at 33px, and a round after that made the
+   padding symmetric (26px/26px) plus nudged the label up to true-
+   center the search bar's own line against the box's center line.
+   Direct user follow-up request reverted that centering pass: "The
+   filter by text and button do not need to move up for the latter to
+   be aligned with the search bar. Those two elements can go back to
+   their previous locations" -- so the label and padding below are
+   back to the pre-centering 18px/33px-24px-12px values; the row is no
+   longer perfectly vertically centered, by request. */
 .area-controls{
   position: relative;
   margin-bottom: 40px;
   background: var(--paper-soft); border: 1.5px solid var(--ink-soft); border-radius: var(--radius-lg);
-  padding: 26px 24px;
+  padding: 33px 24px 12px;
 }
 .area-controls-label{
-  position: absolute; top:10px; left:29px; line-height:1;
+  position: absolute; top:18px; left:29px; line-height:1;
   font-family: var(--font-nav); font-size:.64rem; font-weight:700;
   letter-spacing:.05em; text-transform: uppercase; color: var(--ink-soft);
 }
@@ -874,7 +871,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    normal laptop viewport on load. Font sizes themselves (set two rounds
    above, per direct request) are left alone -- only the space around and
    between lines is trimmed. */
-#people-main .area-controls{ margin-bottom: 8px; padding: 26px 24px; }
+#people-main .area-controls{ margin-bottom: 8px; padding: 33px 24px 10px; }
 #people-list .subsection-toggle{ margin-bottom: 4px; }
 
 .area-filter-bar{ display:flex; flex-wrap:wrap; gap:10px; }
@@ -1077,11 +1074,11 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    the way a game's locked slots all render identically until a real
    photo/headshot replaces it. */
 .rp-tile-photo.rp-tile-photo--person{ background: var(--ink); aspect-ratio: 16/10; }
-/* Scoped override (direct user request, see #people-main tightening note
-   above): people.html's photo card can run shorter than research.html's
-   People tiles without hurting the silhouette placeholder -- only this
-   page's usage (.person-media ancestor) is affected. */
-.person-media .rp-tile-photo--person{ aspect-ratio: 16/8; }
+/* Follow-up (direct user request): people.html used to scope this down
+   to a shorter 16/8 ratio; removed so the photo goes back to the base
+   16/10 ratio shared with research.html's tiles, which raises the
+   photo's share of the card toward the requested "60-70% photo" (was
+   running closer to 54% of the card at 16/8). */
 .rp-tile-photo-silhouette{
   position:absolute; left:50%; top:50%; transform: translate(-50%, -50%);
   width:auto; height:58%; fill: rgba(255,255,255,.3);
@@ -1542,21 +1539,42 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    caption stretch to fill any extra height align-items:stretch adds to
    the card, so short caption content (e.g. no email, no websites) just
    leaves breathing room at the bottom of the card rather than the card
-   itself refusing to grow. */
+   itself refusing to grow.
+   Follow-up (direct user request): caption background switched from
+   white/paper to black (var(--ink), matching the photo placeholder's
+   own background so the two halves of the card read as one dark unit)
+   -- text/link colors below were already legible-on-dark (white
+   links... actually red links, see .person-contact/.person-links) so
+   only the background and the now-redundant paper/line divider needed
+   to change; border-top dropped since there's no longer a color jump
+   between photo and caption to divide. Gap between the stacked Email/
+   Website lines tightened 5px -> 3px per direct request to reduce the
+   white space between them. */
 .person-media-caption{
-  flex: 1 1 auto; display:flex; flex-direction:column; gap:5px;
-  padding: 8px 10px; border-top: 1px solid var(--line);
+  flex: 1 1 auto; display:flex; flex-direction:column; gap:3px;
+  padding: 8px 10px; background: var(--ink);
 }
+/* Follow-up (direct user request, black caption background): the
+   red link color read too dark against var(--ink) to stay comfortably
+   legible, so Email/Website links go white with a gold hover instead
+   -- both already-used UMD accent colors, just swapped for a dark
+   background instead of light. */
 .person-contact{ display:flex; flex-direction:column; gap:4px; }
-.person-contact a{ font-size:.78rem; font-weight:700; color: var(--umd-red); }
-.person-contact a:hover{ text-decoration:underline; }
+.person-contact a{ font-size:.78rem; font-weight:700; color:#fff; }
+.person-contact a:hover{ color: var(--umd-gold); text-decoration:underline; }
 /* Follow-up (direct user request): personal/lab website links moved
    into the photo card's caption (stacked, matching Email above them)
    instead of sitting inline in the bio column -- see .person-contact
    above, which they're now styled to match. */
 .person-links{ display:flex; flex-direction:column; gap:4px; }
-.person-links a{ font-size:.78rem; font-weight:700; color: var(--umd-red); }
-.person-links a:hover{ text-decoration:underline; }
+.person-links a{ font-size:.78rem; font-weight:700; color:#fff; }
+.person-links a:hover{ color: var(--umd-gold); text-decoration:underline; }
+/* Static fallback (direct user request: "if the person does not yet
+   have an email or website url we can just make the button static")
+   -- same label, same position, no href, muted grey instead of a live
+   link's white so it visibly reads as "not yet available" rather than
+   a broken link. Reuses the search placeholder's existing muted grey. */
+.person-link-static{ font-size:.78rem; font-weight:700; color:#9a9d9f; cursor:default; }
 .person-media-caption .rp-tags{ margin-top:2px; margin-bottom:0; }
 /* Follow-up (direct user request): "increase the font size that we
    don't have this much white space... for the entries." Name/role/bio
