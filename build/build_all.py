@@ -739,7 +739,15 @@ people_body = f"""
     <div class="breadcrumb"><a href="index.html">Home</a> / People</div>
   </div>
 </section>
-<section>
+<!-- Follow-up (direct user request): "reduce some of the white space
+     above the filter and search section and below the breadcrumb" --
+     a bare <section> here inherited the generic section (padding 56px) top/bottom
+     site-wide rule, same 56px-top-padding bug pattern as the earlier
+     Research page People/Projects gap fix. id="people-main" gets a
+     people.html-scoped override (see styles.css) that shrinks just the
+     top padding; the bottom 56px (spacing before the footer) is left
+     alone. -->
+<section id="people-main">
   <div class="container container-narrow">
     <!-- Follow-up (direct user request): the "Filters" toggle label and
          its underline are gone (it read as an orphaned heading with no

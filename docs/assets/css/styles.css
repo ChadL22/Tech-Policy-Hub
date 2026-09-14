@@ -1456,8 +1456,16 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    .person-bio below), but bigger type wraps to more lines and closes
    most of the gap that used to sit above it, rather than just widening
    the empty space below the name/role even further. */
-.person-content h3{ font-size:1.3rem; margin-bottom:4px; font-weight:700; }
-.person-role{ font-style:italic; font-weight:400; font-size:1.1rem; color: var(--ink-soft); margin-bottom:12px; }
+/* Follow-up (direct user request, second pass -- the first font bump
+   wasn't enough): "this text... should fill the space... better...
+   there is too much whitespace in the entries' rectangles." Sized up
+   again (h3 1.3rem->1.4rem, role 1.1rem->1.2rem) with more breathing
+   room (role's margin-bottom 12px->18px) so name+role+bio reads as one
+   generously-set block rather than a tight cluster up top with a stark
+   gap before the (still bottom-aligned, per the gold-line request)
+   bio. */
+.person-content h3{ font-size:1.4rem; margin-bottom:6px; font-weight:700; }
+.person-role{ font-style:italic; font-weight:400; font-size:1.2rem; color: var(--ink-soft); margin-bottom:18px; }
 /* Follow-up (direct user request, referencing Princeton CoCoSci's people
    page): the bio column used to stretch to fill the full 1fr grid track,
    which at our container's max-width made lines of bio text quite long
@@ -1470,7 +1478,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    border-left that spans it), for any row height, instead of centering
    with unequal gaps above/below. */
 .person-bio{ max-width: 640px; flex: 1 1 auto; display:flex; align-items:flex-end; }
-.person-bio p{ font-size:1.15rem; line-height:1.65; color: var(--ink-soft); margin:0; }
+.person-bio p{ font-size:1.25rem; line-height:1.8; color: var(--ink-soft); margin:0; }
 
 @media (max-width: 700px){
   /* Follow-up (direct user request): the photo card grew considerably
@@ -1507,6 +1515,15 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    Speaker Series, and Annual Event still use .page-hero as before. */
 .breadcrumb-bar{ padding: 22px 0 4px; }
 .breadcrumb-bar .breadcrumb{ margin-bottom: 0; }
+/* Follow-up (direct user request): "reduce some of the white space
+   above the filter and search section and below the breadcrumb" -- the
+   generic section{padding:56px 0} rule left a big gap between the
+   breadcrumb and .area-controls below it on people.html specifically;
+   scoped to #people-main (see people_body in build/build_all.py) so
+   research.html/events.html's own top spacing is untouched. Only the
+   top half is shrunk -- bottom stays 56px for the usual gap before the
+   footer. */
+#people-main{ padding-top: 20px; padding-bottom: 56px; }
 .breadcrumb{ font-size:.82rem; color: var(--ink-soft); margin-bottom: 16px; }
 .breadcrumb a{ color: var(--ink-soft); }
 .page-hero p.lede{ max-width: 68ch; font-size: 1.05rem; }
