@@ -895,12 +895,16 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   margin-bottom:20px;
 }
 .pub-section-head h2{ font-size:1.25rem; margin:0; padding:0; border:0; }
-.year-filter-bar{ display:flex; flex-wrap:wrap; gap:6px; }
-/* .year-filter-pill's own look is defined further down, right after
-   the base .filter-pill rule it overrides -- CSS source order decides
-   ties between same-specificity selectors, and .filter-pill lives much
-   later in this file, so a same-specificity override placed up here
-   would just lose to it silently. */
+/* Follow-up (direct user request): the year filter used to be its own
+   pill row sitting inline next to "Publications" (.year-filter-bar,
+   now unused) -- it's now a "Year" .filter-dropdown alongside "Research
+   Area" up in .area-controls (see research_body in build_all.py), so
+   there's exactly one "Filter By" control on the page instead of two
+   different filter UI patterns. .year-filter-pill (further down, right
+   after the base .filter-pill rule) no longer needs its own look now
+   that it renders inside .filter-dropdown-menu -- that selector's
+   higher specificity already gives it the same flat list-item styling
+   as every other dropdown's pills, for free. */
 /* Follow-up (direct user request, applies to every .subsection-toggle
    site-wide -- "Filters" on People/Research/Events, "People"/"Projects"
    on Research): the button used to be width:100% with
@@ -1146,23 +1150,32 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    .rp-carousel-panel too). */
 .pub-panel{
   background: var(--paper-soft); border: 1.5px solid var(--ink-soft);
-  border-radius: var(--radius-lg); padding: 8px 28px 24px;
+  border-radius: var(--radius-lg); padding: 20px 24px;
 }
 .pub-year{
   font-family: var(--font-nav); font-size:1rem; font-weight:700;
-  margin: 28px 0 6px; padding-top:20px; border-top:1px solid var(--line);
+  margin: 20px 0 10px;
 }
-.pub-year:first-child{ margin-top:0; padding-top:0; border-top:none; }
+.pub-year:first-child{ margin-top:0; }
+/* Follow-up (direct user request): each publication entry is now its
+   own bordered, rounded-corner card -- same 1.5px ink-soft border +
+   radius-lg treatment as .person-row/.rp-tile -- instead of a flat
+   list row divided by a thin top border. .pub-row + .pub-row (not a
+   bare margin-top on the base rule) keeps the first row of each year
+   group flush under its heading, same pattern as .person-row. */
+.pub-row{
+  display:flex; gap:14px; align-items:flex-start; padding:14px 18px;
+  background: var(--paper); border: 1.5px solid var(--ink-soft); border-radius: var(--radius-lg);
+}
+.pub-row + .pub-row{ margin-top:10px; }
 /* Direct user request: "each publication entry should be alternate,
    between grey and white... no matter how the content is filtered."
-   The background lives here (white by default); .pub-row--alt (grey)
-   is toggled by main.js's researchExplorer render() every time it
+   The background above is white by default; .pub-row--alt (grey) is
+   toggled by main.js's researchExplorer render() every time it
    recomputes which rows are hidden, walking only the currently-
    visible ones in order -- so the stripe always alternates cleanly
    against what's actually on screen, never raw DOM position. */
-.pub-row{ display:flex; gap:14px; align-items:flex-start; padding:12px 0; border-top:1px solid var(--line); background: var(--paper); }
 .pub-row--alt{ background: var(--paper-soft); }
-.pub-year + .pub-row{ border-top:none; }
 .pub-row[hidden]{ display:none; }
 .pub-row .rp-tags{ flex:0 0 auto; flex-direction:column; margin-bottom:0; margin-top:3px; }
 .pub-cite{ margin:0; font-size:.92rem; line-height:1.55; color: var(--ink); }
@@ -1245,7 +1258,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 .search-box{ position: relative; margin: 22px 0 4px; max-width: 420px; }
 .search-box-icon{ position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--ink-soft); pointer-events: none; }
 .search-box-input{
-  width:100%; padding: 12px 16px 12px 40px; border-radius: var(--radius);
+  width:100%; padding: 12px 16px 12px 40px; border-radius: var(--radius-lg);
   border: 1.5px solid var(--line); background:#fff; color: var(--ink);
   font-family: var(--font-body); font-size:.92rem;
 }
@@ -1356,7 +1369,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 .filter-dropdown{ position:relative; }
 .filter-dropdown-toggle{
   display:flex; align-items:center; gap:8px; padding:10px 16px;
-  border: 1.5px solid var(--ink-soft); border-radius: var(--radius); background:#fff;
+  border: 1.5px solid var(--ink-soft); border-radius: var(--radius-lg); background:#fff;
   font-family: var(--font-nav); font-weight:700; font-size:.8rem; letter-spacing:.03em; text-transform:uppercase;
   color: var(--ink-soft); cursor:pointer; transition: color .15s ease, border-color .15s ease;
 }
@@ -1380,7 +1393,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 .filter-dropdown-menu{
   position:absolute; top:calc(100% + 8px); left:0; z-index:20; min-width:230px;
   display:flex; flex-direction:column; gap:2px;
-  background:#fff; border:1px solid var(--line); border-radius: var(--radius);
+  background:#fff; border:1px solid var(--line); border-radius: var(--radius-lg);
   box-shadow: 0 12px 28px rgba(20,20,20,.14); padding:8px;
 }
 .filter-dropdown-menu[hidden]{ display:none; }

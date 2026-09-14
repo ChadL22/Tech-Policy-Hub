@@ -319,6 +319,16 @@ research_body = f"""
     <!-- Follow-up (direct user request): the "Filters" toggle label and
          its underline are gone, matching Events/People -- just the
          Research Area dropdown + search box remain, always visible. -->
+    <!-- Follow-up (direct user request): the Publications year filter
+         used to be its own pill row next to the "Publications" heading
+         -- now a second dropdown here, right next to Research Area,
+         under the one "Filter By" label -- "just like the research area
+         filter at the top of the page." year_filter_pills is the exact
+         same markup that row used to render; researchExplorer's
+         .year-filter-pill listener (main.js) doesn't care where in the
+         DOM these buttons live, so moving them here needed no JS
+         changes, and the generic .filter-dropdown wiring (open/close,
+         selected-count badge) picks this dropdown up automatically. -->
     <div class="area-controls">
       <span class="area-controls-label">Filter By</span>
       <div class="area-controls-row">
@@ -329,6 +339,13 @@ research_body = f"""
               <span class="filter-dropdown-caret" aria-hidden="true"></span>
             </button>
             <div class="filter-dropdown-menu" hidden role="group" aria-label="Filter by research area">{area_filter_pills}</div>
+          </div>
+          <div class="filter-dropdown">
+            <button type="button" class="filter-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+              <span>Year</span><span class="filter-dropdown-count" hidden></span>
+              <span class="filter-dropdown-caret" aria-hidden="true"></span>
+            </button>
+            <div class="filter-dropdown-menu" hidden role="group" aria-label="Filter publications by year">{year_filter_pills}</div>
           </div>
         </div>
         {g.search_box_html("Search people, projects, publications&hellip;", "Search research")}
@@ -405,7 +422,6 @@ research_body = f"""
     <section class="research-subsection" id="publications">
       <div class="pub-section-head">
         <h2>Publications</h2>
-        <div class="year-filter-bar" role="group" aria-label="Filter publications by year">{year_filter_pills}</div>
       </div>
       <div class="pub-panel">
         <div class="pub-list" id="publications-panel">{pubs_list}</div>
