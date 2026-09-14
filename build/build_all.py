@@ -769,13 +769,26 @@ people_body = f"""
          is hidden by main.js (same idea as research.html's .pub-year
          headings) when a filter/search leaves nothing visible inside
          it, so an empty group doesn't leave a heading floating over
-         nothing. -->
+         nothing.
+         Follow-up (direct user request): "Core member and affiliate
+         sections should have grey backgrounds that have rounded
+         corners... separate containers" -- each group's .section-head +
+         its people-list panel now sit together inside their own
+         .people-group card (var(--paper-soft), same grey used by
+         .area-controls/.rp-carousel-panel, so this reads as the same
+         family of "boxed" panel already established elsewhere on the
+         site). The old margin-top:48px that used to separate the
+         Affiliates heading from Core Members' last row (when both sat
+         in one flat wrapper) moves to margin between the two cards
+         instead (.people-group + .people-group), since each heading is
+         now the first thing inside its own box. -->
     <div id="people-list">
-      <div class="section-head"><div><h2>Core Members</h2></div></div>
-      <div class="people-list" data-people-group-panel>
-        {core_people_rows}
+      <div class="people-group">
+        <div class="section-head"><div><h2>Core Members</h2></div></div>
+        <div class="people-list" data-people-group-panel>
+          {core_people_rows}
+        </div>
       </div>
-      <div class="section-head" style="margin-top:48px;"><div><h2>Affiliates</h2></div></div>
       <!-- Follow-up (direct user request): "The list of them should be
            scrollable like the Hub News section on the homepage" -- reusing
            the same .rail-scroll-wrap/.rail-scroll fade-bottom component as
@@ -789,9 +802,12 @@ people_body = f"""
            row regardless of the extra nesting. Core Members is
            deliberately left as a plain flat list -- only Affiliates was
            asked for here, and it's short enough not to need capping. -->
-      <div class="people-list rail-scroll-wrap" data-people-group-panel>
-        <div class="rail-scroll affiliates-scroll">
-          {affiliate_people_rows}
+      <div class="people-group">
+        <div class="section-head"><div><h2>Affiliates</h2></div></div>
+        <div class="people-list rail-scroll-wrap" data-people-group-panel>
+          <div class="rail-scroll affiliates-scroll">
+            {affiliate_people_rows}
+          </div>
         </div>
       </div>
     </div>

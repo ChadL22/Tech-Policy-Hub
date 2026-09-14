@@ -1317,7 +1317,27 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 }
 .filter-dropdown-menu .filter-pill:hover{ background: var(--sidebar-band); color: var(--ink); }
 .filter-dropdown-menu .filter-pill.active{ background: var(--umd-red); color:#fff; }
+/* Follow-up (direct user request): "Core member and affiliate sections
+   should have grey backgrounds that have rounded corners... separate
+   containers" -- same treatment as .area-controls/.rp-carousel-panel
+   (var(--paper-soft), 1px var(--line) border, var(--radius-lg) corners)
+   so this reads as the same family of boxed panel already used
+   elsewhere on the site, rather than a one-off. */
+.people-group{
+  background: var(--paper-soft); border: 1px solid var(--line); border-radius: var(--radius-lg);
+  padding: 28px;
+}
+.people-group + .people-group{ margin-top: 32px; }
 .people-list{ margin-top: 8px; }
+/* The Affiliates rail's fade-out (.rail-scroll-wrap::after, shared with
+   the homepage Hub News rail and events.html's lists) ramps to
+   var(--paper) -- right against the homepage/events pages' plain white
+   background, but wrong here now that the rail lives inside this card's
+   grey (var(--paper-soft)) background. Scoped to .people-group so the
+   shared rule (and every other page using it) is untouched. */
+.people-group .rail-scroll-wrap::after{
+  background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 45%, var(--paper-soft) 100%);
+}
 /* Follow-up (direct user request, referencing Princeton CoCoSci's and
    the Brady Lab's people pages): row padding cut from 32px to 16px and
    the photo/text gap from 32px to 20px -- see _person_row_html() in
@@ -1408,7 +1428,13 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    which at our container's max-width made lines of bio text quite long
    and hard to read. Capping it keeps line length reasonable while the
    photo-card column stays fixed-width beside it. */
-.person-bio{ max-width: 640px; flex: 1 1 auto; display:flex; align-items:center; }
+/* Follow-up (direct user request): "the last line of the bio should
+   align with [the] end point of the gold vertical line" -- switched
+   from align-items:center to flex-end so the bio's bottom edge always
+   sits flush with the bottom of .person-content (and so with the
+   border-left that spans it), for any row height, instead of centering
+   with unequal gaps above/below. */
+.person-bio{ max-width: 640px; flex: 1 1 auto; display:flex; align-items:flex-end; }
 .person-bio p{ font-size:1.05rem; line-height:1.65; color: var(--ink-soft); margin:0; }
 
 @media (max-width: 700px){

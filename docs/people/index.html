@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>People | Tech Policy Hub</title>
 <meta name="description" content="Faculty, affiliates, and fellows of the Tech Policy Hub.">
-<link rel="stylesheet" href="../assets/css/styles.css?v=2026091428">
+<link rel="stylesheet" href="../assets/css/styles.css?v=2026091429">
 </head>
 <body>
 
@@ -13,7 +13,7 @@
   <div class="container header-inner">
     <div class="brand-lockup">
       <a href="../" class="brand" aria-label="Tech Policy Hub, University of Maryland School of Public Policy">
-        <img src="../assets/img/sopp-tph-lockup.png?v=2026091428" alt="University of Maryland School of Public Policy &ndash; Tech Policy Hub" class="brand-mark">
+        <img src="../assets/img/sopp-tph-lockup.png?v=2026091429" alt="University of Maryland School of Public Policy &ndash; Tech Policy Hub" class="brand-mark">
       </a>
     </div>
     <nav class="primary-nav" aria-label="Primary">
@@ -105,11 +105,24 @@
          is hidden by main.js (same idea as research.html's .pub-year
          headings) when a filter/search leaves nothing visible inside
          it, so an empty group doesn't leave a heading floating over
-         nothing. -->
+         nothing.
+         Follow-up (direct user request): "Core member and affiliate
+         sections should have grey backgrounds that have rounded
+         corners... separate containers" -- each group's .section-head +
+         its people-list panel now sit together inside their own
+         .people-group card (var(--paper-soft), same grey used by
+         .area-controls/.rp-carousel-panel, so this reads as the same
+         family of "boxed" panel already established elsewhere on the
+         site). The old margin-top:48px that used to separate the
+         Affiliates heading from Core Members' last row (when both sat
+         in one flat wrapper) moves to margin between the two cards
+         instead (.people-group + .people-group), since each heading is
+         now the first thing inside its own box. -->
     <div id="people-list">
-      <div class="section-head"><div><h2>Core Members</h2></div></div>
-      <div class="people-list" data-people-group-panel>
-        
+      <div class="people-group">
+        <div class="section-head"><div><h2>Core Members</h2></div></div>
+        <div class="people-list" data-people-group-panel>
+          
       <div class="person-row" id="person-dr-ido-sivan-sevilla" data-areas="cybersecurity privacy integrity ml" data-roles="core-member" data-search-row>
         <div class="person-body">
           <div class="person-media">
@@ -154,8 +167,8 @@
           </div>
         </div>
       </div>
+        </div>
       </div>
-      <div class="section-head" style="margin-top:48px;"><div><h2>Affiliates</h2></div></div>
       <!-- Follow-up (direct user request): "The list of them should be
            scrollable like the Hub News section on the homepage" -- reusing
            the same .rail-scroll-wrap/.rail-scroll fade-bottom component as
@@ -169,9 +182,11 @@
            row regardless of the extra nesting. Core Members is
            deliberately left as a plain flat list -- only Affiliates was
            asked for here, and it's short enough not to need capping. -->
-      <div class="people-list rail-scroll-wrap" data-people-group-panel>
-        <div class="rail-scroll affiliates-scroll">
-          
+      <div class="people-group">
+        <div class="section-head"><div><h2>Affiliates</h2></div></div>
+        <div class="people-list rail-scroll-wrap" data-people-group-panel>
+          <div class="rail-scroll affiliates-scroll">
+            
       <div class="person-row" id="person-dr-charles-harry" data-areas="cybersecurity" data-roles="affiliate" data-search-row>
         <div class="person-body">
           <div class="person-media">
@@ -458,6 +473,7 @@
           </div>
         </div>
       </div>
+          </div>
         </div>
       </div>
     </div>
@@ -471,19 +487,19 @@
       <div>
         <div class="footer-social">
           <a href="https://sclanga.substack.com/" target="_blank" rel="noopener" aria-label="Substack">
-            <img src="../assets/img/social/substack.png?v=2026091428" alt="" loading="lazy">
+            <img src="../assets/img/social/substack.png?v=2026091429" alt="" loading="lazy">
           </a>
           <a href="https://x.com/phronesisres" target="_blank" rel="noopener" aria-label="X">
-            <img src="../assets/img/social/x.png?v=2026091428" alt="" loading="lazy">
+            <img src="../assets/img/social/x.png?v=2026091429" alt="" loading="lazy">
           </a>
           <a href="https://www.instagram.com/phronesisres" target="_blank" rel="noopener" aria-label="Instagram">
-            <img src="../assets/img/social/instagram.png?v=2026091428" alt="" loading="lazy">
+            <img src="../assets/img/social/instagram.png?v=2026091429" alt="" loading="lazy">
           </a>
           <a href="https://www.threads.com/@phronesisres" target="_blank" rel="noopener" aria-label="Threads">
-            <img src="../assets/img/social/threads.png?v=2026091428" alt="" loading="lazy">
+            <img src="../assets/img/social/threads.png?v=2026091429" alt="" loading="lazy">
           </a>
           <a href="https://www.tiktok.com/@phronesis.research" target="_blank" rel="noopener" aria-label="TikTok">
-            <img src="../assets/img/social/tiktok.png?v=2026091428" alt="" loading="lazy">
+            <img src="../assets/img/social/tiktok.png?v=2026091429" alt="" loading="lazy">
           </a>
         </div>
         <ul class="footer-legal">
@@ -528,6 +544,6 @@
     </div>
   </div>
 </footer>
-<script src="../assets/js/main.js?v=2026091428"></script>
+<script src="../assets/js/main.js?v=2026091429"></script>
 </body>
 </html>
