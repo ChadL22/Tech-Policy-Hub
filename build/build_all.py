@@ -320,16 +320,19 @@ research_body = f"""
          its underline are gone, matching Events/People -- just the
          Research Area dropdown + search box remain, always visible. -->
     <div class="area-controls">
-      <div class="filter-dropdowns-row">
-        <div class="filter-dropdown">
-          <button type="button" class="filter-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
-            <span>Research Area</span><span class="filter-dropdown-count" hidden></span>
-            <span class="filter-dropdown-caret" aria-hidden="true"></span>
-          </button>
-          <div class="filter-dropdown-menu" hidden role="group" aria-label="Filter by research area">{area_filter_pills}</div>
+      <span class="area-controls-label">Filter By</span>
+      <div class="area-controls-row">
+        <div class="filter-dropdowns-row">
+          <div class="filter-dropdown">
+            <button type="button" class="filter-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+              <span>Research Area</span><span class="filter-dropdown-count" hidden></span>
+              <span class="filter-dropdown-caret" aria-hidden="true"></span>
+            </button>
+            <div class="filter-dropdown-menu" hidden role="group" aria-label="Filter by research area">{area_filter_pills}</div>
+          </div>
         </div>
+        {g.search_box_html("Search people, projects, publications&hellip;", "Search research")}
       </div>
-      {g.search_box_html("Search people, projects, publications&hellip;", "Search research")}
     </div>
 
     <section class="research-subsection" id="people">
@@ -578,16 +581,19 @@ events_body = f"""
            main.js) is unchanged; it's just no longer wrapped in a
            hidden panel behind a button. -->
       <div class="area-controls">
-        <div class="filter-dropdowns-row">
-          <div class="filter-dropdown">
-            <button type="button" class="filter-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
-              <span>Category</span><span class="filter-dropdown-count" hidden></span>
-              <span class="filter-dropdown-caret" aria-hidden="true"></span>
-            </button>
-            <div class="filter-dropdown-menu" hidden role="group" aria-label="Filter by category">{g.filter_pills_html(list(g.EVENT_CATEGORIES.keys()), 'events')}</div>
+        <span class="area-controls-label">Filter By</span>
+        <div class="area-controls-row">
+          <div class="filter-dropdowns-row">
+            <div class="filter-dropdown">
+              <button type="button" class="filter-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+                <span>Category</span><span class="filter-dropdown-count" hidden></span>
+                <span class="filter-dropdown-caret" aria-hidden="true"></span>
+              </button>
+              <div class="filter-dropdown-menu" hidden role="group" aria-label="Filter by category">{g.filter_pills_html(list(g.EVENT_CATEGORIES.keys()), 'events')}</div>
+            </div>
           </div>
+          {g.search_box_html("Search events&hellip;", "Search events")}
         </div>
-        {g.search_box_html("Search events&hellip;", "Search events")}
       </div>
       <div class="section-head" style="margin-top:28px;"><div><h2>Upcoming Events</h2></div></div>
       <div class="rail-scroll-wrap events-list-wrap">
@@ -759,16 +765,19 @@ people_body = f"""
          no collapsing panel. The .area-controls div itself (and its
          search/role-pill wiring in main.js) is unchanged. -->
     <div class="area-controls">
-      <div class="filter-dropdowns-row">
-        <div class="filter-dropdown">
-          <button type="button" class="filter-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
-            <span>Role</span><span class="filter-dropdown-count" hidden></span>
-            <span class="filter-dropdown-caret" aria-hidden="true"></span>
-          </button>
-          <div class="filter-dropdown-menu" hidden role="group" aria-label="Filter by role">{role_filter_pills_people}</div>
+      <span class="area-controls-label">Filter By</span>
+      <div class="area-controls-row">
+        <div class="filter-dropdowns-row">
+          <div class="filter-dropdown">
+            <button type="button" class="filter-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+              <span>Role</span><span class="filter-dropdown-count" hidden></span>
+              <span class="filter-dropdown-caret" aria-hidden="true"></span>
+            </button>
+            <div class="filter-dropdown-menu" hidden role="group" aria-label="Filter by role">{role_filter_pills_people}</div>
+          </div>
         </div>
+        {g.search_box_html("Search people&hellip;", "Search people")}
       </div>
-      {g.search_box_html("Search people&hellip;", "Search people")}
     </div>
     <!-- Follow-up (direct user request, "look at the research section
          for inspiration"): Core Members and Affiliates now use the exact

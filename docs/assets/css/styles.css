@@ -815,13 +815,23 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    for a plain utility bar, also needs white text), or gold (odd fit)
    -- grey needs no text-color changes at all, and the dropdown/search
    controls keep their own white pill backgrounds nested inside it. */
+/* Direct user request: "Filter By" now sits above the dropdown/search
+   row, inside the same grey box, on every page that uses this shared
+   component (People/Research/Events). .area-controls itself no longer
+   carries the flex row layout directly -- that moved to
+   .area-controls-row -- so the label can stack above it as a block
+   while the row keeps its own space-between/wrap behavior unchanged. */
 .area-controls{
-  display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;
   margin-bottom: 40px;
   background: var(--paper-soft); border: 1.5px solid var(--ink-soft); border-radius: var(--radius-lg);
   padding: 20px 24px;
 }
-.area-controls .search-box{ margin:0; max-width:320px; flex:1 1 260px; }
+.area-controls-label{
+  display:block; font-family: var(--font-nav); font-size:.78rem; font-weight:700;
+  letter-spacing:.06em; text-transform: uppercase; color: var(--ink-soft); margin-bottom:12px;
+}
+.area-controls-row{ display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap; }
+.area-controls-row .search-box{ margin:0; max-width:320px; flex:1 1 260px; }
 /* Follow-up (direct user request): "when the people page loads we want to
    see the full entry for the first 2 people in the core members list" --
    a chain of small, people.html-scoped reductions (filter-bar spacing,
