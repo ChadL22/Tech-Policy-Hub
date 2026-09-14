@@ -44,7 +44,7 @@ SITE_URL = "https://chadl22.github.io/Tech-Policy-Hub/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026091443"
+ASSET_VERSION = "2026091444"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -809,6 +809,26 @@ def search_box_html(placeholder, aria_label):
         </svg>
         <input type="text" class="search-box-input filter-search-input" placeholder="{placeholder}" aria-label="{aria_label}">
       </div>"""
+
+
+def newsletter_band_html():
+    """Shared "Stay in the Loop" newsletter subscribe band. Originally
+    home.html-only; direct follow-up request put the same band on
+    research.html, events.html, and people.html too, so it's a function
+    now instead of markup inlined once in build_all.py's home_body."""
+    return """
+<section id="subscribe" class="newsletter-band">
+  <div class="container inner">
+    <span class="eyebrow">Stay in the Loop</span>
+    <h2>Subscribe to our newsletter</h2>
+    <p>A monthly briefing on developments at the intersection of technology, law, and policy.</p>
+    <form class="newsletter-form">
+      <input type="email" placeholder="Email Address" required>
+      <button type="submit" class="btn btn-primary">Subscribe</button>
+    </form>
+    <p class="newsletter-partner">Produced in partnership with <a href="https://phronesisresearch.org" target="_blank" rel="noopener">The Phronesis Institute</a></p>
+  </div>
+</section>"""
 
 
 def filter_pills_html(values, group):

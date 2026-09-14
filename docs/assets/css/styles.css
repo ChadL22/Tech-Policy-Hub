@@ -849,7 +849,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 .area-controls-row{
   display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;
 }
-.area-controls-row .search-box{ margin:0; max-width:320px; flex:1 1 260px; }
+.area-controls-row .search-box{ margin:0; max-width:380px; flex:1 1 300px; }
 /* Follow-up (direct user request): "when the people page loads we want to
    see the full entry for the first 2 people in the core members list" --
    a chain of small, people.html-scoped reductions (filter-bar spacing,

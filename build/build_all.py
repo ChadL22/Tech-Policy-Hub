@@ -107,18 +107,7 @@ home_body = f"""
   </div>
 </section>
 
-<section id="subscribe" class="newsletter-band">
-  <div class="container inner">
-    <span class="eyebrow">Stay in the Loop</span>
-    <h2>Subscribe to our newsletter</h2>
-    <p>A monthly briefing on developments at the intersection of technology, law, and policy.</p>
-    <form class="newsletter-form">
-      <input type="email" placeholder="Email Address" required>
-      <button type="submit" class="btn btn-primary">Subscribe</button>
-    </form>
-    <p class="newsletter-partner">Produced in partnership with <a href="https://phronesisresearch.org" target="_blank" rel="noopener">The Phronesis Institute</a></p>
-  </div>
-</section>
+{g.newsletter_band_html()}
 """
 g.write("index.html", g.page("index.html", "Home", "The University of Maryland Tech Policy Hub studies the bridge between computer science and public policy.", home_body))
 
@@ -440,6 +429,7 @@ research_body = f"""
     <div class="teaching-cta"><a href="courses.html" class="btn btn-primary btn-arrow">Explore Courses</a></div>
   </div>
 </section>
+{g.newsletter_band_html()}
 """
 g.write("research.html", g.page("research.html", "Research", "Cybersecurity, consumer privacy, information integrity, and trustworthy ML research from the Tech Policy Hub.", research_body))
 
@@ -637,6 +627,7 @@ events_body = f"""
     </div>
   </div>
 </section>
+{g.newsletter_band_html()}
 """
 g.write("events.html", g.page("events.html", "Events", "Search and browse upcoming and past Tech Policy Hub events.", events_body))
 g.write_raw("events.ics", g.events_ics(g.EVENTS_ITEMS))
@@ -856,6 +847,7 @@ people_body = f"""
     <p class="list-empty" data-empty-for="people-list" hidden>No people match your filters.</p>
   </div>
 </section>
+{g.newsletter_band_html()}
 """
 g.write("people.html", g.page("people.html", "People", "Faculty, affiliates, and fellows of the Tech Policy Hub.", people_body))
 
