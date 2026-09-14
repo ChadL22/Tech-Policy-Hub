@@ -1342,7 +1342,14 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    96px to 240px to hold a real photo + a caption stack (email/website/
    area badges), matching the width research.html's own People tiles
    use (.rp-carousel--people .rp-grid > .rp-tile's flex-basis: 220px). */
-.person-body{ display:grid; grid-template-columns: 240px 1fr; gap: 24px; align-items:stretch; }
+.person-body{ display:grid; grid-template-columns: 240px 1fr; gap: 20px; align-items:stretch; }
+/* Follow-up (direct user request): a gold accent line between the photo
+   card and the name/role/bio column, "as tall as the whole information
+   section" -- a border-left on .person-content does this for free
+   (align-items:stretch above already makes this column's box as tall as
+   the row itself), rather than a separate absolutely-positioned element
+   that would need its own height kept in sync. */
+.person-content{ border-left: 3px solid var(--umd-gold); padding-left: 18px; }
 /* The photo itself reuses research.html's People-tile photo/silhouette
    markup and classes verbatim (.rp-tile-photo.rp-tile-photo--person +
    .rp-tile-photo-silhouette, defined earlier alongside research.html's
