@@ -851,17 +851,57 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   position: relative;
   margin-bottom: 40px;
   background: var(--paper-soft); border: 1.5px solid var(--ink-soft); border-radius: var(--radius-lg);
-  padding: 33px 24px 12px;
+  padding: 33px 24px 31px;
 }
+/* Follow-up (direct user request): "the filter by text should be
+   aligned with the text in the filter button" -- left:29px was a manual
+   nudge from an earlier round (see the corner-radius optical-alignment
+   note elsewhere in this file) that predates the button gaining its own
+   16px text padding + 1.5px border, so the label's text start and the
+   button's text start didn't actually line up. left:42px = the
+   dropdown row's own 24px inset + the button's 1.5px border + the
+   button's 16px text padding, i.e. the label now starts at the exact
+   same x as "ROLE" itself. */
 .area-controls-label{
-  position: absolute; top:18px; left:29px; line-height:1;
+  position: absolute; top:18px; left:42px; line-height:1;
   font-family: var(--font-nav); font-size:.64rem; font-weight:700;
   letter-spacing:.05em; text-transform: uppercase; color: var(--ink-soft);
 }
+/* Follow-up (direct user request): "decouple [the search box and the
+   Role dropdown], then move the search bar down, while keeping the
+   filter button and 'filter by' text" where they are. The search box
+   used to share this row's own centered alignment with the dropdown,
+   so the two could only ever move together -- pulling the search box
+   out of flow (see .search-box below) is what actually decouples them,
+   but that would also shrink this row down to just the dropdown's own
+   height, which would in turn shift the (still center-aligned) dropdown
+   -- min-height:52px keeps the row exactly the size it was rendering at
+   before (when the now-taller search box was still what set that size),
+   so the dropdown's own centered position doesn't move by a pixel. */
 .area-controls-row{
-  display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;
+  display:flex; align-items:center; justify-content:flex-start; gap:20px; flex-wrap:wrap;
+  min-height: 52px;
 }
-.area-controls-row .search-box{ margin:0; max-width:380px; flex:1 1 300px; }
+/* Taken out of the row's flow entirely (position:absolute, against
+   .area-controls' own position:relative) so it can sit at its own,
+   independent vertical position lower in the box -- closer to the
+   bottom edge -- without dragging the Role dropdown down with it via
+   shared row alignment (see the .area-controls-row comment above).
+   .area-controls' own padding-bottom was grown (12px -> 31px) to give
+   it the room to actually land there rather than overflowing past the
+   box's bottom edge. right:24px matches the box's own padding-right,
+   keeping its right edge flush where it always was. Falls back to
+   normal in-flow stacking at the 700px breakpoint below, where there
+   isn't room for an independently-floated search box beside/under a
+   possibly-wrapped dropdown row. */
+.area-controls-row .search-box{
+  margin:0; width:380px; max-width: calc(100% - 24px);
+  position: absolute; top: 50px; right: 24px;
+}
+@media (max-width: 700px){
+  .area-controls-row{ min-height: 0; }
+  .area-controls-row .search-box{ position: static; width:auto; max-width:none; margin-top:16px; }
+}
 /* Follow-up (direct user request): "when the people page loads we want to
    see the full entry for the first 2 people in the core members list" --
    a chain of small, people.html-scoped reductions (filter-bar spacing,
@@ -871,7 +911,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    normal laptop viewport on load. Font sizes themselves (set two rounds
    above, per direct request) are left alone -- only the space around and
    between lines is trimmed. */
-#people-main .area-controls{ margin-bottom: 8px; padding: 33px 24px 10px; }
+#people-main .area-controls{ margin-bottom: 8px; padding: 33px 24px 29px; }
 #people-list .subsection-toggle{ margin-bottom: 4px; }
 
 .area-filter-bar{ display:flex; flex-wrap:wrap; gap:10px; }
@@ -1579,9 +1619,23 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    of gold since this divides a photo from a name-card-style caption
    rather than framing a whole panel. */
 .person-media-caption{
-  flex: 36 1 0; min-height: 0; display:flex; flex-direction:column; gap:3px;
+  flex: 36 1 0; min-height: 0; display:flex; flex-direction:row; align-items:center;
+  justify-content:space-between; gap:8px;
   padding: 8px 10px; background: var(--ink); border-top: 4px solid var(--umd-red);
 }
+/* Follow-up (direct user request): "move the badges to be on the right
+   side of the email and website" -- the caption is now a row, not a
+   column: .person-caption-links (Email + Website, still stacked) on
+   the left, the area-tag badges as their own wrapping group on the
+   right, instead of Email/Website/badges all stacked as three separate
+   lines. Badges wrap onto a second line as needed (2+2 for someone
+   with 4, a single line for 1-2) rather than being paired one-per-
+   label -- the number of badges per person varies (0 to 4+) and
+   doesn't correspond to Email vs. Website, so a wrapping group is the
+   layout that holds up for everyone. This also shortens the caption
+   for the 13 people with only 0-2 badges, who no longer need a
+   dedicated third row just for them. */
+.person-caption-links{ display:flex; flex-direction:column; gap:3px; }
 /* Follow-up (direct user request, black caption background): the
    red link color read too dark against var(--ink) to stay comfortably
    legible, so Email/Website links go white with a gold hover instead
@@ -1603,7 +1657,14 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    link's white so it visibly reads as "not yet available" rather than
    a broken link. Reuses the search placeholder's existing muted grey. */
 .person-link-static{ font-size:.78rem; font-weight:700; color:#9a9d9f; cursor:default; }
-.person-media-caption .rp-tags{ margin-top:0; margin-bottom:0; } /* the flex `gap` on .person-media-caption already spaces this from the line above it -- an extra margin-top here just stacked on top of that gap and ate into the caption's tight flex-grow budget, occasionally overflowing by a few px on shorter rows. */
+.person-media-caption .rp-tags{
+  margin:0; flex-wrap:wrap; justify-content:flex-end; max-width:70px;
+}
+/* max-width:70px (not just "wraps eventually") is deliberately tight
+   enough to force 2 badges per row for the common 2-4 letter codes here
+   (CY/CP/ML ~29px each, II ~20px) -- matching the direct user mockup of
+   badges landing 2-per-row beside Email/Website, rather than an
+   uneven 3-then-1 wrap a looser max-width would produce. */
 /* Follow-up (direct user request): "increase the font size that we
    don't have this much white space... for the entries." Name/role/bio
    all sized up (h3 1.05rem->1.3rem, role gets an explicit size instead

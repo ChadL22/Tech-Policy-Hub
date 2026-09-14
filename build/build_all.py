@@ -739,13 +739,21 @@ def _person_row_html(p):
     # thin links column. It's now a full card -- photo on top (same
     # silhouette placeholder/markup as the research.html tile, reused
     # verbatim so both pages render the identical component), a divider,
-    # then Email/Website/research-area badges stacked below -- sized to
-    # match the height of the name/role/bio column beside it (.person-
-    # body below goes align-items:stretch specifically so this card's
-    # height always equals its row's tallest content, per "the card
-    # should be as tall as the information... next to it"). The content
-    # column itself now carries ONLY name/role/bio, per the same request
-    # -- badges and links moved into the card.
+    # then Email/Website/research-area badges below -- sized to match
+    # the height of the name/role/bio column beside it (.person-body
+    # below goes align-items:stretch specifically so this card's height
+    # always equals its row's tallest content, per "the card should be
+    # as tall as the information... next to it"). The content column
+    # itself now carries ONLY name/role/bio, per the same request --
+    # badges and links moved into the card.
+    #
+    # Follow-up (direct user request): "move the badges to be on the
+    # right side of the email and website" -- .person-caption-links
+    # (Email + Website, stacked) sits in its own column so the area-tag
+    # badges can sit beside it as a wrapping group instead of a third
+    # row underneath, shortening the caption on anyone with 1-2 badges
+    # (which no longer need their own row) -- see .person-media-caption
+    # in styles.css for the row/column split itself.
     areas = _person_areas.get(p["name"], [])
     # id="person-<slug>" is a direct-linkable anchor -- research.html's
     # People tiles (see _person_tile_html) link straight here instead of
@@ -758,8 +766,10 @@ def _person_row_html(p):
               {_person_photo_html(p['name'])}
             </div>
             <div class="person-media-caption">
-              {_person_contact_html(p)}
-              {_person_websites_html(p)}
+              <div class="person-caption-links">
+                {_person_contact_html(p)}
+                {_person_websites_html(p)}
+              </div>
               {_area_tags_html(areas) if areas else ""}
             </div>
           </div>
