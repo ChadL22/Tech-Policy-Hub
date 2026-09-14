@@ -211,8 +211,25 @@ document.addEventListener('DOMContentLoaded', function () {
       emptyMsgs.forEach(function (msg) {
         var panel = document.getElementById(msg.getAttribute('data-empty-for'));
         if (!panel) return;
+        // Follow-up (bug fix): `[data-empty-for]` is a page-wide lookup,
+        // but not every page's "no results" message belongs to THIS
+        // closure -- events.html's Upcoming/Past lists carry their own
+        // [data-empty-for] messages keyed to [data-filter-target] rows,
+        // owned by the generic [data-filter-group] block further down
+        // this file, not by [data-search-row]/researchExplorer. Before
+        // the .area-controls-only guard fix above, this whole render()
+        // never ran on events.html at all (early-return stub), so this
+        // loop never touched those messages and they stayed at their
+        // default `hidden` markup state. Now that render() legitimately
+        // runs there too (for Category/search wiring elsewhere on the
+        // page), a panel with zero [data-search-row] children isn't
+        // this closure's to manage -- skip it so the other mechanism's
+        // (correct) hidden state is left alone instead of being
+        // clobbered into permanently showing "no results".
+        var searchRows = panel.querySelectorAll('[data-search-row]');
+        if (!searchRows.length) return;
         if (panel.hidden) { msg.hidden = true; return; }
-        var anyVisible = Array.prototype.slice.call(panel.querySelectorAll('[data-search-row]'))
+        var anyVisible = Array.prototype.slice.call(searchRows)
           .some(function (row) { return !row.hidden; });
         msg.hidden = anyVisible;
       });

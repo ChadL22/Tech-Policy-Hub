@@ -260,6 +260,22 @@ pubs_list = _pubs_list_html()
 year_filter_pills = _year_filter_pills_html()
 
 research_body = f"""
+<!-- Follow-up (site-wide UI/UX audit against the homepage): every other
+     page -- People, Teaching, Speaker Series, Annual Event -- opens with
+     a .page-hero (breadcrumb/eyebrow/h1/lede) that orients the visitor
+     before any content. Research jumped straight from the sticky ticker
+     into "Filters" with no title at all, which read as broken/abrupt
+     compared to clicking into any other page from the nav -- exactly
+     the kind of friction moving between pages the audit was looking
+     for. Added the same component here for consistency. -->
+<section class="page-hero">
+  <div class="container">
+    <div class="breadcrumb"><a href="index.html">Home</a> / Research</div>
+    <span class="eyebrow">Our Research</span>
+    <h1>Research</h1>
+    <p class="lede">Cybersecurity, consumer privacy, information integrity, and trustworthy ML -- the people, projects, and publications driving the Hub's work.</p>
+  </div>
+</section>
 <section>
   <div class="container container-narrow">
     <button type="button" class="subsection-toggle subsection-toggle--filters" aria-expanded="false" aria-controls="research-filters-panel">
@@ -455,6 +471,20 @@ _ics_webcal_url = _ics_url.replace("https://", "webcal://")
 # stay pinned for the list's whole scroll instead of not sticking at
 # all, or detaching after only its own short height's worth of scroll.
 events_body = f"""
+<!-- Follow-up (site-wide UI/UX audit against the homepage): same gap as
+     research.html above -- Events had no .page-hero at all, jumping
+     straight from the ticker into the Category/Search row, unlike
+     every other page reached from the nav. Added the same
+     breadcrumb/eyebrow/h1/lede component used elsewhere for
+     consistency. -->
+<section class="page-hero">
+  <div class="container">
+    <div class="breadcrumb"><a href="index.html">Home</a> / Events</div>
+    <span class="eyebrow">Hub Events</span>
+    <h1>Events</h1>
+    <p class="lede">Speaker series, workshops, roundtables, and our flagship Annual Event -- browse what's next and what you missed.</p>
+  </div>
+</section>
 <section>
   <div class="container with-sidebar events-layout">
     <div>
