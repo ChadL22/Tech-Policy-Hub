@@ -837,6 +837,14 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    come from padding-top alone. */
 .research-subsection{ padding-top: 12px; padding-bottom: 0; }
 .research-subsection:first-of-type{ padding-top: 0; }
+/* Follow-up (direct user request): Publications reads as a denser,
+   text-heavy list rather than another tile carousel like People/
+   Projects above it -- the shared 12px padding-top (tight on purpose
+   for People/Projects, which sit right next to each other) read as
+   cluttered here, with the Projects carousel's arrows landing right on
+   top of the year-filter row. Publications alone gets more breathing
+   room above it. */
+#publications{ padding-top: 56px; }
 .research-subsection > h2{
   font-size:1.25rem; padding-bottom:12px; margin-bottom:20px; border-bottom: 1px solid var(--ink);
 }
@@ -850,8 +858,12 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   padding-bottom:12px; margin-bottom:20px; border-bottom: 1px solid var(--ink);
 }
 .pub-section-head h2{ font-size:1.25rem; margin:0; padding:0; border:0; }
-.year-filter-bar{ display:flex; flex-wrap:wrap; gap:8px; }
-.year-filter-pill{ padding: 6px 14px; font-size:.72rem; }
+.year-filter-bar{ display:flex; flex-wrap:wrap; gap:6px; }
+/* .year-filter-pill's own look is defined further down, right after
+   the base .filter-pill rule it overrides -- CSS source order decides
+   ties between same-specificity selectors, and .filter-pill lives much
+   later in this file, so a same-specificity override placed up here
+   would just lose to it silently. */
 /* Follow-up (direct user request, applies to every .subsection-toggle
    site-wide -- "Filters" on People/Research/Events, "People"/"Projects"
    on Research): the button used to be width:100% with
@@ -1574,6 +1586,25 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 }
 .filter-pill:hover{ border-color: var(--ink); color: var(--ink); }
 .filter-pill.active{ background: var(--umd-red); border-color: var(--umd-red); color:#fff; }
+/* Follow-up (direct user request): the .filter-pill look above (bold
+   uppercase, thick border, sharp corners) reads as a heavy button --
+   fine for the Research Area/Category dropdown menus, too loud for a
+   plain year toggle sitting next to the Publications heading. Restyled
+   as a small, quiet, fully-rounded chip instead -- plain-weight text,
+   thin border, soft grey fill -- so it reads as a minor filter rather
+   than competing for attention. Placed here (after .filter-pill,
+   .active included) so it wins the cascade tie instead of the base
+   rule silently overriding it. */
+.year-filter-pill{
+  font-family: var(--font-body); font-weight: 600; letter-spacing: normal; text-transform: none;
+  padding: 4px 12px; font-size:.76rem; border-radius: 999px;
+  border-color: var(--line); color: var(--ink-soft); background: var(--paper-soft);
+}
+.year-filter-pill:hover{ border-color: var(--ink-soft); background: var(--nav-band); color: var(--ink); }
+/* Hovering an already-selected year pill would otherwise fall back to
+   the grey hover state above (same specificity, later in source order
+   than .filter-pill.active) -- keep it red/white while active. */
+.year-filter-pill.active:hover{ background: var(--umd-red); border-color: var(--umd-red); color:#fff; }
 
 /* ---------- Footer ---------- */
 footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding-top: 48px; }
