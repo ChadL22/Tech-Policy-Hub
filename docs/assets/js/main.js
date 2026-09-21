@@ -119,31 +119,33 @@ document.addEventListener('DOMContentLoaded', function () {
     tileCarousels.push(initTileCarousel(root));
   });
 
-  // people.html mobile card swipe -- direct user request: the photo
+  // people.html mobile card paging -- direct user request: the photo
   // card + black caption (email/website/area badges) is what shows by
-  // default on a phone-width person row, with a clamped preview of
-  // name/role/bio swiped to as a second, same-size card (see
-  // .person-body/.person-content/.person-bio-open/.person-bio-close in
-  // styles.css for the scroll-snap mechanics and the line-clamp that
-  // keeps the bio card matched in height to the photo card -- a real
-  // touch swipe already works on its own via that CSS alone). These two
-  // buttons are the click/tap/keyboard/screen-reader equivalent of that
-  // swipe, for anyone not dragging a touchscreen. scrollIntoView with
-  // inline:'start' moves .person-body's own horizontal scroll to the
-  // target card; block:'nearest' keeps that from also nudging the
-  // page's vertical scroll position. A no-op on any page without these
-  // buttons (research.html, events.html, desktop widths where they're
-  // hidden but still clickable would be harmless anyway).
-  document.querySelectorAll('.person-bio-open').forEach(function (btn) {
+  // default on a phone-width person row; swiping (or tapping a page's
+  // .person-page-next caret) pages through a clamped bio preview, then
+  // the full bio, then back to the photo (see .person-body/.person-
+  // media/.person-content--preview/.person-content--full in styles.css
+  // for the scroll-snap mechanics and line-clamp/scroll that keep every
+  // page the photo card's height -- a real touch swipe already works on
+  // its own via that CSS alone). This button is the click/tap/keyboard/
+  // screen-reader equivalent of the swipe, for anyone not dragging a
+  // touchscreen -- generic over however many pages a row has (currently
+  // 3: .person-media, .person-content--preview, .person-content--full)
+  // rather than hardcoded to a fixed pair, so it just advances to
+  // whichever page is next in the DOM and wraps to the first once
+  // there's no next one. scrollIntoView with inline:'start' moves
+  // .person-body's own horizontal scroll to that page; block:'nearest'
+  // keeps that from also nudging the page's vertical scroll position. A
+  // no-op on any page without this button (research.html, events.html,
+  // desktop widths where it's hidden but still clickable would be
+  // harmless anyway).
+  document.querySelectorAll('.person-page-next').forEach(function (btn) {
     btn.addEventListener('click', function () {
-      var content = btn.closest('.person-body').querySelector('.person-content');
-      if (content) content.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
-    });
-  });
-  document.querySelectorAll('.person-bio-close').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var media = btn.closest('.person-body').querySelector('.person-media');
-      if (media) media.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+      var body = btn.closest('.person-body');
+      var page = btn.closest('.person-media, .person-content');
+      if (!body || !page) return;
+      var next = page.nextElementSibling || body.firstElementChild;
+      next.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
     });
   });
 
