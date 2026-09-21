@@ -1776,41 +1776,105 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 .person-bio{ max-width: 640px; flex: 1 1 auto; display:flex; align-items:flex-end; }
 .person-bio p{ font-size:1.25rem; line-height:1.5; color: var(--ink-soft); margin:0; }
 
+/* .person-swipe-next/.person-swipe-prev only mean anything inside the
+   swipe layout below (max-width:700px) -- hidden by default so they
+   never show at wider widths where .person-body is the normal 2-column
+   grid and both panels already show at once. Placed BEFORE the @media
+   block on purpose: it has the same selector specificity as the
+   `display:flex` rules inside that block, so it must come first in
+   source order for the media query's version to win once its condition
+   is true, rather than this unconditional rule winning at every width
+   by virtue of appearing later. */
+.person-swipe-next, .person-swipe-prev{ display:none; }
 @media (max-width: 700px){
-  /* Follow-up (direct user request): the photo card grew considerably
-     (96px -> 240px, a bare avatar -> photo+caption card) to match
-     research.html's tiles, which no longer suits sitting narrowed
-     beside the text at phone widths the way the old small square avatar
-     did -- stack the card above the name/role/bio instead, capped to a
-     comfortable width rather than stretching edge-to-edge. */
-  .person-body{ grid-template-columns: 1fr; gap: 16px; }
-  .person-media{ max-width: 280px; }
+  /* Follow-up (direct user request): the previously-stacked card (photo
+     card above, then name/role/bio in full below) put a full bio's
+     worth of text on screen for every single person as you scrolled --
+     "overwhelming." Replaced with a 2-page horizontal swipe: .person-
+     media (photo + black caption, i.e. email/website/area badges) is
+     what shows by default, and swiping the card reveals .person-content
+     (name/role/bio) as a second page. Built on native CSS scroll-snap
+     rather than a JS-driven carousel -- .person-body becomes the
+     scrollable/snapping track and each of its two children becomes a
+     full-width "page" (flex:0 0 100%), so a real touch swipe just
+     scrolls this element horizontally with the browser's own scroll
+     physics/snapping, and the page's own vertical scroll is untouched
+     (orthogonal axis, no gesture conflict). The .person-swipe-next/
+     .person-swipe-prev buttons (see below) are the non-swipe equivalent
+     -- discoverable, and usable via click/tap/keyboard/screen reader,
+     not just a touch drag a mouse/trackpad/AT user couldn't perform. */
+  .person-body{
+    grid-template-columns: none; gap: 0;
+    display:flex; flex-wrap:nowrap; align-items:flex-start;
+    overflow-x:auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  /* align-items:flex-start (not stretch, unlike the desktop 2-column
+     grid above): .person-media and .person-content are now two
+     side-by-side "pages" of the same scroll-snap row, only one of which
+     is in view at a time -- align-items:stretch would still size BOTH
+     to the row's tallest child (almost always the bio page, once it has
+     a few lines of text), leaving the photo/caption page with dead
+     empty space at the bottom of the black caption exactly like the
+     "padding below the content" issue fixed earlier elsewhere on this
+     card. flex-start lets each page size to its own content instead. */
+  .person-body::-webkit-scrollbar{ display:none; }
+  .person-media{
+    max-width:none; flex:0 0 100%; width:100%;
+    scroll-snap-align:start; scroll-snap-stop:always;
+    position:relative;
+  }
   /* Follow-up (direct user request, "same ratio on every card"): the
      64:36 flex-grow split above only produces a consistent ratio when
      .person-media has a definite height to divide up, which it gets on
      desktop from align-items:stretch matching it to the bio column's
-     height (both in the same grid row). At this width .person-body
-     stacks into separate rows, so .person-media is no longer stretched
-     to anything and has no definite height to split -- flex-grow alone
-     would collapse the photo to ~0. Falls back to a fixed 16/10
-     aspect-ratio (giving the photo a definite height again) with the
-     caption filling whatever's left, same as before the ratio fix;
-     each stacked card is judged on its own at this width, not lined up
-     against its neighbor, so a fixed ratio here doesn't reopen the
-     card-to-card inconsistency the desktop fix addresses. */
+     height (both in the same grid row). At this width .person-media is
+     its own full-width swipe page with no sibling to size against --
+     flex-grow alone would collapse the photo to ~0. Falls back to a
+     fixed 16/10 aspect-ratio (giving the photo a definite height again)
+     with the caption filling whatever's left, same as before the ratio
+     fix. */
   .person-media .rp-tile-photo--person{ aspect-ratio: 16/10; flex: 0 0 auto; }
   .person-media-caption{ flex: 1 1 auto; }
-  /* Direct user request ("redundancy in the outlines" on mobile): once
-     .person-body stacks to one column (above), .person-media becomes
-     the dominant element of its .person-row card -- both are the same
-     white/paper background with the identical 1.5px ink-soft border,
-     so .person-media's own ring sits immediately inside .person-row's
-     with no color change to separate them, reading as one doubled
-     outline around the photo. Dropping just .person-media's border
-     color (radius/sizing untouched) leaves .person-row's border as the
-     single outline around the whole card, same as every other card in
-     the list. */
+  /* Direct user request ("redundancy in the outlines" on mobile):
+     .person-media is the dominant element of its .person-row card --
+     both are the same white/paper background with the identical 1.5px
+     ink-soft border, so .person-media's own ring sits immediately
+     inside .person-row's with no color change to separate them, reading
+     as one doubled outline around the photo. Dropping just .person-
+     media's border color (radius/sizing untouched) leaves .person-row's
+     border as the single outline around the whole card, same as every
+     other card in the list. */
   .person-media{ border-color: transparent; }
+  .person-content{
+    flex:0 0 100%; width:100%;
+    scroll-snap-align:start; scroll-snap-stop:always;
+    position:relative;
+    border-left:none; padding-left:0;
+    border-top: 4px solid var(--umd-gold); padding-top: 18px;
+  }
+  /* "Bio ›" / "‹ Photo" -- the tap/click/keyboard equivalent of the
+     swipe itself (see the .person-body comment above for why this
+     exists alongside, not instead of, the swipe). Sits over the photo's
+     empty upper area (the caption below already holds email/website/
+     badges, so this avoids crowding that row) and mirrors it in the
+     top-left corner of the bio page to swipe back. */
+  .person-swipe-next, .person-swipe-prev{
+    display:flex; align-items:center; gap:3px;
+    position:absolute; border:none; border-radius:999px;
+    font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.02em;
+    cursor:pointer;
+  }
+  .person-swipe-next{
+    top:10px; right:10px; padding:6px 12px;
+    background: rgba(0,0,0,.55); color:#fff;
+  }
+  .person-swipe-next span{ font-size:.95rem; }
+  .person-swipe-prev{
+    top:-2px; left:0; padding:4px 0;
+    background:transparent; color: var(--ink-soft);
+  }
+  .person-swipe-prev span{ font-size:.95rem; }
 }
 
 /* Follow-up (direct user request, modeled on the homepage's Hub News

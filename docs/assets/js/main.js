@@ -119,6 +119,32 @@ document.addEventListener('DOMContentLoaded', function () {
     tileCarousels.push(initTileCarousel(root));
   });
 
+  // people.html mobile card swipe -- direct user request: the photo
+  // card + black caption (email/website/area badges) is what shows by
+  // default on a phone-width person row, with name/role/bio swiped to
+  // (see .person-body/.person-swipe-next/.person-swipe-prev in
+  // styles.css for the actual scroll-snap mechanics -- a real touch
+  // swipe already works on its own via that CSS alone). These two
+  // buttons are the click/tap/keyboard/screen-reader equivalent of that
+  // swipe, for anyone not dragging a touchscreen. scrollIntoView with
+  // inline:'start' moves .person-body's own horizontal scroll to the
+  // target pane; block:'nearest' keeps that from also nudging the
+  // page's vertical scroll position. A no-op on any page without these
+  // buttons (research.html, events.html, desktop widths where they're
+  // hidden but still clickable would be harmless anyway).
+  document.querySelectorAll('.person-swipe-next').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var content = btn.closest('.person-body').querySelector('.person-content');
+      if (content) content.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+    });
+  });
+  document.querySelectorAll('.person-swipe-prev').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var media = btn.closest('.person-body').querySelector('.person-media');
+      if (media) media.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+    });
+  });
+
   // Mobile nav toggle -- follow-up (direct user request): the collapsed
   // nav is now a bounded-width drawer + dimmed backdrop instead of a
   // full-screen takeover (see the 1080px breakpoint in styles.css), so
