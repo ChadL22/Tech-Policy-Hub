@@ -1128,7 +1128,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    video game" -- every tile deliberately shows the exact same shape,
    the way a game's locked slots all render identically until a real
    photo/headshot replaces it. */
-.rp-tile-photo.rp-tile-photo--person{ background: var(--ink); aspect-ratio: 16/10; }
+.rp-tile-photo.rp-tile-photo--person{ background: var(--ink); aspect-ratio: 6/5; }
 /* Follow-up (direct user request): people.html used to scope this down
    to a shorter 16/8 ratio; removed so the photo goes back to the base
    16/10 ratio shared with research.html's tiles, which raises the
