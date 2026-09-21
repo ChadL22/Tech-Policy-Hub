@@ -1647,7 +1647,15 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    whichever bio pane happens to be showing. */
 .person-heading{
   border-left: 4px solid var(--umd-gold);
-  padding-left: 12px;
+  /* Pull the box 14px left (into .person-content's own 18px left
+     padding) then pad it back out just enough (10px + the 4px border
+     itself = 14px) that the name/role text lands back at exactly
+     .person-content's normal text column, flush with .person-bio below
+     it (direct user request: "that text can remain aligned with the
+     [bio] text") -- the border sits in the 4px of gutter this leaves
+     between it and the card's own edge. */
+  margin-left: -14px;
+  padding-left: 10px;
 }
 /* The photo itself reuses research.html's People-tile photo/silhouette
    markup and classes verbatim (.rp-tile-photo.rp-tile-photo--person +
@@ -1837,22 +1845,28 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
      and allow the user to page to the next tile and the next tile
      until the bio is complete." .person-body is now a 3-page swipe/
      snap track -- .person-media (photo), .person-content--preview (a
-     clamped few lines, same height as the photo card), .person-content
-     --full (the complete bio, scrollable in place if it still runs
-     long) -- and a single .person-page-next caret in each page's
-     bottom-right corner (the click/tap/keyboard/screen-reader
-     equivalent of the swipe) advances to the next one, wrapping back to
-     the photo after the full bio.
+     clamped few lines), .person-content--full (the complete bio,
+     scrollable in place if it still runs long) -- and a single
+     .person-page-next caret in each page's bottom-right corner (the
+     click/tap/keyboard/screen-reader equivalent of the swipe) advances
+     to the next one, wrapping back to the photo after the full bio.
      Follow-up (direct user request): "the face cards can remain the
-     size we had previously" -- align-items:stretch (which forced every
-     page, including the photo, to match the tallest page's height) is
-     gone; align-items:flex-start lets each page size to its own
-     natural content again, so the photo card goes back to its own
-     aspect-ratio instead of being stretched or squeezed by the bio
-     pages next to it in the scroll track. */
+     size we had previously... we do not want the bio card to be huge"
+     -- went through align-items:stretch (every page forced to match
+     the TALLEST page, ballooning the photo to match a long bio) and
+     then align-items:flex-start (every page its own natural height,
+     which let a long full bio balloon taller than the photo instead).
+     Neither kept all three pages a consistent, modest size. Settled on
+     stretch again, but now paired with an explicit height on
+     .person-body itself (~the photo card's own natural size) instead
+     of leaving the row's height to be derived from its children -- so
+     every page, photo included, stretches to that SAME fixed height,
+     and a page whose content doesn't fit (a long full bio) scrolls
+     internally rather than growing the card. */
   .person-body{
     grid-template-columns: none; gap: 0;
-    display:flex; flex-wrap:nowrap; align-items:flex-start;
+    display:flex; flex-wrap:nowrap; align-items:stretch;
+    height: 262px;
     overflow-x:auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
@@ -1863,21 +1877,21 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
     position:relative;
   }
   /* Follow-up (direct user request, "face cards can remain the size we
-     had previously"): reverted to the same fixed 16/10 aspect-ratio +
-     flex:0 0 auto the photo card uses everywhere else (research.html's
-     People tiles, desktop people.html) -- the 64:36 flex-grow split
-     this replaced only existed to divide up a height forced onto
-     .person-media by align-items:stretch, which mobile no longer uses,
-     so the photo card is sized by its own aspect ratio again instead of
-     by however tall the bio pages next to it happen to be.
-     position:relative is kept so .person-page-next (below) still
-     anchors to this photo box specifically, not the whole card. */
+     had previously"): the same fixed 16/10 aspect-ratio + flex:0 0 auto
+     the photo card uses everywhere else (research.html's People tiles,
+     desktop people.html) -- .person-body's own height above (262px) is
+     calibrated to this photo+caption's natural combined height, so
+     stretching .person-media to fill the row doesn't add any visible
+     slack under it. position:relative is kept so .person-page-next
+     (below) still anchors to this photo box specifically, not the
+     whole card. */
   .person-media .rp-tile-photo--person{ aspect-ratio: 16/10; flex: 0 0 auto; position:relative; }
   .person-content--preview{ display:flex; }
   .person-content{
     flex:0 0 100%; width:100%;
     scroll-snap-align:start; scroll-snap-stop:always;
     position:relative;
+    overflow:hidden;
     /* Bottom clearance for .person-page-next (bottom:10px, ~34px tall)
        so it never sits on top of the last line of text -- the photo
        page's equivalent caret floats over the photo itself instead (see
@@ -1885,24 +1899,25 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
        cover, so only the two text cards need this. */
     padding-bottom: 50px;
   }
-  /* "Preview... in a tile sized the same as the person's photo badge"
-     (direct user request): the preview page is stretched to match
-     .person-media's height (see .person-body above) rather than
-     growing to fit the full bio, so the bio paragraph needs a hard cap
-     to never overflow it -- clamped to a fixed number of lines (CSS's
-     standard line-clamp truncation, "..." added automatically). Top-
-     aligned (not desktop's bottom-align) since a clamped preview reads
-     better starting right under the name/role than floating at the
-     bottom of the card. */
+  /* The preview page is stretched to .person-body's fixed height (see
+     above) rather than growing to fit the full bio, so the bio
+     paragraph needs a hard cap to never overflow it -- clamped to a
+     fixed number of lines (CSS's standard line-clamp truncation, "..."
+     added automatically; 4 lines, tuned to fit under the name/role
+     within the 262px card without needing to scroll). Top-aligned (not
+     desktop's bottom-align) since a clamped preview reads better
+     starting right under the name/role than floating at the bottom of
+     the card. */
   .person-content--preview .person-bio{ align-items:flex-start; }
   .person-content--preview .person-bio p{
-    display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:5; overflow:hidden;
+    display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:4; overflow:hidden;
   }
-  /* The full-bio page is the one page that can legitimately run taller
-     than the shared card height (a long bio is still a long bio) --
-     rather than let it force the row taller and reopen the height-
-     mismatch this whole design has been working to avoid, it scrolls
-     internally within the same fixed height every other page gets. */
+  /* The full-bio page is the one page whose content can legitimately
+     run past the shared 262px card height (a long bio is still a long
+     bio) -- rather than let it force the card taller (reopening the
+     "huge card" problem) or clip it (.person-content's own
+     overflow:hidden above), it scrolls internally within that same
+     fixed height instead. */
   .person-content--full{ overflow-y:auto; }
   .person-content--full .person-bio{ align-items:flex-start; }
   /* Direct user request ("the white bubble does not need to extend to
