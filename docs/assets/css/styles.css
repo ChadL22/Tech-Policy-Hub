@@ -1833,7 +1833,18 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    page): the bio column used to stretch to fill the full 1fr grid track,
    which at our container's max-width made lines of bio text quite long
    and hard to read. Capping it keeps line length reasonable while the
-   photo-card column stays fixed-width beside it. */
+   photo-card column stays fixed-width beside it.
+   Follow-up (direct user request): "It feels like there is a lot of
+   whitespace here [in the bio bubble]... making the bio text larger or
+   extending it out further... a combination of both might work." The
+   640px cap above left a consistently empty ~160px strip on the right
+   of every card (.person-content's own inner content width is ~800px
+   at every viewport this page supports -- see the page's own max-width
+   container, confirmed not to grow past that even on very wide
+   screens, so there's no risk of overly long lines from widening this).
+   Raised to 760px (not the full ~800px, so text doesn't run flush to
+   the card's own edge) and paired with a larger font size below to
+   close most of that gap while keeping line length reasonable. */
 /* Follow-up (direct user request): "the last line of the bio should
    align with [the] end point of the gold vertical line" -- switched
    from align-items:center to flex-end so the bio's bottom edge always
@@ -1843,8 +1854,8 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    .person-content is its own bordered card -- see the comment on that
    rule above -- but bottom-aligning a short bio still reads better than
    leaving it stranded at the top with empty space below.) */
-.person-bio{ max-width: 640px; flex: 1 1 auto; display:flex; align-items:flex-end; margin-top: 8px; }
-.person-bio p{ font-size:1.25rem; line-height:1.5; color: var(--ink-soft); margin:0; }
+.person-bio{ max-width: 760px; flex: 1 1 auto; display:flex; align-items:flex-end; margin-top: 8px; }
+.person-bio p{ font-size:1.35rem; line-height:1.5; color: var(--ink-soft); margin:0; }
 
 /* .person-scroll wraps .person-heading + .person-bio (see build_all.py's
    _person_row_html) so the pair can become one shared scrolling region
