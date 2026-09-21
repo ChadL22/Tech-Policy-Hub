@@ -1598,12 +1598,17 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    area badges), matching the width research.html's own People tiles
    use (.rp-carousel--people .rp-grid > .rp-tile's flex-basis: 220px). */
 .person-body{ display:grid; grid-template-columns: 240px 1fr; gap: 20px; align-items:stretch; }
-/* Follow-up (direct user request): a gold accent line between the photo
-   card and the name/role/bio column, "as tall as the whole information
-   section" -- a border-left on .person-content does this for free
-   (align-items:stretch above already makes this column's box as tall as
-   the row itself), rather than a separate absolutely-positioned element
-   that would need its own height kept in sync. */
+/* Follow-up (direct user request): "the badge [photo card] should
+   stand alone on mobile and desktop... the bio should have its own
+   white bubble" -- .person-content used to be undecorated text with
+   just a thin gold rule down its left edge, so the row read as one
+   real card (.person-media) next to plain type. It's now a proper card
+   in its own right -- same white background/border/radius as .person-
+   media, so the two sit side by side as a visually matched pair, with
+   a gold top accent bar (mirroring .person-media-caption's red one)
+   marking it as the "bio" card instead of the border-left. align-items:
+   stretch above already makes this column's box as tall as the row
+   itself (both cards match height), same as before. */
 /* Follow-up (direct user request): "the bio text should be big enough
    to fill space (top to bottom)" -- a short bio next to a taller photo
    card (see .person-body's align-items:stretch) used to just sit at the
@@ -1613,7 +1618,12 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    under the name/role, for any row height, rather than only a bigger
    font (which can't itself guarantee filling a height that varies row
    to row with card content). */
-.person-content{ border-left: 3px solid var(--umd-gold); padding-left: 18px; display:flex; flex-direction:column; }
+.person-content{
+  background: var(--paper); border: 1.5px solid var(--ink-soft); border-radius: var(--radius-lg);
+  border-top: 4px solid var(--umd-gold);
+  padding: 14px 18px 16px;
+  display:flex; flex-direction:column;
+}
 /* The photo itself reuses research.html's People-tile photo/silhouette
    markup and classes verbatim (.rp-tile-photo.rp-tile-photo--person +
    .rp-tile-photo-silhouette, defined earlier alongside research.html's
@@ -1770,88 +1780,118 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 /* Follow-up (direct user request): "the last line of the bio should
    align with [the] end point of the gold vertical line" -- switched
    from align-items:center to flex-end so the bio's bottom edge always
-   sits flush with the bottom of .person-content (and so with the
-   border-left that spans it), for any row height, instead of centering
-   with unequal gaps above/below. */
+   sits flush with the bottom of .person-content's own padding, for any
+   row height, instead of centering with unequal gaps above/below. (The
+   gold vertical line this originally aligned to is gone now that
+   .person-content is its own bordered card -- see the comment on that
+   rule above -- but bottom-aligning a short bio still reads better than
+   leaving it stranded at the top with empty space below.) */
 .person-bio{ max-width: 640px; flex: 1 1 auto; display:flex; align-items:flex-end; }
 .person-bio p{ font-size:1.25rem; line-height:1.5; color: var(--ink-soft); margin:0; }
 
 /* .person-bio-open/.person-bio-close only mean anything inside the
-   collapsed-bio layout below (max-width:700px) -- hidden by default so
-   they never show at wider widths where .person-body is the normal
-   2-column grid and both the photo card and the bio are already shown
-   at once. Placed BEFORE the @media block on purpose: it has the same
-   selector specificity as the `display:flex` rule inside that block,
-   so it must come first in source order for the media query's version
-   to win once its condition is true, rather than this unconditional
-   rule winning at every width by virtue of appearing later. */
+   swipe layout below (max-width:700px) -- hidden by default so they
+   never show at wider widths where .person-body is the normal 2-column
+   grid and both cards already show at once. Placed BEFORE the @media
+   block on purpose: it has the same selector specificity as the
+   `display:flex` rules inside that block, so it must come first in
+   source order for the media query's version to win once its condition
+   is true, rather than this unconditional rule winning at every width
+   by virtue of appearing later. */
 .person-bio-open, .person-bio-close{ display:none; }
 @media (max-width: 700px){
   /* Follow-up (direct user request): the previously-stacked card (photo
      card above, then name/role/bio in full below) put a full bio's
      worth of text on screen for every single person as you scrolled --
-     "overwhelming." A first pass tried a 2-page horizontal swipe
-     (scroll-snap between the photo card and the bio) to fix that, but
-     the user asked to drop the swipe in favor of just closing the gap
-     it left under a short card -- so this is now a plain collapse/
-     expand instead: .person-content (name/role/bio) starts hidden
-     (display:none, entirely out of the layout, no reserved height)
-     and .person-media (photo + black caption) is the only thing shown.
-     Tapping .person-bio-open reveals it in place, below the photo card,
-     pushing whatever's below the row down -- an ordinary accordion, not
-     a second "page" that has to be sized for even while off-screen. */
-  .person-body{ display:flex; flex-direction:column; gap: 16px; }
-  .person-media{ max-width:none; position:relative; }
+     "overwhelming." Two earlier passes at this both had a real problem:
+     a horizontal swipe-between-two-pages version had to size the row
+     for the taller of the two pages even while the shorter one was the
+     only one showing (dead space under a short photo card); dropping
+     the swipe for a plain expand/collapse fixed that but lost the
+     swipe gesture the user then asked to bring back. This version keeps
+     both: .person-body is a horizontally swiping/snapping track again
+     (scroll-snap, real touch swipe works on its own), but now that
+     .person-content is a proper card of its own (see the base-rule
+     comment above -- "the bio should have its own white bubble"),
+     align-items:stretch makes BOTH cards match the row's height exactly
+     like desktop's 2-column grid does, and the bio itself is clamped to
+     a fixed number of lines (see .person-bio below) so it always fits
+     that shared height as a preview instead of forcing the row taller.
+     .person-bio-open/.person-bio-close (see further below) are the
+     click/tap/keyboard/screen-reader equivalent of the swipe itself. */
+  .person-body{
+    grid-template-columns: none; gap: 0;
+    display:flex; flex-wrap:nowrap; align-items:stretch;
+    overflow-x:auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .person-body::-webkit-scrollbar{ display:none; }
+  .person-media{
+    max-width:none; flex:0 0 100%; width:100%;
+    scroll-snap-align:start; scroll-snap-stop:always;
+    position:relative;
+  }
   /* Follow-up (direct user request, "same ratio on every card"): the
      64:36 flex-grow split above only produces a consistent ratio when
      .person-media has a definite height to divide up, which it gets on
      desktop from align-items:stretch matching it to the bio column's
-     height (both in the same grid row). At this width .person-media has
-     no sibling to size against (.person-content is display:none until
-     opened, and even open the two never share a row) -- flex-grow alone
-     would collapse the photo to ~0. Falls back to a fixed 16/10
-     aspect-ratio (giving the photo a definite height again) with the
-     caption filling whatever's left. */
-  .person-media .rp-tile-photo--person{ aspect-ratio: 16/10; flex: 0 0 auto; }
-  .person-media-caption{ flex: 1 1 auto; }
+     height (both in the same grid row) -- and now gets here too, from
+     that same align-items:stretch on .person-body, since .person-media
+     and .person-content are once again two boxes in the same flex row
+     (just scrolled/clipped so only one shows at a time), not stacked or
+     hidden the way the two earlier mobile passes had it. */
+  .person-media .rp-tile-photo--person{ aspect-ratio: auto; flex: 1 1 0; min-height:0; }
+  .person-media-caption{ flex: 0 0 auto; }
   /* Direct user request ("redundancy in the outlines" on mobile):
-     .person-media is the dominant element of its .person-row card --
-     both are the same white/paper background with the identical 1.5px
-     ink-soft border, so .person-media's own ring sits immediately
-     inside .person-row's with no color change to separate them, reading
-     as one doubled outline around the photo. Dropping just .person-
-     media's border color (radius/sizing untouched) leaves .person-row's
-     border as the single outline around the whole card, same as every
-     other card in the list. */
+     .person-media and .person-content are each the dominant element of
+     their own full-width "page" of .person-row -- both are the same
+     white/paper background with the identical 1.5px ink-soft border, so
+     each one's own ring sits immediately inside .person-row's with no
+     color change to separate them, reading as one doubled outline.
+     Dropping their border color (radius/sizing untouched) leaves
+     .person-row's border as the single outline around whichever page is
+     showing, same as every other card in the list. */
   .person-media{ border-color: transparent; }
   .person-content{
-    display:none; position:relative;
-    border-left:none; padding-left:0;
-    border-top: 4px solid var(--umd-gold); padding-top: 18px;
+    flex:0 0 100%; width:100%;
+    scroll-snap-align:start; scroll-snap-stop:always;
+    position:relative; border-color: transparent;
+    /* Extra clearance above the name so the absolutely-positioned
+       .person-bio-close button (top:10px, ~30px tall) doesn't sit on
+       top of it -- .person-media's equivalent .person-bio-open button
+       has the photo's own empty upper area to float over instead, but
+       .person-content has no such headroom without this. */
+    padding-top: 46px;
   }
-  .person-row--bio-open .person-content{ display:flex; }
-  .person-row--bio-open .person-bio-open{ display:none; }
-  /* "Bio ›" -- opens the accordion; sits over the photo's empty upper
-     area (the caption below already holds email/website/badges, so
-     this avoids crowding that row). "‹ Photo" sits in the bio panel's
-     own top-left corner to close it again -- display:none is enough on
-     its own to hide it while .person-content itself is hidden, since it
-     lives inside that panel. */
-  .person-bio-open{
+  /* "Preview... in a tile sized the same as the person's photo badge"
+     (direct user request): with .person-content now stretched to match
+     .person-media's height instead of growing to fit a full bio (see
+     the .person-body comment above), the bio paragraph needs a hard cap
+     so it never overflows that shared height -- clamped to a fixed
+     number of lines (CSS's standard line-clamp truncation, "..." added
+     automatically) rather than however many lines the text happens to
+     wrap to. Top-aligned here (not desktop's bottom-align) since a
+     clamped preview reads better starting right under the name/role
+     than floating at the bottom of a tall card. */
+  .person-content .person-bio{ align-items:flex-start; }
+  .person-content .person-bio p{
+    display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:5; overflow:hidden;
+  }
+  /* "Bio ›" -- sits over the photo's empty upper area (the caption
+     below already holds email/website/badges, so this avoids crowding
+     that row). "‹ Photo" mirrors it in the bio card's own top-left
+     corner. Both are absolutely positioned within their own card's
+     padding box (not .person-row's), so they land just inside that
+     card's border rather than floating outside it. */
+  .person-bio-open, .person-bio-close{
     display:flex; align-items:center; gap:3px;
-    position:absolute; top:10px; right:10px; padding:6px 12px;
-    border:none; border-radius:999px;
+    position:absolute; top:10px; border:none; border-radius:999px;
     font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.02em;
-    cursor:pointer; background: rgba(0,0,0,.55); color:#fff;
+    cursor:pointer;
   }
-  .person-bio-open span{ font-size:.95rem; }
-  .person-row--bio-open .person-bio-close{
-    display:flex; align-items:center; gap:3px;
-    border:none; border-radius:999px; padding:4px 0;
-    font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.02em;
-    cursor:pointer; background:transparent; color: var(--ink-soft);
-  }
-  .person-bio-close span{ font-size:.95rem; }
+  .person-bio-open{ right:10px; padding:6px 12px; background: rgba(0,0,0,.55); color:#fff; }
+  .person-bio-close{ left:10px; padding:6px 12px; background: var(--paper-soft); color: var(--ink-soft); }
+  .person-bio-open span, .person-bio-close span{ font-size:.95rem; }
 }
 
 /* Follow-up (direct user request, modeled on the homepage's Hub News
