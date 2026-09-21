@@ -1640,23 +1640,21 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    bubble outline... we just do not want the bar to touch the bio. We
    should have whitespace between the role and the bio." Flush-left
    made the bar read as an extension of the card's own border (blending
-   into the rounded corner); back to a border-left on .person-heading
-   itself, inset inside the card the same way .person-media's and
-   .person-content's own borders are, with a small visible gap of its
-   own between it and the card's edge. The negative margin/padding
-   below keeps the name/role text lined up with .person-bio underneath
-   despite that border eating into the heading's box. */
+   into the rounded corner); back to a border-left on .person-heading,
+   inset inside the card the same way .person-media's and .person-
+   content's own borders are.
+   Follow-up (direct user request): "the gold bar and the text next to
+   it need to shift over to the right, such that the yellow bar is
+   aligned with the leftmost starting point of the first letter of the
+   bio." -- .person-heading no longer pulls itself left to compensate
+   for its own border (that's what kept the name/role text flush with
+   the bio); it now sits at .person-content's normal text column like
+   everything else, so the border-left itself lines up with where the
+   bio's own text starts, and the name/role text sits further right
+   again, past the bar and its padding. */
 .person-heading{
   border-left: 4px solid var(--umd-gold);
-  /* Pull the box 14px left (into .person-content's own 18px left
-     padding) then pad it back out just enough (10px + the 4px border
-     itself = 14px) that the name/role text lands back at exactly
-     .person-content's normal text column, flush with .person-bio below
-     it -- the border itself sits in the small gutter this leaves
-     between it and the card's own edge, clearly separate from the
-     card's outline rather than flush with it. */
-  margin-left: -14px;
-  padding-left: 10px;
+  padding-left: 12px;
 }
 /* The photo itself reuses research.html's People-tile photo/silhouette
    markup and classes verbatim (.rp-tile-photo.rp-tile-photo--person +
