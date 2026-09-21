@@ -119,6 +119,35 @@ document.addEventListener('DOMContentLoaded', function () {
     tileCarousels.push(initTileCarousel(root));
   });
 
+  // people.html mobile card paging -- direct user request: "the name,
+  // role, and bio card should still be one swipe away. So the user
+  // sees the image card, then either clicks bio or swipes left and
+  // sees the name, role, bio card." The photo card + black caption is
+  // what shows by default on a phone-width person row; swiping (or
+  // tapping a page's .person-page-next button) pages to the name/role/
+  // bio card, and back (see .person-body/.person-media/.person-content
+  // in styles.css for the scroll-snap mechanics -- a real touch swipe
+  // already works on its own via that CSS alone). This button is the
+  // click/tap/keyboard/screen-reader equivalent of the swipe, generic
+  // over however many pages a row has (currently 2: .person-media,
+  // .person-content) rather than hardcoded to a fixed pair, so it just
+  // advances to whichever page is next in the DOM and wraps to the
+  // first once there's no next one. scrollIntoView with inline:'start'
+  // moves .person-body's own horizontal scroll to that page; block:
+  // 'nearest' keeps that from also nudging the page's vertical scroll
+  // position. A no-op on any page without this button (research.html,
+  // events.html, desktop widths where it's hidden but still clickable
+  // would be harmless anyway).
+  document.querySelectorAll('.person-page-next').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var body = btn.closest('.person-body');
+      var page = btn.closest('.person-media, .person-content');
+      if (!body || !page) return;
+      var next = page.nextElementSibling || body.firstElementChild;
+      next.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+    });
+  });
+
   // Mobile nav toggle -- follow-up (direct user request): the collapsed
   // nav is now a bounded-width drawer + dimmed backdrop instead of a
   // full-screen takeover (see the 1080px breakpoint in styles.css), so

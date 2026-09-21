@@ -756,6 +756,27 @@ def _person_row_html(p):
     # row underneath, shortening the caption on anyone with 1-2 badges
     # (which no longer need their own row) -- see .person-media-caption
     # in styles.css for the row/column split itself.
+    #
+    # Follow-up (direct user request): on mobile the photo card and the
+    # name/role/bio card went through a 3-page swipe (photo, clamped
+    # preview, full bio), then got collapsed to two always-stacked
+    # cards ("we can actually remove the subsequent cards ... just have
+    # the image card and the name, role, and bio card scrollable"). The
+    # stacked version read as one long card, so it's back to a 2-page
+    # swipe -- "the name, role, and bio card should still be one swipe
+    # away. So the user sees the image card, then either clicks bio or
+    # swipes left" -- .person-page-next--bio (top-right of the photo)
+    # and .person-page-next--back (bottom-right of the content card)
+    # are the click/tap equivalent of that swipe; see .person-body's
+    # scroll-snap track in styles.css. Unlike the old 3-page version,
+    # there's only ever ONE content page here (name+role+bio together,
+    # not split into a clamped preview + separate full-bio page) --
+    # .person-scroll is what scrolls internally when the bio runs long
+    # ("the entire card with the bio should be scrollable ... the
+    # person's name and role should scroll as well"), wrapped separately
+    # from .person-page-next--back so the button has its own reserved
+    # strip at the card's bottom instead of floating over the scrolling
+    # text (see .person-content/.person-scroll in styles.css).
     areas = _person_areas.get(p["name"], [])
     # id="person-<slug>" is a direct-linkable anchor -- research.html's
     # People tiles (see _person_tile_html) link straight here instead of
@@ -766,6 +787,7 @@ def _person_row_html(p):
           <div class="person-media">
             <div class="rp-tile-photo rp-tile-photo--person">
               {_person_photo_html(p['name'])}
+              <button type="button" class="person-page-next person-page-next--bio" aria-label="Show bio for {p['name']}">Bio <span aria-hidden="true">&rsaquo;</span></button>
             </div>
             <div class="person-media-caption">
               <div class="person-caption-links">
@@ -776,11 +798,14 @@ def _person_row_html(p):
             </div>
           </div>
           <div class="person-content">
-            <div class="person-heading">
-              <h3>{p['name']}</h3>
-              <div class="person-role">{p['role']}</div>
+            <div class="person-scroll">
+              <div class="person-heading">
+                <h3>{p['name']}</h3>
+                <div class="person-role">{p['role']}</div>
+              </div>
+              <div class="person-bio"><p>{p['bio']}</p></div>
             </div>
-            <div class="person-bio"><p>{p['bio']}</p></div>
+            <button type="button" class="person-page-next person-page-next--back" aria-label="Back to photo for {p['name']}"><span aria-hidden="true">&lsaquo;</span></button>
           </div>
         </div>
       </div>"""
