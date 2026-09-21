@@ -1614,15 +1614,16 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    media, so the two sit side by side as a visually matched pair.
    align-items:stretch above already makes this column's box as tall as
    the row itself (both cards match height), same as before.
-   This bar's exact placement has gone through a few rounds: next to
-   just the name/role (.person-heading, below); briefly reverted to a
-   border spanning the whole card; and finally settled back on scoping
-   it to the heading, with an explicit correction on how far down it
-   should run -- "the yellow/gold bar should end where the bottom of
-   the person's role is. It should not extend past the word into the
-   white space before the Bio" -- which is exactly what the scoped
-   .person-heading wrapper does (its own margin doesn't reach past
-   .person-role's own bottom edge -- see that rule below). */
+   This bar's exact placement has gone through several rounds: next to
+   just the name/role; a border spanning the whole card; back to just
+   the name/role but stopping at the role's own bottom edge; and
+   finally a direct correction that the bar's horizontal position
+   (flush with the card's own edge, same as when it was a plain
+   border-left here) and the bio's position should both stay exactly
+   as they already were -- only the bar's vertical extent should change.
+   See .person-heading below (now drawn as its own absolutely
+   positioned strip rather than a border on a text wrapper) for how
+   that's done without moving any text. */
 /* Follow-up (direct user request): "the bio text should be big enough
    to fill space (top to bottom)" -- a short bio next to a taller photo
    card (see .person-body's align-items:stretch) used to just sit at the
@@ -1637,28 +1638,37 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   padding: 14px 18px 16px;
   display:flex; flex-direction:column;
 }
-/* Follow-up (direct user request): the vertical gold bar marks just the
-   name + role, not the bio below it -- a wrapper around only those two
-   elements (see build_all.py's _person_row_html) rather than a border
-   on .person-content itself (which would run the bar the full height
-   of the card, alongside the bio too). Direct follow-up confirmed the
-   bar should stop exactly at the bottom of the role text, not bleed
-   into the white space before the bio starts -- .person-heading has no
-   bottom border/padding of its own, so .person-role's own margin-
-   bottom collapses through its bottom edge rather than being enclosed
-   by it, and the bar's border-left only extends as far as the box
-   itself (name + role's line box), not into that collapsed margin. */
+/* Direct follow-up: "the gold bar should be in the same place it is in
+   the screenshot (left-to-right). The bio can be in the same place as
+   well. The only thing that needs to change is the vertical
+   alignment -- it should stop at the bottom of the role." A border-left
+   on .person-heading (the previous approach) necessarily shifts the
+   heading's own text over to make room for it, which then needed a
+   compensating negative margin to line back up with the bio -- close,
+   but not pixel-identical to the plain border-left .person-content
+   itself used to carry (flush with the card's true edge, no shift to
+   any text at all). Drawing the bar as its own absolutely positioned
+   strip instead reproduces that exact horizontal position (and leaves
+   the heading's text completely unmoved, still naturally aligned with
+   .person-bio below it) while sizing to .person-heading's own natural
+   height -- top:0/bottom:0 on the ::before stretches it to match
+   .person-heading's auto height (name + role, nothing more) without
+   needing to know that height in advance, so it stops right at the
+   bottom of the role text instead of running the full card. */
 .person-heading{
-  border-left: 4px solid var(--umd-gold);
-  /* Pull the box 14px left (into .person-content's own 18px left
-     padding) then pad it back out just enough (10px + the 4px border
-     itself = 14px) that the name/role text lands back at exactly
-     .person-content's normal text column, flush with .person-bio below
-     it (direct user request: "that text can remain aligned with the
-     [bio] text") -- the border sits in the 4px of gutter this leaves
-     between it and the card's own edge. */
-  margin-left: -14px;
-  padding-left: 10px;
+  position: relative;
+}
+.person-heading::before{
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0;
+  /* -19.5px = .person-content's own 18px padding-left + its 1.5px
+     border -- pulls the bar out to sit flush with .person-content's
+     outer edge, the same physical position its border-left used to
+     occupy. */
+  left: -19.5px;
+  width: 4px;
+  background: var(--umd-gold);
 }
 /* The photo itself reuses research.html's People-tile photo/silhouette
    markup and classes verbatim (.rp-tile-photo.rp-tile-photo--person +
