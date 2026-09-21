@@ -169,6 +169,11 @@ collections:
               - { name: summary, label: Summary, widget: text }
               - { name: primary_label, label: "Button label", widget: string, hint: 'e.g. "Read the Paper", "Read the Coverage", "Event Details"' }
               - { name: link, label: Link, widget: string }
+              - name: image
+                label: "Photo (optional)"
+                widget: image
+                required: false
+                hint: "Falls back to an abstract placeholder graphic if left blank -- see generate.py's lead_media_html()."
       - name: reading
         label: "What We're Reading"
         file: build/data/reading_items.yml

@@ -1,48 +1,50 @@
-- tag: Publication
-  topic: Consumer Privacy
-  topic_file: research.html#area-panel-privacy
-  date: Jul 2025
-  source: '[Add contributing lab/department]'
-  title: 'Cookie-less Identification: For and Against Privacy'
-  summary: Work from the privacy team on the privacy implications of cookie-less identification on the
-    Web was published in the Internet Policy Review.
-  primary_label: Read the Research
-  link: https://policyreview.info/articles/analysis/cookie-less-identification-foragainst-privacy
-- tag: Publication
+- tag: Student Feature
+  topic: Trustworthy ML
+  topic_file: research.html#area-panel-ml
+  date: Aug 31, 2026
+  source: GoTech, UMD School of Public Policy
+  title: Graduate Student Spends Summer in Geneva Exploring AI's Global Future
+  summary: A Public Policy graduate student examined AI governance and digital-divide questions at the
+    UN's Graduate Study Programme in Geneva, one of just 56 students selected worldwide.
+  primary_label: Read the Story
+  link: https://gotech.umd.edu/news/graduate-student-spends-summer-geneva-exploring-ais-global-future
+- tag: Policy
+  topic: Trustworthy ML
+  topic_file: research.html#area-panel-ml
+  date: Jun 12, 2026
+  source: GoTech, UMD School of Public Policy
+  title: New AI Incubation Lab Will Help Maryland Test Ideas Before Committing Resources
+  summary: GoTech faculty helped shape a new Maryland law creating an AI Incubation Lab, letting state
+    agencies test AI applications and weigh risks before committing resources.
+  primary_label: Read the Story
+  link: https://gotech.umd.edu/news/new-ai-incubation-lab-will-help-maryland-test-ideas-committing-resources
+- tag: Student Feature
+  topic: Trustworthy ML
+  topic_file: research.html#area-panel-ml
+  date: May 19, 2026
+  source: GoTech, UMD School of Public Policy
+  title: 'MPM Student Bridges Diplomacy and Data'
+  summary: A former Ukrainian diplomat turned Public Policy student is studying how AI is reshaping who
+    makes decisions and how governments stay accountable.
+  primary_label: Read the Story
+  link: https://gotech.umd.edu/news/mpm-student-bridges-diplomacy-and-data
+- tag: Award
   topic: Information Integrity
   topic_file: research.html#area-panel-integrity
-  date: Jul 2025
-  source: '[Add contributing lab/department]'
-  title: Classifying Trustworthy Content via Third-Party Web Structure
-  summary: New work classifying trustworthy content on the Web based on the third-party structure of websites
-    was published through the FOCI workshop at PETs.
-  primary_label: Read the Paper
-  link: https://www.petsymposium.org/foci/2025/foci-2025-0017.pdf
-- tag: Media
+  date: May 15, 2026
+  source: GoTech, UMD School of Public Policy
+  title: Two Public Policy Doctoral Students Named P.E.O. International Peace Scholars
+  summary: Two Public Policy doctoral students, including a GoTech researcher studying disinformation and
+    algorithmic amplification online, were named P.E.O. International Peace Scholars.
+  primary_label: Read the Story
+  link: https://gotech.umd.edu/news/two-public-policy-doctoral-students-named-peo-international-peace-scholars
+- tag: Platform Launch
   topic: Cybersecurity
   topic_file: research.html#area-panel-cybersecurity
-  date: Mar 2, 2025
-  source: '[Add contributing lab/department]'
-  title: Hub Cybersecurity Work Highlighted by Newsweek
-  summary: Research from the Hub's Cybersecurity group on county-level cyber risk was highlighted by Newsweek.
-  primary_label: Read the Coverage
-  link: https://www.newsweek.com/cybersecurity-risk-map-usa-counties-2026762
-- tag: Speaker Series
-  topic: Consumer Privacy
-  topic_file: research.html#area-panel-privacy
-  date: Mar 12, 2025
-  source: '[Add contributing lab/department]'
-  title: 'Spring 2025 Speaker Series: Privacy Research and Regulation'
-  summary: An online Spring 2025 Speaker Series event on how privacy research can inform privacy regulation.
-  primary_label: Event Details
-  link: https://umd.zoom.us/meeting/register/HbxWvfXnSBWxFfr1a7vnQA
-- tag: Publication
-  topic: Cybersecurity
-  topic_file: research.html#area-panel-cybersecurity
-  date: Jan 17, 2025
-  source: '[Add contributing lab/department]'
-  title: Attack Surface Across U.S. County Governments Published in Journal of Cybersecurity
-  summary: Research on the size, diversity, and severity of exposed attack surface across U.S. county
-    governments is officially published by the Journal of Cybersecurity.
-  primary_label: Read the Paper
-  link: https://academic.oup.com/cybersecurity/article/11/1/tyae032/7959399
+  date: Apr 22, 2026
+  source: GoTech, UMD School of Public Policy
+  title: GoTech Launches Cyber Events Database 2.0 Web Platform
+  summary: GoTech's Cyber Events Database 2.0 launched as a public platform with over 16,700 coded cyber
+    incidents across 178 countries, now used by central banks and federal agencies alike.
+  primary_label: Read the Story
+  link: https://gotech.umd.edu/news/gotech-launches-cyber-events-database-20-web-platform
