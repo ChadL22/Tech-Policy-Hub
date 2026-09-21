@@ -777,14 +777,18 @@ def _person_row_html(p):
             </div>
           </div>
           <div class="person-content person-content--preview">
-            <h3>{p['name']}</h3>
-            <div class="person-role">{p['role']}</div>
+            <div class="person-heading">
+              <h3>{p['name']}</h3>
+              <div class="person-role">{p['role']}</div>
+            </div>
             <div class="person-bio person-bio--preview"><p>{p['bio']}</p></div>
             <button type="button" class="person-page-next" aria-label="Show full bio for {p['name']}"><span aria-hidden="true">&rsaquo;</span></button>
           </div>
           <div class="person-content person-content--full">
-            <h3>{p['name']}</h3>
-            <div class="person-role">{p['role']}</div>
+            <div class="person-heading">
+              <h3>{p['name']}</h3>
+              <div class="person-role">{p['role']}</div>
+            </div>
             <div class="person-bio"><p>{p['bio']}</p></div>
             <button type="button" class="person-page-next" aria-label="Back to photo for {p['name']}"><span aria-hidden="true">&rsaquo;</span></button>
           </div>

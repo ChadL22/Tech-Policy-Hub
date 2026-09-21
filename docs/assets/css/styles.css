@@ -1611,14 +1611,16 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    just a thin gold rule down its left edge, so the row read as one
    real card (.person-media) next to plain type. It's now a proper card
    in its own right -- same white background/border/radius as .person-
-   media, so the two sit side by side as a visually matched pair. Direct
-   follow-up request: "I would like to have the gold/yellow bar be
-   vertical next to bio" -- kept as a border (not the red border-top
-   .person-media-caption uses) but on the left edge, closer to the
-   original border-left treatment now that it's drawn on a proper card
-   instead of bare text. align-items:stretch above already makes this
-   column's box as tall as the row itself (both cards match height),
-   same as before. */
+   media, so the two sit side by side as a visually matched pair.
+   align-items:stretch above already makes this column's box as tall as
+   the row itself (both cards match height), same as before.
+   Follow-up (direct user request): "the vertical yellow/gold bar
+   should be next to the names and role... we do not need to have that
+   bar be the left side outline of the bio, role, and bio bubble" --
+   the gold accent that briefly lived as this card's own border-left
+   has moved to .person-heading (below), a wrapper around just the
+   name+role, so .person-content itself now takes the same plain
+   border as .person-media instead of an accent side. */
 /* Follow-up (direct user request): "the bio text should be big enough
    to fill space (top to bottom)" -- a short bio next to a taller photo
    card (see .person-body's align-items:stretch) used to just sit at the
@@ -1630,9 +1632,22 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    to row with card content). */
 .person-content{
   background: var(--paper); border: 1.5px solid var(--ink-soft); border-radius: var(--radius-lg);
-  border-left: 4px solid var(--umd-gold);
   padding: 14px 18px 16px;
   display:flex; flex-direction:column;
+}
+/* Follow-up (direct user request): "the vertical yellow/gold bar
+   should be next to the names and role on mobile and on web. We do
+   not need to have that bar be the left side outline of the bio,
+   role, and bio bubble." -- the gold accent moves off .person-content
+   itself (which now gets the same plain border as .person-media, so
+   the two cards read as a matched pair with no accent on either) onto
+   a new wrapper around just the name+role (.person-heading, added in
+   build_all.py's _person_row_html), so the gold line marks the
+   heading specifically rather than running the full height of
+   whichever bio pane happens to be showing. */
+.person-heading{
+  border-left: 4px solid var(--umd-gold);
+  padding-left: 12px;
 }
 /* The photo itself reuses research.html's People-tile photo/silhouette
    markup and classes verbatim (.rp-tile-photo.rp-tile-photo--person +
@@ -1827,12 +1842,17 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
      long) -- and a single .person-page-next caret in each page's
      bottom-right corner (the click/tap/keyboard/screen-reader
      equivalent of the swipe) advances to the next one, wrapping back to
-     the photo after the full bio. align-items:stretch keeps every page
-     the same height as the photo card, same as desktop's 2-column grid
-     already does for its one bio card. */
+     the photo after the full bio.
+     Follow-up (direct user request): "the face cards can remain the
+     size we had previously" -- align-items:stretch (which forced every
+     page, including the photo, to match the tallest page's height) is
+     gone; align-items:flex-start lets each page size to its own
+     natural content again, so the photo card goes back to its own
+     aspect-ratio instead of being stretched or squeezed by the bio
+     pages next to it in the scroll track. */
   .person-body{
     grid-template-columns: none; gap: 0;
-    display:flex; flex-wrap:nowrap; align-items:stretch;
+    display:flex; flex-wrap:nowrap; align-items:flex-start;
     overflow-x:auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
@@ -1842,16 +1862,17 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
     scroll-snap-align:start; scroll-snap-stop:always;
     position:relative;
   }
-  /* Follow-up (direct user request, "same ratio on every card"): the
-     64:36 flex-grow split above only produces a consistent ratio when
-     .person-media has a definite height to divide up, which it gets on
-     desktop from align-items:stretch matching it to the bio column's
-     height (both in the same grid row) -- and now gets here too, from
-     that same align-items:stretch on .person-body, since all three
-     pages are boxes in the same flex row (just scrolled/clipped so only
-     one shows at a time). */
-  .person-media .rp-tile-photo--person{ aspect-ratio: auto; flex: 1 1 0; min-height:0; position:relative; }
-  .person-media-caption{ flex: 0 0 auto; }
+  /* Follow-up (direct user request, "face cards can remain the size we
+     had previously"): reverted to the same fixed 16/10 aspect-ratio +
+     flex:0 0 auto the photo card uses everywhere else (research.html's
+     People tiles, desktop people.html) -- the 64:36 flex-grow split
+     this replaced only existed to divide up a height forced onto
+     .person-media by align-items:stretch, which mobile no longer uses,
+     so the photo card is sized by its own aspect ratio again instead of
+     by however tall the bio pages next to it happen to be.
+     position:relative is kept so .person-page-next (below) still
+     anchors to this photo box specifically, not the whole card. */
+  .person-media .rp-tile-photo--person{ aspect-ratio: 16/10; flex: 0 0 auto; position:relative; }
   .person-content--preview{ display:flex; }
   .person-content{
     flex:0 0 100%; width:100%;
