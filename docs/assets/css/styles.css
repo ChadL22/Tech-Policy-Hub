@@ -1614,13 +1614,15 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    media, so the two sit side by side as a visually matched pair.
    align-items:stretch above already makes this column's box as tall as
    the row itself (both cards match height), same as before.
-   Follow-up (direct user request): "the vertical yellow/gold bar
-   should be next to the names and role... we do not need to have that
-   bar be the left side outline of the bio, role, and bio bubble" --
-   the gold accent that briefly lived as this card's own border-left
-   has moved to .person-heading (below), a wrapper around just the
-   name+role, so .person-content itself now takes the same plain
-   border as .person-media instead of an accent side. */
+   This bar's exact placement has gone through a few rounds: next to
+   just the name/role (.person-heading, below); briefly reverted to a
+   border spanning the whole card; and finally settled back on scoping
+   it to the heading, with an explicit correction on how far down it
+   should run -- "the yellow/gold bar should end where the bottom of
+   the person's role is. It should not extend past the word into the
+   white space before the Bio" -- which is exactly what the scoped
+   .person-heading wrapper does (its own margin doesn't reach past
+   .person-role's own bottom edge -- see that rule below). */
 /* Follow-up (direct user request): "the bio text should be big enough
    to fill space (top to bottom)" -- a short bio next to a taller photo
    card (see .person-body's align-items:stretch) used to just sit at the
@@ -1635,16 +1637,17 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   padding: 14px 18px 16px;
   display:flex; flex-direction:column;
 }
-/* Follow-up (direct user request): "the vertical yellow/gold bar
-   should be next to the names and role on mobile and on web. We do
-   not need to have that bar be the left side outline of the bio,
-   role, and bio bubble." -- the gold accent moves off .person-content
-   itself (which now gets the same plain border as .person-media, so
-   the two cards read as a matched pair with no accent on either) onto
-   a new wrapper around just the name+role (.person-heading, added in
-   build_all.py's _person_row_html), so the gold line marks the
-   heading specifically rather than running the full height of
-   whichever bio pane happens to be showing. */
+/* Follow-up (direct user request): the vertical gold bar marks just the
+   name + role, not the bio below it -- a wrapper around only those two
+   elements (see build_all.py's _person_row_html) rather than a border
+   on .person-content itself (which would run the bar the full height
+   of the card, alongside the bio too). Direct follow-up confirmed the
+   bar should stop exactly at the bottom of the role text, not bleed
+   into the white space before the bio starts -- .person-heading has no
+   bottom border/padding of its own, so .person-role's own margin-
+   bottom collapses through its bottom edge rather than being enclosed
+   by it, and the bar's border-left only extends as far as the box
+   itself (name + role's line box), not into that collapsed margin. */
 .person-heading{
   border-left: 4px solid var(--umd-gold);
   /* Pull the box 14px left (into .person-content's own 18px left
