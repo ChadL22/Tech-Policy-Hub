@@ -766,7 +766,6 @@ def _person_row_html(p):
           <div class="person-media">
             <div class="rp-tile-photo rp-tile-photo--person">
               {_person_photo_html(p['name'])}
-              <button type="button" class="person-page-next person-page-next--bio" aria-label="Show bio preview for {p['name']}">Bio <span aria-hidden="true">&rsaquo;</span></button>
             </div>
             <div class="person-media-caption">
               <div class="person-caption-links">
@@ -776,21 +775,12 @@ def _person_row_html(p):
               {_area_tags_html(areas) if areas else ""}
             </div>
           </div>
-          <div class="person-content person-content--preview">
-            <div class="person-heading">
-              <h3>{p['name']}</h3>
-              <div class="person-role">{p['role']}</div>
-            </div>
-            <div class="person-bio person-bio--preview"><p>{p['bio']}</p></div>
-            <button type="button" class="person-page-next" aria-label="Show full bio for {p['name']}"><span aria-hidden="true">&rsaquo;</span></button>
-          </div>
-          <div class="person-content person-content--full">
+          <div class="person-content">
             <div class="person-heading">
               <h3>{p['name']}</h3>
               <div class="person-role">{p['role']}</div>
             </div>
             <div class="person-bio"><p>{p['bio']}</p></div>
-            <button type="button" class="person-page-next person-page-next--back" aria-label="Back to photo for {p['name']}"><span aria-hidden="true">&lsaquo;</span></button>
           </div>
         </div>
       </div>"""

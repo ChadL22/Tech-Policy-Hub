@@ -1846,194 +1846,45 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 .person-bio{ max-width: 640px; flex: 1 1 auto; display:flex; align-items:flex-end; margin-top: 8px; }
 .person-bio p{ font-size:1.25rem; line-height:1.5; color: var(--ink-soft); margin:0; }
 
-/* .person-content--preview/.person-page-next only mean anything inside
-   the paged layout below (max-width:700px) -- hidden by default so
-   they never show at wider widths where .person-body is the normal
-   2-column grid, .person-content--full is the only bio card, and there
-   are no pages to advance through. Placed BEFORE the @media block on
-   purpose: same selector specificity as the `display:flex`/`display:
-   flex` rules inside that block, so it must come first in source order
-   for the media query's version to win once its condition is true,
-   rather than this unconditional rule winning at every width by virtue
-   of appearing later. */
-.person-content--preview, .person-page-next{ display:none; }
 @media (max-width: 700px){
-  /* Follow-up (direct user request): the previously-stacked card (photo
-     card above, then name/role/bio in full below) put a full bio's
-     worth of text on screen for every single person as you scrolled --
-     "overwhelming." This has gone through a few passes: a 2-page swipe
-     with a full-length bio page (dead space under a short photo card);
-     a plain expand/collapse (lost the swipe gesture); a 2-page swipe
-     with the bio clamped to a fixed preview (no way to read the rest).
-     Direct user request settled it: "the carrot can point to the right
-     and allow the user to page to the next tile and the next tile
-     until the bio is complete." .person-body is now a 3-page swipe/
-     snap track -- .person-media (photo), .person-content--preview (a
-     clamped few lines), .person-content--full (the complete bio,
-     scrollable in place if it still runs long) -- and a single
-     .person-page-next caret in each page's bottom-right corner (the
-     click/tap/keyboard/screen-reader equivalent of the swipe) advances
-     to the next one, wrapping back to the photo after the full bio.
-     Follow-up (direct user request): "the face cards can remain the
-     size we had previously... we do not want the bio card to be huge"
-     -- went through align-items:stretch (every page forced to match
-     the TALLEST page, ballooning the photo to match a long bio) and
-     then align-items:flex-start (every page its own natural height,
-     which let a long full bio balloon taller than the photo instead).
-     Neither kept all three pages a consistent, modest size. Settled on
-     stretch again, but now paired with an explicit height on
-     .person-body itself (~the photo card's own natural size) instead
-     of leaving the row's height to be derived from its children -- so
-     every page, photo included, stretches to that SAME fixed height,
-     and a page whose content doesn't fit (a long full bio) scrolls
-     internally rather than growing the card. */
+  /* Follow-up (direct user request): "we can actually remove the
+     subsequent cards and then just have the image card and the name,
+     role, and bio card scrollable. We can remove the carrot button
+     altogether." This replaces several rounds of a 3-page swipe/snap
+     carousel (photo -> clamped bio preview -> full bio, paged through
+     with .person-page-next caret buttons) with a much simpler design:
+     just two cards, stacked, no paging mechanism at all -- the photo
+     card (unchanged) and a single bio card whose own text scrolls
+     internally if it runs long, rather than paging to a separate "full
+     bio" card. See .person-content below for the scrollable bio; the
+     .person-page-next buttons and their markup are gone entirely (see
+     build_all.py's _person_row_html and main.js). */
   .person-body{
-    grid-template-columns: none; gap: 0;
-    display:flex; flex-wrap:nowrap; align-items:stretch;
-    height: 262px;
-    overflow-x:auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    grid-template-columns: none; gap: 10px;
+    display:flex; flex-direction:column;
   }
-  .person-body::-webkit-scrollbar{ display:none; }
-  .person-media{
-    max-width:none; flex:0 0 100%; width:100%;
-    scroll-snap-align:start; scroll-snap-stop:always;
-    position:relative;
-  }
+  .person-media{ max-width:none; width:100%; }
+  .person-media .rp-tile-photo--person{ aspect-ratio: 16/10; flex: 0 0 auto; }
   /* Follow-up (direct user request, "face cards can remain the size we
-     had previously"): the same fixed 16/10 aspect-ratio + flex:0 0 auto
-     the photo card uses everywhere else (research.html's People tiles,
-     desktop people.html) -- .person-body's own height above (262px) is
-     calibrated to this photo+caption's natural combined height, so
-     stretching .person-media to fill the row doesn't add any visible
-     slack under it. position:relative is kept so .person-page-next
-     (below) still anchors to this photo box specifically, not the
-     whole card. */
-  .person-media .rp-tile-photo--person{ aspect-ratio: 16/10; flex: 0 0 auto; position:relative; }
-  /* Follow-up (direct user request): "the black section... should cover
-     the entire bottom of the card, there should be no white sliver."
-     The photo (fixed aspect-ratio above) and caption (sized to its own
-     content) don't always add up to exactly .person-body's own fixed
-     262px height -- any small leftover was showing as a strip of
-     .person-media's own white background below the caption. Letting the
-     caption grow to absorb that leftover (instead of the fixed-size
-     photo) keeps the photo at its calibrated size while guaranteeing
-     the black caption always reaches the card's bottom edge. */
-  .person-media-caption{ flex: 1 1 auto; }
-  .person-content--preview{ display:flex; }
+     had previously"): the same fixed 16/10 aspect-ratio the photo card
+     uses everywhere else (research.html's People tiles, desktop
+     people.html) -- .person-media now sizes to its own natural content
+     (photo + caption) rather than being stretched to match a sibling
+     bio card's height, so there's no leftover space for the caption to
+     absorb (the flex:1 1 auto that used to live here, from when a
+     forced shared height could leave a gap below the caption, is gone;
+     the base rule's flex:0 0 auto already fits it to its own content). */
   .person-content{
-    flex:0 0 100%; width:100%;
-    scroll-snap-align:start; scroll-snap-stop:always;
-    position:relative;
-    overflow:hidden;
-    /* Bottom clearance for .person-page-next (bottom:10px, ~34px tall)
-       so it never sits on top of the last line of text -- the photo
-       page's equivalent caret floats over the photo itself instead (see
-       the .rp-tile-photo--person rule above), which has no text to
-       cover, so only the two text cards need this. */
-    padding-bottom: 50px;
+    width:100%;
+    /* Matches .person-media's own natural height (photo + caption)
+       above, so the two stacked cards read as a consistent pair rather
+       than one towering over the other -- a long bio scrolls within
+       this fixed height instead of growing the card ("we do not want
+       the bio card to be huge," from an earlier round). */
+    height: 262px;
+    overflow-y: auto;
   }
-  /* The preview page is stretched to .person-body's fixed height (see
-     above) rather than growing to fit the full bio, so the bio
-     paragraph needs a hard cap to never overflow it -- clamped to a
-     fixed number of lines (CSS's standard line-clamp truncation, "..."
-     added automatically; 4 lines, tuned to fit under the name/role
-     within the 262px card without needing to scroll). Top-aligned (not
-     desktop's bottom-align) since a clamped preview reads better
-     starting right under the name/role than floating at the bottom of
-     the card. */
-  .person-content--preview .person-bio{ align-items:flex-start; }
-  .person-content--preview .person-bio p{
-    display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:4; overflow:hidden;
-  }
-  /* The full-bio page is the one page whose content can legitimately
-     run past the shared 262px card height (a long bio is still a long
-     bio) -- rather than let it force the card taller (reopening the
-     "huge card" problem) or clip it, the bio text itself scrolls
-     internally within that fixed height (see .person-bio below) instead
-     of the whole card.
-     Follow-up (direct user request): "the additional cards (the 3rd and
-     later) do not need to have the person's name and role" -- of the
-     3 swipe pages, the photo (page 1) never had a name, and the preview
-     (page 2) is where it's introduced; showing it again on the full bio
-     (page 3) was redundant once you've already swiped past the preview.
-     Scoped to mobile only, since .person-content--full is also the one
-     and only bio card on desktop (no pagination there), where the name/
-     role still needs to show. */
-  .person-content--full .person-heading{ display:none; }
-  /* Follow-up (direct user request): "the bio text in the cards without
-     the name and role needs to be moved up... the button should also be
-     cleanly separated from the bio text." Earlier this had the whole
-     card scroll with the caret floating on top via position:absolute --
-     that button doesn't scroll with the content (it's pinned to the
-     card's own fixed box, not the scrolled text inside it), so at any
-     scroll position whatever text happened to fall under it just got
-     covered. Restructured so .person-bio is its own scrolling region
-     (flex:1 1 auto + min-height:0 so it can actually shrink and scroll
-     within the column instead of pushing the card taller) and the
-     button becomes a normal, non-absolute flex child below it (see
-     .person-content--full .person-page-next further down) -- real
-     layout space between them instead of an overlay. margin-top:0
-     overrides .person-bio's usual gap-from-heading spacing, since
-     there's no heading here to space away from (that space now comes
-     from .person-content's own padding-top instead). */
-  .person-content--full{ padding-bottom: 16px; }
-  .person-content--full .person-bio{
-    align-items:flex-start; margin-top: 0;
-    flex: 1 1 auto; min-height: 0; overflow-y: auto;
-  }
-  /* Direct user request ("the white bubble does not need to extend to
-     the image and badge card... or the bubble that has the bio, name,
-     and role"): .person-row itself carries no border of its own any
-     more (see that rule further up), so there's no longer a doubled-
-     outline risk here the way there was when it did -- .person-media
-     and .person-content keep their normal visible borders at every
-     width, mobile included. */
-  .person-page-next{
-    display:flex; align-items:center; justify-content:center;
-    position:absolute; bottom:10px; right:10px;
-    width:34px; height:34px; border-radius:50%;
-    border:none; font-size:1.15rem; line-height:1; cursor:pointer;
-  }
-  .person-media .person-page-next{ background: rgba(0,0,0,.55); color:#fff; }
-  .person-content .person-page-next{ background: var(--umd-gold); color: var(--ink); }
-  /* Follow-up (direct user request): "on the person's image card we
-     should have the bio button in the top right corner, not the carrot
-     button." The plain circular caret (matching the other two pages'
-     buttons) moves to a labeled pill in the photo's top-right corner
-     instead of the bottom-right -- auto-sized to fit "Bio ›" rather
-     than the fixed 34px circle, with the same translucent-dark/white
-     styling the caret already used on top of a photo. */
-  .person-page-next--bio{
-    top: 10px; bottom: auto;
-    width: auto; height: auto;
-    border-radius: 999px;
-    padding: 6px 14px 6px 16px;
-    gap: 4px;
-    font-size: .85rem; font-weight: 700;
-  }
-  /* Follow-up (direct user request): "the yellow button with a carrot
-     should point in the opposite direction when you get to the end" --
-     this button wraps back to the photo (the only one of the three that
-     goes backward instead of advancing), so its glyph is a left caret
-     instead of the other two buttons' right caret (see build_all.py's
-     &lsaquo; on this one button). */
-  /* Follow-up (direct user request): "the button should also be cleanly
-     separated from the bio text." This button used to float via
-     position:absolute over .person-content--full's own scrolling text
-     -- since the button is pinned to the card's fixed box rather than
-     scrolling with the content inside it, at any scroll position
-     whatever text fell under it just got covered. Made a normal,
-     non-absolute flex child instead (.person-bio is now the element
-     that scrolls -- see that rule above), so it sits in its own row
-     below the bio with real layout space (margin-top) between them,
-     never overlapping. */
-  .person-content--full .person-page-next{
-    position: static;
-    align-self: flex-end;
-    margin-top: 8px;
-    flex-shrink: 0;
-  }
+  .person-content .person-bio{ align-items:flex-start; }
 }
 
 /* Follow-up (direct user request, modeled on the homepage's Hub News
