@@ -8,6 +8,7 @@
     UN's Graduate Study Programme in Geneva, one of just 56 students selected worldwide.
   primary_label: Read the Story
   link: https://gotech.umd.edu/news/graduate-student-spends-summer-geneva-exploring-ais-global-future
+  image: assets/img/spotlight/spotlight-geneva-ai-un-2026-08.png
 - tag: Policy
   topic: Trustworthy ML
   topic_file: research.html#area-panel-ml
@@ -18,26 +19,29 @@
     agencies test AI applications and weigh risks before committing resources.
   primary_label: Read the Story
   link: https://gotech.umd.edu/news/new-ai-incubation-lab-will-help-maryland-test-ideas-committing-resources
+  image: assets/img/spotlight/spotlight-ai-incubation-lab-2026-06.png
 - tag: Student Feature
   topic: Trustworthy ML
   topic_file: research.html#area-panel-ml
   date: May 19, 2026
   source: GoTech, UMD School of Public Policy
-  title: 'MPM Student Bridges Diplomacy and Data'
+  title: MPM Student Bridges Diplomacy and Data
   summary: A former Ukrainian diplomat turned Public Policy student is studying how AI is reshaping who
     makes decisions and how governments stay accountable.
   primary_label: Read the Story
   link: https://gotech.umd.edu/news/mpm-student-bridges-diplomacy-and-data
+  image: assets/img/spotlight/spotlight-mpm-diplomacy-data-2026-05.png
 - tag: Award
   topic: Information Integrity
   topic_file: research.html#area-panel-integrity
   date: May 15, 2026
   source: GoTech, UMD School of Public Policy
   title: Two Public Policy Doctoral Students Named P.E.O. International Peace Scholars
-  summary: Two Public Policy doctoral students, including a GoTech researcher studying disinformation and
-    algorithmic amplification online, were named P.E.O. International Peace Scholars.
+  summary: Two Public Policy doctoral students, including a GoTech researcher studying disinformation
+    and algorithmic amplification online, were named P.E.O. International Peace Scholars.
   primary_label: Read the Story
   link: https://gotech.umd.edu/news/two-public-policy-doctoral-students-named-peo-international-peace-scholars
+  image: assets/img/spotlight/spotlight-peo-scholars-2026-05.png
 - tag: Platform Launch
   topic: Cybersecurity
   topic_file: research.html#area-panel-cybersecurity
@@ -48,3 +52,4 @@
     incidents across 178 countries, now used by central banks and federal agencies alike.
   primary_label: Read the Story
   link: https://gotech.umd.edu/news/gotech-launches-cyber-events-database-20-web-platform
+  image: assets/img/spotlight/spotlight-cyber-events-database-2026-04.png
