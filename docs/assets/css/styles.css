@@ -1910,6 +1910,16 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
      (below) still anchors to this photo box specifically, not the
      whole card. */
   .person-media .rp-tile-photo--person{ aspect-ratio: 16/10; flex: 0 0 auto; position:relative; }
+  /* Follow-up (direct user request): "the black section... should cover
+     the entire bottom of the card, there should be no white sliver."
+     The photo (fixed aspect-ratio above) and caption (sized to its own
+     content) don't always add up to exactly .person-body's own fixed
+     262px height -- any small leftover was showing as a strip of
+     .person-media's own white background below the caption. Letting the
+     caption grow to absorb that leftover (instead of the fixed-size
+     photo) keeps the photo at its calibrated size while guaranteeing
+     the black caption always reaches the card's bottom edge. */
+  .person-media-caption{ flex: 1 1 auto; }
   .person-content--preview{ display:flex; }
   .person-content{
     flex:0 0 100%; width:100%;
@@ -1944,6 +1954,15 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
      fixed height instead. */
   .person-content--full{ overflow-y:auto; }
   .person-content--full .person-bio{ align-items:flex-start; }
+  /* Follow-up (direct user request): "the additional cards (the 3rd and
+     later) do not need to have the person's name and role" -- of the
+     3 swipe pages, the photo (page 1) never had a name, and the preview
+     (page 2) is where it's introduced; showing it again on the full bio
+     (page 3) was redundant once you've already swiped past the preview.
+     Scoped to mobile only, since .person-content--full is also the one
+     and only bio card on desktop (no pagination there), where the name/
+     role still needs to show. */
+  .person-content--full .person-heading{ display:none; }
   /* Direct user request ("the white bubble does not need to extend to
      the image and badge card... or the bubble that has the bio, name,
      and role"): .person-row itself carries no border of its own any
