@@ -1878,21 +1878,15 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
     width:100%;
     /* Matches .person-media's own natural height (photo + caption)
        above, so the two stacked cards read as a consistent pair rather
-       than one towering over the other. The card itself does NOT
-       scroll -- only .person-bio below does (direct correction: "NO NO
-       NO. I want the image card, then the bio card. Then the bio card
-       should be scrollable" -- the name/role heading must stay fixed
-       and visible, only the bio paragraph scrolls beneath it). */
+       than one towering over the other -- the whole card (name, role,
+       and bio together) scrolls as one unit within this fixed height
+       (direct correction: "The entire card with the bio should be
+       scrollable. So as you scroll through it the person's name and
+       role should scroll as well." -- not just the bio paragraph). */
     height: 262px;
-    overflow: hidden;
-  }
-  .person-content .person-heading{ flex: 0 0 auto; }
-  .person-content .person-bio{
-    align-items:flex-start;
-    flex: 1 1 auto;
-    min-height: 0;
     overflow-y: auto;
   }
+  .person-content .person-bio{ align-items:flex-start; }
 }
 
 /* Follow-up (direct user request, modeled on the homepage's Hub News
