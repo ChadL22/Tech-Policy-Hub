@@ -1156,6 +1156,17 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 
 @media (max-width: 560px){
   .rp-carousel--people .rp-grid > .rp-tile{ flex-basis: 170px; }
+  /* Direct user request ("redundancy in the outlines" on mobile): at
+     this width main.js stretches a person tile to fill nearly the
+     whole carousel panel edge-to-edge (see the initTileCarousel note
+     above), leaving only .rp-carousel-panel's own 20px padding between
+     its grey border and this tile's white one -- two 1.5px ink-soft
+     rings sitting that close together read as one doubled outline
+     rather than two distinct boxes. Dropping the tile's own border
+     color (radius/sizing untouched, so nothing shifts) leaves exactly
+     one visible ring -- the panel's -- with the white-on-grey color
+     change alone still clearly marking the tile's edge underneath it. */
+  .rp-carousel--people .rp-grid > .rp-tile{ border-color: transparent; }
 }
 
 /* Tall variant (direct user request: "projects can be taller like the
@@ -1774,6 +1785,17 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
      card-to-card inconsistency the desktop fix addresses. */
   .person-media .rp-tile-photo--person{ aspect-ratio: 16/10; flex: 0 0 auto; }
   .person-media-caption{ flex: 1 1 auto; }
+  /* Direct user request ("redundancy in the outlines" on mobile): once
+     .person-body stacks to one column (above), .person-media becomes
+     the dominant element of its .person-row card -- both are the same
+     white/paper background with the identical 1.5px ink-soft border,
+     so .person-media's own ring sits immediately inside .person-row's
+     with no color change to separate them, reading as one doubled
+     outline around the photo. Dropping just .person-media's border
+     color (radius/sizing untouched) leaves .person-row's border as the
+     single outline around the whole card, same as every other card in
+     the list. */
+  .person-media{ border-color: transparent; }
 }
 
 /* Follow-up (direct user request, modeled on the homepage's Hub News
