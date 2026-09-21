@@ -1110,6 +1110,17 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 .rp-carousel--people .rp-grid > .rp-tile{
   flex-basis: 220px; padding:0; overflow:hidden; display:flex; flex-direction:column;
 }
+/* Bug fix: this rule's `display:flex` has higher specificity (3 classes)
+   than the shared `.rp-tile[hidden]{ display:none; }` rule above (1
+   class + 1 attribute), so a filtered-out tile here was staying visible
+   despite JS correctly setting its `hidden` property -- the carousel's
+   own width/paging math (initTileCarousel() in main.js) does read the
+   real `hidden` property, so it was sizing its clipped viewport for the
+   true filtered count while the DOM still rendered the old, larger set,
+   which is what produced both wrong-content tiles and a tile clipped
+   mid-card ("half card"). Same author-display-beats-[hidden] gotcha
+   documented near .area-controls[hidden] further down this file. */
+.rp-carousel--people .rp-grid > .rp-tile[hidden]{ display:none; }
 /* No real headshots yet -- solid --ink placeholder (not area-tinted
    like Projects' photo, since one person can carry several areas).
    Follow-up (direct user request): replaced the centered initials with
@@ -1184,6 +1195,10 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 .rp-carousel--projects .rp-grid > .rp-tile{
   flex-basis: 280px; padding:0; overflow:hidden; display:flex; flex-direction:column;
 }
+/* Bug fix: same author-display-beats-[hidden] gotcha as
+   .rp-carousel--people .rp-grid > .rp-tile[hidden] above -- see that
+   comment for the full explanation. */
+.rp-carousel--projects .rp-grid > .rp-tile[hidden]{ display:none; }
 .rp-tile-photo{
   aspect-ratio: 16/10; position:relative; overflow:hidden; flex:none;
   background: var(--area-color, var(--umd-red));
