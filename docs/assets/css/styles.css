@@ -1652,9 +1652,25 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    everything else, so the border-left itself lines up with where the
    bio's own text starts, and the name/role text sits further right
    again, past the bar and its padding. */
+/* Follow-up (direct user request): "let's shorten the golden bar a
+   little bit more" -- a plain border-left necessarily runs the full
+   height of .person-heading's box, so there was no more room to trim
+   without also trimming the name/role text's own line height. Switched
+   to an absolutely positioned strip (top/bottom inset from the box's
+   edges by a few px each) so the bar can be shorter than the text block
+   it sits beside, independent of the text itself. padding-left stays
+   the same 16px total (4px bar width + 12px gap) so the text doesn't
+   move. */
 .person-heading{
-  border-left: 4px solid var(--umd-gold);
-  padding-left: 12px;
+  position: relative;
+  padding-left: 16px;
+}
+.person-heading::before{
+  content: "";
+  position: absolute;
+  top: 3px; bottom: 3px; left: 0;
+  width: 4px;
+  background: var(--umd-gold);
 }
 /* The photo itself reuses research.html's People-tile photo/silhouette
    markup and classes verbatim (.rp-tile-photo.rp-tile-photo--person +
