@@ -1949,12 +1949,10 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   /* The full-bio page is the one page whose content can legitimately
      run past the shared 262px card height (a long bio is still a long
      bio) -- rather than let it force the card taller (reopening the
-     "huge card" problem) or clip it (.person-content's own
-     overflow:hidden above), it scrolls internally within that same
-     fixed height instead. */
-  .person-content--full{ overflow-y:auto; }
-  .person-content--full .person-bio{ align-items:flex-start; }
-  /* Follow-up (direct user request): "the additional cards (the 3rd and
+     "huge card" problem) or clip it, the bio text itself scrolls
+     internally within that fixed height (see .person-bio below) instead
+     of the whole card.
+     Follow-up (direct user request): "the additional cards (the 3rd and
      later) do not need to have the person's name and role" -- of the
      3 swipe pages, the photo (page 1) never had a name, and the preview
      (page 2) is where it's introduced; showing it again on the full bio
@@ -1963,6 +1961,27 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
      and only bio card on desktop (no pagination there), where the name/
      role still needs to show. */
   .person-content--full .person-heading{ display:none; }
+  /* Follow-up (direct user request): "the bio text in the cards without
+     the name and role needs to be moved up... the button should also be
+     cleanly separated from the bio text." Earlier this had the whole
+     card scroll with the caret floating on top via position:absolute --
+     that button doesn't scroll with the content (it's pinned to the
+     card's own fixed box, not the scrolled text inside it), so at any
+     scroll position whatever text happened to fall under it just got
+     covered. Restructured so .person-bio is its own scrolling region
+     (flex:1 1 auto + min-height:0 so it can actually shrink and scroll
+     within the column instead of pushing the card taller) and the
+     button becomes a normal, non-absolute flex child below it (see
+     .person-content--full .person-page-next further down) -- real
+     layout space between them instead of an overlay. margin-top:0
+     overrides .person-bio's usual gap-from-heading spacing, since
+     there's no heading here to space away from (that space now comes
+     from .person-content's own padding-top instead). */
+  .person-content--full{ padding-bottom: 16px; }
+  .person-content--full .person-bio{
+    align-items:flex-start; margin-top: 0;
+    flex: 1 1 auto; min-height: 0; overflow-y: auto;
+  }
   /* Direct user request ("the white bubble does not need to extend to
      the image and badge card... or the bubble that has the bio, name,
      and role"): .person-row itself carries no border of its own any
@@ -1978,6 +1997,43 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   }
   .person-media .person-page-next{ background: rgba(0,0,0,.55); color:#fff; }
   .person-content .person-page-next{ background: var(--umd-gold); color: var(--ink); }
+  /* Follow-up (direct user request): "on the person's image card we
+     should have the bio button in the top right corner, not the carrot
+     button." The plain circular caret (matching the other two pages'
+     buttons) moves to a labeled pill in the photo's top-right corner
+     instead of the bottom-right -- auto-sized to fit "Bio ›" rather
+     than the fixed 34px circle, with the same translucent-dark/white
+     styling the caret already used on top of a photo. */
+  .person-page-next--bio{
+    top: 10px; bottom: auto;
+    width: auto; height: auto;
+    border-radius: 999px;
+    padding: 6px 14px 6px 16px;
+    gap: 4px;
+    font-size: .85rem; font-weight: 700;
+  }
+  /* Follow-up (direct user request): "the yellow button with a carrot
+     should point in the opposite direction when you get to the end" --
+     this button wraps back to the photo (the only one of the three that
+     goes backward instead of advancing), so its glyph is a left caret
+     instead of the other two buttons' right caret (see build_all.py's
+     &lsaquo; on this one button). */
+  /* Follow-up (direct user request): "the button should also be cleanly
+     separated from the bio text." This button used to float via
+     position:absolute over .person-content--full's own scrolling text
+     -- since the button is pinned to the card's fixed box rather than
+     scrolling with the content inside it, at any scroll position
+     whatever text fell under it just got covered. Made a normal,
+     non-absolute flex child instead (.person-bio is now the element
+     that scrolls -- see that rule above), so it sits in its own row
+     below the bio with real layout space (margin-top) between them,
+     never overlapping. */
+  .person-content--full .person-page-next{
+    position: static;
+    align-self: flex-end;
+    margin-top: 8px;
+    flex-shrink: 0;
+  }
 }
 
 /* Follow-up (direct user request, modeled on the homepage's Hub News
