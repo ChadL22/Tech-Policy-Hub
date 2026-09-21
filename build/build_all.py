@@ -774,10 +774,10 @@ def _person_row_html(p):
               </div>
               {_area_tags_html(areas) if areas else ""}
             </div>
-            <button type="button" class="person-swipe-next" aria-label="Show bio and details for {p['name']}">Bio <span aria-hidden="true">&rsaquo;</span></button>
+            <button type="button" class="person-bio-open" aria-label="Show bio and details for {p['name']}">Bio <span aria-hidden="true">&rsaquo;</span></button>
           </div>
           <div class="person-content">
-            <button type="button" class="person-swipe-prev" aria-label="Back to photo for {p['name']}"><span aria-hidden="true">&lsaquo;</span> Photo</button>
+            <button type="button" class="person-bio-close" aria-label="Hide bio for {p['name']}"><span aria-hidden="true">&lsaquo;</span> Photo</button>
             <h3>{p['name']}</h3>
             <div class="person-role">{p['role']}</div>
             <div class="person-bio"><p>{p['bio']}</p></div>

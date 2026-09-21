@@ -119,29 +119,27 @@ document.addEventListener('DOMContentLoaded', function () {
     tileCarousels.push(initTileCarousel(root));
   });
 
-  // people.html mobile card swipe -- direct user request: the photo
+  // people.html mobile bio accordion -- direct user request: the photo
   // card + black caption (email/website/area badges) is what shows by
-  // default on a phone-width person row, with name/role/bio swiped to
-  // (see .person-body/.person-swipe-next/.person-swipe-prev in
-  // styles.css for the actual scroll-snap mechanics -- a real touch
-  // swipe already works on its own via that CSS alone). These two
-  // buttons are the click/tap/keyboard/screen-reader equivalent of that
-  // swipe, for anyone not dragging a touchscreen. scrollIntoView with
-  // inline:'start' moves .person-body's own horizontal scroll to the
-  // target pane; block:'nearest' keeps that from also nudging the
-  // page's vertical scroll position. A no-op on any page without these
+  // default on a phone-width person row, with name/role/bio hidden
+  // until the "Bio" button opens it in place (see .person-content/
+  // .person-bio-open/.person-bio-close in styles.css -- .person-content
+  // is display:none until the row carries .person-row--bio-open, so a
+  // closed row reserves no leftover height for it, unlike an earlier
+  // swipe-between-two-pages version that had to size both whether or
+  // not the second one was showing). A no-op on any page without these
   // buttons (research.html, events.html, desktop widths where they're
   // hidden but still clickable would be harmless anyway).
-  document.querySelectorAll('.person-swipe-next').forEach(function (btn) {
+  document.querySelectorAll('.person-bio-open').forEach(function (btn) {
     btn.addEventListener('click', function () {
-      var content = btn.closest('.person-body').querySelector('.person-content');
-      if (content) content.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+      var row = btn.closest('.person-row');
+      if (row) row.classList.add('person-row--bio-open');
     });
   });
-  document.querySelectorAll('.person-swipe-prev').forEach(function (btn) {
+  document.querySelectorAll('.person-bio-close').forEach(function (btn) {
     btn.addEventListener('click', function () {
-      var media = btn.closest('.person-body').querySelector('.person-media');
-      if (media) media.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+      var row = btn.closest('.person-row');
+      if (row) row.classList.remove('person-row--bio-open');
     });
   });
 
