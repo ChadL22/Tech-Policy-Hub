@@ -1092,7 +1092,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   display:flex; flex-direction:column; text-decoration:none; color: inherit;
   transition: border-color .15s ease;
 }
-.rp-tile--link:hover{ border-color: var(--umd-red); }
+.rp-tile--link:hover{ border-color: var(--umd-red); text-decoration: none; }
 .rp-tile--link:hover h3{ color: var(--umd-red); }
 .rp-tile h3{ font-size:1.02rem; margin-bottom:2px; }
 .rp-desc{ font-size:.9rem; color: var(--ink-soft); line-height:1.5; margin:0; }
@@ -1161,7 +1161,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    people page" -- the same 4px red border-top people.html's own card
    caption uses at the photo/caption boundary (.person-media-caption),
    now added here too so both pages' person cards match. */
-.rp-tile--person .rp-tile-caption{ background: var(--ink); padding: 12px 14px; border-top: 4px solid var(--umd-red); }
+.rp-tile--person .rp-tile-caption{ background: var(--ink); padding: 12px 14px; border-top: 4px solid var(--umd-gold); }
 .rp-tile--person .rp-tile-caption h3{ color:#fff; }
 .rp-tile--person .rp-tags{ margin-bottom: 0; }
 
@@ -1750,7 +1750,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 .person-media-caption{
   flex: 0 0 auto; display:flex; flex-direction:row; align-items:flex-start;
   justify-content:space-between; gap:8px;
-  padding: 6px 10px 8px; background: var(--ink); border-top: 4px solid var(--umd-red);
+  padding: 6px 10px 8px; background: var(--ink); border-top: 4px solid var(--umd-gold);
 }
 /* Follow-up (direct user request): "move the badges to be on the right
    side of the email and website" -- the caption is now a row, not a
