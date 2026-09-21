@@ -1803,7 +1803,16 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    gap before the (still bottom-aligned, per the gold-line request)
    bio. */
 .person-content h3{ font-size:1.4rem; margin-bottom:3px; font-weight:700; }
-.person-role{ font-style:italic; font-weight:400; font-size:1.2rem; color: var(--ink-soft); margin-bottom:8px; }
+/* Follow-up (direct user request): "shorten the gold bar so that it
+   does not border the top of the bio's text" -- .person-role's own
+   margin-bottom used to be what created the gap before the bio, but
+   that margin sits INSIDE .person-heading's box (the gold bar's own
+   border-left runs the full height of that box), so the bar was
+   extending down through this gap to the bio's very edge. Moved to
+   .person-bio's margin-top instead (below) -- same visible gap, but
+   now outside .person-heading entirely, so the bar stops right at the
+   bottom of the role text itself. */
+.person-role{ font-style:italic; font-weight:400; font-size:1.2rem; color: var(--ink-soft); }
 /* Follow-up (direct user request, referencing Princeton CoCoSci's people
    page): the bio column used to stretch to fill the full 1fr grid track,
    which at our container's max-width made lines of bio text quite long
@@ -1818,7 +1827,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    .person-content is its own bordered card -- see the comment on that
    rule above -- but bottom-aligning a short bio still reads better than
    leaving it stranded at the top with empty space below.) */
-.person-bio{ max-width: 640px; flex: 1 1 auto; display:flex; align-items:flex-end; }
+.person-bio{ max-width: 640px; flex: 1 1 auto; display:flex; align-items:flex-end; margin-top: 8px; }
 .person-bio p{ font-size:1.25rem; line-height:1.5; color: var(--ink-soft); margin:0; }
 
 /* .person-content--preview/.person-page-next only mean anything inside
