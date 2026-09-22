@@ -1,87 +1,72 @@
 - tag: Publication
   date: Aug 2026
-  title: Why Is Tech Regulation So Hard?
-  summary: A new essay from Hub Founder & Director Ido Sivan-Sevilla on why regulating technology is so
-    challenging was published in The Regulatory Review.
+  title: Why Is Tech Regulation So Hard? By Dr. Ido Sivan-Sevilla
+  summary: A new essay from Hub Founder & Director Ido Sivan-Sevilla on why regulating technology is so challenging was published in The Regulatory Review.
   link: https://www.theregreview.org/2026/08/03/sivan-sevilla-why-is-tech-regulation-so-hard/
 - tag: Publication
   date: Jun 2026
-  title: Neuro-Symbolic Frameworks for Accountable AI Published at ACM FAccT
-  summary: The Hub's work on neuro-symbolic frameworks for accountable AI is now officially published in
-    the ACM FAccT 2026 Proceedings.
+  title: Neuro-Symbolic Frameworks for Accountable AI Published at 2026 ACM FAccT
+  summary: The Hub's work on neuro-symbolic frameworks for accountable AI is now officially published in the ACM FAccT 2026 Proceedings.
   link: https://dl.acm.org/doi/10.1145/3805689.3812335
 - tag: Presentation
   date: Jun 2026
   title: Presenting on Adaptive Regulation at CNIL's Privacy Research Day
-  summary: Hub Founder & Director Ido Sivan-Sevilla will present work-in-progress on the meaning of adaptive
-    regulation for emerging technologies at the 2026 Privacy Research Day, hosted by France's CNIL.
+  summary: Hub Founder & Director Ido Sivan-Sevilla will present work-in-progress on the meaning of adaptive regulation for emerging technologies at the 2026 Privacy Research Day, hosted by France's CNIL.
   link: https://www.cnil.fr/en/privacy-research-day-2026
 - tag: Media
   date: May 2026
   title: Interviewed by the Data Security Decoded Podcast
-  summary: Hub Founder & Director Ido Sivan-Sevilla was interviewed by the Data Security Decoded podcast
-    about his research on cyberattack surface management.
+  summary: Hub Founder & Director Ido Sivan-Sevilla was interviewed by the Data Security Decoded podcast about his research on cyberattack surface management.
   link: https://www.youtube.com/watch?v=MHD7DGiWA1A&list=PLHHKVC-uQ3XgvJ3MBjcZbHqn2QwmTLb8R&index=2
 - tag: Publication
   date: May 2026
   title: Neuro-Symbolic Public AI Accountability Work Accepted at ACM FAccT
-  summary: Co-authored work on neuro-symbolic frameworks for public AI accountability has been accepted to
-    ACM's Conference on Fairness, Accountability, and Transparency (FAccT).
+  summary: Co-authored work on neuro-symbolic frameworks for public AI accountability has been accepted to ACM's Conference on Fairness, Accountability, and Transparency (FAccT).
   link: https://arxiv.org/abs/2512.12109v4
 - tag: Publication
   date: Apr 2026
   title: Adaptively Regulating Privacy as Contextual Integrity Published at IEEE Security & Privacy
-  summary: Co-authored work on adaptively regulating privacy through the lens of contextual integrity was
-    published in IEEE Security & Privacy.
+  summary: Co-authored work on adaptively regulating privacy through the lens of contextual integrity was published in IEEE Security & Privacy.
   link: https://doi.org/10.1109/MSEC.2026.3671696
 - tag: Presentation
   date: Jan 2026
   title: Presenting on Legal Accountability of Public Algorithms at Data Justice 2026
-  summary: Hub Founder & Director Ido Sivan-Sevilla will present joint work on the legal accountability of
-    public algorithms at the upcoming Data Justice Conference.
+  summary: Hub Founder & Director Ido Sivan-Sevilla will present joint work on the legal accountability of public algorithms at the upcoming Data Justice Conference.
   link: https://datajusticelab.org/event/data-justice-2026-the-datafied-state/
 - tag: Media
   date: Oct 2025
   title: Interviewed by Signal Magazine on County Government Vulnerabilities
-  summary: Hub Founder & Director Ido Sivan-Sevilla was interviewed by Signal magazine about his research
-    on U.S. county government vulnerabilities and the rationale for launching the Tech Policy Hub.
+  summary: Hub Founder & Director Ido Sivan-Sevilla was interviewed by Signal magazine about his research on U.S. county government vulnerabilities and the rationale for launching the Tech Policy Hub.
   link: https://www.afcea.org/signal-media/cyber-edge/crucial-first-look-nations-cyber-attack-surfaces
 - tag: Publication
   date: Jul 2025
   title: 'Cookie-less Identification: For and Against Privacy'
-  summary: Co-authored work on the privacy implications of cookie-less identification by AdTech has been
-    accepted for publication in Internet Policy Review.
+  summary: Co-authored work on the privacy implications of cookie-less identification by AdTech has been accepted for publication in Internet Policy Review.
   link: https://policyreview.info/articles/analysis/cookie-less-identification-foragainst-privacy
 - tag: Publication
   date: Jun 2025
   title: Predicting Website Reliability from Structure Accepted at FOCI
-  summary: A co-authored paper with undergraduate student Parthav Poudel applying machine learning to
-    predict website reliability from site structure has been accepted for the Free and Open Communications
-    on the Internet (FOCI) workshop at PETs 2025.
+  summary: A co-authored paper with undergraduate student Parthav Poudel applying machine learning to predict website reliability from site structure has been accepted for the Free and Open Communications on the Internet (FOCI) workshop at PETs 2025.
   link: https://www.petsymposium.org/foci/2025/foci-2025-0017.pdf
 - tag: Recognition
   date: Jun 2025
   title: Invited to the Cyber Resilience Corps' First Cyber Volunteering Day
-  summary: Hub Founder & Director Ido Sivan-Sevilla was invited to the Cyber Resilience Corps' first Cyber
-    Volunteering Day based on his research on the attack surface of U.S. county governments.
+  summary: Hub Founder & Director Ido Sivan-Sevilla was invited to the Cyber Resilience Corps' first Cyber Volunteering Day based on his research on the attack surface of U.S. county governments.
   link: https://idonibrasco.github.io/assets/Cyber%20Volunteering%20Day%20Invitation%20-%20Ido%20Sivan-Sevilla.pdf
 - tag: Presentation
   date: May 2025
   title: Presenting on Usable Privacy and Security Policymaking at SOUPS 2025
-  summary: Hub Founder & Director Ido Sivan-Sevilla will present his research agenda on usable privacy and
-    security policymaking in the SOUPS 2025 lightning talks.
+  summary: Hub Founder & Director Ido Sivan-Sevilla will present his research agenda on usable privacy and security policymaking in the SOUPS 2025 lightning talks.
   link: https://www.usenix.org/conference/soups2025
 - tag: Presentation
   date: Apr 2025
   title: Discussing Local Government Cybersecurity at the Ohio State Technology Law Journal Symposium
-  summary: Hub Founder & Director Ido Sivan-Sevilla was invited to discuss his work on local government
-    cybersecurity at the Ohio State Technology Law Journal Symposium.
+  summary: Hub Founder & Director Ido Sivan-Sevilla was invited to discuss his work on local government cybersecurity at the Ohio State Technology Law Journal Symposium.
   link: https://moritzlaw.osu.edu/ohio-state-technology-law-journal-symposium-0
 - tag: Media
   date: Mar 2025
   title: Cyber Attack Surface Research Highlighted by Newsweek
-  summary: Co-authored work measuring the cyber attack surface across U.S. county governments was highlighted
-    by Newsweek.
+  summary: Co-authored work measuring the cyber attack surface across U.S. county governments was highlighted by Newsweek.
   link: https://www.newsweek.com/cybersecurity-risk-map-usa-counties-2026762
 - tag: Publication
   date: Mar 2025
@@ -96,6 +81,5 @@
 - tag: Publication
   date: Jan 2025
   title: Attack Surface Across U.S. County Governments Published in Journal of Cybersecurity
-  summary: Research measuring the size, diversity, and severity of the integrated attack surface exposed
-    across U.S. county governments is officially published in the Journal of Cybersecurity.
+  summary: Research measuring the size, diversity, and severity of the integrated attack surface exposed across U.S. county governments is officially published in the Journal of Cybersecurity.
   link: https://academic.oup.com/cybersecurity/article/11/1/tyae032/7959399
