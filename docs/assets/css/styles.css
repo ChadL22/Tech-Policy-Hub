@@ -2298,8 +2298,16 @@ footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding
    its own heading, not stretched into a wide track). gap is now just a
    floor under that spacing, not the main mechanism, so it's back down
    to a plain 32px. Mobile (max-width:900px/720px below) is untouched --
-   1fr 1fr there is the right call at that size. */
-.footer-grid{ display:grid; grid-template-columns: repeat(3, max-content); justify-content:space-between; gap: 32px; padding-bottom: 44px; }
+   1fr 1fr there is the right call at that size.
+   Follow-up (direct user request): "Research and Connect can come in a
+   bit... do not need to be hugging the ends" -- space-between put
+   Research and Connect flush against .container's own left/right edges
+   (the same edges the header logo/nav and every other section's content
+   line up with), which read as too tight. 64px of horizontal padding
+   here insets both of them from those edges without touching how
+   Events falls evenly between them -- space-between still distributes
+   whatever width is left after that padding is subtracted. */
+.footer-grid{ display:grid; grid-template-columns: repeat(3, max-content); justify-content:space-between; gap: 32px; padding: 0 64px 44px; }
 .footer-grid h4{ font-family: var(--font-nav); font-size:.82rem; text-transform:uppercase; letter-spacing:.04em; margin-bottom:14px; color: var(--ink); }
 .footer-grid ul{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:9px; }
 .footer-grid a{ color: var(--ink-soft); font-size:.92rem; }
@@ -2391,7 +2399,13 @@ body.nav-open{ overflow:hidden; }
   .grid-4 > .topic-card:nth-child(2n+1){ border-left:none; padding-left:0; }
   .with-sidebar{ grid-template-columns: 1fr; }
   .cal-day{ min-height: 46px; }
-  .footer-grid{ grid-template-columns: 1fr 1fr; gap: 28px; }
+  /* padding reset to 0 -- the 64px horizontal inset above (direct user
+     request, desktop-only in spirit) is sized for space-between's wide
+     desktop spread; at this width the grid is back to a plain 1fr 1fr
+     fill, where .container's own 24px padding is the only inset this
+     already had before that request, and doubling up with 64px more
+     here would crowd out most of a phone-width column. */
+  .footer-grid{ grid-template-columns: 1fr 1fr; gap: 28px; padding-left: 0; padding-right: 0; }
   .teaching-cta{ text-align:left; margin-top:16px; }
   .header-inner{ --brand-mark-h: 56px; }
 }
@@ -2412,7 +2426,7 @@ body.nav-open{ overflow:hidden; }
   .feed-item{ grid-template-columns: 1fr; }
   .event-row{ grid-template-columns: 60px 1fr; }
   .event-row .btn{ grid-column: 1 / -1; justify-self:start; }
-  .footer-grid{ grid-template-columns: 1fr 1fr; }
+  .footer-grid{ grid-template-columns: 1fr 1fr; padding-left: 0; padding-right: 0; }
 }
 @media (max-width: 480px){
   .header-inner{ gap:10px; --brand-mark-h: 38px; }
