@@ -1929,6 +1929,22 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
      photo) keeps the photo at its calibrated size while guaranteeing
      the black caption always reaches the card's bottom edge. */
   .person-media-caption{ flex: 1 1 auto; }
+  /* Direct user request: "the links... should be placed in a 2x2 way"
+     on mobile only -- desktop keeps them in the single stacked column
+     above (plenty of vertical room there), but mobile's fixed 262px-
+     tall card (see .person-body above) has much less to spare, so
+     Email/LinkedIn/Website go 2-across here instead of one per line.
+     Same technique as .person-media-caption .rp-tags' own 2x2 grid
+     below: display:contents on the two wrapper divs (.person-contact,
+     .person-links) removes their boxes without touching the generated
+     markup, so their <a>/<span> children -- Email, [LinkedIn], Website,
+     [any extra site] in that DOM order -- become direct items of one
+     2-column grid. Most people have no LinkedIn on file, so Email+
+     Website already fill exactly one row; the few who do have all
+     three wrap to a second row with one empty cell, the literal "2x2"
+     the request describes. */
+  .person-caption-links{ display:grid; grid-template-columns: repeat(2, auto); gap: 4px 14px; }
+  .person-contact, .person-links{ display:contents; }
   .person-content{
     flex:0 0 100%; width:100%;
     scroll-snap-align:start; scroll-snap-stop:always;
