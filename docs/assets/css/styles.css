@@ -317,6 +317,17 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    .lead-secondary's box, so it isn't thrown off by .lead-secondary's
    box now being taller than its content. */
 .lead-grid{ display:grid; grid-template-columns: 280px 1fr 280px; gap: 40px; }
+/* Direct user request: "when you click About & Contact you should be
+   taken to the What We Do section" -- id="about" sits on this element
+   (see home_body in build_all.py). Without scroll-margin-top, a native
+   #about jump lands this element's top flush with the viewport's very
+   top edge, which is exactly where .site-header sits (position:sticky,
+   top:0) -- so the "What We Do" heading would land hidden BEHIND the
+   header instead of visible below it. 120px clears the header's own
+   ~101px height with a little breathing room to spare, at every width
+   (header height barely changes between the desktop and collapsed-nav
+   layouts). */
+#about{ scroll-margin-top: 120px; }
 .lead-secondary{ grid-column: 1; display:flex; flex-direction:column; }
 .lead-secondary > .rail-head{ padding-right: 28px; }
 .lead-secondary-body{ flex: 1 1 auto; display:flex; flex-direction:column; border-right: 1px solid var(--line); padding-right: 28px; }

@@ -74,24 +74,35 @@ publications, teaching), `courses/`, `speaker-series/`, `annual-event/`,
 `events/`, `people/` — 7 HTML pages in all. Alongside those, the build
 also writes one non-HTML file to the site root — `docs/events.ics`, a
 generated calendar feed (see **Site capabilities** below). There's no
-standalone About page or news page: About is a section on the homepage
-(`index.html#about`, see below), and the homepage's "Hub News" rail is
-the site's one news listing (see **Site capabilities** below). Separately,
-`docs/admin/` is the content manager (see **Content management**) — a
-tool for editing the site, not a page of it, and marked `noindex,
-nofollow` accordingly.
+standalone About page or news page: About & Contact is the "What We Do"
+section on the homepage (`index.html#about`, see below), and the
+homepage's "Hub News" rail is the site's one news listing (see **Site
+capabilities** below). Separately, `docs/admin/` is the content manager
+(see **Content management**) — a tool for editing the site, not a page
+of it, and marked `noindex, nofollow` accordingly.
 
 The primary nav is a flat **Home / Research / Events / People** — plain
 links, no dropdowns. `courses/`, `speaker-series/`, and `annual-event/`
-aren't in the top nav but are real pages, reachable from Research's and
-Events' own filter pills and cross-links (research.html links out to
-Courses; events.html links out to Speaker Series and the Annual Event) —
-each section page already offers the finer navigation a dropdown would
-have, so there's no separate "All Research"/"All Events" entry either;
-the section page itself is the "view everything" destination, filterable
-in place (see below). About isn't in the top-level nav, but stays
-reachable via the footer's "Connect" column ("About & Contact", linking
-to `index.html#about`).
+aren't in the top nav. `speaker-series/` and `annual-event/` are still
+real, live pages -- every Speaker Series/Annual Event entry on the
+calendar (`events.yml`/`past_events.yml`) links out to one of them, and
+the footer's "Events" column also offers a "Calendar" link straight to
+`events/` (direct user request: replaced two separate Speaker Series/
+Annual Event footer links, which were only ever a second path to the
+same two pages). `courses/` has no inbound link anywhere on the live
+site as of the same request (its footer "Teaching" entry was removed) --
+the page itself is left in place rather than deleted, just currently
+unreachable through normal navigation; update this note if that changes.
+Each section page already offers the finer navigation a dropdown would
+have (research.html/events.html's own filter pills), so there's no
+separate "All Research"/"All Events" entry either; the section page
+itself is the "view everything" destination, filterable in place (see
+below). About isn't in the top-level nav, but stays reachable via the
+footer's "Connect" column ("About & Contact", linking to
+`index.html#about`, which now targets the homepage's "What We Do" band
+specifically rather than the Guiding Questions section further down --
+also a direct user request, since the mission copy and "email our
+founder" line are what actually answer "About & Contact").
 
 ## Publishing (GitHub Pages)
 
@@ -366,3 +377,10 @@ replaced with real material before launch:
   verified via iapp.org as of Sep 2026, but a 3rd-party listing like
   this can move; reconfirm before relying on it, and swap/add other
   external events here the same way.
+- The footer's remaining legal link, "Web Accessibility" (`href="#"`,
+  `footer()` in `build/generate.py`), is still a placeholder pending a
+  real accessibility statement page. Its former neighbors, "Privacy
+  Policy" and "Notice of Non-discrimination", were removed outright
+  (direct user request) rather than left as placeholders -- if either
+  is wanted back, it needs a real destination this time, not another
+  `href="#"`.

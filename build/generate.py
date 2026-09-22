@@ -44,7 +44,7 @@ SITE_URL = "https://techpolicyhub.org/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026092203"
+ASSET_VERSION = "2026092204"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -282,24 +282,39 @@ def footer():
             <img src="assets/img/social/tiktok.png?v={ASSET_VERSION}" alt="" loading="lazy">
           </a>
         </div>
+        <!-- Follow-up (direct user request): "remove Teaching, Privacy
+             Policy, Notice of Non-discrimination, as well as Speaker
+             Series and Annual Event." Privacy Policy and Notice of
+             Non-discrimination dropped from here -- both were still
+             just "#" placeholders pending real policy pages (see
+             README "Known placeholders"), same as Web Accessibility,
+             which stays since it wasn't named for removal. -->
         <ul class="footer-legal">
-          <li><a href="#">Privacy Policy</a></li>
           <li><a href="#">Web Accessibility</a></li>
-          <li><a href="#">Notice of Non-discrimination</a></li>
         </ul>
       </div>
       <div>
         <h4>Research</h4>
         <ul>
           {"".join(f'<li><a href="{t["file"]}">{t["name"]}</a></li>' for t in TOPICS)}
-          <li><a href="courses.html">Teaching</a></li>
         </ul>
       </div>
       <div>
+        <!-- Follow-up (direct user request): Speaker Series and Annual
+             Event replaced with a single Calendar link to events.html.
+             Both pages themselves are untouched and still reachable --
+             every Speaker Series/Annual Event entry on the calendar
+             (see events.yml/past_events.yml) still links out to them,
+             this was only ever a second, redundant path to the same
+             two pages sitting alongside the actual calendar. courses.html
+             (was linked here as "Teaching", also direct-request removed
+             above) has no other inbound link now and is effectively
+             retired, but the page itself is left in place rather than
+             deleted, matching how Speaker Series/Annual Event keep
+             existing after losing their own footer entry. -->
         <h4>Events</h4>
         <ul>
-          <li><a href="speaker-series.html">Speaker Series</a></li>
-          <li><a href="annual-event.html">Annual Event</a></li>
+          <li><a href="events.html">Calendar</a></li>
         </ul>
       </div>
       <div>
@@ -582,7 +597,7 @@ def question_list_html(items):
 
 def guiding_questions_html(items):
     """Rounded-rectangle card grid for the homepage's Guiding Questions
-    section (#about) -- one .guide-q card per question, laid out via
+    section -- one .guide-q card per question, laid out via
     .guide-q-list's CSS grid (4 cols desktop, responsive down to 1).
     Modeled on a Bloomberg reference the user provided: bordered white
     cards like Bloomberg's "Odd Lots" row, under a plain bold section

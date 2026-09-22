@@ -40,7 +40,18 @@ EVENTS_RAIL = [dict(tag=f"{e['m']} {e['d']}", title=e['title'], link=e['link']) 
 home_body = f"""
 <section class="lead-section">
   <div class="container lead-grid">
-    <div class="lead-secondary">
+    <!-- Follow-up (direct user request): "when you click About & Contact
+         you should be taken to the What We Do section" -- id="about"
+         moves here from the Guiding Questions section below (it had
+         drifted there at some point; see the ABOUT section note further
+         down this file -- the mission copy + "email our founder" line
+         right here were the original #about target, and a footer
+         About & Contact click landing on Guiding Questions instead
+         never actually matched anyone asking about the Hub). The
+         anchor name itself (#about) is unchanged, so every existing
+         link to it -- footer's Connect column, generate.py's
+         subscribe/rewrite comments -- follows along automatically. -->
+    <div class="lead-secondary" id="about">
       <div class="rail-head">What We Do</div>
       <div class="lead-secondary-body">
         <p>The University of Maryland&rsquo;s Tech Policy Hub studies tech policy from a socio&#8209;technical&nbsp;perspective, building the bridge between computer science &amp; public policy to understand how policy is designed and implemented for, by, and with tech. Our hub spans the forefront of tech policy across four research areas, bringing together DMV&#8209;based practitioners, scholars, and civil activists to shape the future of technology in society.</p>
@@ -98,7 +109,7 @@ home_body = f"""
   </div>
 </section>
 
-<section id="about" class="guiding-section">
+<section class="guiding-section">
   <div class="container">
     <h3 class="guiding-head">Guiding Questions</h3>
     <div class="guide-q-list">
