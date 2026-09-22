@@ -4,6 +4,26 @@ Website for the University of Maryland Tech Policy Hub, a project of the
 [Center for Governance of Technology and Systems (GoTech)](https://gotech.umd.edu/)
 at the UMD School of Public Policy. The new site replaces
 techpolicy.info.umd.edu and complements (does not replace) gotech.umd.edu.
+It showcases the Hub's research, events, people, and courses, and — via the
+homepage's News, Research Spotlight, "What We're Reading," and Field Pulse
+sections — keeps that content current with minimal manual upkeep.
+
+This repo contains everything needed to build, edit, and publish that site:
+
+- **`docs/`** — the live static site itself (what GitHub Pages actually
+  serves; see **Publishing** below), including a small self-contained
+  content manager at `docs/admin/` (served at `/admin`) for editing the
+  site's content without touching code or git — see **Content
+  management**.
+- **`build/`** — the Python generator (`generate.py` + `build_all.py`)
+  that assembles every page in `docs/` from shared header/footer/nav plus
+  the YAML content files in `build/data/`, and two scheduled scripts
+  (`refresh_ticker.py`, `refresh_reading.py`) that keep the homepage's
+  signal ticker and reading list current on their own — see **Editing
+  content** and **Site capabilities**.
+- **`.github/workflows/`** — automation that reruns the generator and
+  republishes `docs/` whenever content changes (by hand, via the content
+  manager, or on the scripts' own schedule) — see **Content management**.
 
 The redesign keeps UMD/GoTech brand continuity (Terrapin red, SPP/UMD seal)
 and draws its design language primarily from financial/legal news
@@ -38,7 +58,7 @@ build/    Python generator that produces the pages in docs/
 
 `docs/` is a static site (no server or build step required to view it).
 Each page shares the same header, footer, and nav, assembled by the
-generator in `build/` so those stay consistent across all 12 pages. It's
+generator in `build/` so those stay consistent across every page. It's
 named `docs/` (not `site/`) specifically so GitHub Pages can serve it
 directly — see **Publishing** below.
 
@@ -50,21 +70,28 @@ including rewriting internal links, so page content in `build/build_all.py`
 can just use plain `href="events.html"`-style references.
 
 Pages: `index.html` (home), `research/` (research hub — projects,
-publications, teaching), `topic-cybersecurity/`, `topic-privacy/`,
-`topic-integrity/`, `topic-ml/`, `courses/`, `speaker-series/`,
-`annual-event/`, `events/`, `people/`, `about/`. Alongside those
-12 HTML pages, the build also writes one non-HTML file to the site
-root — `docs/events.ics`, a generated calendar feed (see **Site
-capabilities** below). There is no standalone news page — the homepage's
-"Hub News" rail is the site's one news listing (see **Site capabilities**
-below).
+publications, teaching), `courses/`, `speaker-series/`, `annual-event/`,
+`events/`, `people/` — 7 HTML pages in all. Alongside those, the build
+also writes one non-HTML file to the site root — `docs/events.ics`, a
+generated calendar feed (see **Site capabilities** below). There's no
+standalone About page or news page: About is a section on the homepage
+(`index.html#about`, see below), and the homepage's "Hub News" rail is
+the site's one news listing (see **Site capabilities** below). Separately,
+`docs/admin/` is the content manager (see **Content management**) — a
+tool for editing the site, not a page of it, and marked `noindex,
+nofollow` accordingly.
 
-The primary nav is **Home / Research (dropdown) / Events (dropdown) /
-People**. Each dropdown's parent label is itself a real link to that
-page's index (Research/Events), so there's no separate "All Research"/"All
-Events" entry — the page itself is the "view everything" destination, and
-both are filterable in place (see below). About isn't in the top-level
-nav, but stays reachable via the footer's "Connect" column.
+The primary nav is a flat **Home / Research / Events / People** — plain
+links, no dropdowns. `courses/`, `speaker-series/`, and `annual-event/`
+aren't in the top nav but are real pages, reachable from Research's and
+Events' own filter pills and cross-links (research.html links out to
+Courses; events.html links out to Speaker Series and the Annual Event) —
+each section page already offers the finer navigation a dropdown would
+have, so there's no separate "All Research"/"All Events" entry either;
+the section page itself is the "view everything" destination, filterable
+in place (see below). About isn't in the top-level nav, but stays
+reachable via the footer's "Connect" column ("About & Contact", linking
+to `index.html#about`).
 
 ## Publishing (GitHub Pages)
 
@@ -275,18 +302,23 @@ CSS/JS (no framework, no build step) in `docs/assets/css/styles.css` and
   plain download link.
 - **Newsletter signup** — a homepage section (`#subscribe`) for subscribing
   to the Hub's newsletter.
-- **Join the Hub** — an outreach section on the About page inviting new
-  members and pointing prospective affiliates to the Hub's founder,
-  Dr. Sivan-Sevilla, by email.
+- **Join the Hub** — an outreach section within the homepage's About &
+  Contact band (`#about`) inviting new members and pointing prospective
+  affiliates to the Hub's founder, Dr. Sivan-Sevilla, by email.
 
 ## Branding notes
 
-- The header's top-left mark is the official UMD seal
-  (`docs/assets/img/umd-seal.png`); the Hub's own bordered "TECH / POLICY
-  HUB" lockup (`docs/assets/img/tph-mark.png`) sits next to it.
+- The header's top-left mark is a single combined lockup —
+  `docs/assets/img/sopp-tph-lockup.png` — pairing the UMD seal with
+  "School of Public Policy / Tech Policy Hub" type, rather than the seal
+  and a separate Hub wordmark as two images.
 - The official GoTech (Center for Governance of Technology and Systems)
   logo (`docs/assets/img/gtech-main.svg`, read-only on disk) appears in the
   **footer**, not the header.
+- The browser tab icon (`docs/assets/img/favicon.ico` +
+  `favicon-16.png`/`favicon-32.png`/`apple-touch-icon.png`) is a crop of
+  just the sphere from the UMD seal, generated once and checked in as
+  static files rather than derived at build time.
 - Colors and type live in `docs/assets/css/styles.css` (`:root` variables
   at the top of the file) — UMD red as the dominant accent, gold reserved
   for ticker/banner-style dark elements, squared (not pill-shaped) corners
