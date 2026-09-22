@@ -1091,7 +1091,8 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   background: var(--paper-soft); border: 1.5px solid var(--ink-soft);
   border-radius: var(--radius-lg); padding: 20px;
 }
-.rp-carousel-viewport{ overflow: hidden; }
+.rp-carousel-viewport{ overflow: hidden; cursor: grab; }
+.rp-carousel-viewport.dragging{ cursor: grabbing; user-select: none; }
 .rp-grid{ display:flex; flex-wrap:nowrap; align-items:stretch; gap: 20px; }
 /* Follow-up (direct user request): "the cards/tiles on the research
    page should have rounded corners like the container they sit in" --

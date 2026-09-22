@@ -148,6 +148,51 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     viewport.addEventListener('touchcancel', function () { touchTracking = false; });
 
+    // Direct user request: the same paging swipe should also work with a
+    // mouse click-and-drag on desktop, not just touch. Mirrors the touch
+    // handler above -- a discrete whole-page goTo() snap, not the ticker's
+    // continuous free-drag style, so tiles never end up half-cut-off.
+    // Left button only; a 5px move threshold distinguishes an intentional
+    // drag from a click so a tile's link still opens on a plain click.
+    // mouseDragged also suppresses that click (capture phase) once a drag
+    // has happened, so releasing the mouse over a tile after dragging
+    // doesn't accidentally follow its link. preventDefault() on mousedown
+    // blocks the browser's native "drag this image/link" gesture -- tiles
+    // contain an <img>, and without this the native drag swallows the
+    // mouseup before it ever reaches us, leaving the carousel stuck mid-drag.
+    var mouseStartX = 0, mouseDown = false, mouseDragged = false;
+    viewport.addEventListener('mousedown', function (e) {
+      if (e.button !== 0) return;
+      e.preventDefault();
+      mouseDown = true;
+      mouseDragged = false;
+      mouseStartX = e.clientX;
+      viewport.classList.add('dragging');
+    });
+    viewport.addEventListener('mousemove', function (e) {
+      if (!mouseDown) return;
+      var dx = e.clientX - mouseStartX;
+      if (!mouseDragged && Math.abs(dx) > 5) mouseDragged = true;
+      if (mouseDragged) e.preventDefault();
+    });
+    function endMouseDrag(e) {
+      if (!mouseDown) return;
+      mouseDown = false;
+      viewport.classList.remove('dragging');
+      if (!mouseDragged) return;
+      var dx = e.clientX - mouseStartX;
+      if (Math.abs(dx) >= 40) goTo(page + (dx < 0 ? 1 : -1));
+    }
+    viewport.addEventListener('mouseup', endMouseDrag);
+    viewport.addEventListener('mouseleave', function () {
+      mouseDown = false;
+      mouseDragged = false;
+      viewport.classList.remove('dragging');
+    });
+    viewport.addEventListener('click', function (e) {
+      if (mouseDragged) { e.preventDefault(); e.stopPropagation(); }
+    }, true);
+
     refresh();
 
     return { refresh: refresh };
