@@ -1,19 +1,915 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="robots" content="noindex" />
-  <title>Content Admin — Tech Policy Hub</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tech Policy Hub — Content Manager</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+<style>
+:root{
+  --umd-red: #E21833;
+  --umd-red-dark: #A6081F;
+  --umd-gold: #FFD200;
+  --accent-teal: #0B7285;
+  --ink: #212529;
+  --ink-soft: #52565A;
+  --paper: #FFFFFF;
+  --paper-soft: #F6F5F2;
+  --sidebar-band: #F8F8F8;
+  --line: #DDE0E3;
+  --radius: 4px;
+  --radius-lg: 14px;
+  --font-body: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-label: 'Roboto Condensed', sans-serif;
+}
+*{ box-sizing: border-box; }
+html,body{ margin:0; padding:0; height:100%; }
+body{
+  font-family: var(--font-body); color: var(--ink); background: var(--paper-soft);
+  font-size: 15px; line-height:1.45;
+}
+button, input, select, textarea{ font-family: inherit; font-size: inherit; }
+a{ color: var(--umd-red); }
+h1,h2,h3{ margin:0; font-family: var(--font-body); }
+
+.eyebrow{
+  font-family: var(--font-label); font-weight:700; font-size:.72rem;
+  letter-spacing:.1em; text-transform:uppercase; color: var(--ink-soft);
+}
+
+/* ── layout shell ── */
+.cms-shell{ display:flex; flex-direction:column; height:100vh; }
+.cms-topbar{
+  flex:none; display:flex; align-items:center; justify-content:space-between;
+  padding: 12px 20px; background: var(--ink); color:#fff; border-bottom: 4px solid var(--umd-gold);
+}
+.cms-topbar-brand{ font-family: var(--font-label); font-weight:700; letter-spacing:.03em; font-size:1.05rem; }
+.cms-topbar-brand span{ color: var(--umd-gold); font-weight:400; margin-left:8px; font-size:.85rem; }
+.cms-topbar-right{ display:flex; align-items:center; gap:14px; }
+.topbar-status{ display:flex; align-items:center; gap:7px; font-size:.82rem; color:#D9DADC; }
+.status-dot{ width:9px; height:9px; border-radius:50%; background:#6B7176; flex:none; }
+.status-dot.connected{ background:#2E9E4F; }
+.status-dot.error{ background: var(--umd-red); }
+.topbar-btn{
+  border:1.5px solid rgba(255,255,255,.35); background:transparent; color:#fff;
+  padding:7px 14px; border-radius:var(--radius); cursor:pointer; font-weight:600; font-size:.82rem;
+  transition: all .15s ease;
+}
+.topbar-btn:hover{ border-color:#fff; }
+.topbar-btn.primary{ background: var(--umd-red); border-color: var(--umd-red); }
+.topbar-btn.primary:hover{ background: var(--umd-red-dark); border-color: var(--umd-red-dark); }
+.topbar-btn:disabled{ opacity:.4; cursor:default; }
+.topbar-btn:disabled:hover{ border-color: rgba(255,255,255,.35); background:transparent; }
+.topbar-btn.primary:disabled{ background: var(--umd-red); border-color: var(--umd-red); opacity:.4; }
+
+.cms-body{ flex:1; display:flex; min-height:0; }
+
+/* ── sidebar ── */
+.cms-sidebar{
+  flex:none; width:260px; background: var(--sidebar-band); border-right:1px solid var(--line);
+  overflow-y:auto; padding: 16px 0 40px;
+}
+.sidebar-group-label{
+  padding: 14px 16px 6px; font-family: var(--font-label); font-weight:700; font-size:.68rem;
+  letter-spacing:.1em; text-transform:uppercase; color: var(--ink-soft);
+}
+.sidebar-item{
+  display:flex; align-items:center; justify-content:space-between; width:100%; text-align:left;
+  padding: 9px 16px; border:none; background:none; cursor:pointer; font-size:.88rem; color: var(--ink);
+  border-left: 3px solid transparent;
+}
+.sidebar-item:hover{ background: rgba(0,0,0,.035); }
+.sidebar-item.active{ background:#fff; border-left-color: var(--umd-red); font-weight:600; }
+.sidebar-count{
+  font-size:.72rem; color: var(--ink-soft); background: rgba(0,0,0,.06); border-radius:10px;
+  padding:1px 8px; min-width:20px; text-align:center;
+}
+.sidebar-item.active .sidebar-count{ background: var(--umd-red); color:#fff; }
+
+/* ── main ── */
+.cms-main{ flex:1; overflow-y:auto; padding: 28px 34px 60px; min-width:0; }
+.main-header{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:18px; flex-wrap:wrap; gap:10px; }
+.main-title{ font-size:1.4rem; font-weight:700; }
+.main-file-hint{ font-size:.78rem; color: var(--ink-soft); font-family: monospace; }
+.btn{
+  border:1.5px solid var(--line); background:#fff; color: var(--ink); padding:9px 16px;
+  border-radius: var(--radius); cursor:pointer; font-weight:600; font-size:.85rem; transition: all .15s ease;
+}
+.btn:hover{ border-color: var(--ink); }
+.btn.primary{ background: var(--umd-red); border-color: var(--umd-red); color:#fff; }
+.btn.primary:hover{ background: var(--umd-red-dark); border-color: var(--umd-red-dark); }
+.btn.danger{ color: var(--umd-red-dark); border-color: var(--umd-red-dark); }
+.btn.danger:hover{ background: var(--umd-red-dark); color:#fff; }
+.btn.small{ padding:5px 10px; font-size:.76rem; }
+.btn.ghost{ border-color:transparent; background:none; }
+.btn.ghost:hover{ background: rgba(0,0,0,.05); border-color:transparent; }
+
+/* entry list */
+.entry-card{
+  display:flex; align-items:center; gap:12px; background:#fff; border:1.5px solid var(--line);
+  border-radius: var(--radius-lg); padding: 12px 16px; margin-bottom:10px;
+}
+.entry-card-body{ flex:1; min-width:0; }
+.entry-card-title{ font-weight:700; font-size:.95rem; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.entry-card-meta{ font-size:.78rem; color: var(--ink-soft); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.entry-card-actions{ display:flex; gap:6px; flex:none; }
+.entry-card-order{ display:flex; flex-direction:column; gap:2px; flex:none; }
+.entry-card-order button{ border:none; background:none; cursor:pointer; color: var(--ink-soft); line-height:1; padding:2px 4px; }
+.entry-card-order button:hover{ color: var(--ink); }
+.entry-card-order button:disabled{ opacity:.25; cursor:default; }
+.empty-state{ text-align:center; padding: 60px 20px; color: var(--ink-soft); }
+.empty-state p{ margin: 6px 0; }
+
+/* form */
+.entry-form{ background:#fff; border:1.5px solid var(--line); border-radius: var(--radius-lg); padding: 22px 26px; max-width: 720px; }
+.field{ margin-bottom: 18px; }
+.field-label{ display:block; font-weight:700; font-size:.8rem; margin-bottom:5px; }
+.field-label .opt{ font-weight:400; color: var(--ink-soft); text-transform:none; letter-spacing:0; }
+.field-hint{ font-size:.76rem; color: var(--ink-soft); margin-top:4px; }
+.field input[type=text], .field input[type=email], .field input[type=url], .field input[type=number],
+.field select, .field textarea{
+  width:100%; padding: 9px 11px; border:1.5px solid var(--line); border-radius: var(--radius);
+  background:#fff; color: var(--ink);
+}
+.field input:focus, .field select:focus, .field textarea:focus{ outline:none; border-color: var(--umd-red); }
+.field textarea{ min-height: 90px; resize: vertical; font-family: var(--font-body); }
+.field-checkrow{ display:flex; gap:16px; flex-wrap:wrap; }
+.field-check{ display:flex; align-items:center; gap:6px; font-size:.85rem; }
+.field-check input{ width:auto; }
+.sub-list-row{ display:flex; gap:8px; align-items:flex-start; margin-bottom:8px; }
+.sub-list-row .field{ flex:1; margin-bottom:0; }
+.sub-list-remove{ flex:none; margin-top:2px; }
+.form-actions{ display:flex; gap:10px; margin-top: 22px; border-top:1px solid var(--line); padding-top:18px; }
+
+/* image field */
+.image-field-preview{
+  display:flex; align-items:center; gap:14px; margin-bottom:8px;
+}
+.image-field-preview img{ max-width:140px; max-height:90px; border-radius:var(--radius); border:1px solid var(--line); object-fit:cover; }
+.image-field-empty{
+  width:140px; height:90px; border:1.5px dashed var(--line); border-radius:var(--radius);
+  display:flex; align-items:center; justify-content:center; color: var(--ink-soft); font-size:.7rem; text-align:center; padding:6px;
+}
+.image-upload-progress{ font-size:.78rem; color: var(--ink-soft); margin-top:4px; }
+
+/* connect screen */
+.connect-wrap{ min-height:100vh; display:flex; align-items:center; justify-content:center; background: var(--sidebar-band); padding: 24px; }
+.connect-card{
+  max-width: 460px; width:100%; background:#fff; border:1.5px solid var(--line); border-radius: var(--radius-lg);
+  padding: 34px 32px; border-top: 5px solid var(--umd-red);
+}
+.connect-card h1{ font-size:1.3rem; margin: 6px 0 14px; }
+.connect-card p{ font-size:.88rem; color: var(--ink-soft); line-height:1.55; }
+.connect-card input{
+  width:100%; padding: 11px 12px; border:1.5px solid var(--line); border-radius: var(--radius);
+  margin: 14px 0 8px; font-family: monospace;
+}
+.connect-card input:focus{ outline:none; border-color: var(--umd-red); }
+.connect-error{ color: var(--umd-red-dark); font-size:.82rem; margin-bottom:10px; }
+.connect-note{ font-size:.75rem; color: var(--ink-soft); margin-top:14px; }
+
+/* toast */
+.toast{
+  position:fixed; bottom:22px; left:50%; transform:translateX(-50%) translateY(0); z-index:200;
+  background: var(--ink); color:#fff; padding: 11px 20px; border-radius: var(--radius);
+  font-size:.85rem; box-shadow: 0 8px 24px rgba(0,0,0,.25); transition: opacity .2s, transform .2s;
+  border-left: 4px solid var(--umd-gold);
+}
+.toast.error{ border-left-color: var(--umd-red); }
+.toast.hidden{ opacity:0; pointer-events:none; transform:translateX(-50%) translateY(8px); }
+
+.loading-note{ padding: 40px 0; text-align:center; color: var(--ink-soft); }
+.required-mark{ color: var(--umd-red); }
+</style>
 </head>
 <body>
-  <!--
-    Sveltia CMS admin entry point. See README "Content management" for
-    the full picture -- this page + config.yml (piece 1 of 3) is only
-    reachable/functional once a repo/org admin has completed the GitHub
-    OAuth + sveltia-cms-auth setup described there (piece 2). Until
-    then this loads but sign-in will fail.
-  -->
-  <script src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js"></script>
+
+<!-- ══════ CONNECT SCREEN ══════ -->
+<div class="connect-wrap" id="connect-wrap">
+  <div class="connect-card">
+    <div class="eyebrow">Tech Policy Hub</div>
+    <h1>Content Manager</h1>
+    <p>
+      Add, edit, and remove People, Events, Hub News, Research Spotlight items,
+      What We're Reading, and Guiding Questions — no code or terminal needed.
+      Saved changes publish straight to the site's repository and the site
+      rebuilds itself automatically within a couple of minutes.
+    </p>
+    <p>
+      <strong>Enter a GitHub personal access token</strong> with write access to
+      this repository.<br>
+      <a href="https://github.com/settings/tokens/new?description=Tech+Policy+Hub+CMS&scopes=repo" target="_blank" rel="noopener">Create a token →</a>
+      (a fine-grained token scoped to just <code>ChadL22/Tech-Policy-Hub</code> with
+      "Contents: Read and write" is enough; a classic token needs the <code>repo</code> scope)
+    </p>
+    <input type="password" id="token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
+    <div class="connect-error" id="connect-error" style="display:none;"></div>
+    <button class="btn primary" style="width:100%;" id="connect-btn" onclick="connect()">Connect →</button>
+    <p class="connect-note">Your token stays in this browser (saved to local storage so you don't have to
+      re-enter it) and is sent only to GitHub's API — never anywhere else.</p>
+  </div>
+</div>
+
+<!-- ══════ APP SHELL ══════ -->
+<div class="cms-shell" id="cms-shell" style="display:none;">
+  <header class="cms-topbar">
+    <div class="cms-topbar-brand">Tech Policy Hub <span>Content Manager</span></div>
+    <div class="cms-topbar-right">
+      <div class="topbar-status">
+        <div class="status-dot" id="status-dot"></div>
+        <span id="status-text">Connecting…</span>
+      </div>
+      <button class="topbar-btn primary" id="publish-btn" disabled onclick="publishChanges()">Publish changes</button>
+      <button class="topbar-btn" onclick="disconnect()">Sign out</button>
+    </div>
+  </header>
+  <div class="cms-body">
+    <aside class="cms-sidebar" id="sidebar"></aside>
+    <main class="cms-main" id="main"></main>
+  </div>
+</div>
+
+<div class="toast hidden" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════════════════════
+const REPO = 'ChadL22/Tech-Policy-Hub';
+const BRANCH = 'main';
+const GH_API = 'https://api.github.com';
+const TOKEN_KEY = 'tph_cms_token';
+
+const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+const EVENT_CATS = ['Speaker Series','Workshop','Roundtable','Annual Event','Conference'];
+const ROLE_TYPE_OPTIONS = [{label:'Core Member', value:'core-member'}, {label:'Affiliate', value:'affiliate'}];
+const AREA_OPTIONS_4 = ['Cybersecurity','Consumer Privacy','Information Integrity','Trustworthy ML'];
+const AREA_OPTIONS_QUESTIONS = ['Cybersecurity','Consumer Privacy','Information Integrity','Trustworthy ML','Policy Design','Practice','Teaching'];
+const READING_TYPE_OPTIONS = ['Research Papers','Policy Artifacts','Legal Analyses','Essays','Articles','Reports'];
+
+// research-area name -> the anchor its Spotlight card should link to
+// (mirrors build/data/topics.yml -- kept in sync by hand, same as
+// config.yml's own hardcoded select options did).
+const AREA_TOPIC_FILE = {
+  'Cybersecurity': 'research.html#area-panel-cybersecurity',
+  'Consumer Privacy': 'research.html#area-panel-privacy',
+  'Information Integrity': 'research.html#area-panel-integrity',
+  'Trustworthy ML': 'research.html#area-panel-ml',
+};
+
+// ═══════════════════════════════════════════════════════════
+// COLLECTION SCHEMAS
+// One entry per build/data/*.yml file this tool edits. Scope mirrors
+// docs/admin/config.yml's own (now-retired) Sveltia collections exactly:
+// People, Events (upcoming + past), and homepage content (Hub News,
+// Research Spotlight, What We're Reading, Guiding Questions).
+// Deliberately NOT covered here, same reasoning as before: topic_detail.yml
+// (nested per-research-area data, not a flat list) and the small taxonomy
+// files (area_meta.yml, event_categories.yml, role_types.yml,
+// reading_types.yml, reading_type_labels.yml, topics.yml) -- each tied to
+// a hardcoded CSS color/class elsewhere in the site, so these stay a
+// deliberate hand/code edit. ticker.json is excluded too -- it's refreshed
+// on a schedule by refresh-ticker.yml, not hand-edited content.
+// ═══════════════════════════════════════════════════════════
+const COLLECTIONS = {
+  people: {
+    label: 'People', group: 'People', file: 'build/data/people.yml',
+    newLabel: 'Add person',
+    summaryTitle: e => e.name || 'Untitled',
+    summaryMeta: e => e.role || '',
+    fields: [
+      { name:'initials', label:'Initials (avatar)', type:'text', hint:'1–3 characters, used as a placeholder avatar when no photo is set.' },
+      { name:'name', label:'Name', type:'text', required:true },
+      { name:'role', label:'Title / Position', type:'text', hint:'Shown under their name on the People page (e.g. "Founder & Director", "Co-Lead", "Affiliate").' },
+      { name:'focus', label:'Focus (short, one line)', type:'text' },
+      { name:'role_types', label:'Type', type:'multiselect', options:ROLE_TYPE_OPTIONS, hint:'Core Member or Affiliate — drives which People page section (and the Role filter) this person appears under.' },
+      { name:'bio', label:'Bio', type:'textarea' },
+      { name:'email', label:'Email', type:'text', required:false },
+      { name:'photo', label:'Photo', type:'image', required:false, uploadDir:'people', slugFrom:'name',
+        hint:'Falls back to a generic silhouette placeholder if left blank. Use a photo with real headroom above the hair and below the chin — the site crops fairly tightly.' },
+      { name:'websites', label:"Website(s)", type:'list', required:false,
+        hint:"One or more sites for this person — each gets its own labeled link.",
+        subfields:[
+          { name:'label', label:'Link label', type:'text', hint:'e.g. "Website" or "Phronesis Research Institute"' },
+          { name:'url', label:'URL', type:'text' },
+        ]},
+      { name:'linkedin', label:'LinkedIn', type:'text', required:false },
+    ],
+  },
+  events_upcoming: {
+    label: 'Upcoming Events', group: 'Events', file: 'build/data/events.yml',
+    newLabel: 'Add upcoming event',
+    summaryTitle: e => e.title || 'Untitled',
+    summaryMeta: e => [e.y, e.m, e.d].filter(Boolean).join('-'),
+    fields: [
+      { name:'y', label:'Year', type:'number', required:true },
+      { name:'m', label:'Month', type:'select', options:MONTHS, required:true },
+      { name:'d', label:'Day of month', type:'text', hint:'Two digits, e.g. 09 — kept as text so a leading zero displays correctly.', required:true },
+      { name:'cat', label:'Category', type:'select', options:EVENT_CATS, hint:'Colors/legend come from build/data/event_categories.yml.', required:true },
+      { name:'title', label:'Title', type:'text', required:true },
+      { name:'meta', label:'Meta line (time · location)', type:'text' },
+      { name:'link', label:'Link', type:'text' },
+    ],
+  },
+  events_past: {
+    label: 'Past Events', group: 'Events', file: 'build/data/past_events.yml',
+    newLabel: 'Add past event',
+    summaryTitle: e => e.title || 'Untitled',
+    summaryMeta: e => String(e.y || ''),
+    fields: [
+      { name:'y', label:'Year', type:'number', required:true },
+      { name:'m', label:'Month', type:'select', options:MONTHS, required:true },
+      { name:'cat', label:'Category', type:'select', options:EVENT_CATS, required:true },
+      { name:'title', label:'Title', type:'text', required:true },
+      { name:'summary', label:'Summary', type:'textarea' },
+      { name:'link', label:'Link', type:'text' },
+    ],
+  },
+  news: {
+    label: 'Hub News', group: 'Homepage', file: 'build/data/news_items.yml',
+    newLabel: 'Add news item',
+    summaryTitle: e => e.title || 'Untitled',
+    summaryMeta: e => e.date || '',
+    fields: [
+      { name:'tag', label:'Tag', type:'text' },
+      { name:'date', label:'Date', type:'text', hint:'e.g. "Jul 2025" — freeform text, not a date picker, to match the rest of the site.', required:true },
+      { name:'title', label:'Title', type:'text', required:true },
+      { name:'summary', label:'Summary', type:'textarea' },
+      { name:'link', label:'Link', type:'text' },
+    ],
+  },
+  spotlight: {
+    label: 'Research Spotlight', group: 'Homepage', file: 'build/data/spotlight_items.yml',
+    newLabel: 'Add spotlight item',
+    summaryTitle: e => e.title || 'Untitled',
+    summaryMeta: e => e.date || '',
+    fields: [
+      { name:'tag', label:'Tag', type:'text', hint:'e.g. "Policy", "Student Feature", "Award", "Platform Launch"' },
+      { name:'topic', label:'Research Area', type:'select', options:AREA_OPTIONS_4, required:true, drivesTopicFile:true },
+      { name:'topic_file', label:'Research Area link', type:'text', readOnlyComputed:true, hint:'Set automatically from Research Area above.' },
+      { name:'date', label:'Date', type:'text', required:true },
+      { name:'source', label:'Source', type:'text' },
+      { name:'title', label:'Title', type:'text', required:true },
+      { name:'summary', label:'Summary', type:'textarea' },
+      { name:'primary_label', label:'Button label', type:'text', hint:'e.g. "Read the Story", "Read the Paper", "Event Details"' },
+      { name:'link', label:'Link', type:'text' },
+      { name:'image', label:'Photo (optional)', type:'image', required:false, uploadDir:'spotlight', slugFrom:'title',
+        hint:'Falls back to an abstract placeholder graphic if left blank.' },
+    ],
+  },
+  reading: {
+    label: "What We're Reading", group: 'Homepage', file: 'build/data/reading_items.yml',
+    newLabel: 'Add reading item',
+    summaryTitle: e => e.title || 'Untitled',
+    summaryMeta: e => e.type || '',
+    fields: [
+      { name:'source', label:'Source', type:'text' },
+      { name:'type', label:'Content Type', type:'select', options:READING_TYPE_OPTIONS, required:true, hint:'See build/data/reading_type_labels.yml for how each shows on the card.' },
+      { name:'title', label:'Title', type:'text', required:true },
+      { name:'summary', label:'Summary', type:'textarea' },
+      { name:'meta', label:'Meta line', type:'text', hint:'e.g. "6 min read"' },
+      { name:'link', label:'Link', type:'text' },
+    ],
+  },
+  questions: {
+    label: 'Guiding Questions', group: 'Homepage', file: 'build/data/questions.yml',
+    newLabel: 'Add question',
+    summaryTitle: e => e.text || 'Untitled',
+    summaryMeta: e => e.tag || '',
+    fields: [
+      { name:'text', label:'Question', type:'textarea', required:true },
+      { name:'tag', label:'Research Area', type:'select', options:AREA_OPTIONS_QUESTIONS, required:true },
+      { name:'link', label:'Link', type:'text' },
+    ],
+  },
+};
+
+const GROUP_ORDER = ['People', 'Events', 'Homepage'];
+
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+let ghToken = localStorage.getItem(TOKEN_KEY) || null;
+let store = {};       // key -> { entries: [...], sha: '...' }
+let dirty = new Set(); // keys with unpublished edits
+let activeKey = null;
+let editingIndex = null; // null = list view; -1 = new entry; number = editing that index
+let formValues = {};
+
+// ═══════════════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════════════
+function slugify(s){
+  return (s || '').toLowerCase().replace(/[^\w\s-]/g,'').trim().replace(/\s+/g,'-').replace(/-+/g,'-');
+}
+function showToast(msg, type){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type ? ' ' + type : '');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.add('hidden'), 3600);
+}
+function setStatus(text, connected){
+  document.getElementById('status-text').textContent = text;
+  const dot = document.getElementById('status-dot');
+  dot.className = 'status-dot' + (connected === true ? ' connected' : connected === false ? ' error' : '');
+}
+function updatePublishBtn(){
+  const btn = document.getElementById('publish-btn');
+  btn.disabled = dirty.size === 0;
+  btn.textContent = dirty.size > 0 ? `Publish changes (${dirty.size})` : 'Publish changes';
+}
+function markDirty(key){
+  dirty.add(key);
+  updatePublishBtn();
+}
+
+// UTF-8 safe base64 helpers -- must mirror each other exactly, or
+// multibyte characters (em dashes, curly quotes, accents) get mangled
+// a little more on every publish.
+function b64EncodeUtf8(str){
+  return btoa(unescape(encodeURIComponent(str)));
+}
+function b64DecodeUtf8(b64){
+  const binary = atob(b64.replace(/\n/g, ''));
+  const bytes = Uint8Array.from(binary, ch => ch.charCodeAt(0));
+  return new TextDecoder('utf-8').decode(bytes);
+}
+
+// ═══════════════════════════════════════════════════════════
+// GITHUB API
+// ═══════════════════════════════════════════════════════════
+async function ghFetch(path, opts={}){
+  const res = await fetch(GH_API + path, {
+    ...opts,
+    headers: {
+      'Authorization': 'Bearer ' + ghToken,
+      'Accept': 'application/vnd.github+json',
+      'Content-Type': 'application/json',
+      ...(opts.headers || {}),
+    },
+  });
+  if (!res.ok){
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || ('GitHub error ' + res.status));
+  }
+  return res.status === 204 ? null : res.json();
+}
+
+async function loadCollection(key){
+  const col = COLLECTIONS[key];
+  const data = await ghFetch('/repos/' + REPO + '/contents/' + col.file + '?ref=' + BRANCH);
+  const text = b64DecodeUtf8(data.content);
+  const parsed = jsyaml.load(text);
+  store[key] = { entries: Array.isArray(parsed) ? parsed : [], sha: data.sha };
+}
+
+async function saveCollection(key){
+  const col = COLLECTIONS[key];
+  const s = store[key];
+  // Re-fetch the current SHA immediately before writing so a stale SHA
+  // (the file changed since we loaded it) doesn't silently overwrite
+  // someone else's edit.
+  const current = await ghFetch('/repos/' + REPO + '/contents/' + col.file + '?ref=' + BRANCH);
+  s.sha = current.sha;
+  const yamlText = jsyaml.dump(s.entries, { lineWidth: -1, noRefs: true, sortKeys: false }) ;
+  const encoded = b64EncodeUtf8(yamlText);
+  const result = await ghFetch('/repos/' + REPO + '/contents/' + col.file, {
+    method: 'PUT',
+    body: JSON.stringify({
+      message: 'content: update ' + col.file.split('/').pop() + ' via CMS',
+      content: encoded,
+      sha: s.sha,
+      branch: BRANCH,
+    }),
+  });
+  s.sha = result.content.sha;
+  dirty.delete(key);
+}
+
+async function uploadImageFile(file, uploadDir, slugHint){
+  const ext = (file.type.split('/')[1] || 'png').replace('jpeg','jpg');
+  const base = slugify(slugHint) || 'image';
+  const isPeoplePhoto = uploadDir === 'people';
+  const filename = isPeoplePhoto
+    ? `${base}.${ext}`
+    : `${uploadDir}-${base}-${Date.now()}.${ext}`;
+  const path = `docs/assets/img/${uploadDir}/${filename}`;
+
+  const dataUrl = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+  const base64 = dataUrl.split(',')[1];
+
+  // If a file already exists at this exact path (e.g. re-uploading a
+  // person's photo), the Contents API requires that file's current sha
+  // to overwrite it rather than error with "already exists".
+  let existingSha = undefined;
+  try {
+    const existing = await ghFetch('/repos/' + REPO + '/contents/' + path + '?ref=' + BRANCH);
+    existingSha = existing.sha;
+  } catch (e) { /* doesn't exist yet -- fine */ }
+
+  await ghFetch('/repos/' + REPO + '/contents/' + path, {
+    method: 'PUT',
+    body: JSON.stringify({
+      message: 'content: ' + (existingSha ? 'replace' : 'add') + ' image ' + filename,
+      content: base64,
+      sha: existingSha,
+      branch: BRANCH,
+    }),
+  });
+  return `assets/img/${uploadDir}/${filename}`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════════════════════
+async function connect(){
+  const tok = document.getElementById('token-input').value.trim();
+  const errEl = document.getElementById('connect-error');
+  errEl.style.display = 'none';
+  if (!tok){ return; }
+  const btn = document.getElementById('connect-btn');
+  btn.textContent = 'Connecting…'; btn.disabled = true;
+  ghToken = tok;
+  try {
+    const repoInfo = await ghFetch('/repos/' + REPO);
+    if (!repoInfo.permissions || !repoInfo.permissions.push){
+      throw new Error('This token can read the repository but not write to it. Make sure it has "Contents: Read and write" (fine-grained) or the "repo" scope (classic).');
+    }
+    localStorage.setItem(TOKEN_KEY, tok);
+    document.getElementById('connect-wrap').style.display = 'none';
+    document.getElementById('cms-shell').style.display = 'flex';
+    await initApp();
+  } catch (e) {
+    ghToken = null;
+    errEl.textContent = e.message;
+    errEl.style.display = 'block';
+    btn.textContent = 'Connect →'; btn.disabled = false;
+  }
+}
+function disconnect(){
+  localStorage.removeItem(TOKEN_KEY);
+  ghToken = null;
+  store = {}; dirty.clear(); activeKey = null; editingIndex = null;
+  document.getElementById('cms-shell').style.display = 'none';
+  document.getElementById('connect-wrap').style.display = 'flex';
+  document.getElementById('token-input').value = '';
+}
+
+async function initApp(){
+  setStatus('Loading content…', null);
+  renderSidebar();
+  const keys = Object.keys(COLLECTIONS);
+  let failedAny = false;
+  for (const key of keys){
+    try { await loadCollection(key); }
+    catch (e) { failedAny = true; showToast('Failed to load ' + COLLECTIONS[key].label + ': ' + e.message, 'error'); }
+    renderSidebar(); // update counts incrementally
+  }
+  setStatus(failedAny ? 'Connected (some content failed to load)' : 'Connected', !failedAny);
+  if (!activeKey){ selectCollection(keys[0]); }
+}
+
+// ═══════════════════════════════════════════════════════════
+// SIDEBAR
+// ═══════════════════════════════════════════════════════════
+function renderSidebar(){
+  const el = document.getElementById('sidebar');
+  let html = '';
+  for (const group of GROUP_ORDER){
+    html += `<div class="sidebar-group-label">${group}</div>`;
+    for (const [key, col] of Object.entries(COLLECTIONS)){
+      if (col.group !== group) continue;
+      const count = store[key] ? store[key].entries.length : '—';
+      const active = key === activeKey ? ' active' : '';
+      html += `<button class="sidebar-item${active}" onclick="selectCollection('${key}')">
+        <span>${col.label}</span><span class="sidebar-count">${count}</span>
+      </button>`;
+    }
+  }
+  el.innerHTML = html;
+}
+
+function selectCollection(key){
+  activeKey = key;
+  editingIndex = null;
+  renderSidebar();
+  renderMain();
+}
+
+// ═══════════════════════════════════════════════════════════
+// MAIN — entry list
+// ═══════════════════════════════════════════════════════════
+function renderMain(){
+  const el = document.getElementById('main');
+  if (!activeKey){ el.innerHTML = ''; return; }
+  const col = COLLECTIONS[activeKey];
+  if (!store[activeKey]){
+    el.innerHTML = `<div class="loading-note">Loading ${col.label}…</div>`;
+    return;
+  }
+  if (editingIndex !== null){
+    renderForm();
+    return;
+  }
+  const entries = store[activeKey].entries;
+  let html = `<div class="main-header">
+      <h2 class="main-title">${col.label}</h2>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <span class="main-file-hint">${col.file}</span>
+        <button class="btn primary" onclick="startNewEntry()">+ ${col.newLabel}</button>
+      </div>
+    </div>`;
+  if (entries.length === 0){
+    html += `<div class="empty-state"><p>No entries yet.</p><p>Click "${col.newLabel}" to add the first one.</p></div>`;
+  } else {
+    entries.forEach((e, i) => {
+      html += `<div class="entry-card">
+        <div class="entry-card-order">
+          <button onclick="moveEntry(${i},-1)" ${i===0?'disabled':''} title="Move up">▲</button>
+          <button onclick="moveEntry(${i},1)" ${i===entries.length-1?'disabled':''} title="Move down">▼</button>
+        </div>
+        <div class="entry-card-body">
+          <div class="entry-card-title">${escapeHtml(col.summaryTitle(e))}</div>
+          <div class="entry-card-meta">${escapeHtml(col.summaryMeta(e))}</div>
+        </div>
+        <div class="entry-card-actions">
+          <button class="btn small" onclick="startEditEntry(${i})">Edit</button>
+          <button class="btn small danger" onclick="deleteEntry(${i})">Delete</button>
+        </div>
+      </div>`;
+    });
+  }
+  el.innerHTML = html;
+}
+
+function escapeHtml(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function moveEntry(i, dir){
+  const entries = store[activeKey].entries;
+  const j = i + dir;
+  if (j < 0 || j >= entries.length) return;
+  [entries[i], entries[j]] = [entries[j], entries[i]];
+  markDirty(activeKey);
+  renderMain();
+}
+
+function deleteEntry(i){
+  const col = COLLECTIONS[activeKey];
+  const label = col.summaryTitle(store[activeKey].entries[i]) || 'this entry';
+  if (!confirm(`Delete "${label}"? This can't be undone once you publish.`)) return;
+  store[activeKey].entries.splice(i, 1);
+  markDirty(activeKey);
+  renderMain();
+}
+
+// ═══════════════════════════════════════════════════════════
+// MAIN — entry form
+// ═══════════════════════════════════════════════════════════
+function startNewEntry(){
+  editingIndex = -1;
+  formValues = {};
+  for (const f of COLLECTIONS[activeKey].fields){
+    if (f.type === 'multiselect') formValues[f.name] = [];
+    else if (f.type === 'list') formValues[f.name] = [];
+    else formValues[f.name] = '';
+  }
+  renderMain();
+}
+function startEditEntry(i){
+  editingIndex = i;
+  formValues = JSON.parse(JSON.stringify(store[activeKey].entries[i]));
+  renderMain();
+}
+function cancelForm(){
+  editingIndex = null;
+  renderMain();
+}
+
+function renderForm(){
+  const col = COLLECTIONS[activeKey];
+  const isNew = editingIndex === -1;
+  let html = `<div class="main-header">
+      <h2 class="main-title">${isNew ? col.newLabel : 'Edit — ' + escapeHtml(col.summaryTitle(formValues))}</h2>
+    </div>
+    <div class="entry-form">`;
+  for (const f of col.fields){
+    html += renderField(f);
+  }
+  html += `<div class="form-actions">
+      <button class="btn primary" onclick="saveForm()">Save</button>
+      <button class="btn" onclick="cancelForm()">Cancel</button>
+    </div>
+  </div>`;
+  document.getElementById('main').innerHTML = html;
+}
+
+function renderField(f){
+  const val = formValues[f.name];
+  const reqMark = f.required ? ' <span class="required-mark">*</span>' : (f.required === false ? '' : '');
+  let inner = '';
+  switch (f.type){
+    case 'text':
+      inner = `<input type="text" id="field-${f.name}" value="${escapeHtml(val)}" ${f.readOnlyComputed ? 'readonly' : ''} oninput="onFieldInput('${f.name}', this.value)">`;
+      break;
+    case 'number':
+      inner = `<input type="number" id="field-${f.name}" value="${escapeHtml(val)}" oninput="onFieldInput('${f.name}', this.value)">`;
+      break;
+    case 'textarea':
+      inner = `<textarea id="field-${f.name}" oninput="onFieldInput('${f.name}', this.value)">${escapeHtml(val)}</textarea>`;
+      break;
+    case 'select': {
+      const opts = f.options.map(o => `<option value="${escapeHtml(o)}" ${o===val?'selected':''}>${escapeHtml(o)}</option>`).join('');
+      const extra = f.drivesTopicFile ? ` onchange="onTopicSelectChange(this.value)"` : ` onchange="onFieldInput('${f.name}', this.value)"`;
+      inner = `<select id="field-${f.name}"${extra}><option value="">— select —</option>${opts}</select>`;
+      break;
+    }
+    case 'multiselect': {
+      const chosen = Array.isArray(val) ? val : [];
+      inner = `<div class="field-checkrow">` + f.options.map(o =>
+        `<label class="field-check"><input type="checkbox" value="${escapeHtml(o.value)}" ${chosen.includes(o.value)?'checked':''} onchange="onMultiToggle('${f.name}', '${o.value}', this.checked)"> ${escapeHtml(o.label)}</label>`
+      ).join('') + `</div>`;
+      break;
+    }
+    case 'image':
+      inner = renderImageField(f);
+      break;
+    case 'list':
+      inner = renderListField(f);
+      break;
+    default:
+      inner = `<input type="text" id="field-${f.name}" value="${escapeHtml(val)}" oninput="onFieldInput('${f.name}', this.value)">`;
+  }
+  const hint = f.hint ? `<div class="field-hint">${escapeHtml(f.hint)}</div>` : '';
+  const readOnlyNote = f.readOnlyComputed ? ` <span class="opt">(auto-filled — read-only)</span>` : '';
+  return `<div class="field">
+    <label class="field-label">${escapeHtml(f.label)}${reqMark}${readOnlyNote}</label>
+    ${inner}${hint}
+  </div>`;
+}
+
+function renderImageField(f){
+  const val = formValues[f.name];
+  const preview = val
+    ? `<img src="../${val}" onerror="this.style.display='none'">`
+    : `<div class="image-field-empty">No image set</div>`;
+  return `<div class="image-field-preview" id="image-preview-${f.name}">${preview}</div>
+    <input type="file" accept="image/*" id="image-input-${f.name}" onchange="onImageSelected('${f.name}', '${f.uploadDir}', '${f.slugFrom || ''}')">
+    ${val ? `<button type="button" class="btn small ghost" style="margin-top:6px;" onclick="clearImageField('${f.name}')">Remove image</button>` : ''}
+    <div class="image-upload-progress" id="image-progress-${f.name}"></div>`;
+}
+
+function renderListField(f){
+  const items = Array.isArray(formValues[f.name]) ? formValues[f.name] : [];
+  let html = `<div id="list-field-${f.name}">`;
+  items.forEach((item, i) => {
+    html += `<div class="sub-list-row">`;
+    f.subfields.forEach(sf => {
+      const v = item[sf.name] || '';
+      html += `<div class="field">
+        <label class="field-label" style="font-weight:400;">${escapeHtml(sf.label)}</label>
+        <input type="text" value="${escapeHtml(v)}" oninput="onSubListInput('${f.name}', ${i}, '${sf.name}', this.value)">
+      </div>`;
+    });
+    html += `<button type="button" class="btn small danger sub-list-remove" onclick="removeSubListItem('${f.name}', ${i})">✕</button></div>`;
+  });
+  html += `</div><button type="button" class="btn small" onclick="addSubListItem('${f.name}')">+ Add</button>`;
+  return html;
+}
+
+// ── field change handlers ──
+function onFieldInput(name, value){ formValues[name] = value; }
+function onMultiToggle(name, value, checked){
+  const arr = Array.isArray(formValues[name]) ? formValues[name] : (formValues[name] = []);
+  const idx = arr.indexOf(value);
+  if (checked && idx === -1) arr.push(value);
+  if (!checked && idx !== -1) arr.splice(idx, 1);
+}
+function onTopicSelectChange(value){
+  formValues['topic'] = value;
+  formValues['topic_file'] = AREA_TOPIC_FILE[value] || '';
+  const el = document.getElementById('field-topic_file');
+  if (el) el.value = formValues['topic_file'];
+}
+function onSubListInput(fieldName, i, subName, value){
+  formValues[fieldName][i][subName] = value;
+}
+function addSubListItem(fieldName){
+  if (!Array.isArray(formValues[fieldName])) formValues[fieldName] = [];
+  formValues[fieldName].push({});
+  renderForm();
+}
+function removeSubListItem(fieldName, i){
+  formValues[fieldName].splice(i, 1);
+  renderForm();
+}
+
+async function onImageSelected(fieldName, uploadDir, slugFromField){
+  const input = document.getElementById('image-input-' + fieldName);
+  const file = input.files[0];
+  if (!file) return;
+  if (!file.type.startsWith('image/')){ showToast('Please select an image file.', 'error'); return; }
+  if (file.size > 12 * 1024 * 1024){ showToast('Image must be under 12MB.', 'error'); return; }
+  const progressEl = document.getElementById('image-progress-' + fieldName);
+  progressEl.textContent = 'Uploading…';
+  try {
+    const slugHint = slugFromField ? (formValues[slugFromField] || 'image') : 'image';
+    const path = await uploadImageFile(file, uploadDir, slugHint);
+    formValues[fieldName] = path;
+    progressEl.textContent = '';
+    showToast('Image uploaded.');
+    renderForm();
+  } catch (e) {
+    progressEl.textContent = '';
+    showToast('Image upload failed: ' + e.message, 'error');
+  }
+}
+function clearImageField(fieldName){
+  formValues[fieldName] = '';
+  renderForm();
+}
+
+function saveForm(){
+  const col = COLLECTIONS[activeKey];
+  for (const f of col.fields){
+    if (f.required && !formValues[f.name]){
+      showToast(`"${f.label}" is required.`, 'error');
+      return;
+    }
+  }
+  // Build the saved object in schema field order for a stable, readable diff.
+  const obj = {};
+  for (const f of col.fields){
+    let v = formValues[f.name];
+    if (f.type === 'number'){
+      v = v === '' ? null : Number(v);
+    } else if (typeof v === 'string' && v === '' && !f.required){
+      // Matches the existing data convention: an unset optional scalar
+      // (email, linkedin, photo, …) is stored as null, not "".
+      v = null;
+    }
+    obj[f.name] = v;
+  }
+  if (editingIndex === -1){
+    store[activeKey].entries.push(obj);
+  } else {
+    store[activeKey].entries[editingIndex] = obj;
+  }
+  markDirty(activeKey);
+  editingIndex = null;
+  renderSidebar();
+  renderMain();
+}
+
+// ═══════════════════════════════════════════════════════════
+// PUBLISH
+// ═══════════════════════════════════════════════════════════
+async function publishChanges(){
+  if (dirty.size === 0) return;
+  const btn = document.getElementById('publish-btn');
+  btn.disabled = true; btn.textContent = 'Publishing…';
+  const keys = Array.from(dirty);
+  let okCount = 0, failed = [];
+  for (const key of keys){
+    try { await saveCollection(key); okCount++; }
+    catch (e) { failed.push(COLLECTIONS[key].label + ': ' + e.message); }
+  }
+  updatePublishBtn();
+  if (failed.length === 0){
+    showToast(`Published ${okCount} file${okCount===1?'':'s'}. The site will rebuild automatically in a couple of minutes.`);
+  } else {
+    showToast(`Published ${okCount}, ${failed.length} failed — ${failed.join('; ')}`, 'error');
+  }
+}
+
+window.addEventListener('beforeunload', (e) => {
+  if (dirty.size > 0){ e.preventDefault(); e.returnValue = ''; }
+});
+
+// ═══════════════════════════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════════════════════════
+(function boot(){
+  if (ghToken){
+    document.getElementById('connect-wrap').style.display = 'none';
+    document.getElementById('cms-shell').style.display = 'flex';
+    document.getElementById('token-input').value = ghToken;
+    initApp().catch(e => {
+      showToast('Connection failed: ' + e.message, 'error');
+      setStatus('Connection failed', false);
+    });
+  }
+})();
+</script>
 </body>
 </html>

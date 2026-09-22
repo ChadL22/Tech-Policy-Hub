@@ -147,52 +147,44 @@ of a stale cache.
 
 ## Content management
 
-The site's content (the `build/data/*.yml` files above) is editable
-without writing Python through a git-based headless CMS admin UI at
-`/admin` on this site, once the one remaining manual setup step below is
-done. This is [Sveltia CMS](https://github.com/sveltia/sveltia-cms) (the
-current maintained successor to Decap/Netlify CMS), editing the
-`build/data/*.yml` files directly and committing straight to this repo.
-Three pieces, in the order they were built:
+The site's content (the `build/data/*.yml` files above) is editable without
+writing Python or touching git, through a content manager at `/admin` on
+this site (`docs/admin/index.html`). It's a small self-contained tool
+(modeled on the one already used for the Phronesis site) that reads and
+writes those YAML files directly through the GitHub API, using a personal
+access token instead of an OAuth login — so there's no Cloudflare Worker or
+OAuth App to register or maintain.
 
-1. **The CMS config** (`docs/admin/index.html` + `docs/admin/config.yml`)
-   — done. Covers the flat, frequently-edited collections: People,
-   Events (upcoming + past), and homepage content (Hub News, Research
-   Spotlight, What We're Reading, Guiding Questions). Deliberately NOT
-   covered yet: `topic_detail.yml` (nested per-research-area data, not a
-   flat list -- needs a more involved config) and the small taxonomy
-   files (`area_meta.yml`, `event_categories.yml`, `role_types.yml`,
-   `reading_types.yml`, `reading_type_labels.yml` -- each tied to a
-   hardcoded CSS color/class elsewhere in the site, so adding a key
-   through a form without a matching code change would silently render
-   wrong; these stay a deliberate hand/code edit). `config.yml`'s own
-   comments explain each collection's fields.
-2. **Auto-rebuild on content change**
-   (`.github/workflows/rebuild-on-content-change.yml`) — done. Runs
-   `build/build_all.py` and commits the regenerated `docs/` whenever
-   `build/data/**` changes on `main`, so a CMS commit goes live without
-   anyone running the build script by hand.
-3. **GitHub OAuth, so Hub members can log in with their own GitHub
-   account** — the one piece that needs a person to act, not something
-   that can be scripted from outside: it means registering a GitHub
-   OAuth App and deploying a small token-exchange proxy, both under this
-   repo's/org's own accounts. **Someone with admin access to this GitHub
-   repo/org** should:
-   1. Deploy [sveltia-cms-auth](https://github.com/sveltia/sveltia-cms-auth)
-      (a small Cloudflare Worker — free tier is enough) following that
-      project's own README; it needs a Cloudflare account.
-   2. Register a new OAuth App at
-      github.com/organizations/**ChadL22**/settings/applications (or
-      github.com/settings/developers if this repo isn't under an org) —
-      Homepage URL `https://chadl22.github.io/Tech-Policy-Hub/`,
-      Authorization callback URL is the Worker's own URL from step 1
-      (its README shows the exact path).
-   3. Put that OAuth App's Client ID and Secret into the Worker's
-      environment (again, per sveltia-cms-auth's README).
+**Covers:** People, Events (upcoming + past), and homepage content (Hub
+News, Research Spotlight, What We're Reading, Guiding Questions) — the
+flat, frequently-edited collections. Not covered: `topic_detail.yml`
+(nested per-research-area data, not a flat list) and the small taxonomy
+files (`area_meta.yml`, `event_categories.yml`, `role_types.yml`,
+`reading_types.yml`, `reading_type_labels.yml` — each tied to a hardcoded
+CSS color/class elsewhere in the site, so adding a key through a form
+without a matching code change would silently render wrong). Those stay a
+deliberate hand/code edit.
 
-   Until this is done, `/admin` loads but sign-in fails — content
-   changes go through editing the YAML files directly and running
-   `build_all.py` by hand, as described above.
+**To use it:**
+
+1. Go to `/admin` on the live site (or open `docs/admin/index.html`
+   locally).
+2. Generate a GitHub personal access token with `repo` scope (GitHub →
+   Settings → Developer settings → Personal access tokens → Fine-grained
+   or classic; scope it to just this repo if using fine-grained) and paste
+   it in. The token stays in your browser only — it's never sent anywhere
+   but the GitHub API.
+3. Edit, add, reorder, or delete entries in any collection, then click
+   **Publish changes**. Each publish commits straight to `main`.
+
+Publishing automatically triggers the rebuild workflow below, so changes
+go live within a couple minutes with nothing further to do by hand.
+
+**Auto-rebuild on content change**
+(`.github/workflows/rebuild-on-content-change.yml`) runs
+`build/build_all.py` and commits the regenerated `docs/` whenever
+`build/data/**` changes on `main` — including commits made by the content
+manager above.
 
 ## Site capabilities
 
