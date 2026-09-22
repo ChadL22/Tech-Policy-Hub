@@ -234,6 +234,7 @@ h1,h2,h3{ margin:0; font-family: var(--font-body); }
         <div class="status-dot" id="status-dot"></div>
         <span id="status-text">Connecting…</span>
       </div>
+      <button class="topbar-btn" id="reload-btn" onclick="reloadAll()" title="Fetch the latest content from GitHub — use this if you or someone else may have published changes since this page loaded">↻ Reload latest</button>
       <button class="topbar-btn primary" id="publish-btn" disabled onclick="publishChanges()">Publish changes</button>
       <button class="topbar-btn" onclick="disconnect()">Sign out</button>
     </div>
@@ -492,11 +493,18 @@ async function loadCollection(key){
 async function saveCollection(key){
   const col = COLLECTIONS[key];
   const s = store[key];
-  // Re-fetch the current SHA immediately before writing so a stale SHA
-  // (the file changed since we loaded it) doesn't silently overwrite
-  // someone else's edit.
+  // Re-fetch the current SHA immediately before writing -- this is a
+  // GitHub-API "pull" check, the equivalent of a git pull before push.
+  // If it doesn't match the SHA we loaded (or last saved) this file
+  // against, something else changed it in the meantime; refuse to
+  // overwrite rather than silently clobbering that edit. The caller
+  // (publishChanges) catches this, leaves the file marked dirty, and
+  // moves on to the other dirty files instead of stopping the whole
+  // publish.
   const current = await ghFetch('/repos/' + REPO + '/contents/' + col.file + '?ref=' + BRANCH);
-  s.sha = current.sha;
+  if (current.sha !== s.sha){
+    throw new Error('changed on GitHub since you loaded it — click "↻ Reload latest" to get the current version, then redo this edit (nothing was overwritten)');
+  }
   const yamlText = jsyaml.dump(s.entries, { lineWidth: -1, noRefs: true, sortKeys: false }) ;
   const encoded = b64EncodeUtf8(yamlText);
   const result = await ghFetch('/repos/' + REPO + '/contents/' + col.file, {
@@ -528,7 +536,9 @@ async function loadTopics(){
 
 async function saveTopics(){
   const current = await ghFetch('/repos/' + REPO + '/contents/' + TOPICS_FILE + '?ref=' + BRANCH);
-  store.topics.sha = current.sha;
+  if (current.sha !== store.topics.sha){
+    throw new Error('changed on GitHub since you loaded it — click "↻ Reload latest" to get the current version, then redo this edit (nothing was overwritten)');
+  }
   const yamlText = jsyaml.dump(store.topics.entries, { lineWidth: -1, noRefs: true, sortKeys: false });
   const encoded = b64EncodeUtf8(yamlText);
   const result = await ghFetch('/repos/' + REPO + '/contents/' + TOPICS_FILE, {
@@ -555,7 +565,9 @@ async function loadAreaMeta(){
 
 async function saveAreaMeta(){
   const current = await ghFetch('/repos/' + REPO + '/contents/' + AREA_META_FILE + '?ref=' + BRANCH);
-  store.area_meta.sha = current.sha;
+  if (current.sha !== store.area_meta.sha){
+    throw new Error('changed on GitHub since you loaded it — click "↻ Reload latest" to get the current version, then redo this edit (nothing was overwritten)');
+  }
   const yamlText = jsyaml.dump(store.area_meta.data, { lineWidth: -1, noRefs: true, sortKeys: false });
   const encoded = b64EncodeUtf8(yamlText);
   const result = await ghFetch('/repos/' + REPO + '/contents/' + AREA_META_FILE, {
@@ -592,10 +604,12 @@ async function loadTopicDetail(){
 }
 
 async function saveTopicDetail(){
-  // Same stale-sha-avoidance pattern as saveCollection: re-fetch the
-  // current sha immediately before writing.
+  // Same conflict-check pattern as saveCollection: re-fetch the current
+  // sha immediately before writing and refuse to overwrite if it moved.
   const current = await ghFetch('/repos/' + REPO + '/contents/' + TOPIC_DETAIL_FILE + '?ref=' + BRANCH);
-  store.topic_detail.sha = current.sha;
+  if (current.sha !== store.topic_detail.sha){
+    throw new Error('changed on GitHub since you loaded it — click "↻ Reload latest" to get the current version, then redo this edit (nothing was overwritten)');
+  }
   const yamlText = jsyaml.dump(store.topic_detail.data, { lineWidth: -1, noRefs: true, sortKeys: false });
   const encoded = b64EncodeUtf8(yamlText);
   const result = await ghFetch('/repos/' + REPO + '/contents/' + TOPIC_DETAIL_FILE, {
@@ -705,6 +719,29 @@ async function initApp(){
   renderSidebar();
   setStatus(failedAny ? 'Connected (some content failed to load)' : 'Connected', !failedAny);
   if (!activeKey && !activeTopicKey && !showAreasOverview){ selectCollection(keys[0]); }
+}
+
+// Manual "pull" -- re-fetches every file fresh from GitHub. Each Publish
+// already refuses to overwrite a file that changed since it was loaded
+// (see the sha check in saveCollection/saveTopicDetail/saveTopics/
+// saveAreaMeta), so this is for the other half of staying in sync: use
+// it before starting new edits if you (or someone else, or another tab)
+// may have published changes since this page loaded.
+async function reloadAll(){
+  if (dirty.size > 0){
+    if (!confirm('You have unpublished changes. Reloading will discard them and load the latest content from GitHub instead. Continue?')) return;
+  }
+  const keepKey = activeKey, keepTopicKey = activeTopicKey, keepOverview = showAreasOverview;
+  store = {};
+  dirty.clear();
+  activeKey = null; activeTopicKey = null; showAreasOverview = false; newAreaFormOpen = false; editingIndex = null;
+  updatePublishBtn();
+  await initApp();
+  // Try to land back on whatever the user was looking at, now with fresh data.
+  if (keepOverview) selectAreasOverview();
+  else if (keepTopicKey && store.topics && store.topics.entries.some(a => a.key === keepTopicKey)) selectTopicArea(keepTopicKey);
+  else if (keepKey && COLLECTIONS[keepKey]) selectCollection(keepKey);
+  showToast('Reloaded the latest content from GitHub.');
 }
 
 // ═══════════════════════════════════════════════════════════

@@ -186,6 +186,16 @@ hand/code edit.
 Publishing automatically triggers the rebuild workflow below, so changes
 go live within a couple minutes with nothing further to do by hand.
 
+**Avoiding conflicts:** if a file changed on GitHub after this tool
+loaded it (someone else published, you have it open in two tabs, or you
+edited the YAML by hand) Publish won't silently overwrite that change --
+it checks each file's current version right before writing and refuses
+if it moved, leaving your edit marked unpublished so nothing is lost.
+Click **↻ Reload latest** in the top bar (it'll warn first if you have
+unpublished edits, since reloading discards them) to pick up the current
+content, then redo the edit. Reach for it before starting new edits too,
+if you know something may have published since this page loaded.
+
 **Auto-rebuild on content change**
 (`.github/workflows/rebuild-on-content-change.yml`) runs
 `build/build_all.py` and commits the regenerated `docs/` whenever
