@@ -601,6 +601,13 @@ async function loadTopicDetail(){
   for (const key of Object.keys(parsed)){
     const d = parsed[key] || (parsed[key] = {});
     if (!Array.isArray(d.projects)) d.projects = [];
+    // Projects used to be bare [title, description] pairs (no image/link
+    // support); upgrade any old-shape entry in place so older data (or a
+    // hand-edited YAML file) still loads cleanly under the current
+    // {title,description,link,image} object shape -- see addProject.
+    d.projects = d.projects.map(p => Array.isArray(p)
+      ? { title: p[0] || '', description: p[1] || '', link: '', image: '' }
+      : { title: '', description: '', link: '', image: '', ...p });
     if (!Array.isArray(d.pubs)) d.pubs = [];
     if (!Array.isArray(d.people)) d.people = [];
   }
@@ -1058,6 +1065,10 @@ function renderTopicAreaMain(){
     html += `<div class="empty-state" style="padding:18px;"><p>No projects yet.</p></div>`;
   }
   data.projects.forEach((p, i) => {
+    const imgVal = p.image || '';
+    const imgPreview = imgVal
+      ? `<img src="../${imgVal}" onerror="this.style.display='none'">`
+      : `<div class="image-field-empty">No image set</div>`;
     html += `<div class="topic-card">
       <div class="entry-card-order">
         <button onclick="moveProject(${i},-1)" ${i===0?'disabled':''} title="Move up">▲</button>
@@ -1065,9 +1076,17 @@ function renderTopicAreaMain(){
       </div>
       <div class="topic-card-body">
         <div class="field"><label class="field-label">Title</label>
-          <input type="text" value="${escapeHtml(p[0]||'')}" oninput="onProjectInput(${i},0,this.value)"></div>
+          <input type="text" value="${escapeHtml(p.title||'')}" oninput="onProjectInput(${i},'title',this.value)"></div>
         <div class="field"><label class="field-label">Description</label>
-          <textarea oninput="onProjectInput(${i},1,this.value)">${escapeHtml(p[1]||'')}</textarea></div>
+          <textarea oninput="onProjectInput(${i},'description',this.value)">${escapeHtml(p.description||'')}</textarea></div>
+        <div class="field"><label class="field-label">Link <span class="opt">(optional — makes the whole tile clickable on the Research page)</span></label>
+          <input type="text" value="${escapeHtml(p.link||'')}" oninput="onProjectInput(${i},'link',this.value)" placeholder="https://…"></div>
+        <div class="field"><label class="field-label">Image <span class="opt">(optional — falls back to a colored placeholder if left blank)</span></label>
+          <div class="image-field-preview" id="image-preview-project-${i}">${imgPreview}</div>
+          <input type="file" accept="image/*" id="image-input-project-${i}" onchange="onProjectImageSelected(${i})">
+          ${imgVal ? `<button type="button" class="btn small ghost" style="margin-top:6px;" onclick="clearProjectImage(${i})">Remove image</button>` : ''}
+          <div class="image-upload-progress" id="image-progress-project-${i}"></div>
+        </div>
       </div>
       <div class="topic-card-actions"><button class="btn small danger" onclick="removeProject(${i})">Delete</button></div>
     </div>`;
@@ -1152,12 +1171,12 @@ function deleteCurrentArea(){
   deleteAreaEntry(i);
 }
 
-function onProjectInput(i, idx, value){
-  store.topic_detail.data[activeTopicKey].projects[i][idx] = value;
+function onProjectInput(i, field, value){
+  store.topic_detail.data[activeTopicKey].projects[i][field] = value;
   markDirty('topic_detail');
 }
 function addProject(){
-  store.topic_detail.data[activeTopicKey].projects.push(['', '']);
+  store.topic_detail.data[activeTopicKey].projects.push({ title:'', description:'', link:'', image:'' });
   markDirty('topic_detail');
   renderMain();
 }
@@ -1171,6 +1190,39 @@ function moveProject(i, dir){
   const j = i + dir;
   if (j < 0 || j >= arr.length) return;
   [arr[i], arr[j]] = [arr[j], arr[i]];
+  markDirty('topic_detail');
+  renderMain();
+}
+
+// Projects' image upload follows the same uploadImageFile() flow as the
+// People/Spotlight `type:'image'` fields (renderImageField/onImageSelected
+// above), but -- like every other Research Area edit -- writes straight
+// into store.topic_detail.data instead of a formValues draft, since this
+// page has no Save/Cancel step of its own (see renderTopicAreaMain).
+async function onProjectImageSelected(i){
+  const input = document.getElementById('image-input-project-' + i);
+  const file = input.files[0];
+  if (!file) return;
+  if (!file.type.startsWith('image/')){ showToast('Please select an image file.', 'error'); return; }
+  if (file.size > 12 * 1024 * 1024){ showToast('Image must be under 12MB.', 'error'); return; }
+  const progressEl = document.getElementById('image-progress-project-' + i);
+  progressEl.textContent = 'Uploading…';
+  try {
+    const project = store.topic_detail.data[activeTopicKey].projects[i];
+    const slugHint = project.title || 'project';
+    const path = await uploadImageFile(file, 'projects', slugHint);
+    project.image = path;
+    markDirty('topic_detail');
+    progressEl.textContent = '';
+    showToast('Image uploaded.');
+    renderMain();
+  } catch (e) {
+    progressEl.textContent = '';
+    showToast('Image upload failed: ' + e.message, 'error');
+  }
+}
+function clearProjectImage(i){
+  store.topic_detail.data[activeTopicKey].projects[i].image = '';
   markDirty('topic_detail');
   renderMain();
 }

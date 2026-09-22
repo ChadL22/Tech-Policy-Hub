@@ -1,9 +1,13 @@
 cybersecurity:
   projects:
-  - - Cyber Risk Mapping for U.S. Counties
-    - Quantifying exposed attack surface and cyber risk across all 50 states and thousands of county governments.
-  - - Critical Infrastructure Resilience
-    - Working with practitioners to translate attack-surface research into actionable defense priorities.
+  - title: Cyber Risk Mapping for U.S. Counties
+    description: Quantifying exposed attack surface and cyber risk across all 50 states and thousands of county governments.
+    link: ''
+    image: ''
+  - title: Critical Infrastructure Resilience
+    description: Working with practitioners to translate attack-surface research into actionable defense priorities.
+    link: ''
+    image: ''
   pubs:
   - venue: Journal of Cybersecurity
     year: 2025
@@ -47,11 +51,14 @@ cybersecurity:
   - Parthav Poudel
 privacy:
   projects:
-  - - Cookie-less Identification Tracking
-    - Studying how identification methods are evolving as third-party cookies are phased out, and what it means
-      for privacy.
-  - - Watchdog Accountability
-    - Assessing the powers of formal and informal U.S. privacy regulators.
+  - title: Cookie-less Identification Tracking
+    description: Studying how identification methods are evolving as third-party cookies are phased out, and what it means for privacy.
+    link: ''
+    image: ''
+  - title: Watchdog Accountability
+    description: Assessing the powers of formal and informal U.S. privacy regulators.
+    link: ''
+    image: ''
   pubs:
   - venue: IEEE Security & Privacy
     year: 2026
@@ -121,10 +128,14 @@ privacy:
   - Patrick Parham
 integrity:
   projects:
-  - - Trustworthy Content Classification
-    - Classifying trustworthy content on the web using third-party site structure.
-  - - Platform Transparency Tracker
-    - Monitoring platform disclosures and their real-world enforcement.
+  - title: Trustworthy Content Classification
+    description: Classifying trustworthy content on the web using third-party site structure.
+    link: ''
+    image: ''
+  - title: Platform Transparency Tracker
+    description: Monitoring platform disclosures and their real-world enforcement.
+    link: ''
+    image: ''
   pubs:
   - venue: Free and Open Communications on the Internet (FOCI)
     year: 2025
@@ -141,10 +152,14 @@ integrity:
   - Parthav Poudel
 ml:
   projects:
-  - - Algorithmic Accountability Framework
-    - Developing standards for evaluating machine learning systems used in public decision-making.
-  - - AI Governance Roundtables
-    - Convening researchers and policymakers on the governance of emerging AI systems.
+  - title: Algorithmic Accountability Framework
+    description: Developing standards for evaluating machine learning systems used in public decision-making.
+    link: ''
+    image: ''
+  - title: AI Governance Roundtables
+    description: Convening researchers and policymakers on the governance of emerging AI systems.
+    link: ''
+    image: ''
   pubs: []
   people:
   - Dr. Ido Sivan-Sevilla

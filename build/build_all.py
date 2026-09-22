@@ -120,10 +120,12 @@ g.write("index.html", g.page("index.html", "Home", "The University of Maryland T
 # etc.", which needs the author byline as its own real field rather than
 # folded into a description string.
 # Content lives in build/data/topic_detail.yml -- see README "Editing
-# content". `projects` entries are 2-element [name, description] lists
-# now rather than Python tuples (YAML has no tuple type); every place
-# that reads them just does `for n, d in ...["projects"]`, which
-# unpacks a 2-item list exactly the same as a 2-item tuple.
+# content". `projects` entries are dicts (title/description/link/image,
+# link and image both optional -- empty string when unset) rather than
+# the original 2-element [name, description] lists, so a project can
+# carry a real photo and an outbound link the same way Publications
+# entries already do (see _pub_row_html below) instead of forcing every
+# project tile through the colored placeholder with no link out.
 TOPIC_DETAIL = g.load_data("topic_detail")
 
 # Follow-up 7 (direct user request, replacing the click-to-select single-
@@ -219,25 +221,44 @@ def _person_tile_html(name, keys):
       </a>"""
 
 
-def _project_tile_html(name, desc, key):
+def _project_tile_html(p, key):
     # Direct user request, modeled on Bloomberg.com's "Today's Videos"
-    # card: a photo area on top (no real project photos yet, so this is
-    # the same colored/textured placeholder treatment as the homepage
-    # Research Spotlight's .lead-media, recolored per the project's
-    # research area -- see AREA_META/g.AREA_META) with that area's badge
-    # in the corner, then the title + description in a shaded caption
-    # strip below (.rp-tile-caption) rather than floating directly on
-    # white -- "the title... is in the grey section of the tile."
+    # card: a photo area on top, then the title + description in a
+    # shaded caption strip below (.rp-tile-caption) rather than floating
+    # directly on white -- "the title... is in the grey section of the
+    # tile." Most projects still have no real photo, so the photo area
+    # falls back to the same colored/textured placeholder treatment as
+    # the homepage Research Spotlight's .lead-media, recolored per the
+    # project's research area (AREA_META/g.AREA_META) -- same
+    # placeholder/real-image switch as People's tiles, see
+    # _person_photo_html. Follow-up (direct user request): projects can
+    # now also carry an optional outbound link (topic_detail.yml's
+    # `link`), which -- same as People's tile-links-to-people.html
+    # pattern -- turns the whole tile into a real link (rp-tile--link)
+    # instead of a plain non-interactive div; no link keeps the original
+    # inert-card behavior.
     m = g.AREA_META[key]
-    return f"""
-      <div class="rp-tile rp-tile--project" data-areas="{key}" data-search-row>
-        <div class="rp-tile-photo" style="--area-color:{m['color']}">
-          <span class="area-tag rp-tile-photo-badge">{m['code']}</span>
+    image = p.get("image")
+    link = p.get("link")
+    photo_img_html = (
+        f'<img class="rp-tile-photo-img" src="{image}" alt="{p["title"]}" loading="lazy">\n          '
+        if image else ""
+    )
+    inner = f"""<div class="rp-tile-photo" style="--area-color:{m['color']}">
+          {photo_img_html}<span class="area-tag rp-tile-photo-badge">{m['code']}</span>
         </div>
         <div class="rp-tile-caption">
-          <h3>{name}</h3>
-          <p class="rp-desc">{desc}</p>
-        </div>
+          <h3>{p['title']}</h3>
+          <p class="rp-desc">{p['description']}</p>
+        </div>"""
+    if link:
+        return f"""
+      <a class="rp-tile rp-tile--link rp-tile--project" href="{link}"{g.link_attrs(link)} data-areas="{key}" data-search-row>
+        {inner}
+      </a>"""
+    return f"""
+      <div class="rp-tile rp-tile--project" data-areas="{key}" data-search-row>
+        {inner}
       </div>"""
 
 
@@ -321,7 +342,7 @@ for t in g.TOPICS:
         _person_areas.setdefault(n, []).append(t["key"])
 
 people_tiles = "".join(_person_tile_html(name, keys) for name, keys in _person_areas.items())
-project_tiles = "".join(_project_tile_html(n, d, t["key"]) for t in g.TOPICS for n, d in TOPIC_DETAIL[t["key"]]["projects"])
+project_tiles = "".join(_project_tile_html(p, t["key"]) for t in g.TOPICS for p in TOPIC_DETAIL[t["key"]]["projects"])
 pubs_list = _pubs_list_html()
 year_filter_pills = _year_filter_pills_html()
 
