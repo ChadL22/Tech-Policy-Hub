@@ -258,48 +258,38 @@ const TOKEN_KEY = 'tph_cms_token';
 const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
 const EVENT_CATS = ['Speaker Series','Workshop','Roundtable','Annual Event','Conference'];
 const ROLE_TYPE_OPTIONS = [{label:'Core Member', value:'core-member'}, {label:'Affiliate', value:'affiliate'}];
-const AREA_OPTIONS_4 = ['Cybersecurity','Consumer Privacy','Information Integrity','Trustworthy ML'];
-const AREA_OPTIONS_QUESTIONS = ['Cybersecurity','Consumer Privacy','Information Integrity','Trustworthy ML','Policy Design','Practice','Teaching'];
 const READING_TYPE_OPTIONS = ['Research Papers','Policy Artifacts','Legal Analyses','Essays','Articles','Reports'];
 
-// research-area name -> the anchor its Spotlight card should link to
-// (mirrors build/data/topics.yml -- kept in sync by hand, same as
-// config.yml's own hardcoded select options did).
-const AREA_TOPIC_FILE = {
-  'Cybersecurity': 'research.html#area-panel-cybersecurity',
-  'Consumer Privacy': 'research.html#area-panel-privacy',
-  'Information Integrity': 'research.html#area-panel-integrity',
-  'Trustworthy ML': 'research.html#area-panel-ml',
-};
-
-// The four fixed research areas (mirrors build/data/topics.yml's key/name
-// pairs -- kept in sync by hand, same as AREA_TOPIC_FILE above). These
-// keys themselves aren't editable here -- the topic taxonomy is tied to
-// hardcoded CSS colors in area_meta.yml, same reasoning as the other
-// excluded taxonomy files -- only each area's build/data/topic_detail.yml
-// content (its projects, publications, and people) is.
-const TOPIC_AREAS = [
-  { key: 'cybersecurity', name: 'Cybersecurity' },
-  { key: 'privacy', name: 'Consumer Privacy' },
-  { key: 'integrity', name: 'Information Integrity' },
-  { key: 'ml', name: 'Trustworthy ML' },
-];
+// Research Areas (build/data/topics.yml + area_meta.yml + topic_detail.yml)
+// are fully editable, including adding/removing/reordering areas
+// themselves -- see the "Research Areas" sidebar item, selectAreasOverview,
+// renderAreasOverview, and renderTopicAreaMain below. Areas are loaded
+// into store.topics (list: key/file/index/name/blurb), store.area_meta
+// (dict: key -> {code,color}), and store.topic_detail (dict: key ->
+// {projects,pubs,people}) -- three files kept in lockstep by key.
+// These fallbacks are only used by the "Research Area" <select> fields
+// below (Spotlight, Guiding Questions) before store.topics has loaded.
+const AREA_OPTIONS_4_FALLBACK = ['Cybersecurity','Consumer Privacy','Information Integrity','Trustworthy ML'];
+const AREA_OPTIONS_QUESTIONS_EXTRA = ['Policy Design','Practice','Teaching'];
 const TOPIC_DETAIL_FILE = 'build/data/topic_detail.yml';
+const TOPICS_FILE = 'build/data/topics.yml';
+const AREA_META_FILE = 'build/data/area_meta.yml';
 
 // ═══════════════════════════════════════════════════════════
 // COLLECTION SCHEMAS
 // One entry per flat-list build/data/*.yml file this tool edits: People,
 // Events (upcoming + past), and homepage content (Hub News, Research
-// Spotlight, What We're Reading, Guiding Questions). build/data/topic_detail.yml
-// (each Research Area's projects/publications/people) is a different shape --
-// a fixed-key object, not a flat list -- so it gets its own "Research Areas"
-// sidebar group and editor below (see TOPIC_AREAS / renderTopicAreaMain),
-// rather than fitting the schema-driven form here.
-// Deliberately NOT covered at all: the small taxonomy files (area_meta.yml,
-// event_categories.yml, role_types.yml, reading_types.yml,
-// reading_type_labels.yml, topics.yml) -- each tied to a hardcoded CSS
-// color/class elsewhere in the site, so these stay a deliberate hand/code
-// edit. ticker.json is excluded too -- it's refreshed on a schedule by
+// Spotlight, What We're Reading, Guiding Questions). Research Areas
+// (build/data/topics.yml + area_meta.yml + topic_detail.yml, including
+// adding/removing/reordering the areas themselves) is a different shape --
+// three linked files, not one flat list -- so it gets its own "Research
+// Areas" sidebar item and editor below (see renderAreasOverview /
+// renderTopicAreaMain) rather than fitting the schema-driven form here.
+// Deliberately NOT covered at all: the remaining small taxonomy files
+// (event_categories.yml, role_types.yml, reading_types.yml,
+// reading_type_labels.yml) -- each tied to a hardcoded CSS color/class
+// elsewhere in the site, so these stay a deliberate hand/code edit.
+// ticker.json is excluded too -- it's refreshed on a schedule by
 // refresh-ticker.yml, not hand-edited content.
 // ═══════════════════════════════════════════════════════════
 const COLLECTIONS = {
@@ -376,7 +366,7 @@ const COLLECTIONS = {
     summaryMeta: e => e.date || '',
     fields: [
       { name:'tag', label:'Tag', type:'text', hint:'e.g. "Policy", "Student Feature", "Award", "Platform Launch"' },
-      { name:'topic', label:'Research Area', type:'select', options:AREA_OPTIONS_4, required:true, drivesTopicFile:true },
+      { name:'topic', label:'Research Area', type:'select', options:AREA_OPTIONS_4_FALLBACK, optionsFromTopics:true, required:true, drivesTopicFile:true },
       { name:'topic_file', label:'Research Area link', type:'text', readOnlyComputed:true, hint:'Set automatically from Research Area above.' },
       { name:'date', label:'Date', type:'text', required:true },
       { name:'source', label:'Source', type:'text' },
@@ -409,7 +399,7 @@ const COLLECTIONS = {
     summaryMeta: e => e.tag || '',
     fields: [
       { name:'text', label:'Question', type:'textarea', required:true },
-      { name:'tag', label:'Research Area', type:'select', options:AREA_OPTIONS_QUESTIONS, required:true },
+      { name:'tag', label:'Research Area', type:'select', options:[...AREA_OPTIONS_4_FALLBACK, ...AREA_OPTIONS_QUESTIONS_EXTRA], optionsFromTopics:true, extraOptions:AREA_OPTIONS_QUESTIONS_EXTRA, required:true },
       { name:'link', label:'Link', type:'text' },
     ],
   },
@@ -424,7 +414,10 @@ let ghToken = localStorage.getItem(TOKEN_KEY) || null;
 let store = {};       // key -> { entries: [...], sha: '...' }
 let dirty = new Set(); // keys with unpublished edits
 let activeKey = null;
-let activeTopicKey = null; // non-null when a Research Area (topic_detail.yml) is selected instead
+let activeTopicKey = null; // non-null when one specific Research Area is being edited
+let showAreasOverview = false; // true = showing the Research Areas list (add/reorder/delete areas)
+let newAreaFormOpen = false;
+let newAreaDraft = { name:'', code:'', color:'#0B7285', blurb:'' };
 let editingIndex = null; // null = list view; -1 = new entry; number = editing that index
 let formValues = {};
 
@@ -519,6 +512,65 @@ async function saveCollection(key){
   dirty.delete(key);
 }
 
+// topics.yml (the ordered list of research areas -- key/file/index/name/
+// blurb) is a flat list, same shape loadCollection/saveCollection already
+// handle, but it's kept OUT of COLLECTIONS/GROUP_ORDER (so it doesn't get
+// the generic schema-driven form -- 'key'/'file'/'index' are computed,
+// never hand-typed, and adding/removing an entry here must also touch
+// area_meta.yml + topic_detail.yml in lockstep). Its own small
+// load/save pair mirrors loadCollection/saveCollection's shape.
+async function loadTopics(){
+  const data = await ghFetch('/repos/' + REPO + '/contents/' + TOPICS_FILE + '?ref=' + BRANCH);
+  const text = b64DecodeUtf8(data.content);
+  const parsed = jsyaml.load(text);
+  store.topics = { entries: Array.isArray(parsed) ? parsed : [], sha: data.sha };
+}
+
+async function saveTopics(){
+  const current = await ghFetch('/repos/' + REPO + '/contents/' + TOPICS_FILE + '?ref=' + BRANCH);
+  store.topics.sha = current.sha;
+  const yamlText = jsyaml.dump(store.topics.entries, { lineWidth: -1, noRefs: true, sortKeys: false });
+  const encoded = b64EncodeUtf8(yamlText);
+  const result = await ghFetch('/repos/' + REPO + '/contents/' + TOPICS_FILE, {
+    method: 'PUT',
+    body: JSON.stringify({
+      message: 'content: update topics.yml via CMS',
+      content: encoded,
+      sha: store.topics.sha,
+      branch: BRANCH,
+    }),
+  });
+  store.topics.sha = result.content.sha;
+  dirty.delete('topics');
+}
+
+// area_meta.yml (key -> {code,color}) is a fixed-key object, same shape
+// as topic_detail.yml -- same load/save pattern.
+async function loadAreaMeta(){
+  const data = await ghFetch('/repos/' + REPO + '/contents/' + AREA_META_FILE + '?ref=' + BRANCH);
+  const text = b64DecodeUtf8(data.content);
+  const parsed = jsyaml.load(text) || {};
+  store.area_meta = { data: parsed, sha: data.sha };
+}
+
+async function saveAreaMeta(){
+  const current = await ghFetch('/repos/' + REPO + '/contents/' + AREA_META_FILE + '?ref=' + BRANCH);
+  store.area_meta.sha = current.sha;
+  const yamlText = jsyaml.dump(store.area_meta.data, { lineWidth: -1, noRefs: true, sortKeys: false });
+  const encoded = b64EncodeUtf8(yamlText);
+  const result = await ghFetch('/repos/' + REPO + '/contents/' + AREA_META_FILE, {
+    method: 'PUT',
+    body: JSON.stringify({
+      message: 'content: update area_meta.yml via CMS',
+      content: encoded,
+      sha: store.area_meta.sha,
+      branch: BRANCH,
+    }),
+  });
+  store.area_meta.sha = result.content.sha;
+  dirty.delete('area_meta');
+}
+
 // topic_detail.yml is a fixed-key object ({cybersecurity:{...}, privacy:{...},
 // integrity:{...}, ml:{...}}), not a flat list, so it gets its own
 // load/save pair instead of going through loadCollection/saveCollection.
@@ -530,8 +582,8 @@ async function loadTopicDetail(){
   const data = await ghFetch('/repos/' + REPO + '/contents/' + TOPIC_DETAIL_FILE + '?ref=' + BRANCH);
   const text = b64DecodeUtf8(data.content);
   const parsed = jsyaml.load(text) || {};
-  for (const area of TOPIC_AREAS){
-    const d = parsed[area.key] || (parsed[area.key] = {});
+  for (const key of Object.keys(parsed)){
+    const d = parsed[key] || (parsed[key] = {});
     if (!Array.isArray(d.projects)) d.projects = [];
     if (!Array.isArray(d.pubs)) d.pubs = [];
     if (!Array.isArray(d.people)) d.people = [];
@@ -627,7 +679,8 @@ async function connect(){
 function disconnect(){
   localStorage.removeItem(TOKEN_KEY);
   ghToken = null;
-  store = {}; dirty.clear(); activeKey = null; activeTopicKey = null; editingIndex = null;
+  store = {}; dirty.clear(); activeKey = null; activeTopicKey = null;
+  showAreasOverview = false; newAreaFormOpen = false; editingIndex = null;
   document.getElementById('cms-shell').style.display = 'none';
   document.getElementById('connect-wrap').style.display = 'flex';
   document.getElementById('token-input').value = '';
@@ -643,11 +696,15 @@ async function initApp(){
     catch (e) { failedAny = true; showToast('Failed to load ' + COLLECTIONS[key].label + ': ' + e.message, 'error'); }
     renderSidebar(); // update counts incrementally
   }
+  try { await loadTopics(); }
+  catch (e) { failedAny = true; showToast('Failed to load Research Areas list: ' + e.message, 'error'); }
+  try { await loadAreaMeta(); }
+  catch (e) { failedAny = true; showToast('Failed to load Research Area colors/codes: ' + e.message, 'error'); }
   try { await loadTopicDetail(); }
-  catch (e) { failedAny = true; showToast('Failed to load Research Areas: ' + e.message, 'error'); }
+  catch (e) { failedAny = true; showToast('Failed to load Research Area content: ' + e.message, 'error'); }
   renderSidebar();
   setStatus(failedAny ? 'Connected (some content failed to load)' : 'Connected', !failedAny);
-  if (!activeKey && !activeTopicKey){ selectCollection(keys[0]); }
+  if (!activeKey && !activeTopicKey && !showAreasOverview){ selectCollection(keys[0]); }
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -667,21 +724,29 @@ function renderSidebar(){
       </button>`;
     }
   }
-  html += `<div class="sidebar-group-label">Research Areas</div>`;
-  for (const area of TOPIC_AREAS){
-    const d = store.topic_detail ? store.topic_detail.data[area.key] : null;
-    const count = d ? (d.projects.length + d.pubs.length + d.people.length) : '—';
-    const active = area.key === activeTopicKey ? ' active' : '';
-    html += `<button class="sidebar-item${active}" onclick="selectTopicArea('${area.key}')">
-      <span>${escapeHtml(area.name)}</span><span class="sidebar-count">${count}</span>
-    </button>`;
-  }
+  html += `<div class="sidebar-group-label">Research</div>`;
+  const areaCount = store.topics ? store.topics.entries.length : '—';
+  const areasActive = (showAreasOverview || !!activeTopicKey) ? ' active' : '';
+  html += `<button class="sidebar-item${areasActive}" onclick="selectAreasOverview()">
+    <span>Research Areas</span><span class="sidebar-count">${areaCount}</span>
+  </button>`;
   el.innerHTML = html;
 }
 
 function selectCollection(key){
   activeKey = key;
   activeTopicKey = null;
+  showAreasOverview = false;
+  editingIndex = null;
+  renderSidebar();
+  renderMain();
+}
+
+function selectAreasOverview(){
+  activeKey = null;
+  activeTopicKey = null;
+  showAreasOverview = true;
+  newAreaFormOpen = false;
   editingIndex = null;
   renderSidebar();
   renderMain();
@@ -690,6 +755,7 @@ function selectCollection(key){
 function selectTopicArea(key){
   activeTopicKey = key;
   activeKey = null;
+  showAreasOverview = false;
   editingIndex = null;
   renderSidebar();
   renderMain();
@@ -700,6 +766,7 @@ function selectTopicArea(key){
 // ═══════════════════════════════════════════════════════════
 function renderMain(){
   const el = document.getElementById('main');
+  if (showAreasOverview){ renderAreasOverview(); return; }
   if (activeTopicKey){ renderTopicAreaMain(); return; }
   if (!activeKey){ el.innerHTML = ''; return; }
   const col = COLLECTIONS[activeKey];
@@ -761,31 +828,187 @@ function deleteEntry(i){
   if (!confirm(`Delete "${label}"? This can't be undone once you publish.`)) return;
   store[activeKey].entries.splice(i, 1);
   markDirty(activeKey);
+  renderSidebar(); // count badge must reflect the deletion immediately, not just on next collection switch
   renderMain();
 }
 
 // ═══════════════════════════════════════════════════════════
-// MAIN — Research Area editor (topic_detail.yml)
-// Edits write straight into store.topic_detail.data[topicKey] (no
-// separate formValues draft/Save-Cancel step) since each area holds
-// three independent repeatable lists rather than one flat set of
-// fields — the same direct-to-store, re-render-on-structural-change
+// MAIN — Research Areas overview (topics.yml)
+// A normal add/reorder/delete list view, same visual language as every
+// other collection's entry list — this is what makes areas addable,
+// unlike the fixed 4-area version this replaced. Creating or deleting an
+// area here also touches area_meta.yml (its color/code) and
+// topic_detail.yml (its content), keeping all three files' keys in sync.
+// ═══════════════════════════════════════════════════════════
+function renderAreasOverview(){
+  const el = document.getElementById('main');
+  if (!store.topics || !store.area_meta || !store.topic_detail){
+    el.innerHTML = `<div class="loading-note">Loading Research Areas…</div>`;
+    return;
+  }
+  const entries = store.topics.entries;
+  let html = `<div class="main-header">
+      <h2 class="main-title">Research Areas</h2>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <span class="main-file-hint">build/data/topics.yml</span>
+        <button class="btn primary" onclick="toggleNewAreaForm()">${newAreaFormOpen ? 'Cancel' : '+ Add Research Area'}</button>
+      </div>
+    </div>
+    <p class="topic-section-hint" style="margin-top:-10px;">Each area also gets its own accent color/code and content — projects, publications, people — from its own edit page. Deleting an area here won't update any Research Spotlight items or Guiding Questions still tagged with its old name; check those separately after publishing.</p>`;
+
+  if (newAreaFormOpen){ html += renderNewAreaFormHtml(); }
+
+  if (entries.length === 0 && !newAreaFormOpen){
+    html += `<div class="empty-state"><p>No research areas yet.</p><p>Click "+ Add Research Area" to add the first one.</p></div>`;
+  } else {
+    entries.forEach((a, i) => {
+      const meta = store.area_meta.data[a.key] || {};
+      const swatch = meta.color
+        ? `<span style="display:inline-block;width:14px;height:14px;border-radius:3px;background:${escapeHtml(meta.color)};border:1px solid rgba(0,0,0,.15);flex:none;" title="${escapeHtml(meta.color)}"></span>`
+        : '';
+      html += `<div class="entry-card">
+        <div class="entry-card-order">
+          <button onclick="moveAreaEntry(${i},-1)" ${i===0?'disabled':''} title="Move up">▲</button>
+          <button onclick="moveAreaEntry(${i},1)" ${i===entries.length-1?'disabled':''} title="Move down">▼</button>
+        </div>
+        ${swatch}
+        <div class="entry-card-body">
+          <div class="entry-card-title">${escapeHtml(a.name)}${meta.code ? ` <span class="field-label opt" style="font-weight:400;">${escapeHtml(meta.code)}</span>` : ''}</div>
+          <div class="entry-card-meta">${escapeHtml(a.blurb || '')}</div>
+        </div>
+        <div class="entry-card-actions">
+          <button class="btn small" onclick="selectTopicArea('${a.key}')">Edit</button>
+          <button class="btn small danger" onclick="deleteAreaEntry(${i})">Delete</button>
+        </div>
+      </div>`;
+    });
+  }
+  el.innerHTML = html;
+}
+
+function toggleNewAreaForm(){
+  newAreaFormOpen = !newAreaFormOpen;
+  newAreaDraft = { name:'', code:'', color:'#0B7285', blurb:'' };
+  renderMain();
+}
+function onNewAreaInput(field, value){ newAreaDraft[field] = value; }
+
+function renderNewAreaFormHtml(){
+  return `<div class="entry-form" style="margin-bottom:20px;max-width:600px;">
+    <div class="field"><label class="field-label">Name <span class="required-mark">*</span></label>
+      <input type="text" value="${escapeHtml(newAreaDraft.name)}" oninput="onNewAreaInput('name', this.value)" placeholder="e.g. Platform Governance"></div>
+    <div class="field"><label class="field-label">Short code <span class="opt">(2–4 letters, for the small area badge — auto-filled from the name if left blank)</span></label>
+      <input type="text" value="${escapeHtml(newAreaDraft.code)}" oninput="onNewAreaInput('code', this.value)"></div>
+    <div class="field"><label class="field-label">Accent color</label><br>
+      <input type="color" value="${escapeHtml(newAreaDraft.color)}" oninput="onNewAreaInput('color', this.value)" style="width:60px;height:38px;padding:2px;"></div>
+    <div class="field"><label class="field-label">Blurb <span class="opt">(shown on the homepage's Research Areas tile)</span></label>
+      <textarea oninput="onNewAreaInput('blurb', this.value)">${escapeHtml(newAreaDraft.blurb)}</textarea></div>
+    <div class="form-actions">
+      <button class="btn primary" onclick="createNewArea()">Create</button>
+      <button class="btn" onclick="toggleNewAreaForm()">Cancel</button>
+    </div>
+  </div>`;
+}
+
+function deriveAreaCode(name){
+  const words = (name || '').trim().split(/\s+/).filter(Boolean);
+  if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
+  return (words[0] || 'AA').slice(0, 2).toUpperCase();
+}
+
+function createNewArea(){
+  const name = (newAreaDraft.name || '').trim();
+  if (!name){ showToast('"Name" is required.', 'error'); return; }
+  const baseKey = slugify(name) || 'area';
+  const existingKeys = new Set(store.topics.entries.map(a => a.key));
+  let finalKey = baseKey, n = 2;
+  while (existingKeys.has(finalKey)){ finalKey = `${baseKey}-${n}`; n++; }
+  const index = String(store.topics.entries.length + 1).padStart(2, '0');
+  const file = `research.html#area-panel-${finalKey}`;
+  store.topics.entries.push({ key: finalKey, file, index, name, blurb: newAreaDraft.blurb || '' });
+  store.area_meta.data[finalKey] = {
+    code: (newAreaDraft.code || '').trim().toUpperCase() || deriveAreaCode(name),
+    color: newAreaDraft.color || '#0B7285',
+  };
+  store.topic_detail.data[finalKey] = { projects: [], pubs: [], people: [] };
+  markDirty('topics'); markDirty('area_meta'); markDirty('topic_detail');
+  newAreaFormOpen = false;
+  showToast(`Added "${name}" — now add its projects, publications, and people.`);
+  selectTopicArea(finalKey);
+}
+
+function moveAreaEntry(i, dir){
+  const arr = store.topics.entries;
+  const j = i + dir;
+  if (j < 0 || j >= arr.length) return;
+  [arr[i], arr[j]] = [arr[j], arr[i]];
+  arr.forEach((a, idx) => { a.index = String(idx + 1).padStart(2, '0'); });
+  markDirty('topics');
+  renderMain();
+}
+
+function deleteAreaEntry(i){
+  const area = store.topics.entries[i];
+  if (!confirm(`Delete "${area.name}"? This removes all its projects, publications, and people links, and can't be undone once you publish. Any Research Spotlight items or Guiding Questions still tagged "${area.name}" will need to be updated separately.`)) return;
+  store.topics.entries.splice(i, 1);
+  store.topics.entries.forEach((a, idx) => { a.index = String(idx + 1).padStart(2, '0'); });
+  delete store.area_meta.data[area.key];
+  delete store.topic_detail.data[area.key];
+  markDirty('topics'); markDirty('area_meta'); markDirty('topic_detail');
+  renderSidebar();
+  renderMain();
+}
+
+// ═══════════════════════════════════════════════════════════
+// MAIN — one Research Area's editor (topic_detail.yml, + its
+// name/blurb in topics.yml and code/color in area_meta.yml)
+// Edits write straight into the store (no separate formValues
+// draft/Save-Cancel step) since this page holds several independent
+// pieces — the same direct-to-store, re-render-on-structural-change
 // pattern moveEntry/deleteEntry already use above.
 // ═══════════════════════════════════════════════════════════
 function renderTopicAreaMain(){
   const el = document.getElementById('main');
-  if (!store.topic_detail){
+  if (!store.topics || !store.area_meta || !store.topic_detail){
     el.innerHTML = `<div class="loading-note">Loading Research Areas…</div>`;
     return;
   }
-  const area = TOPIC_AREAS.find(a => a.key === activeTopicKey);
-  const data = store.topic_detail.data[activeTopicKey];
+  const areaIndex = store.topics.entries.findIndex(a => a.key === activeTopicKey);
+  if (areaIndex === -1){
+    // Stale reference (e.g. this area was just deleted) -- fall back
+    // to the overview instead of rendering a broken page.
+    selectAreasOverview();
+    return;
+  }
+  const area = store.topics.entries[areaIndex];
+  const meta = store.area_meta.data[activeTopicKey] || (store.area_meta.data[activeTopicKey] = {});
+  const data = store.topic_detail.data[activeTopicKey] || (store.topic_detail.data[activeTopicKey] = { projects: [], pubs: [], people: [] });
+  if (!Array.isArray(data.projects)) data.projects = [];
+  if (!Array.isArray(data.pubs)) data.pubs = [];
+  if (!Array.isArray(data.people)) data.people = [];
 
   let html = `<div class="main-header">
       <h2 class="main-title">${escapeHtml(area.name)}</h2>
-      <span class="main-file-hint">build/data/topic_detail.yml — ${area.key}</span>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <span class="main-file-hint">build/data/topic_detail.yml — ${area.key}</span>
+        <button class="btn ghost" onclick="selectAreasOverview()">← All Research Areas</button>
+      </div>
+    </div>`;
+
+  // ── Details (topics.yml name/blurb + area_meta.yml code/color) ──
+  html += `<div class="topic-section">
+    <h3 class="topic-section-head">Details</h3>
+    <div class="topic-card-row" style="margin-bottom:14px;">
+      <div class="field"><label class="field-label">Name <span class="required-mark">*</span></label>
+        <input type="text" value="${escapeHtml(area.name)}" oninput="onAreaMetaInput('name', this.value)"></div>
+      <div class="field"><label class="field-label">Short code</label>
+        <input type="text" value="${escapeHtml(meta.code||'')}" oninput="onAreaMetaInput('code', this.value)"></div>
     </div>
-    <p class="topic-section-hint" style="margin-top:-10px;">Feeds the "${escapeHtml(area.name)}" panel on the Research page — its projects, publications, and people.</p>`;
+    <div class="field" style="margin-bottom:14px;"><label class="field-label">Accent color</label><br>
+      <input type="color" value="${escapeHtml(meta.color||'#0B7285')}" oninput="onAreaMetaInput('color', this.value)" style="width:60px;height:38px;padding:2px;"></div>
+    <div class="field"><label class="field-label">Blurb <span class="opt">(shown on the homepage's Research Areas tile)</span></label>
+      <textarea oninput="onAreaMetaInput('blurb', this.value)">${escapeHtml(area.blurb||'')}</textarea></div>
+  </div>`;
 
   // ── Projects ──
   html += `<div class="topic-section">
@@ -861,7 +1084,31 @@ function renderTopicAreaMain(){
   });
   html += `<button class="btn" onclick="addPerson()">+ Add person</button></div>`;
 
+  // ── Delete area ──
+  html += `<div class="topic-section" style="border-top:1px solid var(--line); padding-top:20px;">
+    <button class="btn danger" onclick="deleteCurrentArea()">Delete this Research Area</button>
+  </div>`;
+
   el.innerHTML = html;
+}
+
+function onAreaMetaInput(field, value){
+  const i = store.topics.entries.findIndex(a => a.key === activeTopicKey);
+  if (i === -1) return;
+  if (field === 'name' || field === 'blurb'){
+    store.topics.entries[i][field] = value;
+    markDirty('topics');
+  } else {
+    const meta = store.area_meta.data[activeTopicKey] || (store.area_meta.data[activeTopicKey] = {});
+    meta[field] = value;
+    markDirty('area_meta');
+  }
+}
+
+function deleteCurrentArea(){
+  const i = store.topics.entries.findIndex(a => a.key === activeTopicKey);
+  if (i === -1) return;
+  deleteAreaEntry(i);
 }
 
 function onProjectInput(i, idx, value){
@@ -986,7 +1233,12 @@ function renderField(f){
       inner = `<textarea id="field-${f.name}" oninput="onFieldInput('${f.name}', this.value)">${escapeHtml(val)}</textarea>`;
       break;
     case 'select': {
-      const opts = f.options.map(o => `<option value="${escapeHtml(o)}" ${o===val?'selected':''}>${escapeHtml(o)}</option>`).join('');
+      let optionList = f.options || [];
+      if (f.optionsFromTopics){
+        const topicNames = store.topics ? store.topics.entries.map(a => a.name) : (f.options || []).filter(o => !(f.extraOptions||[]).includes(o));
+        optionList = f.extraOptions ? [...topicNames, ...f.extraOptions] : topicNames;
+      }
+      const opts = optionList.map(o => `<option value="${escapeHtml(o)}" ${o===val?'selected':''}>${escapeHtml(o)}</option>`).join('');
       const extra = f.drivesTopicFile ? ` onchange="onTopicSelectChange(this.value)"` : ` onchange="onFieldInput('${f.name}', this.value)"`;
       inner = `<select id="field-${f.name}"${extra}><option value="">— select —</option>${opts}</select>`;
       break;
@@ -1054,7 +1306,8 @@ function onMultiToggle(name, value, checked){
 }
 function onTopicSelectChange(value){
   formValues['topic'] = value;
-  formValues['topic_file'] = AREA_TOPIC_FILE[value] || '';
+  const area = store.topics ? store.topics.entries.find(a => a.name === value) : null;
+  formValues['topic_file'] = area ? area.file : '';
   const el = document.getElementById('field-topic_file');
   if (el) el.value = formValues['topic_file'];
 }
@@ -1137,13 +1390,16 @@ async function publishChanges(){
   btn.disabled = true; btn.textContent = 'Publishing…';
   const keys = Array.from(dirty);
   let okCount = 0, failed = [];
+  const specialLabels = { topic_detail: 'Research Areas (content)', topics: 'Research Areas (list)', area_meta: 'Research Areas (colors/codes)' };
   for (const key of keys){
     try {
       if (key === 'topic_detail') await saveTopicDetail();
+      else if (key === 'topics') await saveTopics();
+      else if (key === 'area_meta') await saveAreaMeta();
       else await saveCollection(key);
       okCount++;
     }
-    catch (e) { failed.push((key === 'topic_detail' ? 'Research Areas' : COLLECTIONS[key].label) + ': ' + e.message); }
+    catch (e) { failed.push((specialLabels[key] || COLLECTIONS[key].label) + ': ' + e.message); }
   }
   updatePublishBtn();
   if (failed.length === 0){

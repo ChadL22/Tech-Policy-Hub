@@ -156,15 +156,20 @@ access token instead of an OAuth login — so there's no Cloudflare Worker or
 OAuth App to register or maintain.
 
 **Covers:** People, Events (upcoming + past), homepage content (Hub News,
-Research Spotlight, What We're Reading, Guiding Questions), and each
-Research Area's projects, publications, and people (`topic_detail.yml`,
-under its own "Research Areas" sidebar group — the four areas themselves
-aren't addable/removable there, just their content). Not covered: the
-small taxonomy files (`area_meta.yml`, `event_categories.yml`,
-`role_types.yml`, `reading_types.yml`, `reading_type_labels.yml`,
-`topics.yml` — each tied to a hardcoded CSS color/class elsewhere in the
-site, so adding a key through a form without a matching code change would
-silently render wrong). Those stay a deliberate hand/code edit.
+Research Spotlight, What We're Reading, Guiding Questions), and Research
+Areas in full — under their own "Research Areas" sidebar item, areas
+themselves can be added, renamed, recolored, reordered, and deleted (kept
+in sync across `topics.yml` + `area_meta.yml`), and each area's projects,
+publications, and people (`topic_detail.yml`) are editable from its own
+page. Deleting or renaming an area doesn't update any Research Spotlight
+items or Guiding Questions still tagged with its old name — the tool
+warns about this on delete; check those collections separately after
+publishing. Not covered: the remaining small taxonomy files
+(`event_categories.yml`, `role_types.yml`, `reading_types.yml`,
+`reading_type_labels.yml` — each tied to a hardcoded CSS color/class
+elsewhere in the site, so adding a key through a form without a matching
+code change would silently render wrong). Those stay a deliberate
+hand/code edit.
 
 **To use it:**
 

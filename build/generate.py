@@ -287,10 +287,7 @@ def footer():
       <div>
         <h4>Research</h4>
         <ul>
-          <li><a href="research.html#area-panel-cybersecurity">Cybersecurity</a></li>
-          <li><a href="research.html#area-panel-privacy">Consumer Privacy</a></li>
-          <li><a href="research.html#area-panel-integrity">Information Integrity</a></li>
-          <li><a href="research.html#area-panel-ml">Trustworthy ML</a></li>
+          {"".join(f'<li><a href="{t["file"]}">{t["name"]}</a></li>' for t in TOPICS)}
           <li><a href="courses.html">Teaching</a></li>
         </ul>
       </div>
@@ -876,11 +873,12 @@ def filter_pills_html(values, group):
 
 
 def research_matrix_html():
-    """Miniature 2x2 grid of the Hub's 4 research areas -- homepage only,
-    sits directly under the lead grid's Hub News rail (follow-up 16).
-    Assumes exactly 4 TOPICS (a true 2x2); if that count ever changes
-    this needs a different layout, not just more/fewer cells."""
-    assert len(TOPICS) == 4, "research_matrix_html() is hard-coded for a 2x2 (4 topics)"
+    """Grid of the Hub's research areas (homepage only, sits directly
+    under the lead grid's Hub News rail -- follow-up 16). A true 2-column
+    ruled grid; the CSS gives a lone odd-count final cell the full row
+    width (.matrix-cell:last-child:nth-child(odd)) so any number of
+    areas (added/removed via the content manager's Research Areas
+    editor) lays out cleanly, not just the original 4."""
     return "".join(f"""
         <a class="matrix-cell" href="{t['file']}">
           <span class="index">{t['index']}</span>
