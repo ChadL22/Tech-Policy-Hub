@@ -1945,17 +1945,23 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
      above (plenty of vertical room there), but mobile's fixed 262px-
      tall card (see .person-body above) has much less to spare, so
      Email/LinkedIn/Website go 2-across here instead of one per line.
-     Same technique as .person-media-caption .rp-tags' own 2x2 grid
-     below: display:contents on the two wrapper divs (.person-contact,
-     .person-links) removes their boxes without touching the generated
-     markup, so their <a>/<span> children -- Email, [LinkedIn], Website,
-     [any extra site] in that DOM order -- become direct items of one
-     2-column grid. Most people have no LinkedIn on file, so Email+
-     Website already fill exactly one row; the few who do have all
-     three wrap to a second row with one empty cell, the literal "2x2"
-     the request describes. */
-  .person-caption-links{ display:grid; grid-template-columns: repeat(2, auto); gap: 4px 14px; }
-  .person-contact, .person-links{ display:contents; }
+     Follow-up (direct user request): the first attempt at this
+     flattened .person-contact and .person-links into ONE 2-column grid
+     via display:contents, which auto-flowed every link across both
+     columns in DOM order -- fine when there's a LinkedIn (Email+
+     LinkedIn fill row 1, Website starts row 2, matching the request),
+     but wrong for the common no-LinkedIn case, where Website slid up
+     into row 1's empty second cell instead of staying beneath Email:
+     "we do not want to move website to the second column, it should be
+     beneath the email option. If the person had a 3rd or 4th listing
+     like a LinkedIn then it would start the second column." So each
+     wrapper is now its OWN 2-column grid instead of being flattened
+     away: .person-contact (Email, +LinkedIn if present) is row 1,
+     .person-links (Website, +any extra site) is always row 2 --
+     Website only ever shares a row with another website, never with
+     Email/LinkedIn, regardless of how many items either row has. */
+  .person-caption-links{ display:flex; flex-direction:column; gap:4px; }
+  .person-contact, .person-links{ display:grid; grid-template-columns: repeat(2, auto); gap: 4px 14px; }
   .person-content{
     flex:0 0 100%; width:100%;
     scroll-snap-align:start; scroll-snap-stop:always;
