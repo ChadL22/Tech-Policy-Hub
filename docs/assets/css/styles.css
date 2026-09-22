@@ -2286,15 +2286,20 @@ footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding
    track, so the visible content still hugged the left edge of each
    third, reading as left-skewed overall rather than as one centered
    block (unlike the newsletter band right above it, which IS a
-   centered block). max-content columns + justify-content:center shrink
-   each track to fit its own content instead, so Research/Events/Connect
-   sit together as a compact, genuinely centered cluster -- gap bumped
-   32px -> 56px alongside this so the (now much narrower) columns don't
-   read as cramped once they're not stretched full-width anymore. Mobile
-   (see the max-width:900px/720px overrides below) is untouched --
-   1fr 1fr there is the right call at that size, where filling the
-   available width keeps things legible rather than clustering tight. */
-.footer-grid{ display:grid; grid-template-columns: repeat(3, max-content); justify-content:center; gap: 56px; padding-bottom: 44px; }
+   centered block). max-content columns shrink each track to fit its
+   own content instead of stretching.
+   Follow-up (direct user request): "spaced out across the bottom... do
+   not need them centered and hugging each other" -- justify-content
+   flipped center -> space-between, so Research sits at the container's
+   left edge, Connect at its right edge, and Events falls in the even
+   gap between them, spread across the full width like the original
+   1fr 1fr 1fr did spatially, but without that version's problem (each
+   column's own content is still sized to itself, left-aligned under
+   its own heading, not stretched into a wide track). gap is now just a
+   floor under that spacing, not the main mechanism, so it's back down
+   to a plain 32px. Mobile (max-width:900px/720px below) is untouched --
+   1fr 1fr there is the right call at that size. */
+.footer-grid{ display:grid; grid-template-columns: repeat(3, max-content); justify-content:space-between; gap: 32px; padding-bottom: 44px; }
 .footer-grid h4{ font-family: var(--font-nav); font-size:.82rem; text-transform:uppercase; letter-spacing:.04em; margin-bottom:14px; color: var(--ink); }
 .footer-grid ul{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:9px; }
 .footer-grid a{ color: var(--ink-soft); font-size:.92rem; }
