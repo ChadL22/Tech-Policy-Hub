@@ -1,17 +1,15 @@
 - initials: IS
   name: Dr. Ido Sivan-Sevilla
-  photo: assets/img/people/ido-sivan-sevilla.jpg
   role: Founder & Director
   focus: Privacy law, regulatory enforcement, comparative tech policy
   role_types:
-  - core-member
-  bio: Founder and director of the Tech Policy Hub. Ido is an assistant professor in UMD's College of Information
-    and an affiliate professor in the School of Public Policy, studying the governance of digital technologies through
-    methods spanning process tracing, computational text analysis, and vulnerability analysis.
+    - core-member
+  bio: Founder and director of the Tech Policy Hub. Ido is an assistant professor in UMD's College of Information and an affiliate professor in the School of Public Policy, studying the governance of digital technologies through novel computational methods to advance evidence-based monitoring and evaluation of tech policy implementations, building adaptive models for tech regulation.
   email: sevilla@umd.edu
+  photo: assets/img/people/ido-sivan-sevilla.jpg
   websites:
-  - label: Personal Website
-    url: https://idonibrasco.github.io/
+    - label: Personal Website
+      url: https://idonibrasco.github.io/
   linkedin: null
 - initials: SL
   name: Sipho C. Langa, M.S.
@@ -19,15 +17,12 @@
   role: Co-Lead
   focus: Mechanism design, welfare economics, consumer protection, HCI
   role_types:
-  - core-member
-  bio: Sipho is a research engineer whose professional work focuses on Causal Inference and Artificial Intelligence.
-    His academic work explores topics at the intersection of technology, law, and policy through the lens of
-    mechanism design. He is also the Founder and Executive Director of the <a href="https://phronesisresearch.org/"
-    target="_blank" rel="noopener">Phronesis Institute</a>.
+    - core-member
+  bio: Sipho is a research engineer whose professional work focuses on Causal Inference and Artificial Intelligence. His academic work explores topics at the intersection of technology, law, and policy through the lens of mechanism design. He is also the Founder and Executive Director of the <a href="https://phronesisresearch.org/" target="_blank" rel="noopener">Phronesis Institute</a>.
   email: sclanga@proton.me
   websites:
-  - label: Website
-    url: https://chadl22.github.io/
+    - label: Website
+      url: https://chadl22.github.io/
   linkedin: null
 - initials: CH
   name: Dr. Charles Harry
@@ -35,11 +30,8 @@
   role: Faculty
   focus: Cyber risk measurement, critical infrastructure, strategic cyber policy
   role_types:
-  - affiliate
-  bio: Charles Harry is a senior researcher and practitioner with over 20 years of experience in intelligence and
-    cyber operations. He directs the Center for Governance of Technology and Systems (GoTech) and is an Associate
-    Research Professor in UMD's School of Public Policy, researching how to measure the effects of cyberattacks
-    to help policymakers assess strategic risk.
+    - affiliate
+  bio: Charles Harry is a senior researcher and practitioner with over 20 years of experience in intelligence and cyber operations. He directs the Center for Governance of Technology and Systems (GoTech) and is an Associate Research Professor in UMD's School of Public Policy, researching how to measure the effects of cyberattacks to help policymakers assess strategic risk.
   email: null
   websites: []
   linkedin: null
@@ -49,10 +41,8 @@
   role: Practitioner (Tech/Government)
   focus: Cybersecurity, disinformation, machine learning, data science
   role_types:
-  - affiliate
-  bio: Mark McDermott is a researcher and engineer with over 15 years of experience spanning cybersecurity, disinformation,
-    machine learning, and big data. His work crosses mathematics, engineering, and analysis, from U.S. defense applications
-    to international research collaborations.
+    - affiliate
+  bio: Mark McDermott is a researcher and engineer with over 15 years of experience spanning cybersecurity, disinformation, machine learning, and big data. His work crosses mathematics, engineering, and analysis, from U.S. defense applications to international research collaborations.
   email: null
   websites: []
   linkedin: null
@@ -62,10 +52,8 @@
   role: Faculty
   focus: Human-centered computer security, usable privacy
   role_types:
-  - affiliate
-  bio: Michelle Mazurek is an associate professor of computer science at the University of Maryland and Director
-    of the Maryland Cybersecurity Center. Her research focuses on human-centered computer security, understanding
-    and improving how professionals and everyday users learn, adopt, and experience security and privacy practices.
+    - affiliate
+  bio: Michelle Mazurek is an associate professor of computer science at the University of Maryland and Director of the Maryland Cybersecurity Center. Her research focuses on human-centered computer security, understanding and improving how professionals and everyday users learn, adopt, and experience security and privacy practices.
   email: null
   websites: []
   linkedin: null
@@ -75,10 +63,8 @@
   role: Faculty
   focus: Human-centered cryptography, privacy-preserving systems
   role_types:
-  - affiliate
-  bio: Gabriel Kaptchuk is an assistant professor in UMD's Department of Computer Science, with a joint appointment
-    in the University of Maryland Institute for Advanced Computer Studies (UMIACS). His research centers on human-centered
-    cryptography, making privacy-preserving systems intuitive and accessible.
+    - affiliate
+  bio: Gabriel Kaptchuk is an assistant professor in UMD's Department of Computer Science, with a joint appointment in the University of Maryland Institute for Advanced Computer Studies (UMIACS). His research centers on human-centered cryptography, making privacy-preserving systems intuitive and accessible.
   email: null
   websites: []
   linkedin: null
@@ -88,11 +74,8 @@
   role: Fellow
   focus: Web privacy, data infrastructure, misinformation policy
   role_types:
-  - affiliate
-  bio: Parthav Poudel is a Computer Science and Cybersecurity student at the University of Maryland (Class of 2026)
-    and a Department of Defense SMART Scholarship recipient. He conducts research at UMD's College of Information
-    on data infrastructure, web privacy, and misinformation, building web-crawling and data pipelines that inform
-    cybersecurity and misinformation policy.
+    - affiliate
+  bio: Parthav Poudel is a Computer Science and Cybersecurity student at the University of Maryland (Class of 2026) and a Department of Defense SMART Scholarship recipient. He conducts research at UMD's College of Information on data infrastructure, web privacy, and misinformation, building web-crawling and data pipelines that inform cybersecurity and misinformation policy.
   email: null
   websites: []
   linkedin: null
@@ -101,10 +84,8 @@
   role: Faculty
   focus: Consumer privacy, technology adoption, privacy education
   role_types:
-  - affiliate
-  bio: Jessica Vitak is a professor in UMD's iSchool and an affiliate professor in the Communication Department
-    and the Joint Program in Survey Methodology. She runs the Privacy Education and Research Lab (PEARL), studying
-    how privacy concerns shape technology adoption and developing tools for more informed data-sharing decisions.
+    - affiliate
+  bio: Jessica Vitak is a professor in UMD's iSchool and an affiliate professor in the Communication Department and the Joint Program in Survey Methodology. She runs the Privacy Education and Research Lab (PEARL), studying how privacy concerns shape technology adoption and developing tools for more informed data-sharing decisions.
   email: null
   websites: []
   linkedin: null
@@ -113,10 +94,8 @@
   role: Fellow
   focus: Ad tech, cookie deprecation, consumer privacy
   role_types:
-  - affiliate
-  bio: Patrick Parham is a Ph.D. student at UMD's College of Information studying advertising and media technology,
-    with a focus on proposals for a post-third-party-cookie web. He previously worked in the programmatic advertising
-    industry.
+    - affiliate
+  bio: Patrick Parham is a Ph.D. student at UMD's College of Information studying advertising and media technology, with a focus on proposals for a post-third-party-cookie web. He previously worked in the programmatic advertising industry.
   email: null
   websites: []
   linkedin: null
@@ -125,10 +104,8 @@
   role: Faculty
   focus: Information quality, social network dynamics
   role_types:
-  - affiliate
-  bio: Giovanni Luca Ciampaglia is an assistant professor at UMD's College of Information, where he leads the Computational
-    Socio-dynamics Laboratory. His research examines how information quality and propagation shape trust and reliability
-    in social computing systems.
+    - affiliate
+  bio: Giovanni Luca Ciampaglia is an assistant professor at UMD's College of Information, where he leads the Computational Socio-dynamics Laboratory. His research examines how information quality and propagation shape trust and reliability in social computing systems.
   email: null
   websites: []
   linkedin: null
@@ -137,10 +114,8 @@
   role: Faculty
   focus: Data governance, misinformation, open science
   role_types:
-  - affiliate
-  bio: Irene Pasquetto is an assistant professor at UMD's College of Information. Her research spans data governance
-    and open data practices, mis- and disinformation studies, and related questions in algorithmic fairness, digital
-    labor, and open science.
+    - affiliate
+  bio: Irene Pasquetto is an assistant professor at UMD's College of Information. Her research spans data governance and open data practices, mis- and disinformation studies, and related questions in algorithmic fairness, digital labor, and open science.
   email: null
   websites: []
   linkedin: null
@@ -149,10 +124,8 @@
   role: Faculty
   focus: Information quality, crisis informatics, social media
   role_types:
-  - affiliate
-  bio: Cody Buntain is an assistant professor at UMD's College of Information, studying how people use online information
-    spaces during crises and political unrest. He is a research affiliate at NYU's Center for Social Media and Politics,
-    and his work has been covered by outlets including the New York Times and WIRED.
+    - affiliate
+  bio: Cody Buntain is an assistant professor at UMD's College of Information, studying how people use online information spaces during crises and political unrest. He is a research affiliate at NYU's Center for Social Media and Politics, and his work has been covered by outlets including the New York Times and WIRED.
   email: null
   websites: []
   linkedin: null
@@ -161,10 +134,8 @@
   role: Faculty
   focus: Data ethics, trustworthy AI, responsible research practice
   role_types:
-  - affiliate
-  bio: Katie Shilton is a professor at UMD's College of Information studying technology and data ethics. She leads
-    the Ethics & Values in Design (EViD) Lab and co-directs the NSF/NIST-funded TRAILS Institute on trustworthy
-    AI, with recent work spanning content moderation and data ethics education.
+    - affiliate
+  bio: Katie Shilton is a professor at UMD's College of Information studying technology and data ethics. She leads the Ethics & Values in Design (EViD) Lab and co-directs the NSF/NIST-funded TRAILS Institute on trustworthy AI, with recent work spanning content moderation and data ethics education.
   email: null
   websites: []
   linkedin: null
@@ -173,11 +144,8 @@
   role: Fellow
   focus: AI governance, platform governance, participatory design
   role_types:
-  - affiliate
-  bio: Laura Fichtner is a postdoctoral researcher with the TRAILS Institute, researching how artificial intelligence,
-    particularly generative AI, can be developed and governed in a participatory, democratic manner. She earned
-    her doctorate from the University of Hamburg with a thesis on platform governance and content moderation regulation
-    in Germany.
+    - affiliate
+  bio: Laura Fichtner is a postdoctoral researcher with the TRAILS Institute, researching how artificial intelligence, particularly generative AI, can be developed and governed in a participatory, democratic manner. She earned her doctorate from the University of Hamburg with a thesis on platform governance and content moderation regulation in Germany.
   email: null
   websites: []
   linkedin: null
@@ -186,11 +154,8 @@
   role: Practitioner (Tech/Government)
   focus: AI governance, algorithmic measurement, responsible AI
   role_types:
-  - affiliate
-  bio: Amy Winecoff is a Senior Technologist in the AI Governance Lab at the Center for Democracy & Technology,
-    developing technically informed strategies for AI governance and measurement. She previously worked as a data
-    scientist building recommendation systems and was a research fellow at Princeton's Center for Information Technology
-    Policy.
+    - affiliate
+  bio: Amy Winecoff is a Senior Technologist in the AI Governance Lab at the Center for Democracy & Technology, developing technically informed strategies for AI governance and measurement. She previously worked as a data scientist building recommendation systems and was a research fellow at Princeton's Center for Information Technology Policy.
   email: null
   websites: []
   linkedin: null
