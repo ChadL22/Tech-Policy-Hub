@@ -139,6 +139,10 @@ def head(title, description):
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{title} | Tech Policy Hub</title>
 <meta name="description" content="{description}">
+<link rel="icon" href="assets/img/favicon.ico?v={ASSET_VERSION}" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png?v={ASSET_VERSION}">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon-16.png?v={ASSET_VERSION}">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png?v={ASSET_VERSION}">
 <link rel="stylesheet" href="assets/css/styles.css?v={ASSET_VERSION}">
 </head>
 <body>
