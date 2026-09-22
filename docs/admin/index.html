@@ -183,6 +183,17 @@ h1,h2,h3{ margin:0; font-family: var(--font-body); }
 
 .loading-note{ padding: 40px 0; text-align:center; color: var(--ink-soft); }
 .required-mark{ color: var(--umd-red); }
+
+/* topic-area (Research Areas / topic_detail.yml) editor */
+.topic-section{ max-width: 760px; margin-bottom: 32px; }
+.topic-section-head{ font-size:1.05rem; font-weight:700; margin-bottom:4px; padding-bottom:8px; border-bottom:1.5px solid var(--line); }
+.topic-section-hint{ font-size:.78rem; color: var(--ink-soft); margin:6px 0 14px; }
+.topic-card{ display:flex; gap:12px; background:#fff; border:1.5px solid var(--line); border-radius: var(--radius-lg); padding: 14px 16px; margin-bottom:10px; align-items:flex-start; }
+.topic-card-body{ flex:1; min-width:0; display:flex; flex-direction:column; gap:10px; }
+.topic-card-body .field{ margin-bottom:0; }
+.topic-card-body .field-label{ font-weight:400; }
+.topic-card-row{ display:grid; grid-template-columns: 1fr 110px; gap:10px; }
+.topic-card-actions{ display:flex; flex-direction:column; gap:6px; flex:none; }
 </style>
 </head>
 <body>
@@ -194,9 +205,10 @@ h1,h2,h3{ margin:0; font-family: var(--font-body); }
     <h1>Content Manager</h1>
     <p>
       Add, edit, and remove People, Events, Hub News, Research Spotlight items,
-      What We're Reading, and Guiding Questions — no code or terminal needed.
-      Saved changes publish straight to the site's repository and the site
-      rebuilds itself automatically within a couple of minutes.
+      What We're Reading, Guiding Questions, and each Research Area's projects,
+      publications, and people — no code or terminal needed. Saved changes
+      publish straight to the site's repository and the site rebuilds itself
+      automatically within a couple of minutes.
     </p>
     <p>
       <strong>Enter a GitHub personal access token</strong> with write access to
@@ -260,19 +272,35 @@ const AREA_TOPIC_FILE = {
   'Trustworthy ML': 'research.html#area-panel-ml',
 };
 
+// The four fixed research areas (mirrors build/data/topics.yml's key/name
+// pairs -- kept in sync by hand, same as AREA_TOPIC_FILE above). These
+// keys themselves aren't editable here -- the topic taxonomy is tied to
+// hardcoded CSS colors in area_meta.yml, same reasoning as the other
+// excluded taxonomy files -- only each area's build/data/topic_detail.yml
+// content (its projects, publications, and people) is.
+const TOPIC_AREAS = [
+  { key: 'cybersecurity', name: 'Cybersecurity' },
+  { key: 'privacy', name: 'Consumer Privacy' },
+  { key: 'integrity', name: 'Information Integrity' },
+  { key: 'ml', name: 'Trustworthy ML' },
+];
+const TOPIC_DETAIL_FILE = 'build/data/topic_detail.yml';
+
 // ═══════════════════════════════════════════════════════════
 // COLLECTION SCHEMAS
-// One entry per build/data/*.yml file this tool edits. Scope mirrors
-// docs/admin/config.yml's own (now-retired) Sveltia collections exactly:
-// People, Events (upcoming + past), and homepage content (Hub News,
-// Research Spotlight, What We're Reading, Guiding Questions).
-// Deliberately NOT covered here, same reasoning as before: topic_detail.yml
-// (nested per-research-area data, not a flat list) and the small taxonomy
-// files (area_meta.yml, event_categories.yml, role_types.yml,
-// reading_types.yml, reading_type_labels.yml, topics.yml) -- each tied to
-// a hardcoded CSS color/class elsewhere in the site, so these stay a
-// deliberate hand/code edit. ticker.json is excluded too -- it's refreshed
-// on a schedule by refresh-ticker.yml, not hand-edited content.
+// One entry per flat-list build/data/*.yml file this tool edits: People,
+// Events (upcoming + past), and homepage content (Hub News, Research
+// Spotlight, What We're Reading, Guiding Questions). build/data/topic_detail.yml
+// (each Research Area's projects/publications/people) is a different shape --
+// a fixed-key object, not a flat list -- so it gets its own "Research Areas"
+// sidebar group and editor below (see TOPIC_AREAS / renderTopicAreaMain),
+// rather than fitting the schema-driven form here.
+// Deliberately NOT covered at all: the small taxonomy files (area_meta.yml,
+// event_categories.yml, role_types.yml, reading_types.yml,
+// reading_type_labels.yml, topics.yml) -- each tied to a hardcoded CSS
+// color/class elsewhere in the site, so these stay a deliberate hand/code
+// edit. ticker.json is excluded too -- it's refreshed on a schedule by
+// refresh-ticker.yml, not hand-edited content.
 // ═══════════════════════════════════════════════════════════
 const COLLECTIONS = {
   people: {
@@ -396,6 +424,7 @@ let ghToken = localStorage.getItem(TOKEN_KEY) || null;
 let store = {};       // key -> { entries: [...], sha: '...' }
 let dirty = new Set(); // keys with unpublished edits
 let activeKey = null;
+let activeTopicKey = null; // non-null when a Research Area (topic_detail.yml) is selected instead
 let editingIndex = null; // null = list view; -1 = new entry; number = editing that index
 let formValues = {};
 
@@ -490,6 +519,46 @@ async function saveCollection(key){
   dirty.delete(key);
 }
 
+// topic_detail.yml is a fixed-key object ({cybersecurity:{...}, privacy:{...},
+// integrity:{...}, ml:{...}}), not a flat list, so it gets its own
+// load/save pair instead of going through loadCollection/saveCollection.
+// store.topic_detail = { data: {...}, sha } -- edits write straight into
+// `data` (see renderTopicAreaMain and its handlers) rather than through a
+// formValues draft, since each area has three independent repeatable
+// lists rather than one flat set of fields.
+async function loadTopicDetail(){
+  const data = await ghFetch('/repos/' + REPO + '/contents/' + TOPIC_DETAIL_FILE + '?ref=' + BRANCH);
+  const text = b64DecodeUtf8(data.content);
+  const parsed = jsyaml.load(text) || {};
+  for (const area of TOPIC_AREAS){
+    const d = parsed[area.key] || (parsed[area.key] = {});
+    if (!Array.isArray(d.projects)) d.projects = [];
+    if (!Array.isArray(d.pubs)) d.pubs = [];
+    if (!Array.isArray(d.people)) d.people = [];
+  }
+  store.topic_detail = { data: parsed, sha: data.sha };
+}
+
+async function saveTopicDetail(){
+  // Same stale-sha-avoidance pattern as saveCollection: re-fetch the
+  // current sha immediately before writing.
+  const current = await ghFetch('/repos/' + REPO + '/contents/' + TOPIC_DETAIL_FILE + '?ref=' + BRANCH);
+  store.topic_detail.sha = current.sha;
+  const yamlText = jsyaml.dump(store.topic_detail.data, { lineWidth: -1, noRefs: true, sortKeys: false });
+  const encoded = b64EncodeUtf8(yamlText);
+  const result = await ghFetch('/repos/' + REPO + '/contents/' + TOPIC_DETAIL_FILE, {
+    method: 'PUT',
+    body: JSON.stringify({
+      message: 'content: update topic_detail.yml via CMS',
+      content: encoded,
+      sha: store.topic_detail.sha,
+      branch: BRANCH,
+    }),
+  });
+  store.topic_detail.sha = result.content.sha;
+  dirty.delete('topic_detail');
+}
+
 async function uploadImageFile(file, uploadDir, slugHint){
   const ext = (file.type.split('/')[1] || 'png').replace('jpeg','jpg');
   const base = slugify(slugHint) || 'image';
@@ -558,7 +627,7 @@ async function connect(){
 function disconnect(){
   localStorage.removeItem(TOKEN_KEY);
   ghToken = null;
-  store = {}; dirty.clear(); activeKey = null; editingIndex = null;
+  store = {}; dirty.clear(); activeKey = null; activeTopicKey = null; editingIndex = null;
   document.getElementById('cms-shell').style.display = 'none';
   document.getElementById('connect-wrap').style.display = 'flex';
   document.getElementById('token-input').value = '';
@@ -574,8 +643,11 @@ async function initApp(){
     catch (e) { failedAny = true; showToast('Failed to load ' + COLLECTIONS[key].label + ': ' + e.message, 'error'); }
     renderSidebar(); // update counts incrementally
   }
+  try { await loadTopicDetail(); }
+  catch (e) { failedAny = true; showToast('Failed to load Research Areas: ' + e.message, 'error'); }
+  renderSidebar();
   setStatus(failedAny ? 'Connected (some content failed to load)' : 'Connected', !failedAny);
-  if (!activeKey){ selectCollection(keys[0]); }
+  if (!activeKey && !activeTopicKey){ selectCollection(keys[0]); }
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -595,11 +667,29 @@ function renderSidebar(){
       </button>`;
     }
   }
+  html += `<div class="sidebar-group-label">Research Areas</div>`;
+  for (const area of TOPIC_AREAS){
+    const d = store.topic_detail ? store.topic_detail.data[area.key] : null;
+    const count = d ? (d.projects.length + d.pubs.length + d.people.length) : '—';
+    const active = area.key === activeTopicKey ? ' active' : '';
+    html += `<button class="sidebar-item${active}" onclick="selectTopicArea('${area.key}')">
+      <span>${escapeHtml(area.name)}</span><span class="sidebar-count">${count}</span>
+    </button>`;
+  }
   el.innerHTML = html;
 }
 
 function selectCollection(key){
   activeKey = key;
+  activeTopicKey = null;
+  editingIndex = null;
+  renderSidebar();
+  renderMain();
+}
+
+function selectTopicArea(key){
+  activeTopicKey = key;
+  activeKey = null;
   editingIndex = null;
   renderSidebar();
   renderMain();
@@ -610,6 +700,7 @@ function selectCollection(key){
 // ═══════════════════════════════════════════════════════════
 function renderMain(){
   const el = document.getElementById('main');
+  if (activeTopicKey){ renderTopicAreaMain(); return; }
   if (!activeKey){ el.innerHTML = ''; return; }
   const col = COLLECTIONS[activeKey];
   if (!store[activeKey]){
@@ -670,6 +761,172 @@ function deleteEntry(i){
   if (!confirm(`Delete "${label}"? This can't be undone once you publish.`)) return;
   store[activeKey].entries.splice(i, 1);
   markDirty(activeKey);
+  renderMain();
+}
+
+// ═══════════════════════════════════════════════════════════
+// MAIN — Research Area editor (topic_detail.yml)
+// Edits write straight into store.topic_detail.data[topicKey] (no
+// separate formValues draft/Save-Cancel step) since each area holds
+// three independent repeatable lists rather than one flat set of
+// fields — the same direct-to-store, re-render-on-structural-change
+// pattern moveEntry/deleteEntry already use above.
+// ═══════════════════════════════════════════════════════════
+function renderTopicAreaMain(){
+  const el = document.getElementById('main');
+  if (!store.topic_detail){
+    el.innerHTML = `<div class="loading-note">Loading Research Areas…</div>`;
+    return;
+  }
+  const area = TOPIC_AREAS.find(a => a.key === activeTopicKey);
+  const data = store.topic_detail.data[activeTopicKey];
+
+  let html = `<div class="main-header">
+      <h2 class="main-title">${escapeHtml(area.name)}</h2>
+      <span class="main-file-hint">build/data/topic_detail.yml — ${area.key}</span>
+    </div>
+    <p class="topic-section-hint" style="margin-top:-10px;">Feeds the "${escapeHtml(area.name)}" panel on the Research page — its projects, publications, and people.</p>`;
+
+  // ── Projects ──
+  html += `<div class="topic-section">
+    <h3 class="topic-section-head">Projects</h3>`;
+  if (data.projects.length === 0){
+    html += `<div class="empty-state" style="padding:18px;"><p>No projects yet.</p></div>`;
+  }
+  data.projects.forEach((p, i) => {
+    html += `<div class="topic-card">
+      <div class="entry-card-order">
+        <button onclick="moveProject(${i},-1)" ${i===0?'disabled':''} title="Move up">▲</button>
+        <button onclick="moveProject(${i},1)" ${i===data.projects.length-1?'disabled':''} title="Move down">▼</button>
+      </div>
+      <div class="topic-card-body">
+        <div class="field"><label class="field-label">Title</label>
+          <input type="text" value="${escapeHtml(p[0]||'')}" oninput="onProjectInput(${i},0,this.value)"></div>
+        <div class="field"><label class="field-label">Description</label>
+          <textarea oninput="onProjectInput(${i},1,this.value)">${escapeHtml(p[1]||'')}</textarea></div>
+      </div>
+      <div class="topic-card-actions"><button class="btn small danger" onclick="removeProject(${i})">Delete</button></div>
+    </div>`;
+  });
+  html += `<button class="btn" onclick="addProject()">+ Add project</button></div>`;
+
+  // ── Publications ──
+  html += `<div class="topic-section">
+    <h3 class="topic-section-head">Publications</h3>
+    <p class="topic-section-hint">Shown newest-first, grouped by year — order here doesn't matter.</p>`;
+  if (data.pubs.length === 0){
+    html += `<div class="empty-state" style="padding:18px;"><p>No publications yet.</p></div>`;
+  }
+  data.pubs.forEach((p, i) => {
+    html += `<div class="topic-card">
+      <div class="topic-card-body">
+        <div class="topic-card-row">
+          <div class="field"><label class="field-label">Venue</label>
+            <input type="text" value="${escapeHtml(p.venue||'')}" oninput="onPubInput(${i},'venue',this.value)"></div>
+          <div class="field"><label class="field-label">Year</label>
+            <input type="number" value="${p.year==null?'':escapeHtml(p.year)}" oninput="onPubInput(${i},'year',this.value)"></div>
+        </div>
+        <div class="field"><label class="field-label">Title</label>
+          <input type="text" value="${escapeHtml(p.title||'')}" oninput="onPubInput(${i},'title',this.value)"></div>
+        <div class="field"><label class="field-label">Link</label>
+          <input type="text" value="${escapeHtml(p.link||'')}" oninput="onPubInput(${i},'link',this.value)"></div>
+        <div class="field"><label class="field-label">Authors <span class="opt">(one per line, in citation order)</span></label>
+          <textarea oninput="onPubAuthorsInput(${i},this.value)">${escapeHtml((p.authors||[]).join('\n'))}</textarea></div>
+      </div>
+      <div class="topic-card-actions"><button class="btn small danger" onclick="removePub(${i})">Delete</button></div>
+    </div>`;
+  });
+  html += `<button class="btn" onclick="addPub()">+ Add publication</button></div>`;
+
+  // ── People ──
+  const peopleNames = store.people ? store.people.entries.map(p => p.name).filter(Boolean) : [];
+  html += `<div class="topic-section">
+    <h3 class="topic-section-head">People</h3>
+    <p class="topic-section-hint">Type or pick a name matching an entry in People exactly, so their tile links to their full listing there.</p>
+    <datalist id="topic-people-datalist">${peopleNames.map(n => `<option value="${escapeHtml(n)}">`).join('')}</datalist>`;
+  if (data.people.length === 0){
+    html += `<div class="empty-state" style="padding:18px;"><p>No people linked yet.</p></div>`;
+  }
+  data.people.forEach((name, i) => {
+    html += `<div class="topic-card" style="padding:10px 12px;">
+      <div class="entry-card-order">
+        <button onclick="movePerson(${i},-1)" ${i===0?'disabled':''} title="Move up">▲</button>
+        <button onclick="movePerson(${i},1)" ${i===data.people.length-1?'disabled':''} title="Move down">▼</button>
+      </div>
+      <div class="topic-card-body">
+        <input type="text" list="topic-people-datalist" value="${escapeHtml(name||'')}" oninput="onPersonInput(${i},this.value)">
+      </div>
+      <div class="topic-card-actions"><button class="btn small danger" onclick="removePerson(${i})">Delete</button></div>
+    </div>`;
+  });
+  html += `<button class="btn" onclick="addPerson()">+ Add person</button></div>`;
+
+  el.innerHTML = html;
+}
+
+function onProjectInput(i, idx, value){
+  store.topic_detail.data[activeTopicKey].projects[i][idx] = value;
+  markDirty('topic_detail');
+}
+function addProject(){
+  store.topic_detail.data[activeTopicKey].projects.push(['', '']);
+  markDirty('topic_detail');
+  renderMain();
+}
+function removeProject(i){
+  store.topic_detail.data[activeTopicKey].projects.splice(i, 1);
+  markDirty('topic_detail');
+  renderMain();
+}
+function moveProject(i, dir){
+  const arr = store.topic_detail.data[activeTopicKey].projects;
+  const j = i + dir;
+  if (j < 0 || j >= arr.length) return;
+  [arr[i], arr[j]] = [arr[j], arr[i]];
+  markDirty('topic_detail');
+  renderMain();
+}
+
+function onPubInput(i, field, value){
+  const pub = store.topic_detail.data[activeTopicKey].pubs[i];
+  pub[field] = field === 'year' ? (value === '' ? null : Number(value)) : value;
+  markDirty('topic_detail');
+}
+function onPubAuthorsInput(i, value){
+  store.topic_detail.data[activeTopicKey].pubs[i].authors = value.split('\n').map(s => s.trim()).filter(Boolean);
+  markDirty('topic_detail');
+}
+function addPub(){
+  store.topic_detail.data[activeTopicKey].pubs.push({ venue:'', year:null, title:'', link:'', authors:[] });
+  markDirty('topic_detail');
+  renderMain();
+}
+function removePub(i){
+  store.topic_detail.data[activeTopicKey].pubs.splice(i, 1);
+  markDirty('topic_detail');
+  renderMain();
+}
+
+function onPersonInput(i, value){
+  store.topic_detail.data[activeTopicKey].people[i] = value;
+  markDirty('topic_detail');
+}
+function addPerson(){
+  store.topic_detail.data[activeTopicKey].people.push('');
+  markDirty('topic_detail');
+  renderMain();
+}
+function removePerson(i){
+  store.topic_detail.data[activeTopicKey].people.splice(i, 1);
+  markDirty('topic_detail');
+  renderMain();
+}
+function movePerson(i, dir){
+  const arr = store.topic_detail.data[activeTopicKey].people;
+  const j = i + dir;
+  if (j < 0 || j >= arr.length) return;
+  [arr[i], arr[j]] = [arr[j], arr[i]];
+  markDirty('topic_detail');
   renderMain();
 }
 
@@ -881,8 +1138,12 @@ async function publishChanges(){
   const keys = Array.from(dirty);
   let okCount = 0, failed = [];
   for (const key of keys){
-    try { await saveCollection(key); okCount++; }
-    catch (e) { failed.push(COLLECTIONS[key].label + ': ' + e.message); }
+    try {
+      if (key === 'topic_detail') await saveTopicDetail();
+      else await saveCollection(key);
+      okCount++;
+    }
+    catch (e) { failed.push((key === 'topic_detail' ? 'Research Areas' : COLLECTIONS[key].label) + ': ' + e.message); }
   }
   updatePublishBtn();
   if (failed.length === 0){
