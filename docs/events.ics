@@ -12,7 +12,7 @@ DTEND;VALUE=DATE:20260910
 SUMMARY:Speaker Series: Platform Design & the Law
 DESCRIPTION:4:00 PM · College Park\, MD & Zoom
 CATEGORIES:Speaker Series
-URL:https://chadl22.github.io/Tech-Policy-Hub/speaker-series/
+URL:https://techpolicyhub.org/speaker-series/
 END:VEVENT
 BEGIN:VEVENT
 UID:20261014-workshop-measuring-algorithmic-harm@techpolicyhub.umd.edu
@@ -22,7 +22,7 @@ DTEND;VALUE=DATE:20261015
 SUMMARY:Workshop: Measuring Algorithmic Harm
 DESCRIPTION:1:00 PM · Iribe Center\, Room 3137
 CATEGORIES:Workshop
-URL:https://chadl22.github.io/Tech-Policy-Hub/events/
+URL:https://techpolicyhub.org/events/
 END:VEVENT
 BEGIN:VEVENT
 UID:20261118-roundtable-ai-policy-in-the-states@techpolicyhub.umd.edu
@@ -32,7 +32,7 @@ DTEND;VALUE=DATE:20261119
 SUMMARY:Roundtable: AI Policy in the States
 DESCRIPTION:10:00 AM · Virtual
 CATEGORIES:Roundtable
-URL:https://chadl22.github.io/Tech-Policy-Hub/events/
+URL:https://techpolicyhub.org/events/
 END:VEVENT
 BEGIN:VEVENT
 UID:20270323-iapp-global-summit-2027@techpolicyhub.umd.edu
@@ -52,6 +52,6 @@ DTEND;VALUE=DATE:20270410
 SUMMARY:Tech Policy Hub Annual Event 2027
 DESCRIPTION:All day · University of Maryland
 CATEGORIES:Annual Event
-URL:https://chadl22.github.io/Tech-Policy-Hub/annual-event/
+URL:https://techpolicyhub.org/annual-event/
 END:VEVENT
 END:VCALENDAR

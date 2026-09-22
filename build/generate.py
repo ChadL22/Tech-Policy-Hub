@@ -37,7 +37,7 @@ def load_data(name):
 # Absolute site URL -- used for the .ics feed's UIDs/event links (which need
 # to be absolute regardless of what page linked to the feed) and for the
 # webcal:// subscribe link on events.html (same URL, scheme swapped).
-SITE_URL = "https://chadl22.github.io/Tech-Policy-Hub/"
+SITE_URL = "https://techpolicyhub.org/"
 
 # Bumped by hand whenever styles.css / main.js change, and appended as a
 # query string to their <link>/<script> tags below. Without this, browsers
