@@ -404,13 +404,18 @@ NEWS_ITEMS = load_data("news_items")
 # calendar_widget_html() / calendar_legend_html()). Kept in Hub brand
 # colors (red/gold/ink/teal) plus --slate-gray for the 5th category,
 # since the site otherwise only defines those four.
-# Follow-up (direct user request): "Conference" is a category for
-# events the Hub did NOT organize -- field-wide technology policy
-# conferences it wants visitors to know about, in support of the field
+# Follow-up (direct user request): "External" is a category for events
+# the Hub did NOT organize but wants visitors to know about -- field
+# conferences, but also smaller things like a local ATIH meetup or a
+# talk hosted by Georgetown -- anything in the area the Hub will be
+# attending or wants to bring attention to, in support of the field
 # more broadly rather than only its own programming (Speaker Series,
-# Workshop, Roundtable, Annual Event). See EVENTS_ITEMS below for how
-# that shows up in practice, and events_rows_html()'s docstring for why
-# those rows open in a new tab.
+# Workshop, Roundtable, Annual Event). Originally named "Conference"
+# (narrower scope, field-wide conferences only) before this broadening;
+# renamed rather than added alongside it to avoid two overlapping
+# categories. See EVENTS_ITEMS below for how that shows up in practice,
+# and events_rows_html()'s docstring for why those rows open in a new
+# tab.
 # Content lives in build/data/event_categories.yml -- see README "Editing content".
 EVENT_CATEGORIES = load_data("event_categories")
 
@@ -882,11 +887,19 @@ def research_matrix_html():
     ruled grid; the CSS gives a lone odd-count final cell the full row
     width (.matrix-cell:last-child:nth-child(odd)) so any number of
     areas (added/removed via the content manager's Research Areas
-    editor) lays out cleanly, not just the original 4."""
+    editor) lays out cleanly, not just the original 4.
+    Follow-up (direct user request): each cell's title now carries its
+    area's short code in parentheses (e.g. "Cybersecurity (CY)") --
+    the same code area_meta.yml already supplies for the project-tile
+    badges on research.html (AREA_META[key]['code']; see
+    _project_tile_html in build_all.py) -- wrapped in its own span so
+    the compact homepage rail variant (.research-matrix--rail, the only
+    place this renders) can style/hide it separately from the name if
+    it ever needs to."""
     return "".join(f"""
         <a class="matrix-cell" href="{t['file']}">
           <span class="index">{t['index']}</span>
-          <h3>{t['name']}</h3>
+          <h3>{t['name']} <span class="matrix-code">({AREA_META[t['key']]['code']})</span></h3>
           <p>{t['blurb']}</p>
         </a>""" for t in TOPICS)
 
@@ -1007,14 +1020,15 @@ def events_rows_html(items, limit=None, with_btn=True):
     that render a subset of events without a filter bar present.
 
     Follow-up (direct user request): events.html now also carries
-    "Conference" entries -- field conferences the Hub didn't organize but
-    wants visitors to know about, in support of the tech policy field
-    more broadly (not just the Hub's own Speaker Series/Workshop/
-    Roundtable/Annual Event programming). Those rows point at a real
-    external site (e.g. the conference's own registration page), so
-    link_attrs() -- the same helper reading_cards_html() uses for its
-    off-site links -- opens them in a new tab instead of navigating the
-    visitor away from the Hub."""
+    "External" entries -- events the Hub didn't organize but wants
+    visitors to know about (field conferences, but also smaller things
+    like a local meetup or a talk hosted by another institution), in
+    support of the tech policy field more broadly (not just the Hub's
+    own Speaker Series/Workshop/Roundtable/Annual Event programming).
+    Those rows point at a real external site (e.g. the event's own
+    registration page), so link_attrs() -- the same helper
+    reading_cards_html() uses for its off-site links -- opens them in a
+    new tab instead of navigating the visitor away from the Hub."""
     out = []
     for e in (items[:limit] if limit else items):
         attrs = link_attrs(e["link"])

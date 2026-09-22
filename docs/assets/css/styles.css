@@ -719,6 +719,13 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 .matrix-cell .index{ font-family: var(--font-nav); font-weight: 700; font-size: .9rem; color: var(--umd-red); display:block; margin-bottom: 8px; }
 .matrix-cell h3{ color: var(--ink); margin-bottom: 6px; overflow-wrap: break-word; hyphens: auto; }
 .matrix-cell:hover h3{ color: var(--umd-red); }
+/* Direct user request: each area's short code (area_meta.yml, same
+   codes as the project-tile badges on research.html) now sits in
+   parentheses after the name -- de-emphasized relative to the name
+   itself (regular weight, ink-soft) so it reads as a secondary label,
+   not a second heading. */
+.matrix-cell .matrix-code{ color: var(--ink-soft); font-weight: 400; }
+.matrix-cell:hover .matrix-code{ color: inherit; }
 .matrix-cell p{ color: var(--ink-soft); font-size: .92rem; margin:0; }
 
 /* Compact variant of the ruled 2x2 research-matrix grid, used at

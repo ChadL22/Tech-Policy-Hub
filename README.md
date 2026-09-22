@@ -356,11 +356,13 @@ replaced with real material before launch:
   `EVENTS_ITEMS` on every build, so keeping that array current is what
   keeps the calendar subscription accurate. `TICKER_ITEMS` no longer needs
   manual refresh — see **Site capabilities** above.
-- The "Conference" category (`EVENT_CATEGORIES`, `build/data/event_categories.yml`)
-  is for field-wide events the Hub didn't organize, listed in support of
-  the tech policy field generally rather than only the Hub's own
-  programming. Its one entry so far -- the IAPP Global Summit 2027 --
-  is a real external conference with dates/venue verified via iapp.org
-  as of Sep 2026, but a 3rd-party listing like this can move; reconfirm
-  before relying on it, and swap/add other field conferences here the
-  same way.
+- The "External" category (`EVENT_CATEGORIES`, `build/data/event_categories.yml`)
+  is for events the Hub didn't organize but wants visitors to know
+  about -- field-wide conferences, but also smaller things like a local
+  ATIH meetup or a talk hosted by Georgetown -- anything in the area the
+  Hub will be attending or wants to bring attention to, rather than
+  only its own programming. Its one entry so far -- the IAPP Global
+  Summit 2027 -- is a real external conference with dates/venue
+  verified via iapp.org as of Sep 2026, but a 3rd-party listing like
+  this can move; reconfirm before relying on it, and swap/add other
+  external events here the same way.

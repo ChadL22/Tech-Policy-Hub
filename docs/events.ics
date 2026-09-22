@@ -41,7 +41,7 @@ DTSTART;VALUE=DATE:20270323
 DTEND;VALUE=DATE:20270324
 SUMMARY:IAPP Global Summit 2027
 DESCRIPTION:Washington\, DC · Hosted by the IAPP
-CATEGORIES:Conference
+CATEGORIES:External
 URL:https://iapp.org/conference/iapp-global-summit
 END:VEVENT
 BEGIN:VEVENT
