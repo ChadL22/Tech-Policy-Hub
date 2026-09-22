@@ -44,7 +44,7 @@ SITE_URL = "https://techpolicyhub.org/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026092204"
+ASSET_VERSION = "2026092205"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -260,12 +260,19 @@ def ticker_section():
 
 
 def footer():
-    return f"""
-<footer class="site-footer">
-  <div class="container">
-    <div class="footer-grid">
-      <div>
-        <div class="footer-social">
+    # Follow-up (direct user request): "move the collection of social
+    # media platforms, as is, below About & Contact." footer_social_html
+    # is the exact same markup that used to open the footer's first grid
+    # column (untouched, hence "as is") -- factored into its own small
+    # function purely so it can be dropped into the Connect column below
+    # instead, without duplicating the 5 platform links. Its old column
+    # is gone rather than left empty: that column had already lost its
+    # other content (.footer-legal, removed by an earlier direct
+    # request) so it had nothing left in it once the icons moved out --
+    # see footer_html's own comment on .footer-grid going 4 columns ->
+    # 3 below.
+    def footer_social_html():
+        return f"""<div class="footer-social">
           <a href="https://sclanga.substack.com/" target="_blank" rel="noopener" aria-label="Substack">
             <img src="assets/img/social/substack.png?v={ASSET_VERSION}" alt="" loading="lazy">
           </a>
@@ -281,21 +288,20 @@ def footer():
           <a href="https://www.tiktok.com/@phronesis.research" target="_blank" rel="noopener" aria-label="TikTok">
             <img src="assets/img/social/tiktok.png?v={ASSET_VERSION}" alt="" loading="lazy">
           </a>
-        </div>
-        <!-- Follow-up (direct user request): "remove Teaching, Privacy
-             Policy, Notice of Non-discrimination, as well as Speaker
-             Series and Annual Event." Privacy Policy and Notice of
-             Non-discrimination dropped from here first -- both were
-             still just "#" placeholders pending real policy pages (see
-             README "Known placeholders"). Web Accessibility (the third
-             and last .footer-legal item) survived that round since it
-             wasn't named, but a follow-up direct request removed it
-             too, so .footer-legal has no items left and the <ul> itself
-             is gone -- an empty list here would just be dead markup.
-             .footer-legal's own CSS rule (styles.css) is left in place
-             despite now being unused, in case this column gets a real
-             legal/policy link again later. -->
-      </div>
+        </div>"""
+
+    return f"""
+<footer class="site-footer">
+  <div class="container">
+    <!-- Follow-up (direct user request, same as footer_social_html's
+         comment above): .footer-grid drops from 4 columns to 3 here
+         (see its rule in styles.css) now that the social icons' old
+         first column has nothing left in it -- an empty grid column
+         would just be blank space. The two mobile breakpoints that
+         collapse this to 2 columns (max-width:900px/720px) need no
+         change: a plain 1fr 1fr grid wraps 3 items into 2-then-1 on its
+         own, it was never hardcoded to expect exactly 4. -->
+    <div class="footer-grid">
       <div>
         <h4>Research</h4>
         <ul>
@@ -327,6 +333,7 @@ def footer():
           <li><a href="people.html">People</a></li>
           <li><a href="index.html#about">About &amp; Contact</a></li>
         </ul>
+        {footer_social_html()}
       </div>
     </div>
     <div class="footer-bottom">

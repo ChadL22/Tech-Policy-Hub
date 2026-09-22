@@ -2275,12 +2275,21 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 
 /* ---------- Footer ---------- */
 footer.site-footer{ background: #fff; border-top: 1px solid var(--line); padding-top: 48px; }
-.footer-grid{ display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 32px; padding-bottom: 44px; }
+/* Follow-up (direct user request): 4 columns -> 3 now that the social
+   icons' old first column is gone (see footer() in generate.py) --
+   Research/Events/Connect are the only columns left. */
+.footer-grid{ display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px; padding-bottom: 44px; }
 .footer-grid h4{ font-family: var(--font-nav); font-size:.82rem; text-transform:uppercase; letter-spacing:.04em; margin-bottom:14px; color: var(--ink); }
 .footer-grid ul{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:9px; }
 .footer-grid a{ color: var(--ink-soft); font-size:.92rem; }
 .footer-grid a:hover{ color: var(--umd-red); }
-.footer-social{ display:flex; flex-wrap:wrap; align-items:center; row-gap:10px; column-gap:16px; margin-bottom: 18px; }
+/* Follow-up (direct user request): margin-bottom -> margin-top -- this
+   used to open its column with .footer-legal's link list right below it
+   (hence a BOTTOM margin separating the two); now it's the last thing
+   in the Connect column, below the About & Contact list, so the same
+   18px gap needs to go on top instead, or the icons would sit flush
+   against "About & Contact" above them. */
+.footer-social{ display:flex; flex-wrap:wrap; align-items:center; row-gap:10px; column-gap:16px; margin-top: 18px; }
 .footer-social a{
   display:inline-flex; align-items:center; justify-content:center;
 }
