@@ -1059,10 +1059,13 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    whenever there are enough of them -- direct user request to remove
    the leftover gap a fixed tile width could leave at the row's end);
    `.rp-grid` is the flex track that gets paged inside it via
-   scrollLeft, controlled only by the prev/next arrows in
-   `.rp-carousel-footer` below (no dots -- direct user request) -- no
-   native scrollbar/drag, so there's never a mid-scroll partial frame at
-   rest either. `.rp-carousel--people` keeps tiles small, like
+   scrollLeft, controlled by the prev/next arrows in
+   `.rp-carousel-footer` below (no dots -- direct user request) or,
+   follow-up direct user request, a touch swipe on mobile (see the
+   touchstart/touchmove/touchend handlers in initTileCarousel(),
+   main.js) -- both page by a whole screenful only, never a free
+   drag/scroll, so there's never a mid-scroll partial frame at rest
+   either. `.rp-carousel--people` keeps tiles small, like
    Bloomberg's "Originals" row (no bio -- see _person_tile_html, each
    tile links straight to that person's full listing on people.html);
    `.rp-carousel--projects` is the taller variant, like Bloomberg's

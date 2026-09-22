@@ -3,8 +3,9 @@ document.addEventListener('DOMContentLoaded', function () {
   // Direct user request, modeled on Bloomberg.com's homepage "Bloomberg
   // Originals"/"Watch" rows: research.html's People/Projects tile rows
   // (.rp-carousel, see research_body in build_all.py) page through
-  // whole tiles only via prev/next arrows -- never a free-scroll strip
-  // that can leave a tile half-cut-off at the right edge. Each
+  // whole tiles only via prev/next arrows or (follow-up direct user
+  // request) a touch swipe on mobile -- never a free-scroll strip that
+  // can leave a tile half-cut-off at the right edge. Each
   // `[data-carousel]` root owns a `.rp-carousel-viewport` (the clipped
   // window) wrapping a `.rp-grid` (the actual flex track of tiles) plus
   // a `.rp-carousel-footer` (just the arrows -- a follow-up direct user
@@ -110,6 +111,43 @@ document.addEventListener('DOMContentLoaded', function () {
     if (prevBtn) prevBtn.addEventListener('click', function () { goTo(page - 1); });
     if (nextBtn) nextBtn.addEventListener('click', function () { goTo(page + 1); });
     window.addEventListener('resize', refresh);
+
+    // Direct user request: swipe through People/Projects on mobile.
+    // .rp-carousel-viewport is overflow:hidden with no native
+    // touch-scroll -- a deliberate choice (see the comment above
+    // .rp-carousel-viewport in styles.css) so a tile is never left
+    // half-cut-off mid-scroll. So a swipe is detected manually here and
+    // mapped onto the same whole-page goTo() the arrows use, rather
+    // than becoming a free drag -- keeps the "no partial tile" rule
+    // intact while still letting a finger-swipe page the row. touchmove
+    // only preventDefault()s once the gesture reads as horizontal, so a
+    // mostly-vertical touch (the user just scrolling the page over this
+    // row) is left alone to scroll the page normally.
+    var touchStartX = 0, touchStartY = 0, touchTracking = false, touchHorizontal = false;
+    viewport.addEventListener('touchstart', function (e) {
+      if (e.touches.length !== 1) return;
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      touchTracking = true;
+      touchHorizontal = false;
+    }, { passive: true });
+    viewport.addEventListener('touchmove', function (e) {
+      if (!touchTracking || e.touches.length !== 1) return;
+      var dx = e.touches[0].clientX - touchStartX;
+      var dy = e.touches[0].clientY - touchStartY;
+      if (!touchHorizontal && Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) touchHorizontal = true;
+      if (touchHorizontal) e.preventDefault();
+    }, { passive: false });
+    viewport.addEventListener('touchend', function (e) {
+      if (!touchTracking) return;
+      touchTracking = false;
+      if (!touchHorizontal) return;
+      var dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) < 40) return;
+      goTo(page + (dx < 0 ? 1 : -1));
+    });
+    viewport.addEventListener('touchcancel', function () { touchTracking = false; });
+
     refresh();
 
     return { refresh: refresh };
