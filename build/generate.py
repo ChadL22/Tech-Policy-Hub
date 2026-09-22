@@ -285,13 +285,16 @@ def footer():
         <!-- Follow-up (direct user request): "remove Teaching, Privacy
              Policy, Notice of Non-discrimination, as well as Speaker
              Series and Annual Event." Privacy Policy and Notice of
-             Non-discrimination dropped from here -- both were still
-             just "#" placeholders pending real policy pages (see
-             README "Known placeholders"), same as Web Accessibility,
-             which stays since it wasn't named for removal. -->
-        <ul class="footer-legal">
-          <li><a href="#">Web Accessibility</a></li>
-        </ul>
+             Non-discrimination dropped from here first -- both were
+             still just "#" placeholders pending real policy pages (see
+             README "Known placeholders"). Web Accessibility (the third
+             and last .footer-legal item) survived that round since it
+             wasn't named, but a follow-up direct request removed it
+             too, so .footer-legal has no items left and the <ul> itself
+             is gone -- an empty list here would just be dead markup.
+             .footer-legal's own CSS rule (styles.css) is left in place
+             despite now being unused, in case this column gets a real
+             legal/policy link again later. -->
       </div>
       <div>
         <h4>Research</h4>

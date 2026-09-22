@@ -377,10 +377,11 @@ replaced with real material before launch:
   verified via iapp.org as of Sep 2026, but a 3rd-party listing like
   this can move; reconfirm before relying on it, and swap/add other
   external events here the same way.
-- The footer's remaining legal link, "Web Accessibility" (`href="#"`,
-  `footer()` in `build/generate.py`), is still a placeholder pending a
-  real accessibility statement page. Its former neighbors, "Privacy
-  Policy" and "Notice of Non-discrimination", were removed outright
-  (direct user request) rather than left as placeholders -- if either
-  is wanted back, it needs a real destination this time, not another
-  `href="#"`.
+- The footer's `.footer-legal` link list -- "Privacy Policy", "Web
+  Accessibility", "Notice of Non-discrimination" -- is gone entirely
+  (direct user request, in two rounds: the first two went first as
+  still-`href="#"` placeholders pending real pages, Web Accessibility
+  followed in a follow-up). The `.footer-legal` CSS rule itself is left
+  in `styles.css` unused, in case a real legal/policy link lands in that
+  footer column again later -- if one does, it needs a real destination
+  this time, not another `href="#"`.
