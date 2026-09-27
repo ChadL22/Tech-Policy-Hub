@@ -1412,6 +1412,7 @@ function renderForm(){
   }
   html += `<div class="form-actions">
       <button class="btn primary" onclick="saveForm()">Save</button>
+      ${isNew ? `<button class="btn primary" onclick="saveForm(true)">Save &amp; add another</button>` : ''}
       <button class="btn" onclick="cancelForm()">Cancel</button>
     </div>
   </div>`;
@@ -1702,7 +1703,7 @@ function clearImageField(fieldName){
   renderForm();
 }
 
-function saveForm(){
+function saveForm(keepAdding){
   const col = COLLECTIONS[activeKey];
   for (const f of col.fields){
     if (f.required && !formValues[f.name]){
@@ -1736,15 +1737,27 @@ function saveForm(){
       obj[f.name + '_v'] = hasImage ? (formValues[f.name + '_v'] == null ? null : formValues[f.name + '_v']) : null;
     }
   }
-  if (editingIndex === -1){
+  const wasNew = editingIndex === -1;
+  if (wasNew){
     store[activeKey].entries.push(obj);
   } else {
     store[activeKey].entries[editingIndex] = obj;
   }
   markDirty(activeKey);
-  editingIndex = null;
-  renderSidebar();
-  renderMain();
+  renderSidebar(); // count badge should reflect each add right away, same as deleteEntry
+  if (keepAdding && wasNew){
+    // Direct user request ("I want to be able to batch changes...
+    // add multiple new people"): stay in the form instead of dropping
+    // back to the list, so adding several entries in a row doesn't
+    // mean re-clicking "+ Add ..." and re-navigating each time.
+    // Nothing is pushed to GitHub yet either way -- Publish still
+    // covers everything queued up across every entry saved this way.
+    showToast(`Saved "${col.summaryTitle(obj)}". Add another below, or Publish changes when you're done.`);
+    startNewEntry();
+  } else {
+    editingIndex = null;
+    renderMain();
+  }
 }
 
 // ═══════════════════════════════════════════════════════════
