@@ -268,6 +268,57 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
+  // Project detail pop-up -- direct user request: "we should have page
+  // pop-ups that cover the projects' information. This avoids us
+  // having to make dedicated pages for each project and allows us to
+  // maintain aesthetics. The image could be any size and the
+  // description could be as long as someone likes." Every project
+  // tile (research.html, _project_tile_html in build_all.py) is a
+  // <button data-project-trigger> carrying its own <template
+  // class="project-detail-template"> with that project's full image +
+  // untruncated description already built server-side; opening the
+  // pop-up is just cloning that template's content into the one
+  // shared .project-modal on the page. A no-op on any page without a
+  // .project-modal (nothing else on the site uses this yet).
+  (function () {
+    var backdrop = document.querySelector('.project-modal-backdrop');
+    var modal = document.querySelector('.project-modal');
+    if (!backdrop || !modal) return;
+    var body = modal.querySelector('.project-modal-body');
+    var closeBtn = modal.querySelector('.project-modal-close');
+    var lastTrigger = null;
+
+    function openModal(trigger) {
+      var tpl = trigger.querySelector('.project-detail-template');
+      if (!tpl || !body) return;
+      body.innerHTML = '';
+      body.appendChild(tpl.content.cloneNode(true));
+      lastTrigger = trigger;
+      backdrop.hidden = false;
+      modal.hidden = false;
+      document.body.classList.add('project-modal-open');
+      if (closeBtn) closeBtn.focus();
+    }
+
+    function closeModal() {
+      if (modal.hidden) return;
+      backdrop.hidden = true;
+      modal.hidden = true;
+      document.body.classList.remove('project-modal-open');
+      if (body) body.innerHTML = '';
+      if (lastTrigger) { lastTrigger.focus(); lastTrigger = null; }
+    }
+
+    document.querySelectorAll('[data-project-trigger]').forEach(function (btn) {
+      btn.addEventListener('click', function () { openModal(btn); });
+    });
+    backdrop.addEventListener('click', closeModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !modal.hidden) closeModal();
+    });
+  })();
+
   // Mobile nav toggle -- follow-up (direct user request): the collapsed
   // nav is now a bounded-width drawer + dimmed backdrop instead of a
   // full-screen takeover (see the 1080px breakpoint in styles.css), so

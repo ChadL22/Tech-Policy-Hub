@@ -249,55 +249,75 @@ def _project_tile_html(p, key):
     # the homepage Research Spotlight's .lead-media, recolored per the
     # project's research area (AREA_META/g.AREA_META) -- same
     # placeholder/real-image switch as People's tiles, see
-    # _person_photo_html. Follow-up (direct user request): projects can
-    # now also carry an optional outbound link (topic_detail.yml's
-    # `link`), which -- same as People's tile-links-to-people.html
-    # pattern -- turns the whole tile into a real link (rp-tile--link)
-    # instead of a plain non-interactive div; no link keeps the original
-    # inert-card behavior.
+    # _person_photo_html.
     m = g.AREA_META[key]
     image = p.get("image")
     link = p.get("link")
     # See generate.py's image_fit_style -- reproduces the CMS's
     # Reposition & Scale control, when this project's image has had one
-    # used on it.
+    # used on it. Only affects the small card thumbnail below -- the
+    # pop-up's own image (modal_media_html) always shows the photo at
+    # its natural, uncropped size, per the direct user request below.
     fit = g.image_fit_style(p, "image")
     ver = g.image_version_suffix(p, "image")
-    img_src = f"{image}{ver}"
+    img_src = f"{image}{ver}" if image else None
     photo_img_html = (
         f'{g.image_backdrop_html(img_src)}<img class="rp-tile-photo-img" src="{img_src}" alt="{p["title"]}" loading="lazy"{fit}>\n          '
         if image else ""
     )
-    # Direct user request: full project descriptions were rendering
-    # fully expanded on the card, which could run to a whole paragraph
-    # and made the grid look ungainly. .rp-desc now clamps to a few
-    # lines with a CSS ellipsis (see styles.css), so this is a preview/
-    # summary, not the full text. When there's a link, a small "Read
-    # the full project" affordance makes the truncation's escape hatch
-    # visible -- the whole tile is already the link (rp-tile--link
-    # below), so this is a styled <span>, not a second nested <a>.
-    # Projects with no link just show the truncated summary with no
-    # promise of more -- add a link in the CMS to get this affordance.
-    read_more_html = (
-        '\n          <span class="rp-desc-more">Read the full project &rarr;</span>'
+    # Direct user request: "we should have page pop-ups that cover the
+    # projects' information. This avoids us having to make dedicated
+    # pages for each project and allows us to maintain aesthetics. The
+    # image could be any size and the description could be as long as
+    # someone likes." Every project tile is now a <button> (not an <a>
+    # possibly wrapping a plain <div> as before) so the WHOLE card opens
+    # an in-page pop-up on click, showing the full title, the image at
+    # its own natural size (unclamped, unlike the card thumbnail above),
+    # and the complete description with no 3-line clamp. An optional
+    # outbound `link` (topic_detail.yml) used to make the whole tile
+    # navigate off-site; now it's a "Visit project site" link INSIDE the
+    # pop-up instead, so a project can have both a pop-up and an
+    # outbound link without them competing for the same click.
+    #
+    # The pop-up's full content lives in a <template class="project-
+    # detail-template"> nested inside the tile's own <button> --
+    # template content is inert (never rendered, not interactive, not
+    # picked up by [data-search-row]'s text search), so it's valid and
+    # harmless there. projectModal (main.js) just clones it into the
+    # single shared .project-modal (see research_body below) on click.
+    # Building the full markup here in Python -- not via JS string
+    # concatenation or data-* attributes -- means arbitrarily long
+    # descriptions and any punctuation/quotes in them need no JS-side
+    # escaping, and Python stays the one source of truth for a
+    # project's content, same as everywhere else on this site.
+    modal_media_html = (
+        f'<div class="project-modal-media"><img src="{img_src}" alt="{p["title"]}"></div>'
+        if image else ""
+    )
+    modal_link_html = (
+        f'\n          <a class="project-modal-link" href="{link}"{g.link_attrs(link)}>Visit project site &nearr;</a>'
         if link else ""
     )
+    detail_template = f"""<template class="project-detail-template">{modal_media_html}
+        <div class="project-modal-text" style="--area-color:{m['color']}">
+          <span class="area-tag">{m['code']}</span>
+          <h2 class="project-modal-title">{p['title']}</h2>
+          <p class="project-modal-desc">{p['description']}</p>{modal_link_html}
+        </div>
+      </template>"""
     inner = f"""<div class="rp-tile-photo" style="--area-color:{m['color']}">
           {photo_img_html}<span class="area-tag rp-tile-photo-badge">{m['code']}</span>
         </div>
         <div class="rp-tile-caption">
           <h3>{p['title']}</h3>
-          <p class="rp-desc">{p['description']}</p>{read_more_html}
-        </div>"""
-    if link:
-        return f"""
-      <a class="rp-tile rp-tile--link rp-tile--project" href="{link}"{g.link_attrs(link)} data-areas="{key}" data-search-row>
-        {inner}
-      </a>"""
+          <p class="rp-desc">{p['description']}</p>
+          <span class="rp-desc-more">Read more &rarr;</span>
+        </div>
+        {detail_template}"""
     return f"""
-      <div class="rp-tile rp-tile--project" data-areas="{key}" data-search-row>
+      <button type="button" class="rp-tile rp-tile--project rp-tile--project-btn" data-project-trigger aria-haspopup="dialog" data-areas="{key}" data-search-row>
         {inner}
-      </div>"""
+      </button>"""
 
 
 def _format_authors(authors):
@@ -512,6 +532,22 @@ research_body = f"""
     </section>
   </div>
 </section>
+<!-- Direct user request: a single shared pop-up for every project's full
+     details (image at natural size + complete description) instead of a
+     dedicated page per project -- see _project_tile_html's
+     project-detail-template (each project tile's own <button> carries
+     one) and the "Project detail pop-up" block in main.js, which clones
+     the clicked tile's template into .project-modal-body here. Modeled
+     on the mobile nav drawer's own backdrop + explicit close + Escape
+     pattern (.nav-backdrop/.nav-close in generate.py's header()) for a
+     consistent open/close feel across the site. -->
+<div class="project-modal-backdrop" hidden></div>
+<div class="project-modal" role="dialog" aria-modal="true" hidden>
+  <button type="button" class="project-modal-close" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+  <div class="project-modal-body"></div>
+</div>
 {g.newsletter_band_html()}
 """
 g.write("research.html", g.page("research.html", "Research", "Cybersecurity, consumer privacy, information integrity, and trustworthy ML research from the Tech Policy Hub.", research_body))
