@@ -44,7 +44,7 @@ SITE_URL = "https://techpolicyhub.org/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026092704"
+ASSET_VERSION = "2026092705"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -670,6 +670,100 @@ def image_fit_style(item, prefix="image"):
         f' style="object-fit:contain;object-position:center;'
         f'transform:translate({x}%,{y}%) scale({zoom});transform-origin:center center;"'
     )
+
+
+_IMAGE_SIZE_CACHE = {}
+
+
+def image_size(image_path):
+    """(width, height) of an image under docs/, or None if unreadable /
+    Pillow missing. Cached per path for the life of one build."""
+    if not image_path:
+        return None
+    path = image_path.split("?", 1)[0]
+    if path not in _IMAGE_SIZE_CACHE:
+        try:
+            from PIL import Image
+            with Image.open(os.path.join(ROOT, path)) as im:
+                _IMAGE_SIZE_CACHE[path] = im.size
+        except Exception:
+            _IMAGE_SIZE_CACHE[path] = None
+    return _IMAGE_SIZE_CACHE[path]
+
+
+# Phone-card photo framing. MUST match phoneDefaultFit() in
+# docs/admin/index.html, which previews the same default in the CMS.
+PHONE_PHOTO_ASPECT = 16 / 10   # people.html's photo band at <=700px
+PHONE_PHOTO_TARGET_WIDTH = 0.62  # photo should span ~62% of the band's width
+PHONE_PHOTO_MAX_ZOOM = 2.2
+PHONE_PHOTO_TOP_BIAS = 0.3     # of any vertical overflow, 30% comes off the top
+
+
+def phone_default_fit(width, height):
+    """Automatic phone framing, as (x%, y%, zoom) in the same terms the
+    CMS's Reposition & Scale tool stores (contain baseline + translate()/
+    scale()). Direct user request: phone cards were "unflattering" --
+    a cover crop blew headshots up until heads were cut off, but showing
+    the whole photo left tall portraits tiny inside the wide 16:10 band.
+    This zooms a photo just enough that it spans ~62% of the band's
+    width (a portrait) or fills its height (a wide photo), then keeps
+    the head in frame by taking 30% of any vertical overflow off the top
+    and 70% off the bottom -- the same top-weighted idea as desktop's
+    object-position: center 20%. Near-square photos stay whole."""
+    if not width or not height:
+        return (0, 0, 1)
+    a = width / height
+    R = PHONE_PHOTO_ASPECT
+    if a < R:
+        fw, fh = a / R, 1.0
+        zoom = PHONE_PHOTO_TARGET_WIDTH / fw
+    else:
+        fw, fh = 1.0, R / a
+        zoom = 1 / fh
+    zoom = max(1.0, min(PHONE_PHOTO_MAX_ZOOM, zoom))
+    overflow = max(0.0, zoom * fh - 1)
+    y = round(overflow * (0.5 - PHONE_PHOTO_TOP_BIAS) * 100, 3)
+    return (0, y, round(zoom, 3))
+
+
+def person_photo_fit_style(item, prefix="photo"):
+    """People photos' crop, as CSS custom properties rather than a fixed
+    inline style, so the same <img> can carry two independent crops --
+    one for desktop, one for phones -- and styles.css picks between them
+    by viewport (see .rp-tile-photo-img and its @media (max-width:700px)
+    override).
+
+    Direct user request: "The mobile of these cards is unflattering...
+    we should be able to verify/edit the mobile view in the content
+    management tool." On phones people.html's photo box is a wide 16:10
+    band, so the desktop crop (tuned for a taller box) -- or a plain
+    object-fit:cover -- blew portrait headshots up until foreheads and
+    hair were cut off. Phones now get an automatic head-and-shoulders
+    framing (phone_default_fit) from a contain baseline, with the photo's
+    own background color filling any gap (see image_edge_color /
+    has-photo); the CMS's new "Phone" view of the Reposition & Scale tool
+    shows that same framing and writes <prefix>_m_zoom/_m_x/_m_y to
+    override it, independent of the desktop values.
+
+    Desktop (<prefix>_zoom/_x/_y) keeps exactly the behavior
+    image_fit_style gives every other image: untouched = cover, adjusted
+    = contain + the same translate()/scale() transform."""
+    parts = []
+    zoom = item.get(f"{prefix}_zoom")
+    if zoom is not None:
+        x = item.get(f"{prefix}_x") or 0
+        y = item.get(f"{prefix}_y") or 0
+        parts.append(f"--fit:contain;--fit-pos:center;--fit-t:translate({x}%,{y}%) scale({zoom});")
+    mzoom = item.get(f"{prefix}_m_zoom")
+    if mzoom is not None:
+        mx = item.get(f"{prefix}_m_x") or 0
+        my = item.get(f"{prefix}_m_y") or 0
+    else:
+        size = image_size(item.get(prefix))
+        mx, my, mzoom = phone_default_fit(*size) if size else (0, 0, 1)
+    if mzoom != 1 or mx or my:
+        parts.append(f"--fit-m-t:translate({mx}%,{my}%) scale({mzoom});")
+    return f' style="{"".join(parts)}"' if parts else ""
 
 
 def image_version_suffix(item, prefix="image"):

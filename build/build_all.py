@@ -199,7 +199,7 @@ def _person_photo_html(name):
     if photo:
         # See generate.py's image_fit_style -- reproduces the CMS's
         # Reposition & Scale control, when a photo's had one used on it.
-        fit = g.image_fit_style(person, "photo")
+        fit = g.person_photo_fit_style(person, "photo")
         ver = g.image_version_suffix(person, "photo")
         src = f"{photo}{ver}"
         return f'<img class="rp-tile-photo-img" src="{src}" alt="{name}" loading="lazy"{fit}>'

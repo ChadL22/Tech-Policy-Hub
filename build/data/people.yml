@@ -11,6 +11,9 @@
   photo_x: -0.9090909090909091
   photo_y: 12.000213071965055
   photo_v: null
+  photo_m_zoom: 1.7
+  photo_m_x: 0
+  photo_m_y: 14
   websites:
     - label: Personal Website
       url: https://idonibrasco.github.io/

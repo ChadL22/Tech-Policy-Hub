@@ -218,6 +218,24 @@ h1,h2,h3{ margin:0; font-family: var(--font-body); }
 .image-fit-zoomrow input[type=range]{ flex:1; }
 .image-fit-zoomval{ font-size:.76rem; color: var(--ink-soft); min-width:40px; text-align:right; font-variant-numeric: tabular-nums; }
 .image-fit-hint{ font-size:.72rem; color: var(--ink-soft); margin-top:6px; max-width:220px; }
+/* Desktop / Phone switch (direct user request: "we should be able to
+   verify/edit the mobile view in the content management tool"). Shown
+   on image fields whose schema sets `mobileAspect` (People's photo) --
+   Phone swaps the preview + Reposition & Scale tool for a phone-shaped
+   16:10 card, editing the separate <field>_m_zoom/_m_x/_m_y values the
+   live site uses at phone widths (see person_photo_fit_style). */
+.image-view-switch{ display:inline-flex; border:1.5px solid var(--line); border-radius:999px; overflow:hidden; margin-bottom:10px; }
+.image-view-switch button{
+  border:0; background:#fff; padding:6px 14px; font:inherit; font-size:.76rem; font-weight:700;
+  color: var(--ink-soft); cursor:pointer;
+}
+.image-view-switch button.active{ background: var(--ink); color:#fff; }
+.image-fit-box.phone{ width:280px; border-radius: 14px 14px 0 0; border-bottom:0; }
+.phone-card-caption{
+  width:280px; height:30px; background:#212529;
+  border:1.5px solid var(--ink-soft); border-top:4px solid #FFD200; border-radius: 0 0 14px 14px;
+}
+.image-fit-zoomrow.phone{ width:280px; }
 
 /* connect screen */
 .connect-wrap{ min-height:100vh; display:flex; align-items:center; justify-content:center; background: var(--sidebar-band); padding: 24px; }
@@ -368,11 +386,11 @@ const COLLECTIONS = {
       { name:'name', label:'Name', type:'text', required:true },
       { name:'role', label:'Title / Position', type:'text', hint:'Shown under their name on the People page (e.g. "Founder & Director", "Co-Lead", "Affiliate").' },
       { name:'focus', label:'Focus (short, one line)', type:'text' },
-      { name:'role_types', label:'Type', type:'multiselect', options:ROLE_TYPE_OPTIONS, hint:'Core Member or Affiliate — drives which People page section (and the Role filter) this person appears under.' },
+      { name:'role_types', label:'Type', type:'multiselect', options:ROLE_TYPE_OPTIONS, hint:'Core Member or Affiliate — drives which People page section this person appears under.' },
       { name:'bio', label:'Bio', type:'textarea' },
       { name:'email', label:'Email', type:'text', required:false },
-      { name:'photo', label:'Photo', type:'image', required:false, uploadDir:'people', slugFrom:'name', aspect:'6/5',
-        hint:'Falls back to a generic silhouette placeholder if left blank. Use a photo with real headroom above the hair and below the chin — the site crops fairly tightly.' },
+      { name:'photo', label:'Photo', type:'image', required:false, uploadDir:'people', slugFrom:'name', aspect:'6/5', mobileAspect:'16/10',
+        hint:'Falls back to a generic silhouette placeholder if left blank. Use the Desktop / Phone switch above the preview to check (and separately adjust) how the photo looks on computers and on phones.' },
       { name:'websites', label:"Website(s)", type:'list', required:false,
         hint:"One or more sites for this person — each gets its own labeled link.",
         subfields:[
@@ -478,6 +496,16 @@ const GROUP_ORDER = ['People', 'Events', 'Homepage'];
 let ghToken = localStorage.getItem(TOKEN_KEY) || null;
 let store = {};       // key -> { entries: [...], sha: '...' }
 let dirty = new Set(); // keys with unpublished edits
+// Direct user request: "fix the counter in the content tool for the
+// number of changes." The Publish button used to show dirty.size -- the
+// number of FILES touched -- so editing five people read "(1)", and
+// opening an entry and saving it untouched still counted. It now counts
+// actual changes: each file's content as last loaded/published is kept
+// in `baseline`, and changeCount() compares against it record by record
+// (an added, edited or deleted person/event/project each count as one;
+// a pure reorder counts as one). Undoing an edit brings the count back
+// down, and a file whose count is 0 is skipped on Publish.
+let baseline = {};
 let activeKey = null;
 let activeTopicKey = null; // non-null when one specific Research Area is being edited
 let showAreasOverview = false; // true = showing the Research Areas list (add/reorder/delete areas)
@@ -504,10 +532,65 @@ function setStatus(text, connected){
   const dot = document.getElementById('status-dot');
   dot.className = 'status-dot' + (connected === true ? ' connected' : connected === false ? ' error' : '');
 }
+// Normalized copy for comparison: object keys sorted, and null /
+// undefined / "" / [] treated as "not set" -- saving an untouched entry
+// can add empty companion fields (photo_zoom: null, ...) that change
+// nothing a visitor would see, and shouldn't read as a change.
+function canonContent(v){
+  if (Array.isArray(v)) return v.map(canonContent);
+  if (v && typeof v === 'object'){
+    const out = {};
+    for (const k of Object.keys(v).sort()){
+      const c = canonContent(v[k]);
+      if (c === null || c === undefined || c === '' || (Array.isArray(c) && c.length === 0)) continue;
+      out[k] = c;
+    }
+    return out;
+  }
+  return v;
+}
+function storeContent(key){
+  const s = store[key];
+  if (!s) return undefined;
+  return s.entries !== undefined ? s.entries : s.data;
+}
+function snapshotBaseline(key){
+  baseline[key] = JSON.stringify(canonContent(storeContent(key)));
+}
+function countDiff(a, b){
+  if (Array.isArray(a) && Array.isArray(b)){
+    const A = a.map(x => JSON.stringify(x)), B = b.map(x => JSON.stringify(x));
+    const left = new Map();
+    A.forEach(s => left.set(s, (left.get(s) || 0) + 1));
+    let added = 0;
+    B.forEach(s => { const c = left.get(s) || 0; if (c > 0) left.set(s, c - 1); else added++; });
+    let removed = 0;
+    left.forEach(c => { removed += c; });
+    const n = Math.max(added, removed); // an edit = one removed + one added
+    if (n === 0 && A.join('\u0000') !== B.join('\u0000')) return 1; // pure reorder
+    return n;
+  }
+  if (a && b && typeof a === 'object' && typeof b === 'object' && !Array.isArray(a) && !Array.isArray(b)){
+    let n = 0;
+    new Set([...Object.keys(a), ...Object.keys(b)]).forEach(k => { n += countDiff(a[k], b[k]); });
+    return n;
+  }
+  return JSON.stringify(a) === JSON.stringify(b) ? 0 : 1;
+}
+function changeCount(key){
+  if (!(key in baseline) || !store[key]) return 0;
+  return countDiff(JSON.parse(baseline[key]), canonContent(storeContent(key)));
+}
+function totalChanges(){
+  let n = 0;
+  for (const key of dirty) n += changeCount(key);
+  return n;
+}
 function updatePublishBtn(){
   const btn = document.getElementById('publish-btn');
-  btn.disabled = dirty.size === 0;
-  btn.textContent = dirty.size > 0 ? `Publish changes (${dirty.size})` : 'Publish changes';
+  const n = totalChanges();
+  btn.disabled = n === 0;
+  btn.textContent = n > 0 ? `Publish ${n} change${n === 1 ? '' : 's'}` : 'Publish changes';
 }
 function markDirty(key){
   dirty.add(key);
@@ -552,6 +635,7 @@ async function loadCollection(key){
   const text = b64DecodeUtf8(data.content);
   const parsed = jsyaml.load(text);
   store[key] = { entries: Array.isArray(parsed) ? parsed : [], sha: data.sha };
+  snapshotBaseline(key);
 }
 
 async function saveCollection(key){
@@ -581,6 +665,7 @@ async function saveCollection(key){
     }),
   });
   s.sha = result.content.sha;
+  snapshotBaseline(key);
   dirty.delete(key);
 }
 
@@ -596,6 +681,7 @@ async function loadTopics(){
   const text = b64DecodeUtf8(data.content);
   const parsed = jsyaml.load(text);
   store.topics = { entries: Array.isArray(parsed) ? parsed : [], sha: data.sha };
+  snapshotBaseline('topics');
 }
 
 async function saveTopics(){
@@ -615,6 +701,7 @@ async function saveTopics(){
     }),
   });
   store.topics.sha = result.content.sha;
+  snapshotBaseline('topics');
   dirty.delete('topics');
 }
 
@@ -625,6 +712,7 @@ async function loadAreaMeta(){
   const text = b64DecodeUtf8(data.content);
   const parsed = jsyaml.load(text) || {};
   store.area_meta = { data: parsed, sha: data.sha };
+  snapshotBaseline('area_meta');
 }
 
 async function saveAreaMeta(){
@@ -644,6 +732,7 @@ async function saveAreaMeta(){
     }),
   });
   store.area_meta.sha = result.content.sha;
+  snapshotBaseline('area_meta');
   dirty.delete('area_meta');
 }
 
@@ -672,6 +761,7 @@ async function loadTopicDetail(){
     if (!Array.isArray(d.people)) d.people = [];
   }
   store.topic_detail = { data: parsed, sha: data.sha };
+  snapshotBaseline('topic_detail');
 }
 
 async function saveTopicDetail(){
@@ -693,6 +783,7 @@ async function saveTopicDetail(){
     }),
   });
   store.topic_detail.sha = result.content.sha;
+  snapshotBaseline('topic_detail');
   dirty.delete('topic_detail');
 }
 
@@ -776,7 +867,7 @@ async function connect(){
 function disconnect(){
   localStorage.removeItem(TOKEN_KEY);
   ghToken = null;
-  store = {}; dirty.clear(); activeKey = null; activeTopicKey = null;
+  store = {}; baseline = {}; dirty.clear(); activeKey = null; activeTopicKey = null;
   showAreasOverview = false; newAreaFormOpen = false; editingIndex = null;
   document.getElementById('cms-shell').style.display = 'none';
   document.getElementById('connect-wrap').style.display = 'flex';
@@ -811,11 +902,12 @@ async function initApp(){
 // it before starting new edits if you (or someone else, or another tab)
 // may have published changes since this page loaded.
 async function reloadAll(){
-  if (dirty.size > 0){
+  if (totalChanges() > 0){
     if (!confirm('You have unpublished changes. Reloading will discard them and load the latest content from GitHub instead. Continue?')) return;
   }
   const keepKey = activeKey, keepTopicKey = activeTopicKey, keepOverview = showAreasOverview;
   store = {};
+  baseline = {};
   dirty.clear();
   activeKey = null; activeTopicKey = null; showAreasOverview = false; newAreaFormOpen = false; editingIndex = null;
   updatePublishBtn();
@@ -1542,6 +1634,51 @@ function clearAllImagePreviewOverrides(){
   for (const key of Object.keys(imagePreviewOverride)) clearImagePreviewOverride(key);
 }
 
+// The live site fills any gap around a letterboxed photo with that
+// photo's own background color (generate.py's image_edge_color), not a
+// neutral gray -- so these previews do the same, or they'd show a gray
+// border the real site never has. Same sampling as the Python side:
+// fit within 240px, left/right edge bands over the upper 60% plus the
+// top band, a few pixels in from the border, per-channel median. Runs
+// on each preview <img>'s onload; blob: previews and same-origin
+// ../assets/ URLs can both be read back through a canvas.
+const edgeColorCache = {};
+function imageEdgeColor(img){
+  const key = img.currentSrc || img.src;
+  if (edgeColorCache[key]) return edgeColorCache[key];
+  try {
+    const s = Math.min(1, 240 / Math.max(img.naturalWidth, img.naturalHeight));
+    const w = Math.max(1, Math.round(img.naturalWidth * s)), h = Math.max(1, Math.round(img.naturalHeight * s));
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h);
+    ctx.drawImage(img, 0, 0, w, h);
+    const d = ctx.getImageData(0, 0, w, h).data;
+    const inset = Math.max(1, Math.floor(w / 100)), band = Math.max(2, Math.floor(w / 25));
+    const upper = Math.max(inset + 1, Math.floor(h * 0.6));
+    const R = [], G = [], B = [];
+    const take = (x, y) => { const i = (y * w + x) * 4; R.push(d[i]); G.push(d[i+1]); B.push(d[i+2]); };
+    const xs = [];
+    for (let x = inset; x < inset + band; x++) xs.push(x);
+    for (let x = w - inset - band; x < w - inset; x++) xs.push(x);
+    xs.forEach(x => { for (let y = inset; y < upper; y++) take(x, y); });
+    for (let y = inset; y < inset + band; y++) for (let x = inset; x < w - inset; x++) take(x, y);
+    const med = a => a.sort((p, q) => p - q)[Math.floor(a.length / 2)];
+    const col = `rgb(${med(R)}, ${med(G)}, ${med(B)})`;
+    edgeColorCache[key] = col;
+    return col;
+  } catch (e) { return null; }
+}
+function applyEdgeFill(img){
+  const col = imageEdgeColor(img);
+  if (col && img.parentElement) img.parentElement.style.background = col;
+}
+
+// Which view (desktop/phone) each image field's tool is showing --
+// keyed by field name; defaults to desktop.
+const imageFieldView = {};
+function setImageFieldView(name, view){ imageFieldView[name] = view; renderForm(); }
+
 function imageFitToolHtml(prefix, aspect, src, x, y, zoom){
   const zz = zoom == null ? 1 : zoom;
   const xx = x || 0;
@@ -1549,7 +1686,7 @@ function imageFitToolHtml(prefix, aspect, src, x, y, zoom){
   return `<div class="image-fit-tool">
     <div class="image-fit-tool-label">Reposition &amp; scale</div>
     <div class="image-fit-box" id="fitbox-${prefix}" style="aspect-ratio:${aspect};" onmousedown="startImageFitDrag(event,'${prefix}')">
-      <img id="fitimg-${prefix}" src="${src}" onerror="this.parentElement.classList.add('is-broken')" style="transform: translate(${xx}%, ${yy}%) scale(${zz});" draggable="false">
+      <img id="fitimg-${prefix}" src="${src}" onload="applyEdgeFill(this)" onerror="this.parentElement.classList.add('is-broken')" style="transform: translate(${xx}%, ${yy}%) scale(${zz});" draggable="false">
     </div>
     <div class="image-fit-zoomrow">
       <span class="image-fit-zoomval">1&times;</span>
@@ -1559,6 +1696,60 @@ function imageFitToolHtml(prefix, aspect, src, x, y, zoom){
     </div>
     <div class="image-fit-hint">Drag to pan, slide to zoom — zoom out to reveal more of an image the automatic crop above was cutting into.</div>
     ${zoom != null ? `<button type="button" class="btn small ghost" style="margin-top:6px;" onclick="resetImageFit('${prefix}')">Reset to automatic crop</button>` : ''}
+  </div>`;
+}
+
+// Automatic phone framing for a photo with no phone crop saved yet.
+// MUST match phone_default_fit() in build/generate.py (same constants):
+// zoom a portrait until it spans ~62% of the 16:10 band's width (a wide
+// photo: until it fills the band's height), capped at 2.2x, taking 30%
+// of any vertical overflow off the top so the head stays in frame.
+function phoneDefaultFit(nw, nh){
+  if (!nw || !nh) return { x: 0, y: 0, zoom: 1 };
+  const a = nw / nh, R = 16 / 10;
+  let fw, fh, zoom;
+  if (a < R){ fw = a / R; fh = 1; zoom = 0.62 / fw; }
+  else { fw = 1; fh = R / a; zoom = 1 / fh; }
+  zoom = Math.max(1, Math.min(2.2, zoom));
+  const overflow = Math.max(0, zoom * fh - 1);
+  return { x: 0, y: Math.round(overflow * 20 * 1000) / 1000, zoom: Math.round(zoom * 1000) / 1000 };
+}
+const phoneDefault = {};
+function onPhonePreviewLoad(img, prefix, fieldName){
+  applyEdgeFill(img);
+  if (formValues[fieldName + '_m_zoom'] != null) return;
+  const d = phoneDefaultFit(img.naturalWidth, img.naturalHeight);
+  phoneDefault[prefix] = d;
+  img.style.transform = `translate(${d.x}%, ${d.y}%) scale(${d.zoom})`;
+  const slider = document.getElementById('fitzoom-' + prefix);
+  if (slider) slider.value = d.zoom;
+  const zval = document.getElementById('fitzoomval-' + prefix);
+  if (zval) zval.textContent = d.zoom.toFixed(2) + '\u00d7';
+}
+
+// Phone-view variant of the tool: same drag/zoom handlers, but a
+// phone-card-shaped box (the People page's 16:10 photo band with its
+// black caption strip under it) and wording for the phone default,
+// which is the WHOLE photo rather than a crop -- see
+// person_photo_fit_style in generate.py.
+function imageFitPhoneToolHtml(prefix, aspect, src, x, y, zoom, fieldName){
+  const zz = zoom == null ? 1 : zoom;
+  const xx = x || 0;
+  const yy = y || 0;
+  return `<div class="image-fit-tool">
+    <div class="image-fit-tool-label">On a phone (People page card)</div>
+    <div class="image-fit-box phone" id="fitbox-${prefix}" style="aspect-ratio:${aspect};" onmousedown="startImageFitDrag(event,'${prefix}')">
+      <img id="fitimg-${prefix}" src="${src}" onload="onPhonePreviewLoad(this, '${prefix}', '${fieldName}')" onerror="this.parentElement.classList.add('is-broken')" style="transform: translate(${xx}%, ${yy}%) scale(${zz});" draggable="false">
+    </div>
+    <div class="phone-card-caption" aria-hidden="true"></div>
+    <div class="image-fit-zoomrow phone">
+      <span class="image-fit-zoomval">1&times;</span>
+      <input type="range" id="fitzoom-${prefix}" min="1" max="4" step="0.05" value="${zz}"
+        oninput="onImageFitZoomInput('${prefix}', this.value)">
+      <span class="image-fit-zoomval" id="fitzoomval-${prefix}">${zz.toFixed(2)}&times;</span>
+    </div>
+    <div class="image-fit-hint" style="max-width:280px;">This is exactly what phones show. Until you adjust it, phones use an automatic head-and-shoulders framing, with the photo's own background color filling any gap. Drag to pan, slide to zoom &mdash; this only changes the phone view, not desktop.</div>
+    ${zoom != null ? `<button type="button" class="btn small ghost" style="margin-top:6px;" onclick="resetImageFit('${prefix}')">Reset to automatic framing</button>` : ''}
   </div>`;
 }
 
@@ -1647,8 +1838,27 @@ function renderImageField(f){
   const ver = formValues[f.name + '_v'];
   const src = overrideSrc || (val ? '../' + val + (ver ? '?v=' + ver : '') : '');
   const box = src
-    ? `<div class="image-fit-preview" style="aspect-ratio:${ratio};"><img src="${src}" onerror="this.parentElement.classList.add('is-broken')"></div>`
+    ? `<div class="image-fit-preview" style="aspect-ratio:${ratio};"><img src="${src}" onload="applyEdgeFill(this)" onerror="this.parentElement.classList.add('is-broken')"></div>`
     : `<div class="image-field-empty" style="aspect-ratio:${ratio};">No image set</div>`;
+  const view = f.mobileAspect && src ? (imageFieldView[f.name] || 'desktop') : 'desktop';
+  const viewSwitch = f.mobileAspect && src ? `<div class="image-view-switch" role="group" aria-label="Preview size">
+      <button type="button" class="${view === 'desktop' ? 'active' : ''}" onclick="setImageFieldView('${f.name}', 'desktop')">Desktop</button>
+      <button type="button" class="${view === 'phone' ? 'active' : ''}" onclick="setImageFieldView('${f.name}', 'phone')">Phone</button>
+    </div>` : '';
+  const controls = `<input type="file" accept="image/*" id="image-input-${f.name}" onchange="onImageSelected('${f.name}', '${f.uploadDir}', '${f.slugFrom || ''}')">
+    ${val ? `<button type="button" class="btn small ghost" style="margin-top:6px;" onclick="clearImageField('${f.name}')">Remove image</button>` : ''}
+    <div class="image-upload-progress" id="image-progress-${f.name}"></div>`;
+  if (view === 'phone'){
+    const mp = prefix + '-m';
+    imageFitGet[mp] = () => formValues[f.name + '_m_zoom'] == null
+      ? (phoneDefault[mp] || { x: 0, y: 0, zoom: 1 })
+      : { x: formValues[f.name + '_m_x'] || 0, y: formValues[f.name + '_m_y'] || 0, zoom: formValues[f.name + '_m_zoom'] };
+    imageFitSet[mp] = (x, y, zoom) => { formValues[f.name + '_m_x'] = x; formValues[f.name + '_m_y'] = y; formValues[f.name + '_m_zoom'] = zoom; };
+    imageFitRerender[mp] = renderForm;
+    return `${viewSwitch}
+    ${imageFitPhoneToolHtml(mp, f.mobileAspect, src, formValues[f.name + '_m_x'], formValues[f.name + '_m_y'], formValues[f.name + '_m_zoom'], f.name)}
+    ${controls}`;
+  }
   const note = `<div class="image-fit-note">Cropped exactly as it'll appear on the site (${ratio.replace('/', ':')}, filled — not stretched or letterboxed). Anything important near an edge here will be cut off there too.${overrideSrc ? ' Showing your local file — the live site can take a minute or two to start serving a freshly uploaded image.' : ''}</div>`;
   let fitTool = '';
   if (src){
@@ -1657,11 +1867,9 @@ function renderImageField(f){
     imageFitRerender[prefix] = renderForm;
     fitTool = imageFitToolHtml(prefix, ratio, src, formValues[f.name + '_x'], formValues[f.name + '_y'], formValues[f.name + '_zoom']);
   }
-  return `<div class="image-field-preview" id="image-preview-${f.name}">${box}${note}</div>
+  return `${viewSwitch}<div class="image-field-preview" id="image-preview-${f.name}">${box}${note}</div>
     ${fitTool}
-    <input type="file" accept="image/*" id="image-input-${f.name}" onchange="onImageSelected('${f.name}', '${f.uploadDir}', '${f.slugFrom || ''}')">
-    ${val ? `<button type="button" class="btn small ghost" style="margin-top:6px;" onclick="clearImageField('${f.name}')">Remove image</button>` : ''}
-    <div class="image-upload-progress" id="image-progress-${f.name}"></div>`;
+    ${controls}`;
 }
 
 function renderListField(f){
@@ -1732,6 +1940,9 @@ async function onImageSelected(fieldName, uploadDir, slugFromField){
     formValues[fieldName + '_zoom'] = null;
     formValues[fieldName + '_x'] = null;
     formValues[fieldName + '_y'] = null;
+    formValues[fieldName + '_m_zoom'] = null;
+    formValues[fieldName + '_m_x'] = null;
+    formValues[fieldName + '_m_y'] = null;
     showToast('Image uploaded. The live site can take a minute or two to start serving it -- the preview keeps showing your local copy until you remove or replace it.');
     renderForm();
   } catch (e) {
@@ -1746,6 +1957,9 @@ function clearImageField(fieldName){
   formValues[fieldName + '_x'] = null;
   formValues[fieldName + '_y'] = null;
   formValues[fieldName + '_v'] = null;
+  formValues[fieldName + '_m_zoom'] = null;
+  formValues[fieldName + '_m_x'] = null;
+  formValues[fieldName + '_m_y'] = null;
   clearImagePreviewOverride('field-' + fieldName);
   renderForm();
 }
@@ -1782,6 +1996,12 @@ function saveForm(keepAdding){
       obj[f.name + '_x'] = hasImage ? (formValues[f.name + '_x'] == null ? null : formValues[f.name + '_x']) : null;
       obj[f.name + '_y'] = hasImage ? (formValues[f.name + '_y'] == null ? null : formValues[f.name + '_y']) : null;
       obj[f.name + '_v'] = hasImage ? (formValues[f.name + '_v'] == null ? null : formValues[f.name + '_v']) : null;
+      // Phone crop (fields with a mobileAspect only -- People's photo).
+      if (f.mobileAspect){
+        for (const k of ['_m_zoom', '_m_x', '_m_y']){
+          obj[f.name + k] = hasImage && formValues[f.name + k] != null ? formValues[f.name + k] : null;
+        }
+      }
     }
   }
   const wasNew = editingIndex === -1;
@@ -1811,11 +2031,17 @@ function saveForm(keepAdding){
 // PUBLISH
 // ═══════════════════════════════════════════════════════════
 async function publishChanges(){
-  if (dirty.size === 0) return;
+  // Files touched but back to their published content have nothing to
+  // publish -- drop them instead of committing an identical file.
+  for (const key of Array.from(dirty)){ if (changeCount(key) === 0) dirty.delete(key); }
+  const pending = totalChanges();
+  if (pending === 0){ updatePublishBtn(); return; }
   const btn = document.getElementById('publish-btn');
   btn.disabled = true; btn.textContent = 'Publishing…';
   const keys = Array.from(dirty);
-  let okCount = 0, failed = [];
+  const perKey = {};
+  keys.forEach(k => { perKey[k] = changeCount(k); });
+  let okCount = 0, okChanges = 0, failed = [];
   const specialLabels = { topic_detail: 'Research Areas (content)', topics: 'Research Areas (list)', area_meta: 'Research Areas (colors/codes)' };
   for (const key of keys){
     try {
@@ -1824,19 +2050,20 @@ async function publishChanges(){
       else if (key === 'area_meta') await saveAreaMeta();
       else await saveCollection(key);
       okCount++;
+      okChanges += perKey[key];
     }
     catch (e) { failed.push((specialLabels[key] || COLLECTIONS[key].label) + ': ' + e.message); }
   }
   updatePublishBtn();
   if (failed.length === 0){
-    showToast(`Published ${okCount} file${okCount===1?'':'s'}. The site will rebuild automatically in a couple of minutes.`);
+    showToast(`Published ${okChanges} change${okChanges===1?'':'s'}. The site will rebuild automatically in a couple of minutes.`);
   } else {
-    showToast(`Published ${okCount}, ${failed.length} failed — ${failed.join('; ')}`, 'error');
+    showToast(`Published ${okChanges} change${okChanges===1?'':'s'}; ${failed.length} file${failed.length===1?'':'s'} failed — ${failed.join('; ')}`, 'error');
   }
 }
 
 window.addEventListener('beforeunload', (e) => {
-  if (dirty.size > 0){ e.preventDefault(); e.returnValue = ''; }
+  if (totalChanges() > 0){ e.preventDefault(); e.returnValue = ''; }
 });
 
 // ═══════════════════════════════════════════════════════════

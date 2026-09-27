@@ -1187,7 +1187,24 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    so every card in a row lines up the same regardless of the source
    photo's own dimensions. */
 .rp-tile-photo-img{
-  position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position: center 20%;
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit: var(--fit, cover); object-position: var(--fit-pos, center 20%);
+  transform: var(--fit-t, none); transform-origin: center center;
+}
+/* Direct user request ("The mobile of these cards is unflattering"):
+   people.html's phone layout puts the photo in a wide 16:10 band, where
+   a cover crop (or the desktop crop, tuned for a taller box) blew
+   portrait headshots up until heads were cut off. On phones the photo
+   starts from a contain baseline and --fit-m-t applies either the
+   automatic head-and-shoulders framing or the CMS's "Phone" view
+   adjustment (see person_photo_fit_style / phone_default_fit in
+   generate.py), with the photo's own background color filling any
+   gap (.has-photo above) -- all independent of desktop. Scoped to .person-media so research.html's People
+   tiles keep their desktop crop at every width. */
+@media (max-width: 700px){
+  .person-media .rp-tile-photo-img{
+    object-fit: contain; object-position: center; transform: var(--fit-m-t, none);
+  }
 }
 /* Badges sit last (after the name), matching the mockup's stacking
    order; the shared .rp-tags rule's trailing margin-bottom is wasted
