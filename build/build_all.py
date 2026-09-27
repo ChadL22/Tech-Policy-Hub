@@ -194,9 +194,13 @@ def _person_photo_html(name):
     # back to the same generic person-silhouette icon as before --
     # "like a locked character in a video game" -- until people.yml
     # gives them a `photo` path.
-    photo = (_people_by_name.get(name) or {}).get("photo")
+    person = _people_by_name.get(name) or {}
+    photo = person.get("photo")
     if photo:
-        return f'<img class="rp-tile-photo-img" src="{photo}" alt="{name}" loading="lazy">'
+        # See generate.py's image_fit_style -- reproduces the CMS's
+        # Reposition & Scale control, when a photo's had one used on it.
+        fit = g.image_fit_style(person, "photo")
+        return f'<img class="rp-tile-photo-img" src="{photo}" alt="{name}" loading="lazy"{fit}>'
     return """<svg class="rp-tile-photo-silhouette" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
             <circle cx="50" cy="36" r="18"/>
             <path d="M50 60c-23 0-39 15-39 38h78c0-23-16-38-39-38z"/>
@@ -251,8 +255,12 @@ def _project_tile_html(p, key):
     m = g.AREA_META[key]
     image = p.get("image")
     link = p.get("link")
+    # See generate.py's image_fit_style -- reproduces the CMS's
+    # Reposition & Scale control, when this project's image has had one
+    # used on it.
+    fit = g.image_fit_style(p, "image")
     photo_img_html = (
-        f'<img class="rp-tile-photo-img" src="{image}" alt="{p["title"]}" loading="lazy">\n          '
+        f'<img class="rp-tile-photo-img" src="{image}" alt="{p["title"]}" loading="lazy"{fit}>\n          '
         if image else ""
     )
     # Direct user request: full project descriptions were rendering

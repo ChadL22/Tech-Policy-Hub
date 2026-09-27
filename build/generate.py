@@ -626,7 +626,43 @@ def guiding_questions_html(items):
     return "".join(out)
 
 
-def lead_media_html(topic_label, image=None):
+def image_fit_style(item, prefix="image"):
+    """Direct user request ("We should be able to size it and fit. We
+    should be able to scale photos."): the CMS's image fields (People's
+    `photo`, Spotlight's `image`, Projects' `image`) each got a
+    Reposition & Scale control (docs/admin/index.html's imageFitToolHtml)
+    that pans/zooms an image within its tile -- crucially, zooming OUT
+    to reveal an image plain object-fit:cover would otherwise crop into,
+    which a fixed crop alone could never do (see the "Temporal Aspects"
+    diagram from the previous fix: too tall for its 16:10 tile, cover
+    was slicing its top/bottom labels off no matter what). That control
+    stores `<prefix>_zoom`/`<prefix>_x`/`<prefix>_y` alongside the image
+    path itself; this turns those into the inline style that reproduces
+    the CMS's exact preview on the live site. `_zoom` is None until an
+    editor actually opens that control (see docs/admin/index.html's
+    renderImageField/onProjectImageSelected -- a freshly uploaded image
+    has no fit data yet), so every image that predates this feature, or
+    was never adjusted, gets no inline style at all and keeps its exact
+    previous object-fit:cover appearance -- this function is purely
+    additive. Once `_zoom` IS set, object-fit switches to contain (the
+    control's baseline is "whole image visible, letterboxed by the
+    tile's own background") and a transform pans/scales from there:
+    translate() is listed first so its percentages resolve against the
+    image element's own unscaled box regardless of zoom, matching
+    exactly how the drag math in startImageFitDrag works -- the two
+    have to agree pixel-for-pixel or the CMS preview would lie."""
+    zoom = item.get(f"{prefix}_zoom")
+    if zoom is None:
+        return ""
+    x = item.get(f"{prefix}_x") or 0
+    y = item.get(f"{prefix}_y") or 0
+    return (
+        f' style="object-fit:contain;object-position:center;'
+        f'transform:translate({x}%,{y}%) scale({zoom});transform-origin:center center;"'
+    )
+
+
+def lead_media_html(topic_label, image=None, item=None):
     """Homepage Research Spotlight art. Defaults to the abstract editorial
     graphic (brand diagonal + topic label) used since launch, since most
     entries still don't have real photography on file (see follow-up 11).
@@ -637,10 +673,14 @@ def lead_media_html(topic_label, image=None):
     filling the same box via object-fit:cover (see .lead-media img in
     styles.css) so the photo crops to fit rather than stretching/warping
     regardless of its native aspect ratio. The topic label still overlays
-    on top either way."""
+    on top either way.
+
+    `item` (the full spotlight_items.yml entry, when available) carries
+    this image's optional pan/zoom fit data -- see image_fit_style."""
     if image:
+        fit = image_fit_style(item or {}, "image")
         return f"""
-        <div class="lead-media"><img src="{image}" alt="" loading="lazy"><span class="topic-mark">{topic_label}</span></div>"""
+        <div class="lead-media"><img src="{image}" alt=""{fit} loading="lazy"><span class="topic-mark">{topic_label}</span></div>"""
     return f"""
         <div class="lead-media"><span class="topic-mark">{topic_label}</span></div>"""
 
@@ -695,7 +735,7 @@ def spotlight_html(items):
         active = " is-active is-visible" if i == 0 else ""
         media_slides.append(f"""
         <div class="spotlight-media-slide{active}" data-slide="{i}">
-          {lead_media_html(it['topic'], it.get('image'))}
+          {lead_media_html(it['topic'], it.get('image'), it)}
         </div>""")
         text_slides.append(f"""
         <div class="spotlight-slide{active}" data-slide="{i}">

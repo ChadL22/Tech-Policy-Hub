@@ -176,6 +176,30 @@ h1,h2,h3{ margin:0; font-family: var(--font-body); }
 .image-fit-note{ font-size:.74rem; color: var(--ink-soft); line-height:1.45; max-width:300px; flex:1 1 200px; }
 .image-upload-progress{ font-size:.78rem; color: var(--ink-soft); margin-top:4px; }
 
+/* Reposition & Scale tool (direct user request: "We should be able to
+   size it and fit. We should be able to scale photos.") -- a second,
+   INTERACTIVE preview below the plain crop preview above. Drag inside
+   the box to pan, use the slider to zoom; see the "Image fit/position"
+   JS section for startImageFitDrag/onImageFitZoomInput. Its box is the
+   same width as .image-fit-preview above it so the two visually line
+   up as "before" (automatic crop) / "after" (your adjustment). */
+.image-fit-tool{ margin-top:12px; }
+.image-fit-tool-label{ font-size:.76rem; font-weight:700; color: var(--ink-soft); margin-bottom:6px; }
+.image-fit-box{
+  width:220px; border-radius:var(--radius); border:1.5px solid var(--ink-soft);
+  overflow:hidden; position:relative; background: var(--ink-soft);
+  cursor: grab; touch-action: none;
+}
+.image-fit-box.dragging{ cursor: grabbing; }
+.image-fit-box img{
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:contain; object-position:center; pointer-events:none;
+}
+.image-fit-zoomrow{ display:flex; align-items:center; gap:10px; margin-top:8px; width:220px; }
+.image-fit-zoomrow input[type=range]{ flex:1; }
+.image-fit-zoomval{ font-size:.76rem; color: var(--ink-soft); min-width:40px; text-align:right; font-variant-numeric: tabular-nums; }
+.image-fit-hint{ font-size:.72rem; color: var(--ink-soft); margin-top:6px; max-width:220px; }
+
 /* connect screen */
 .connect-wrap{ min-height:100vh; display:flex; align-items:center; justify-content:center; background: var(--sidebar-band); padding: 24px; }
 .connect-card{
@@ -1087,6 +1111,18 @@ function renderTopicAreaMain(){
       ? `<div class="image-fit-preview" style="aspect-ratio:16/10;"><img src="../${imgVal}" onerror="this.parentElement.style.display='none'"></div>`
       : `<div class="image-field-empty" style="aspect-ratio:16/10;">No image set</div>`;
     const imgNote = `<div class="image-fit-note">Cropped exactly as it'll appear on the Research page (16:10, filled — not stretched or letterboxed). A diagram or screenshot with text near the top/bottom edge will likely get clipped; a photo usually crops fine.</div>`;
+    // Reposition & Scale (direct user request) -- Projects have no
+    // separate save step (every edit writes straight into
+    // store.topic_detail.data, see onProjectInput), so this getter/
+    // setter closes over `p` directly rather than a formValues field.
+    let imgFitTool = '';
+    if (imgVal){
+      const fitPrefix = 'project-' + i;
+      imageFitGet[fitPrefix] = () => ({ x: p.image_x || 0, y: p.image_y || 0, zoom: p.image_zoom });
+      imageFitSet[fitPrefix] = (x, y, zoom) => { p.image_x = x; p.image_y = y; p.image_zoom = zoom; markDirty('topic_detail'); };
+      imageFitRerender[fitPrefix] = renderMain;
+      imgFitTool = imageFitToolHtml(fitPrefix, '16/10', imgVal, p.image_x, p.image_y, p.image_zoom);
+    }
     html += `<div class="topic-card">
       <div class="entry-card-order">
         <button onclick="moveProject(${i},-1)" ${i===0?'disabled':''} title="Move up">▲</button>
@@ -1101,6 +1137,7 @@ function renderTopicAreaMain(){
           <input type="text" value="${escapeHtml(p.link||'')}" oninput="onProjectInput(${i},'link',this.value)" placeholder="https://…"></div>
         <div class="field"><label class="field-label">Image <span class="opt">(optional — falls back to a colored placeholder if left blank)</span></label>
           <div class="image-field-preview" id="image-preview-project-${i}">${imgBox}${imgNote}</div>
+          ${imgFitTool}
           <input type="file" accept="image/*" id="image-input-project-${i}" onchange="onProjectImageSelected(${i})">
           ${imgVal ? `<button type="button" class="btn small ghost" style="margin-top:6px;" onclick="clearProjectImage(${i})">Remove image</button>` : ''}
           <div class="image-upload-progress" id="image-progress-project-${i}"></div>
@@ -1230,6 +1267,10 @@ async function onProjectImageSelected(i){
     const slugHint = project.title || 'project';
     const path = await uploadImageFile(file, 'projects', slugHint);
     project.image = path;
+    // A new image invalidates any pan/zoom tuned for the old one.
+    project.image_zoom = null;
+    project.image_x = null;
+    project.image_y = null;
     markDirty('topic_detail');
     progressEl.textContent = '';
     showToast('Image uploaded.');
@@ -1240,7 +1281,11 @@ async function onProjectImageSelected(i){
   }
 }
 function clearProjectImage(i){
-  store.topic_detail.data[activeTopicKey].projects[i].image = '';
+  const project = store.topic_detail.data[activeTopicKey].projects[i];
+  project.image = '';
+  project.image_zoom = null;
+  project.image_x = null;
+  project.image_y = null;
   markDirty('topic_detail');
   renderMain();
 }
@@ -1378,6 +1423,104 @@ function renderField(f){
   </div>`;
 }
 
+// ═══════════════════════════════════════════════════════════
+// IMAGE FIT/POSITION -- direct user request: "We should be able to
+// size it and fit. We should be able to scale photos." The plain crop
+// preview above (image-fit-preview) only ever showed the SAME crop the
+// live site's object-fit:cover would produce -- useful for catching a
+// bad fit (previous fix), useless for correcting one. This tool renders
+// right below it: drag inside the box to pan, use the slider to zoom.
+// It writes three companion values per image -- <prefix>_zoom/_x/_y --
+// that build/generate.py's image_fit_style() reads to reproduce this
+// exact crop on the live site (see that function's own comment for the
+// object-fit:contain + transform math, which has to match
+// onImageFitDragMove's math below pixel-for-pixel or the CMS preview
+// would lie about what ships).
+//
+// imageFitGet/imageFitSet/imageFitRerender are tiny registries keyed by
+// a "prefix" id, because this ONE set of drag/zoom handlers is shared
+// by two different storage shapes: the schema-driven fields (People's
+// photo, Spotlight's image) keep their data in formValues until Save,
+// while Projects write straight into store.topic_detail.data on every
+// change (see onProjectInput/addProject -- that editor has no separate
+// save step). Each call site below registers its own getter/setter/
+// rerender when it builds the tool's HTML.
+// ═══════════════════════════════════════════════════════════
+const imageFitGet = {};
+const imageFitSet = {};
+const imageFitRerender = {};
+let imageFitDrag = null;
+
+function imageFitToolHtml(prefix, aspect, imgSrc, x, y, zoom){
+  const zz = zoom == null ? 1 : zoom;
+  const xx = x || 0;
+  const yy = y || 0;
+  return `<div class="image-fit-tool">
+    <div class="image-fit-tool-label">Reposition &amp; scale</div>
+    <div class="image-fit-box" id="fitbox-${prefix}" style="aspect-ratio:${aspect};" onmousedown="startImageFitDrag(event,'${prefix}')">
+      <img id="fitimg-${prefix}" src="../${imgSrc}" style="transform: translate(${xx}%, ${yy}%) scale(${zz});" draggable="false">
+    </div>
+    <div class="image-fit-zoomrow">
+      <span class="image-fit-zoomval">1&times;</span>
+      <input type="range" id="fitzoom-${prefix}" min="1" max="4" step="0.05" value="${zz}"
+        oninput="onImageFitZoomInput('${prefix}', this.value)">
+      <span class="image-fit-zoomval" id="fitzoomval-${prefix}">${zz.toFixed(2)}&times;</span>
+    </div>
+    <div class="image-fit-hint">Drag to pan, slide to zoom — zoom out to reveal more of an image the automatic crop above was cutting into.</div>
+    ${zoom != null ? `<button type="button" class="btn small ghost" style="margin-top:6px;" onclick="resetImageFit('${prefix}')">Reset to automatic crop</button>` : ''}
+  </div>`;
+}
+
+function startImageFitDrag(e, prefix){
+  e.preventDefault();
+  const box = document.getElementById('fitbox-' + prefix);
+  if (!box || !imageFitGet[prefix]) return;
+  const rect = box.getBoundingClientRect();
+  const state = imageFitGet[prefix]();
+  imageFitDrag = {
+    prefix: prefix, startClientX: e.clientX, startClientY: e.clientY,
+    startX: state.x || 0, startY: state.y || 0, zoom: state.zoom == null ? 1 : state.zoom,
+    boxW: rect.width, boxH: rect.height,
+  };
+  box.classList.add('dragging');
+  window.addEventListener('mousemove', onImageFitDragMove);
+  window.addEventListener('mouseup', endImageFitDrag);
+}
+function onImageFitDragMove(e){
+  if (!imageFitDrag) return;
+  const s = imageFitDrag;
+  // Percentages resolve against the box's own (unscaled) size, same as
+  // the translate() in the img's transform -- see image_fit_style's
+  // comment for why that keeps this 1:1 with what ships on the site.
+  const dxPct = ((e.clientX - s.startClientX) / s.boxW) * 100;
+  const dyPct = ((e.clientY - s.startClientY) / s.boxH) * 100;
+  applyImageFit(s.prefix, s.startX + dxPct, s.startY + dyPct, s.zoom);
+}
+function endImageFitDrag(){
+  if (!imageFitDrag) return;
+  const box = document.getElementById('fitbox-' + imageFitDrag.prefix);
+  if (box) box.classList.remove('dragging');
+  imageFitDrag = null;
+  window.removeEventListener('mousemove', onImageFitDragMove);
+  window.removeEventListener('mouseup', endImageFitDrag);
+}
+function onImageFitZoomInput(prefix, value){
+  if (!imageFitGet[prefix]) return;
+  const state = imageFitGet[prefix]();
+  applyImageFit(prefix, state.x || 0, state.y || 0, parseFloat(value));
+}
+function applyImageFit(prefix, x, y, zoom){
+  const img = document.getElementById('fitimg-' + prefix);
+  if (img) img.style.transform = `translate(${x}%, ${y}%) scale(${zoom})`;
+  const zval = document.getElementById('fitzoomval-' + prefix);
+  if (zval) zval.textContent = zoom.toFixed(2) + '\u00d7';
+  if (imageFitSet[prefix]) imageFitSet[prefix](x, y, zoom);
+}
+function resetImageFit(prefix){
+  if (imageFitSet[prefix]) imageFitSet[prefix](null, null, null);
+  if (imageFitRerender[prefix]) imageFitRerender[prefix]();
+}
+
 function renderImageField(f){
   const val = formValues[f.name];
   const ratio = f.aspect || '1/1';
@@ -1385,7 +1528,16 @@ function renderImageField(f){
     ? `<div class="image-fit-preview" style="aspect-ratio:${ratio};"><img src="../${val}" onerror="this.parentElement.style.display='none'"></div>`
     : `<div class="image-field-empty" style="aspect-ratio:${ratio};">No image set</div>`;
   const note = `<div class="image-fit-note">Cropped exactly as it'll appear on the site (${ratio.replace('/', ':')}, filled — not stretched or letterboxed). Anything important near an edge here will be cut off there too.</div>`;
+  let fitTool = '';
+  if (val){
+    const prefix = 'field-' + f.name;
+    imageFitGet[prefix] = () => ({ x: formValues[f.name + '_x'] || 0, y: formValues[f.name + '_y'] || 0, zoom: formValues[f.name + '_zoom'] });
+    imageFitSet[prefix] = (x, y, zoom) => { formValues[f.name + '_x'] = x; formValues[f.name + '_y'] = y; formValues[f.name + '_zoom'] = zoom; };
+    imageFitRerender[prefix] = renderForm;
+    fitTool = imageFitToolHtml(prefix, ratio, val, formValues[f.name + '_x'], formValues[f.name + '_y'], formValues[f.name + '_zoom']);
+  }
   return `<div class="image-field-preview" id="image-preview-${f.name}">${box}${note}</div>
+    ${fitTool}
     <input type="file" accept="image/*" id="image-input-${f.name}" onchange="onImageSelected('${f.name}', '${f.uploadDir}', '${f.slugFrom || ''}')">
     ${val ? `<button type="button" class="btn small ghost" style="margin-top:6px;" onclick="clearImageField('${f.name}')">Remove image</button>` : ''}
     <div class="image-upload-progress" id="image-progress-${f.name}"></div>`;
@@ -1449,6 +1601,10 @@ async function onImageSelected(fieldName, uploadDir, slugFromField){
     const slugHint = slugFromField ? (formValues[slugFromField] || 'image') : 'image';
     const path = await uploadImageFile(file, uploadDir, slugHint);
     formValues[fieldName] = path;
+    // A new image invalidates any pan/zoom tuned for the old one.
+    formValues[fieldName + '_zoom'] = null;
+    formValues[fieldName + '_x'] = null;
+    formValues[fieldName + '_y'] = null;
     progressEl.textContent = '';
     showToast('Image uploaded.');
     renderForm();
@@ -1459,6 +1615,9 @@ async function onImageSelected(fieldName, uploadDir, slugFromField){
 }
 function clearImageField(fieldName){
   formValues[fieldName] = '';
+  formValues[fieldName + '_zoom'] = null;
+  formValues[fieldName + '_x'] = null;
+  formValues[fieldName + '_y'] = null;
   renderForm();
 }
 
@@ -1482,6 +1641,17 @@ function saveForm(){
       v = null;
     }
     obj[f.name] = v;
+    // Reposition & Scale companions (direct user request) -- only
+    // meaningful alongside a real image, so a cleared image drops them
+    // too (see clearImageField/onImageSelected, which already null
+    // them out in formValues, but this keeps the invariant even if
+    // formValues ever gets there some other way).
+    if (f.type === 'image'){
+      const hasImage = !!v;
+      obj[f.name + '_zoom'] = hasImage ? (formValues[f.name + '_zoom'] == null ? null : formValues[f.name + '_zoom']) : null;
+      obj[f.name + '_x'] = hasImage ? (formValues[f.name + '_x'] == null ? null : formValues[f.name + '_x']) : null;
+      obj[f.name + '_y'] = hasImage ? (formValues[f.name + '_y'] == null ? null : formValues[f.name + '_y']) : null;
+    }
   }
   if (editingIndex === -1){
     store[activeKey].entries.push(obj);
