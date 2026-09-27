@@ -662,6 +662,25 @@ def image_fit_style(item, prefix="image"):
     )
 
 
+def image_version_suffix(item, prefix="image"):
+    """Companion to image_fit_style: a cache-busting `?v=<timestamp>`
+    query string for an image's `src`, read from `<prefix>_v` (set by
+    the CMS's uploadImageFile at the moment of upload -- see
+    docs/admin/index.html). People's photo path is stable across
+    re-uploads (same filename every time, unlike Projects/Spotlight's
+    per-upload-unique filenames), which makes it exactly the kind of
+    URL a browser or GitHub Pages' CDN can keep serving a stale cached
+    copy of after a new upload replaces the file at that same path.
+    Appending a version query string forces a genuinely new URL on
+    every upload regardless of upload dir, so this is applied
+    everywhere for consistency even though People is the case that
+    actually needs it. Absent for images that predate this feature
+    (no `_v` on file) or that were never re-uploaded through the CMS,
+    in which case this returns "" and the `src` is unchanged."""
+    v = item.get(f"{prefix}_v")
+    return f"?v={v}" if v else ""
+
+
 def lead_media_html(topic_label, image=None, item=None):
     """Homepage Research Spotlight art. Defaults to the abstract editorial
     graphic (brand diagonal + topic label) used since launch, since most
@@ -679,8 +698,9 @@ def lead_media_html(topic_label, image=None, item=None):
     this image's optional pan/zoom fit data -- see image_fit_style."""
     if image:
         fit = image_fit_style(item or {}, "image")
+        ver = image_version_suffix(item or {}, "image")
         return f"""
-        <div class="lead-media"><img src="{image}" alt=""{fit} loading="lazy"><span class="topic-mark">{topic_label}</span></div>"""
+        <div class="lead-media"><img src="{image}{ver}" alt=""{fit} loading="lazy"><span class="topic-mark">{topic_label}</span></div>"""
     return f"""
         <div class="lead-media"><span class="topic-mark">{topic_label}</span></div>"""
 

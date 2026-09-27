@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tech Policy Hub — Content Manager</title>
 <meta name="robots" content="noindex, nofollow">
+<!-- This page is loaded directly by URL (not a build-versioned asset
+     link), so nothing forces a browser to fetch a fresh copy after an
+     update -- a stale cached copy of the CMS itself is indistinguishable
+     from a real bug (e.g. it can be missing an image-preview fix that
+     already shipped). Discourage that caching explicitly. -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <link rel="icon" href="../assets/img/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="../assets/img/favicon-16.png">
@@ -689,12 +697,24 @@ async function saveTopicDetail(){
 }
 
 async function uploadImageFile(file, uploadDir, slugHint){
+  // `version` doubles as the non-people filename's uniqueness suffix
+  // (unchanged behavior) AND, returned alongside the path, as a
+  // `?v=` cache-busting stamp every caller now stores as `<field>_v`
+  // and every renderer (CMS preview + live site, see generate.py's
+  // image_version_suffix) appends to the `src`. People's filename is
+  // stable across re-uploads (same path every time) specifically so
+  // editors don't accumulate orphaned old copies, but that same
+  // stability is exactly what makes a browser or GitHub Pages' CDN
+  // prone to keep serving an old cached copy of it after a re-upload
+  // -- the version stamp is what actually busts that cache, since the
+  // path/filename alone can't.
+  const version = Date.now();
   const ext = (file.type.split('/')[1] || 'png').replace('jpeg','jpg');
   const base = slugify(slugHint) || 'image';
   const isPeoplePhoto = uploadDir === 'people';
   const filename = isPeoplePhoto
     ? `${base}.${ext}`
-    : `${uploadDir}-${base}-${Date.now()}.${ext}`;
+    : `${uploadDir}-${base}-${version}.${ext}`;
   const path = `docs/assets/img/${uploadDir}/${filename}`;
 
   const dataUrl = await new Promise((resolve, reject) => {
@@ -723,7 +743,7 @@ async function uploadImageFile(file, uploadDir, slugHint){
       branch: BRANCH,
     }),
   });
-  return `assets/img/${uploadDir}/${filename}`;
+  return { path: `assets/img/${uploadDir}/${filename}`, version };
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1120,7 +1140,10 @@ function renderTopicAreaMain(){
     const imgVal = p.image || '';
     const fitPrefix = 'project-' + i;
     const imgOverrideSrc = imagePreviewOverride[fitPrefix];
-    const imgSrc = imgOverrideSrc || (imgVal ? '../' + imgVal : '');
+    // The cache-busting version stamp (see uploadImageFile) only makes
+    // sense on the real live-site URL -- a blob: override is already a
+    // fresh local file, no busting needed or even meaningful for it.
+    const imgSrc = imgOverrideSrc || (imgVal ? '../' + imgVal + (p.image_v ? '?v=' + p.image_v : '') : '');
     const imgBox = imgSrc
       ? `<div class="image-fit-preview" style="aspect-ratio:16/10;"><img src="${imgSrc}" onerror="this.parentElement.classList.add('is-broken')"></div>`
       : `<div class="image-field-empty" style="aspect-ratio:16/10;">No image set</div>`;
@@ -1283,8 +1306,9 @@ async function onProjectImageSelected(i){
   try {
     const project = store.topic_detail.data[activeTopicKey].projects[i];
     const slugHint = project.title || 'project';
-    const path = await uploadImageFile(file, 'projects', slugHint);
+    const { path, version } = await uploadImageFile(file, 'projects', slugHint);
     project.image = path;
+    project.image_v = version;
     // A new image invalidates any pan/zoom tuned for the old one.
     project.image_zoom = null;
     project.image_x = null;
@@ -1304,6 +1328,7 @@ function clearProjectImage(i){
   project.image_zoom = null;
   project.image_x = null;
   project.image_y = null;
+  project.image_v = null;
   clearImagePreviewOverride('project-' + i);
   markDirty('topic_detail');
   renderMain();
@@ -1569,7 +1594,10 @@ function renderImageField(f){
   const ratio = f.aspect || '1/1';
   const prefix = 'field-' + f.name;
   const overrideSrc = imagePreviewOverride[prefix];
-  const src = overrideSrc || (val ? '../' + val : '');
+  // See onProjectImageSelected's imgSrc comment -- version-stamp only
+  // the real live-site URL, never the blob: override.
+  const ver = formValues[f.name + '_v'];
+  const src = overrideSrc || (val ? '../' + val + (ver ? '?v=' + ver : '') : '');
   const box = src
     ? `<div class="image-fit-preview" style="aspect-ratio:${ratio};"><img src="${src}" onerror="this.parentElement.classList.add('is-broken')"></div>`
     : `<div class="image-field-empty" style="aspect-ratio:${ratio};">No image set</div>`;
@@ -1649,8 +1677,9 @@ async function onImageSelected(fieldName, uploadDir, slugFromField){
   if (progressEl) progressEl.textContent = 'Uploading…';
   try {
     const slugHint = slugFromField ? (formValues[slugFromField] || 'image') : 'image';
-    const path = await uploadImageFile(file, uploadDir, slugHint);
+    const { path, version } = await uploadImageFile(file, uploadDir, slugHint);
     formValues[fieldName] = path;
+    formValues[fieldName + '_v'] = version;
     // A new image invalidates any pan/zoom tuned for the old one.
     formValues[fieldName + '_zoom'] = null;
     formValues[fieldName + '_x'] = null;
@@ -1668,6 +1697,7 @@ function clearImageField(fieldName){
   formValues[fieldName + '_zoom'] = null;
   formValues[fieldName + '_x'] = null;
   formValues[fieldName + '_y'] = null;
+  formValues[fieldName + '_v'] = null;
   clearImagePreviewOverride('field-' + fieldName);
   renderForm();
 }
@@ -1692,16 +1722,18 @@ function saveForm(){
       v = null;
     }
     obj[f.name] = v;
-    // Reposition & Scale companions (direct user request) -- only
-    // meaningful alongside a real image, so a cleared image drops them
-    // too (see clearImageField/onImageSelected, which already null
-    // them out in formValues, but this keeps the invariant even if
-    // formValues ever gets there some other way).
+    // Reposition & Scale companions (direct user request), plus the
+    // upload-time cache-busting version stamp (see uploadImageFile) --
+    // both only meaningful alongside a real image, so a cleared image
+    // drops them too (see clearImageField/onImageSelected, which
+    // already null them out in formValues, but this keeps the
+    // invariant even if formValues ever gets there some other way).
     if (f.type === 'image'){
       const hasImage = !!v;
       obj[f.name + '_zoom'] = hasImage ? (formValues[f.name + '_zoom'] == null ? null : formValues[f.name + '_zoom']) : null;
       obj[f.name + '_x'] = hasImage ? (formValues[f.name + '_x'] == null ? null : formValues[f.name + '_x']) : null;
       obj[f.name + '_y'] = hasImage ? (formValues[f.name + '_y'] == null ? null : formValues[f.name + '_y']) : null;
+      obj[f.name + '_v'] = hasImage ? (formValues[f.name + '_v'] == null ? null : formValues[f.name + '_v']) : null;
     }
   }
   if (editingIndex === -1){
