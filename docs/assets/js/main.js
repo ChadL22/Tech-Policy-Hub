@@ -1,5 +1,42 @@
 // Tech Policy Hub — shared interactions
 document.addEventListener('DOMContentLoaded', function () {
+  // Direct user report: the Affiliates rail's bottom fade-out (shared
+  // with the homepage Hub News rail and events.html's Upcoming/Past
+  // lists -- see .rail-scroll-wrap in styles.css) is a purely static
+  // CSS overlay with no idea whether there's actually anything left to
+  // scroll to. It stayed visible even once you'd reached the true end
+  // of a list -- either because the list is short enough to fit inside
+  // the box without scrolling at all, or because it's already scrolled
+  // all the way down -- permanently "fogging" the last real row for no
+  // reason (the reported screenshot: Amy Winecoff just happened to be
+  // the last Affiliate, Laura Fichtner wasn't at the bottom of the
+  // visible scroll area). Toggles a class the CSS uses to hide that
+  // overlay once `scrollTop + clientHeight` reaches `scrollHeight`
+  // (with a couple px of tolerance for subpixel/zoom rounding) --
+  // which is also simply true from the start for a box that never
+  // needed to scroll in the first place, so one check covers both
+  // cases. Declared (and its listeners wired up) here, at the very top
+  // of this file, specifically so every other block below -- the
+  // search/filter re-render, the subsection-toggle expand/collapse,
+  // and the two height-syncing IIFEs further down, all of which can
+  // change whether a box needs to scroll at all -- can already safely
+  // call refreshRailFades() the moment they run, instead of racing
+  // whatever line of this file happened to set it up.
+  function refreshRailFades() {
+    document.querySelectorAll('.rail-scroll-wrap').forEach(function (wrap) {
+      var scroller = wrap.querySelector('.rail-scroll') || wrap;
+      var atEnd = scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 2;
+      wrap.classList.toggle('rail-fade-hidden', atEnd);
+    });
+  }
+  document.querySelectorAll('.rail-scroll-wrap').forEach(function (wrap) {
+    var scroller = wrap.querySelector('.rail-scroll') || wrap;
+    scroller.addEventListener('scroll', refreshRailFades);
+  });
+  refreshRailFades();
+  window.addEventListener('resize', refreshRailFades);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(refreshRailFades);
+
   // Direct user request, modeled on Bloomberg.com's homepage "Bloomberg
   // Originals"/"Watch" rows: research.html's People/Projects tile rows
   // (.rp-carousel, see research_body in build_all.py) page through
@@ -488,6 +525,7 @@ document.addEventListener('DOMContentLoaded', function () {
       // runs so its page count/viewport width/dots stay correct. A
       // no-op on pages with no [data-carousel] elements.
       tileCarousels.forEach(function (c) { c.refresh(); });
+      refreshRailFades(); // Affiliates' rail-scroll-wrap can gain/lose the need to scroll as filtering shows/hides rows
     }
 
     pills.forEach(function (pill) {
@@ -977,6 +1015,7 @@ document.addEventListener('DOMContentLoaded', function () {
       // and let the CSS default (.rail-scroll's own max-height) apply.
       if (window.matchMedia('(max-width: 1150px)').matches) {
         scroll.style.maxHeight = '';
+        refreshRailFades();
         return;
       }
       // Follow-up (direct user request): the news list used to stop
@@ -990,6 +1029,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var top = wrap.getBoundingClientRect().top;
       var available = target - top;
       if (available > 40) scroll.style.maxHeight = available + 'px';
+      refreshRailFades(); // a new max-height can flip whether Hub News' own box still needs to scroll
     }
 
     sync();
@@ -1020,10 +1060,11 @@ document.addEventListener('DOMContentLoaded', function () {
       if (!list) return;
       function sync() {
         var rows = Array.prototype.slice.call(list.children);
-        if (rows.length <= n) { list.style.maxHeight = ''; return; }
+        if (rows.length <= n) { list.style.maxHeight = ''; refreshRailFades(); return; }
         var top = list.getBoundingClientRect().top;
         var bottom = rows[n - 1].getBoundingClientRect().bottom;
         list.style.maxHeight = (bottom - top) + 'px';
+        refreshRailFades(); // same reasoning as syncHubNewsHeight's sync() above, for events.html's lists
       }
       sync();
       window.addEventListener('resize', sync);

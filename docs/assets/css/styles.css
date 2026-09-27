@@ -2127,7 +2127,14 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   content: ""; position: absolute; left: 0; right: 6px; bottom: 0; height: 40px;
   background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 45%, var(--paper) 100%);
   pointer-events: none;
+  opacity: 1; transition: opacity .15s ease;
 }
+/* Direct user report: this fade had no idea whether there was actually
+   anything left to scroll to, so it stayed on top of the last row even
+   at the true bottom of a short list (or one already scrolled all the
+   way down) -- see refreshRailFades() in main.js, which toggles this
+   class once `scrollTop + clientHeight` reaches `scrollHeight`. */
+.rail-scroll-wrap.rail-fade-hidden::after{ opacity: 0; }
 .rail-scroll{ max-height: 420px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
 .rail-scroll::-webkit-scrollbar{ width: 6px; }
 .rail-scroll::-webkit-scrollbar-track{ background: transparent; }
