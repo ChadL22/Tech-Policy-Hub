@@ -44,7 +44,7 @@ SITE_URL = "https://techpolicyhub.org/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026092702"
+ASSET_VERSION = "2026092703"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -52,12 +52,11 @@ ASSET_VERSION = "2026092702"
 # .../Tech-Policy-Hub/news.html. LINK_ATTR_RE finds href/src attributes in
 # the assembled HTML so write() can rewrite them to match, without having
 # to touch every place a link is built. It also matches a bare
-# url('assets/...') -- the only other place a page-relative asset path
-# shows up is the .image-backdrop div's inline background-image style
-# (see image_backdrop_html); an <img src="..."> gets rewritten because it
-# matches the href/src branch, but that inline style doesn't, so without
-# this it silently keeps its un-prefixed path on every page one level
-# deep (people/, research/, ...) and the backdrop image 404s there.
+# url('assets/...') in an inline style -- an <img src="..."> gets
+# rewritten because it matches the href/src branch, but an inline
+# background-image doesn't, so without this it would silently keep its
+# un-prefixed path on every page one level deep (people/, research/, ...)
+# and 404 there. Nothing emits one right now; kept so a future one works.
 LINK_ATTR_RE = re.compile(r'(href|src)="([^"]+)"|url\(\'(assets/[^\']+)\'\)')
 
 
@@ -692,39 +691,82 @@ def image_version_suffix(item, prefix="image"):
     return f"?v={v}" if v else ""
 
 
-def image_backdrop_html(image_src):
-    """A blurred, scaled-up copy of the same photo, painted behind the
-    sharp <img> itself, filling .rp-tile-photo's box completely no
-    matter how the photo's own crop sits on top of it -- plain
-    object-fit:cover is already full-bleed, so this simply sits
-    invisibly behind it there, but the Reposition & Scale tool's
-    contain mode (see image_fit_style) can leave real gaps at the
-    box's edges once a photo's zoomed/panned to show more of itself
-    than a cover crop would (a portrait headshot inside a wider tile,
-    say). Direct user request: those gaps used to fall through to
-    .rp-tile-photo's placeholder diagonal-stripe pattern -- meant for
-    "no photo yet" -- which read as broken/unfinished behind a REAL
-    photo. Blurring + scaling up the SAME photo instead extends its
-    own edge color into the gap (a plain white-background headshot
-    gets a soft white fill; a warmer-toned one gets a matching warm
-    fill) -- the same "ambient" backdrop treatment music/video players
-    use for letterboxed art -- and it adapts automatically to any
-    photo, with no per-image color to configure by hand.
+_EDGE_COLOR_CACHE = {}
 
-    Pass the exact same `src` string (cache-busting `?v=` query
-    string, if any, already included -- see image_version_suffix)
-    used for the real <img> right after this, so a re-uploaded photo's
-    backdrop refreshes in lockstep with it rather than serving a
-    stale cached blur of the old one. Call this unconditionally
-    whenever a real photo exists, regardless of which fit mode is
-    active for it right now -- in cover mode the sharp image is
-    already full-bleed and hides this completely, so it costs nothing
-    to render up front, and it's already in place the moment that
-    photo's own crop later changes to contain mode. Never call this
-    for the "no photo yet" placeholder itself -- there's no photo to
-    extend a color from, so the diagonal-stripe placeholder stays
-    exactly as it was."""
-    return f'<div class="image-backdrop" style="background-image:url(\'{image_src}\')" aria-hidden="true"></div>\n          '
+
+def image_edge_color(image_path):
+    """The solid background color a photo's letterbox gaps should be
+    filled with, sampled from the photo itself -- direct user request:
+    "There should be no diagonal lines and the background behind his
+    photo and still in the image card should be grey like the background
+    within the photo... Sipho and Ido's photos should have the extra
+    space be solid white since their photo backgrounds are white."
+
+    When the CMS's Reposition & Scale tool puts a photo in contain mode
+    (see image_fit_style), the tile's box can be wider/taller than the
+    photo, leaving gaps at its edges. This reads the photo's own
+    background color so those gaps become an unbroken continuation of
+    it -- white for a white-backdrop headshot, gray for a gray one.
+    (A previous attempt used a blurred copy of the whole photo instead;
+    blur fades its own edges to semi-transparent, so the placeholder
+    stripes still bled through right in the gaps, and blurring the
+    whole frame dragged in shirt/subject colors instead of the wall.)
+
+    Samples the left and right edge bands over the photo's upper 60%,
+    plus its top band -- where a headshot's backdrop actually is; the
+    bottom edge is usually the person's shirt, so it's skipped -- and
+    takes the per-channel median, which ignores stray hair/shoulder
+    pixels that reach an edge. A few pixels in from the true border
+    (JPEG edge artifacts, thin frames). Transparent PNGs are flattened
+    onto white first. Returns "#rrggbb", or None when Pillow isn't
+    installed or the file can't be read (callers fall back to white).
+    Cached per path for the life of one build."""
+    if not image_path:
+        return None
+    path = image_path.split("?", 1)[0]
+    if path in _EDGE_COLOR_CACHE:
+        return _EDGE_COLOR_CACHE[path]
+    color = None
+    try:
+        from PIL import Image
+        with Image.open(os.path.join(ROOT, path)) as im:
+            im = im.convert("RGBA")
+            flat = Image.new("RGBA", im.size, (255, 255, 255, 255))
+            flat.alpha_composite(im)
+            im = flat.convert("RGB")
+            im.thumbnail((240, 240))
+            w, h = im.size
+            inset = max(1, w // 100)
+            band = max(2, w // 25)
+            upper = max(inset + 1, int(h * 0.6))
+            xs = list(range(inset, inset + band)) + list(range(w - inset - band, w - inset))
+            px = [im.getpixel((x, y)) for x in xs for y in range(inset, upper)]
+            px += [im.getpixel((x, y)) for y in range(inset, inset + band) for x in range(inset, w - inset)]
+            if px:
+                mid = len(px) // 2
+                rgb = [sorted(c[i] for c in px)[mid] for i in range(3)]
+                color = "#%02x%02x%02x" % tuple(rgb)
+    except Exception:
+        color = None
+    _EDGE_COLOR_CACHE[path] = color
+    return color
+
+
+def photo_box_attrs(image_path, base_class, extra_style=""):
+    """Opening-tag attributes for a photo's container (.rp-tile-photo /
+    .lead-media): adds `has-photo` -- which turns off the "no photo yet"
+    diagonal-stripe placeholder (see styles.css) -- and sets
+    --photo-fill to the photo's own sampled background color (see
+    image_edge_color). With no photo, returns just the base class and
+    any extra style, leaving the placeholder exactly as before."""
+    style = extra_style
+    cls = base_class
+    if image_path:
+        cls += " has-photo"
+        fill = image_edge_color(image_path) or "#ffffff"
+        style = f"{style}--photo-fill:{fill};"
+    style_attr = f' style="{style}"' if style else ""
+    return f'class="{cls}"{style_attr}'
 
 
 def lead_media_html(topic_label, image=None, item=None):
@@ -746,9 +788,8 @@ def lead_media_html(topic_label, image=None, item=None):
         fit = image_fit_style(item or {}, "image")
         ver = image_version_suffix(item or {}, "image")
         src = f"{image}{ver}"
-        backdrop = image_backdrop_html(src)
         return f"""
-        <div class="lead-media">{backdrop}<img src="{src}" alt=""{fit} loading="lazy"><span class="topic-mark">{topic_label}</span></div>"""
+        <div {photo_box_attrs(image, "lead-media")}><img src="{src}" alt=""{fit} loading="lazy"><span class="topic-mark">{topic_label}</span></div>"""
     return f"""
         <div class="lead-media"><span class="topic-mark">{topic_label}</span></div>"""
 

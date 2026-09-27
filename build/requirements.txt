@@ -2,3 +2,7 @@
 # PyYAML is what load_data() (generate.py) uses to read the site's
 # content out of build/data/*.yml -- see README "Editing content".
 PyYAML>=6.0
+
+# Pillow: generate.py samples each photo's own background color
+# (image_edge_color) to fill letterbox gaps behind it.
+Pillow>=10.0

@@ -202,12 +202,21 @@ def _person_photo_html(name):
         fit = g.image_fit_style(person, "photo")
         ver = g.image_version_suffix(person, "photo")
         src = f"{photo}{ver}"
-        backdrop = g.image_backdrop_html(src)
-        return f'{backdrop}<img class="rp-tile-photo-img" src="{src}" alt="{name}" loading="lazy"{fit}>'
+        return f'<img class="rp-tile-photo-img" src="{src}" alt="{name}" loading="lazy"{fit}>'
     return """<svg class="rp-tile-photo-silhouette" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
             <circle cx="50" cy="36" r="18"/>
             <path d="M50 60c-23 0-39 15-39 38h78c0-23-16-38-39-38z"/>
           </svg>"""
+
+
+def _person_photo_box_attrs(name):
+    # The .rp-tile-photo--person container's own attributes -- see
+    # g.photo_box_attrs: a real headshot gets `has-photo` (no placeholder
+    # stripes) plus its own sampled background color as the fill behind
+    # any letterbox gap, so the photo's backdrop just continues edge to
+    # edge. Shared by research.html's tiles and people.html's rows.
+    person = _people_by_name.get(name) or {}
+    return g.photo_box_attrs(person.get("photo"), "rp-tile-photo rp-tile-photo--person")
 
 
 def _person_tile_html(name, keys):
@@ -229,7 +238,7 @@ def _person_tile_html(name, keys):
     slug = _slugify(name)
     return f"""
       <a class="rp-tile rp-tile--link rp-tile--person" href="people.html#person-{slug}" data-areas="{' '.join(keys)}" data-search-row>
-        <div class="rp-tile-photo rp-tile-photo--person">
+        <div {_person_photo_box_attrs(name)}>
           {_person_photo_html(name)}
         </div>
         <div class="rp-tile-caption">
@@ -262,7 +271,7 @@ def _project_tile_html(p, key):
     ver = g.image_version_suffix(p, "image")
     img_src = f"{image}{ver}" if image else None
     photo_img_html = (
-        f'{g.image_backdrop_html(img_src)}<img class="rp-tile-photo-img" src="{img_src}" alt="{p["title"]}" loading="lazy"{fit}>\n          '
+        f'<img class="rp-tile-photo-img" src="{img_src}" alt="{p["title"]}" loading="lazy"{fit}>\n          '
         if image else ""
     )
     # Direct user request: "we should have page pop-ups that cover the
@@ -305,7 +314,7 @@ def _project_tile_html(p, key):
           <p class="project-modal-desc">{p['description']}</p>{modal_link_html}
         </div>
       </template>"""
-    inner = f"""<div class="rp-tile-photo" style="--area-color:{m['color']}">
+    inner = f"""<div {g.photo_box_attrs(image, "rp-tile-photo", f"--area-color:{m['color']};")}>
           {photo_img_html}<span class="area-tag rp-tile-photo-badge">{m['code']}</span>
         </div>
         <div class="rp-tile-caption">
@@ -880,7 +889,7 @@ def _person_row_html(p):
       <div class="person-row" id="person-{_slugify(p['name'])}" data-areas="{' '.join(areas)}" data-roles="{' '.join(p['role_types'])}" data-search-row>
         <div class="person-body">
           <div class="person-media">
-            <div class="rp-tile-photo rp-tile-photo--person">
+            <div {_person_photo_box_attrs(p['name'])}>
               {_person_photo_html(p['name'])}
               <button type="button" class="person-page-next person-page-next--bio" aria-label="Show bio for {p['name']}">Bio <span aria-hidden="true">&rsaquo;</span></button>
             </div>
