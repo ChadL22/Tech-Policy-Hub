@@ -1,9 +1,9 @@
 cybersecurity:
   projects:
-    - title: Cyber Risk Mapping for U.S. Counties
-      description: Quantifying exposed attack surface and cyber risk across all 50 states and thousands of county governments.
+    - title: 'Temporal Aspects of Cyber Attack Surfaces:  Measuring changes in US county governments attack surfaces over time'
+      description: Capturing longitudinal change in organizational attack surfaces remains an open methodological and analytical challenge. Practitioners and the research community currently lack best practice models to capture and analyze changes in the attack surface, with no standardized data collection methodologies to calibrate such models and draw temporal insights on attack surface dynamics. Existing OSINT-based measurements have been discovering novel aspects across organizational attack surfaces, but have not been deployed to study temporal aspects. The paper seeks to fill these gaps by realizing (1) whether, (2) how, and (3) to what extent features in organizational attack surfaces change over time. We develop novel scales to measure temporal aspects of an attack surface and apply them to the computational collection and analysis of 10-months of data on the integrated attack surface exposed across 3,143 U.S. county governments. We reveal that many aspects of the attack surface are generally static, while a few tend to change, shedding new light on our understanding of cyber risks posed by local government organizations over time. Our work develops first-of-their-kind measures to understand temporal change in an attack surface and relies on OSINT-based methodologies to reveal the areas of cyber risk that become more severe over time across U.S. county governments.
       link: ''
-      image: ''
+      image: assets/img/projects/projects-temporal-aspects-of-cyber-attack-surfaces-measuring-changes-in-us-county-governments-attack-surfaces-over-time-1790502836789.png
     - title: Critical Infrastructure Resilience
       description: Working with practitioners to translate attack-surface research into actionable defense priorities.
       link: ''
