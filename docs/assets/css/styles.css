@@ -1236,7 +1236,26 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    tile variants read consistently. */
 .rp-tile-caption{ background: var(--paper); padding: 16px; flex: 1 1 auto; }
 .rp-carousel--projects .rp-tile h3{ font-size:1.05rem; margin-bottom:8px; }
-.rp-carousel--projects .rp-desc{ font-size:.92rem; }
+/* Direct user request: full descriptions were rendering fully expanded
+   ("cannot be this long and fully expanded") -- clamped to a 3-line
+   preview/summary with a native ellipsis, same technique used nowhere
+   else on the site yet but well-supported (Chrome/Safari/Firefox all
+   read -webkit-line-clamp today, prefixed name notwithstanding). See
+   _project_tile_html's read_more_html for the "link to the work of the
+   project" half of this -- the two ship together. */
+.rp-carousel--projects .rp-desc{
+  font-size:.92rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.rp-desc-more{
+  display:inline-block; margin-top:8px; font-family: var(--font-nav);
+  font-size:.78rem; font-weight:700; letter-spacing:.03em; text-transform:uppercase;
+  color: var(--umd-red);
+}
+.rp-tile--link:hover .rp-desc-more{ text-decoration: underline; }
 
 /* Footer bar below each carousel -- just the prev/next arrows (direct
    user request: no page dots -- the arrows greying out via :disabled at

@@ -255,12 +255,26 @@ def _project_tile_html(p, key):
         f'<img class="rp-tile-photo-img" src="{image}" alt="{p["title"]}" loading="lazy">\n          '
         if image else ""
     )
+    # Direct user request: full project descriptions were rendering
+    # fully expanded on the card, which could run to a whole paragraph
+    # and made the grid look ungainly. .rp-desc now clamps to a few
+    # lines with a CSS ellipsis (see styles.css), so this is a preview/
+    # summary, not the full text. When there's a link, a small "Read
+    # the full project" affordance makes the truncation's escape hatch
+    # visible -- the whole tile is already the link (rp-tile--link
+    # below), so this is a styled <span>, not a second nested <a>.
+    # Projects with no link just show the truncated summary with no
+    # promise of more -- add a link in the CMS to get this affordance.
+    read_more_html = (
+        '\n          <span class="rp-desc-more">Read the full project &rarr;</span>'
+        if link else ""
+    )
     inner = f"""<div class="rp-tile-photo" style="--area-color:{m['color']}">
           {photo_img_html}<span class="area-tag rp-tile-photo-badge">{m['code']}</span>
         </div>
         <div class="rp-tile-caption">
           <h3>{p['title']}</h3>
-          <p class="rp-desc">{p['description']}</p>
+          <p class="rp-desc">{p['description']}</p>{read_more_html}
         </div>"""
     if link:
         return f"""

@@ -148,15 +148,32 @@ h1,h2,h3{ margin:0; font-family: var(--font-body); }
 .sub-list-remove{ flex:none; margin-top:2px; }
 .form-actions{ display:flex; gap:10px; margin-top: 22px; border-top:1px solid var(--line); padding-top:18px; }
 
-/* image field */
+/* image field
+   Direct user request: "when we add projects or any images in the
+   content manager tool we should be able to verify that the image
+   fits" -- the old preview was a generic 140x90 thumbnail, a different
+   shape than any real card on the site, so a diagram like the cyber-
+   attack-surface graphic could look fine here and still get its top
+   and bottom sliced off once the live page's object-fit:cover forced
+   it into a 16:10 tile. The preview box below is now sized to each
+   field's real on-site crop (see each field's `aspect`, e.g. 16/10 for
+   Projects, 6/5 for People, 16/7 for Spotlight) and applies the exact
+   same object-fit:cover, so what you see here is what ships -- if
+   something important gets cut off in this box, it'll get cut off on
+   the live site too. */
 .image-field-preview{
-  display:flex; align-items:center; gap:14px; margin-bottom:8px;
+  display:flex; align-items:flex-start; gap:14px; margin-bottom:8px; flex-wrap:wrap;
 }
-.image-field-preview img{ max-width:140px; max-height:90px; border-radius:var(--radius); border:1px solid var(--line); object-fit:cover; }
+.image-fit-preview{
+  width:220px; border-radius:var(--radius); border:1px solid var(--line);
+  overflow:hidden; position:relative; background: var(--paper-soft); flex:none;
+}
+.image-fit-preview img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
 .image-field-empty{
-  width:140px; height:90px; border:1.5px dashed var(--line); border-radius:var(--radius);
+  width:220px; border:1.5px dashed var(--line); border-radius:var(--radius);
   display:flex; align-items:center; justify-content:center; color: var(--ink-soft); font-size:.7rem; text-align:center; padding:6px;
 }
+.image-fit-note{ font-size:.74rem; color: var(--ink-soft); line-height:1.45; max-width:300px; flex:1 1 200px; }
 .image-upload-progress{ font-size:.78rem; color: var(--ink-soft); margin-top:4px; }
 
 /* connect screen */
@@ -311,7 +328,7 @@ const COLLECTIONS = {
       { name:'role_types', label:'Type', type:'multiselect', options:ROLE_TYPE_OPTIONS, hint:'Core Member or Affiliate — drives which People page section (and the Role filter) this person appears under.' },
       { name:'bio', label:'Bio', type:'textarea' },
       { name:'email', label:'Email', type:'text', required:false },
-      { name:'photo', label:'Photo', type:'image', required:false, uploadDir:'people', slugFrom:'name',
+      { name:'photo', label:'Photo', type:'image', required:false, uploadDir:'people', slugFrom:'name', aspect:'6/5',
         hint:'Falls back to a generic silhouette placeholder if left blank. Use a photo with real headroom above the hair and below the chin — the site crops fairly tightly.' },
       { name:'websites', label:"Website(s)", type:'list', required:false,
         hint:"One or more sites for this person — each gets its own labeled link.",
@@ -379,7 +396,7 @@ const COLLECTIONS = {
       { name:'summary', label:'Summary', type:'textarea' },
       { name:'primary_label', label:'Button label', type:'text', hint:'e.g. "Read the Story", "Read the Paper", "Event Details"' },
       { name:'link', label:'Link', type:'text' },
-      { name:'image', label:'Photo (optional)', type:'image', required:false, uploadDir:'spotlight', slugFrom:'title',
+      { name:'image', label:'Photo (optional)', type:'image', required:false, uploadDir:'spotlight', slugFrom:'title', aspect:'16/7',
         hint:'Falls back to an abstract placeholder graphic if left blank.' },
     ],
   },
@@ -1066,9 +1083,10 @@ function renderTopicAreaMain(){
   }
   data.projects.forEach((p, i) => {
     const imgVal = p.image || '';
-    const imgPreview = imgVal
-      ? `<img src="../${imgVal}" onerror="this.style.display='none'">`
-      : `<div class="image-field-empty">No image set</div>`;
+    const imgBox = imgVal
+      ? `<div class="image-fit-preview" style="aspect-ratio:16/10;"><img src="../${imgVal}" onerror="this.parentElement.style.display='none'"></div>`
+      : `<div class="image-field-empty" style="aspect-ratio:16/10;">No image set</div>`;
+    const imgNote = `<div class="image-fit-note">Cropped exactly as it'll appear on the Research page (16:10, filled — not stretched or letterboxed). A diagram or screenshot with text near the top/bottom edge will likely get clipped; a photo usually crops fine.</div>`;
     html += `<div class="topic-card">
       <div class="entry-card-order">
         <button onclick="moveProject(${i},-1)" ${i===0?'disabled':''} title="Move up">▲</button>
@@ -1082,7 +1100,7 @@ function renderTopicAreaMain(){
         <div class="field"><label class="field-label">Link <span class="opt">(optional — makes the whole tile clickable on the Research page)</span></label>
           <input type="text" value="${escapeHtml(p.link||'')}" oninput="onProjectInput(${i},'link',this.value)" placeholder="https://…"></div>
         <div class="field"><label class="field-label">Image <span class="opt">(optional — falls back to a colored placeholder if left blank)</span></label>
-          <div class="image-field-preview" id="image-preview-project-${i}">${imgPreview}</div>
+          <div class="image-field-preview" id="image-preview-project-${i}">${imgBox}${imgNote}</div>
           <input type="file" accept="image/*" id="image-input-project-${i}" onchange="onProjectImageSelected(${i})">
           ${imgVal ? `<button type="button" class="btn small ghost" style="margin-top:6px;" onclick="clearProjectImage(${i})">Remove image</button>` : ''}
           <div class="image-upload-progress" id="image-progress-project-${i}"></div>
@@ -1362,10 +1380,12 @@ function renderField(f){
 
 function renderImageField(f){
   const val = formValues[f.name];
-  const preview = val
-    ? `<img src="../${val}" onerror="this.style.display='none'">`
-    : `<div class="image-field-empty">No image set</div>`;
-  return `<div class="image-field-preview" id="image-preview-${f.name}">${preview}</div>
+  const ratio = f.aspect || '1/1';
+  const box = val
+    ? `<div class="image-fit-preview" style="aspect-ratio:${ratio};"><img src="../${val}" onerror="this.parentElement.style.display='none'"></div>`
+    : `<div class="image-field-empty" style="aspect-ratio:${ratio};">No image set</div>`;
+  const note = `<div class="image-fit-note">Cropped exactly as it'll appear on the site (${ratio.replace('/', ':')}, filled — not stretched or letterboxed). Anything important near an edge here will be cut off there too.</div>`;
+  return `<div class="image-field-preview" id="image-preview-${f.name}">${box}${note}</div>
     <input type="file" accept="image/*" id="image-input-${f.name}" onchange="onImageSelected('${f.name}', '${f.uploadDir}', '${f.slugFrom || ''}')">
     ${val ? `<button type="button" class="btn small ghost" style="margin-top:6px;" onclick="clearImageField('${f.name}')">Remove image</button>` : ''}
     <div class="image-upload-progress" id="image-progress-${f.name}"></div>`;
