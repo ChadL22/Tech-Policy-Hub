@@ -858,6 +858,7 @@ function selectCollection(key){
   activeTopicKey = null;
   showAreasOverview = false;
   editingIndex = null;
+  clearAllImagePreviewOverrides(); // see its own comment -- leaving any form behind means the local-preview override no longer applies
   renderSidebar();
   renderMain();
 }
@@ -868,6 +869,7 @@ function selectAreasOverview(){
   showAreasOverview = true;
   newAreaFormOpen = false;
   editingIndex = null;
+  clearAllImagePreviewOverrides();
   renderSidebar();
   renderMain();
 }
@@ -877,6 +879,7 @@ function selectTopicArea(key){
   activeKey = null;
   showAreasOverview = false;
   editingIndex = null;
+  clearAllImagePreviewOverrides();
   renderSidebar();
   renderMain();
 }
@@ -1388,15 +1391,18 @@ function startNewEntry(){
     else if (f.type === 'list') formValues[f.name] = [];
     else formValues[f.name] = '';
   }
+  clearAllImagePreviewOverrides(); // a fresh (possibly-another-person's) form starts with no stale photo preview
   renderMain();
 }
 function startEditEntry(i){
   editingIndex = i;
   formValues = JSON.parse(JSON.stringify(store[activeKey].entries[i]));
+  clearAllImagePreviewOverrides();
   renderMain();
 }
 function cancelForm(){
   editingIndex = null;
+  clearAllImagePreviewOverrides();
   renderMain();
 }
 
@@ -1519,6 +1525,22 @@ function clearImagePreviewOverride(key){
   if (imagePreviewOverride[key]) URL.revokeObjectURL(imagePreviewOverride[key]);
   delete imagePreviewOverride[key];
 }
+// Bug fix (direct user report: "photos of people are sometimes
+// swapped or missing in the management tool"). imagePreviewOverride
+// is keyed only by FIELD name ('field-photo'), not by which record is
+// open -- every person's photo field shares that one key. Uploading a
+// photo for Person A sets it and deliberately leaves it set (so the
+// preview survives GitHub Pages' deploy lag, see the comment above),
+// but nothing ever cleared it when you moved on to edit a DIFFERENT
+// person afterward -- so Person B's form could silently render
+// Person A's locally-cached photo instead of Person B's real one
+// (the "swap"), or a since-revoked blob: URL that fails to load (the
+// "missing"). The override is only ever meaningful for the single
+// form open when it was set, so every way of leaving that form now
+// clears it first.
+function clearAllImagePreviewOverrides(){
+  for (const key of Object.keys(imagePreviewOverride)) clearImagePreviewOverride(key);
+}
 
 function imageFitToolHtml(prefix, aspect, src, x, y, zoom){
   const zz = zoom == null ? 1 : zoom;
@@ -1579,6 +1601,31 @@ function onImageFitZoomInput(prefix, value){
   applyImageFit(prefix, state.x || 0, state.y || 0, parseFloat(value));
 }
 function applyImageFit(prefix, x, y, zoom){
+  // Bug fix (direct user report: Patrick Parham's photo went "skinny"
+  // with mismatched background around it, for no interaction anyone
+  // remembered making). A bare click on the zoom slider -- not a
+  // drag, no real adjustment -- jumps straight to whatever value that
+  // click position maps to and fires the same input event a real
+  // slide would; land close enough to the slider's own minimum (1)
+  // and it's indistinguishable from "never touched." That silently
+  // commits x=0,y=0,zoom=1 -- switching the live site from its normal
+  // automatic crop to a letterboxed contain-mode -- with ZERO visible
+  // change in this tool's own preview, which already renders at
+  // exactly that same unscaled baseline whether or not anything's
+  // been committed (see imageFitToolHtml's `zz = zoom == null ? 1 :
+  // zoom`). There was no way to notice it happened. A field that's
+  // never been customized (imageFitGet(...).zoom still null) now
+  // needs to land somewhere MEANINGFULLY off that neutral starting
+  // point before it counts as a real, on-purpose adjustment; once it
+  // has (even once), every later change is honored as-is, including
+  // settling back on exactly neutral -- see the "Temporal Aspects"
+  // diagram, whose whole point IS ending on x=0,y=0,zoom=1
+  // (letterboxed, no extra pan needed), reached through real
+  // dragging, not a first untouched click.
+  const prevState = imageFitGet[prefix] ? imageFitGet[prefix]() : null;
+  const isFirstTouch = prevState && prevState.zoom == null;
+  const isNearNeutral = Math.abs(zoom - 1) < 0.01 && Math.abs(x) < 0.5 && Math.abs(y) < 0.5;
+  if (isFirstTouch && isNearNeutral) return;
   const img = document.getElementById('fitimg-' + prefix);
   if (img) img.style.transform = `translate(${x}%, ${y}%) scale(${zoom})`;
   const zval = document.getElementById('fitzoomval-' + prefix);
