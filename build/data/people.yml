@@ -31,6 +31,9 @@
   photo_x: 0.45454545454545453
   photo_y: 22.90949768284238
   photo_v: null
+  photo_m_zoom: 2
+  photo_m_x: -2.142857142857143
+  photo_m_y: 19.169714285714285
   websites:
     - label: Website
       url: https://chadl22.github.io/
