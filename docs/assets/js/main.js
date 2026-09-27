@@ -632,9 +632,20 @@ document.addEventListener('DOMContentLoaded', function () {
   // instead, so its Filters toggle would otherwise never get wired up.
   // researchExplorer.refresh() is a safe no-op via that same stub on
   // pages where it doesn't apply.
+  // Follow-up (direct user request): a toggle carrying
+  // data-expand-min-width="<px>" ships collapsed (its mobile state) but
+  // opens on load when the viewport is at least that wide -- used by
+  // people.html's Affiliates, expanded by default on desktop only.
+  var autoExpanded = false;
   document.querySelectorAll('.subsection-toggle').forEach(function (btn) {
     var panel = document.getElementById(btn.getAttribute('aria-controls'));
     if (!panel) return;
+    var minW = btn.getAttribute('data-expand-min-width');
+    if (minW && window.matchMedia('(min-width: ' + minW + 'px)').matches) {
+      btn.setAttribute('aria-expanded', 'true');
+      panel.hidden = false;
+      autoExpanded = true;
+    }
     btn.addEventListener('click', function () {
       var open = btn.getAttribute('aria-expanded') !== 'true';
       btn.setAttribute('aria-expanded', String(open));
@@ -642,6 +653,7 @@ document.addEventListener('DOMContentLoaded', function () {
       researchExplorer.refresh();
     });
   });
+  if (autoExpanded) researchExplorer.refresh();
 
   // Open + scroll to a category section or a specific area filter pill
   // from a URL hash, e.g. research.html#publications or

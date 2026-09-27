@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>People | Tech Policy Hub</title>
 <meta name="description" content="Faculty, affiliates, and fellows of the Tech Policy Hub.">
-<link rel="icon" href="../assets/img/favicon.ico?v=2026092703" sizes="any">
-<link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32.png?v=2026092703">
-<link rel="icon" type="image/png" sizes="16x16" href="../assets/img/favicon-16.png?v=2026092703">
-<link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png?v=2026092703">
-<link rel="stylesheet" href="../assets/css/styles.css?v=2026092703">
+<link rel="icon" href="../assets/img/favicon.ico?v=2026092704" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32.png?v=2026092704">
+<link rel="icon" type="image/png" sizes="16x16" href="../assets/img/favicon-16.png?v=2026092704">
+<link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png?v=2026092704">
+<link rel="stylesheet" href="../assets/css/styles.css?v=2026092704">
 </head>
 <body>
 
@@ -17,7 +17,7 @@
   <div class="container header-inner">
     <div class="brand-lockup">
       <a href="../" class="brand" aria-label="Tech Policy Hub, University of Maryland School of Public Policy">
-        <img src="../assets/img/sopp-tph-lockup.png?v=2026092703" alt="University of Maryland School of Public Policy &ndash; Tech Policy Hub" class="brand-mark">
+        <img src="../assets/img/sopp-tph-lockup.png?v=2026092704" alt="University of Maryland School of Public Policy &ndash; Tech Policy Hub" class="brand-mark">
       </a>
     </div>
     <nav class="primary-nav" aria-label="Primary">
@@ -85,20 +85,21 @@
     <!-- Follow-up (direct user request): the "Filters" toggle label and
          its underline are gone (it read as an orphaned heading with no
          content header to pair with -- see the .subsection-toggle--
-         filters follow-up above), and so is the Research Area dropdown
-         -- just the Role dropdown + search box remain, always visible,
-         no collapsing panel. The .area-controls div itself (and its
-         search/role-pill wiring in main.js) is unchanged. -->
+         filters follow-up above). Follow-up (direct user request): the
+         one dropdown here is Research Area again, replacing Role --
+         visitors look people up by area of expertise; Core Members vs
+         Affiliates below already covers role. Always visible, no
+         collapsing panel. -->
     <div class="area-controls">
       <span class="area-controls-label">Filter By</span>
       <div class="area-controls-row">
         <div class="filter-dropdowns-row">
           <div class="filter-dropdown">
             <button type="button" class="filter-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
-              <span>Role</span><span class="filter-dropdown-count" hidden></span>
+              <span>Research Area</span><span class="filter-dropdown-count" hidden></span>
               <span class="filter-dropdown-caret" aria-hidden="true"></span>
             </button>
-            <div class="filter-dropdown-menu" hidden role="group" aria-label="Filter by role"><button type="button" class="filter-pill role-filter-pill" data-role="core-member" aria-pressed="false">Core Member</button><button type="button" class="filter-pill role-filter-pill" data-role="affiliate" aria-pressed="false">Affiliate</button></div>
+            <div class="filter-dropdown-menu" hidden role="group" aria-label="Filter by research area"><button type="button" class="filter-pill area-filter-pill" data-area="cybersecurity" style="--area-color:#E21833" aria-pressed="false">Cybersecurity</button><button type="button" class="filter-pill area-filter-pill" data-area="privacy" style="--area-color:#7A1F3D" aria-pressed="false">Consumer Privacy</button><button type="button" class="filter-pill area-filter-pill" data-area="integrity" style="--area-color:#52565A" aria-pressed="false">Information Integrity</button><button type="button" class="filter-pill area-filter-pill" data-area="ml" style="--area-color:#B8860B" aria-pressed="false">Trustworthy ML</button></div>
           </div>
         </div>
         
@@ -203,14 +204,17 @@
            deliberately left as a plain flat list -- only Affiliates was
            asked for here, and it's short enough not to need capping. -->
       <section class="research-subsection" id="affiliates">
-        <!-- Follow-up (direct user request): Affiliates now starts
-             collapsed -- Core Members above stays expanded by default,
-             only this one starts closed. main.js's subsection-toggle
-             wiring (see near the top of this file) is keyed off
-             whatever aria-expanded/hidden state ships in the markup, so
-             aria-expanded="false" + the panel's own `hidden` attribute
-             here is the entire change; no JS edits needed. -->
-        <button type="button" class="subsection-toggle" aria-expanded="false" aria-controls="affiliates-panel">
+        <!-- Follow-up (direct user request): Affiliates starts
+             collapsed on mobile, but expanded on desktop ("I want the
+             people page to have the affiliates section expanded by
+             default on desktop. Mobile can remain as is."). The markup
+             ships collapsed -- the mobile state, and the no-JS
+             fallback -- and data-expand-min-width tells main.js's
+             .subsection-toggle wiring to open it on load when the
+             viewport is at least that wide. 701px = just past the 700px
+             breakpoint where people.html's cards switch to their swipe-
+             between-photo-and-bio mobile layout (see styles.css). -->
+        <button type="button" class="subsection-toggle" aria-expanded="false" aria-controls="affiliates-panel" data-expand-min-width="701">
           <h2>Affiliates</h2>
           <span class="subsection-caret" aria-hidden="true"></span>
         </button>
@@ -635,19 +639,19 @@
         </ul>
         <div class="footer-social">
           <a href="https://sclanga.substack.com/" target="_blank" rel="noopener" aria-label="Substack">
-            <img src="../assets/img/social/substack.png?v=2026092703" alt="" loading="lazy">
+            <img src="../assets/img/social/substack.png?v=2026092704" alt="" loading="lazy">
           </a>
           <a href="https://x.com/phronesisres" target="_blank" rel="noopener" aria-label="X">
-            <img src="../assets/img/social/x.png?v=2026092703" alt="" loading="lazy">
+            <img src="../assets/img/social/x.png?v=2026092704" alt="" loading="lazy">
           </a>
           <a href="https://www.instagram.com/phronesisres" target="_blank" rel="noopener" aria-label="Instagram">
-            <img src="../assets/img/social/instagram.png?v=2026092703" alt="" loading="lazy">
+            <img src="../assets/img/social/instagram.png?v=2026092704" alt="" loading="lazy">
           </a>
           <a href="https://www.threads.com/@phronesisres" target="_blank" rel="noopener" aria-label="Threads">
-            <img src="../assets/img/social/threads.png?v=2026092703" alt="" loading="lazy">
+            <img src="../assets/img/social/threads.png?v=2026092704" alt="" loading="lazy">
           </a>
           <a href="https://www.tiktok.com/@phronesis.research" target="_blank" rel="noopener" aria-label="TikTok">
-            <img src="../assets/img/social/tiktok.png?v=2026092703" alt="" loading="lazy">
+            <img src="../assets/img/social/tiktok.png?v=2026092704" alt="" loading="lazy">
           </a>
         </div>
       </div>
@@ -662,6 +666,6 @@
     </div>
   </div>
 </footer>
-<script src="../assets/js/main.js?v=2026092703"></script>
+<script src="../assets/js/main.js?v=2026092704"></script>
 </body>
 </html>

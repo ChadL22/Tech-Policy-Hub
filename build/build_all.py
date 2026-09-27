@@ -915,9 +915,19 @@ def _person_row_html(p):
       </div>"""
 
 
-role_filter_pills_people = "".join(
-    f'<button type="button" class="filter-pill role-filter-pill" data-role="{key}" aria-pressed="false">{label}</button>'
-    for key, label in g.ROLE_TYPES.items()
+# Direct user request: "Let's change the role filter to be a research
+# area filter, since that would make more sense. Visitors would probably
+# want to search people by their area of expertise." Same area pills as
+# research.html's (same class, data-area, and per-area color, so
+# researchExplorer in main.js filters each .person-row by its existing
+# data-areas with no JS changes), minus research.html's id="area-panel-
+# <key>" -- those ids are that page's own deep-link targets, so they
+# stay unique to it. The Role facet's JS (data-roles/.role-filter-pill)
+# is left in main.js as a harmless no-op, and Core Members/Affiliates
+# still group people by role below.
+area_filter_pills_people = "".join(
+    f'<button type="button" class="filter-pill area-filter-pill" data-area="{t["key"]}" style="--area-color:{g.AREA_META[t["key"]]["color"]}" aria-pressed="false">{t["name"]}</button>'
+    for t in g.TOPICS
 )
 # Follow-up (direct user request): "type" (role_types.yml) is now
 # strictly Core Member vs Affiliate -- everything that used to double as
@@ -953,20 +963,21 @@ people_body = f"""
     <!-- Follow-up (direct user request): the "Filters" toggle label and
          its underline are gone (it read as an orphaned heading with no
          content header to pair with -- see the .subsection-toggle--
-         filters follow-up above), and so is the Research Area dropdown
-         -- just the Role dropdown + search box remain, always visible,
-         no collapsing panel. The .area-controls div itself (and its
-         search/role-pill wiring in main.js) is unchanged. -->
+         filters follow-up above). Follow-up (direct user request): the
+         one dropdown here is Research Area again, replacing Role --
+         visitors look people up by area of expertise; Core Members vs
+         Affiliates below already covers role. Always visible, no
+         collapsing panel. -->
     <div class="area-controls">
       <span class="area-controls-label">Filter By</span>
       <div class="area-controls-row">
         <div class="filter-dropdowns-row">
           <div class="filter-dropdown">
             <button type="button" class="filter-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
-              <span>Role</span><span class="filter-dropdown-count" hidden></span>
+              <span>Research Area</span><span class="filter-dropdown-count" hidden></span>
               <span class="filter-dropdown-caret" aria-hidden="true"></span>
             </button>
-            <div class="filter-dropdown-menu" hidden role="group" aria-label="Filter by role">{role_filter_pills_people}</div>
+            <div class="filter-dropdown-menu" hidden role="group" aria-label="Filter by research area">{area_filter_pills_people}</div>
           </div>
         </div>
         {g.search_box_html("Search people&hellip;", "Search people")}
@@ -1010,14 +1021,17 @@ people_body = f"""
            deliberately left as a plain flat list -- only Affiliates was
            asked for here, and it's short enough not to need capping. -->
       <section class="research-subsection" id="affiliates">
-        <!-- Follow-up (direct user request): Affiliates now starts
-             collapsed -- Core Members above stays expanded by default,
-             only this one starts closed. main.js's subsection-toggle
-             wiring (see near the top of this file) is keyed off
-             whatever aria-expanded/hidden state ships in the markup, so
-             aria-expanded="false" + the panel's own `hidden` attribute
-             here is the entire change; no JS edits needed. -->
-        <button type="button" class="subsection-toggle" aria-expanded="false" aria-controls="affiliates-panel">
+        <!-- Follow-up (direct user request): Affiliates starts
+             collapsed on mobile, but expanded on desktop ("I want the
+             people page to have the affiliates section expanded by
+             default on desktop. Mobile can remain as is."). The markup
+             ships collapsed -- the mobile state, and the no-JS
+             fallback -- and data-expand-min-width tells main.js's
+             .subsection-toggle wiring to open it on load when the
+             viewport is at least that wide. 701px = just past the 700px
+             breakpoint where people.html's cards switch to their swipe-
+             between-photo-and-bio mobile layout (see styles.css). -->
+        <button type="button" class="subsection-toggle" aria-expanded="false" aria-controls="affiliates-panel" data-expand-min-width="701">
           <h2>Affiliates</h2>
           <span class="subsection-caret" aria-hidden="true"></span>
         </button>
