@@ -169,6 +169,17 @@ h1,h2,h3{ margin:0; font-family: var(--font-body); }
   overflow:hidden; position:relative; background: var(--paper-soft); flex:none;
 }
 .image-fit-preview img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
+/* A just-uploaded image's live URL can 404 for a while (see the
+   "Image fit/position" JS section's imagePreviewOverride comment) --
+   previously that just silently hid the whole preview with no
+   explanation, which is exactly what looked like "nothing happened"
+   after uploading. Now it shows a plain-language reason instead. */
+.image-fit-preview.is-broken img, .image-fit-box.is-broken img{ display:none; }
+.image-fit-preview.is-broken::after, .image-fit-box.is-broken::after{
+  content:'Preview unavailable — still propagating to the live site? Try again in a minute, or Reload latest.';
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  padding:10px; font-size:.68rem; line-height:1.35; text-align:center; color: var(--ink-soft); background: var(--paper-soft);
+}
 .image-field-empty{
   width:220px; border:1.5px dashed var(--line); border-radius:var(--radius);
   display:flex; align-items:center; justify-content:center; color: var(--ink-soft); font-size:.7rem; text-align:center; padding:6px;
@@ -1107,21 +1118,23 @@ function renderTopicAreaMain(){
   }
   data.projects.forEach((p, i) => {
     const imgVal = p.image || '';
-    const imgBox = imgVal
-      ? `<div class="image-fit-preview" style="aspect-ratio:16/10;"><img src="../${imgVal}" onerror="this.parentElement.style.display='none'"></div>`
+    const fitPrefix = 'project-' + i;
+    const imgOverrideSrc = imagePreviewOverride[fitPrefix];
+    const imgSrc = imgOverrideSrc || (imgVal ? '../' + imgVal : '');
+    const imgBox = imgSrc
+      ? `<div class="image-fit-preview" style="aspect-ratio:16/10;"><img src="${imgSrc}" onerror="this.parentElement.classList.add('is-broken')"></div>`
       : `<div class="image-field-empty" style="aspect-ratio:16/10;">No image set</div>`;
-    const imgNote = `<div class="image-fit-note">Cropped exactly as it'll appear on the Research page (16:10, filled — not stretched or letterboxed). A diagram or screenshot with text near the top/bottom edge will likely get clipped; a photo usually crops fine.</div>`;
+    const imgNote = `<div class="image-fit-note">Cropped exactly as it'll appear on the Research page (16:10, filled — not stretched or letterboxed). A diagram or screenshot with text near the top/bottom edge will likely get clipped; a photo usually crops fine.${imgOverrideSrc ? ' Showing your local file — the live site can take a minute or two to start serving a freshly uploaded image.' : ''}</div>`;
     // Reposition & Scale (direct user request) -- Projects have no
     // separate save step (every edit writes straight into
     // store.topic_detail.data, see onProjectInput), so this getter/
     // setter closes over `p` directly rather than a formValues field.
     let imgFitTool = '';
-    if (imgVal){
-      const fitPrefix = 'project-' + i;
+    if (imgSrc){
       imageFitGet[fitPrefix] = () => ({ x: p.image_x || 0, y: p.image_y || 0, zoom: p.image_zoom });
       imageFitSet[fitPrefix] = (x, y, zoom) => { p.image_x = x; p.image_y = y; p.image_zoom = zoom; markDirty('topic_detail'); };
       imageFitRerender[fitPrefix] = renderMain;
-      imgFitTool = imageFitToolHtml(fitPrefix, '16/10', imgVal, p.image_x, p.image_y, p.image_zoom);
+      imgFitTool = imageFitToolHtml(fitPrefix, '16/10', imgSrc, p.image_x, p.image_y, p.image_zoom);
     }
     html += `<div class="topic-card">
       <div class="entry-card-order">
@@ -1260,8 +1273,13 @@ async function onProjectImageSelected(i){
   if (!file) return;
   if (!file.type.startsWith('image/')){ showToast('Please select an image file.', 'error'); return; }
   if (file.size > 12 * 1024 * 1024){ showToast('Image must be under 12MB.', 'error'); return; }
+  // Instant local preview -- see imagePreviewOverride's comment. Shown
+  // right away, before the upload even starts, so picking the wrong
+  // file is obvious immediately rather than after a round trip.
+  setImagePreviewOverride('project-' + i, URL.createObjectURL(file));
+  renderMain();
   const progressEl = document.getElementById('image-progress-project-' + i);
-  progressEl.textContent = 'Uploading…';
+  if (progressEl) progressEl.textContent = 'Uploading…';
   try {
     const project = store.topic_detail.data[activeTopicKey].projects[i];
     const slugHint = project.title || 'project';
@@ -1272,12 +1290,12 @@ async function onProjectImageSelected(i){
     project.image_x = null;
     project.image_y = null;
     markDirty('topic_detail');
-    progressEl.textContent = '';
-    showToast('Image uploaded.');
+    showToast('Image uploaded. The live site can take a minute or two to start serving it -- the preview keeps showing your local copy until you remove or replace it.');
     renderMain();
   } catch (e) {
-    progressEl.textContent = '';
+    clearImagePreviewOverride('project-' + i);
     showToast('Image upload failed: ' + e.message, 'error');
+    renderMain();
   }
 }
 function clearProjectImage(i){
@@ -1286,6 +1304,7 @@ function clearProjectImage(i){
   project.image_zoom = null;
   project.image_x = null;
   project.image_y = null;
+  clearImagePreviewOverride('project-' + i);
   markDirty('topic_detail');
   renderMain();
 }
@@ -1451,14 +1470,38 @@ const imageFitSet = {};
 const imageFitRerender = {};
 let imageFitDrag = null;
 
-function imageFitToolHtml(prefix, aspect, imgSrc, x, y, zoom){
+// Direct user-reported bug: a photo would upload, "Remove image" would
+// appear (proving formValues/the project record DID get the new path),
+// yet the preview showed nothing -- because that preview fetched the
+// image from its LIVE GitHub Pages URL, and this repo's own
+// rebuild-on-content-change workflow makes a SECOND commit after every
+// CMS upload (rebuilding docs/** from the new data), which means a
+// SECOND Pages deployment has to finish before the just-uploaded file
+// is actually served there -- easily a minute or more. Fetching that
+// URL immediately after upload just 404s, and the old code silently
+// hid the broken <img> with zero explanation. imagePreviewOverride
+// sidesteps the live URL entirely for a preview: a blob: URL of the
+// File object the user just picked, valid instantly, no network round
+// trip, so it can't be affected by deploy lag at all. Keyed the same
+// as imageFitGet/Set ('field-<name>' or 'project-<i>').
+const imagePreviewOverride = {};
+function setImagePreviewOverride(key, url){
+  if (imagePreviewOverride[key]) URL.revokeObjectURL(imagePreviewOverride[key]);
+  imagePreviewOverride[key] = url;
+}
+function clearImagePreviewOverride(key){
+  if (imagePreviewOverride[key]) URL.revokeObjectURL(imagePreviewOverride[key]);
+  delete imagePreviewOverride[key];
+}
+
+function imageFitToolHtml(prefix, aspect, src, x, y, zoom){
   const zz = zoom == null ? 1 : zoom;
   const xx = x || 0;
   const yy = y || 0;
   return `<div class="image-fit-tool">
     <div class="image-fit-tool-label">Reposition &amp; scale</div>
     <div class="image-fit-box" id="fitbox-${prefix}" style="aspect-ratio:${aspect};" onmousedown="startImageFitDrag(event,'${prefix}')">
-      <img id="fitimg-${prefix}" src="../${imgSrc}" style="transform: translate(${xx}%, ${yy}%) scale(${zz});" draggable="false">
+      <img id="fitimg-${prefix}" src="${src}" onerror="this.parentElement.classList.add('is-broken')" style="transform: translate(${xx}%, ${yy}%) scale(${zz});" draggable="false">
     </div>
     <div class="image-fit-zoomrow">
       <span class="image-fit-zoomval">1&times;</span>
@@ -1524,17 +1567,19 @@ function resetImageFit(prefix){
 function renderImageField(f){
   const val = formValues[f.name];
   const ratio = f.aspect || '1/1';
-  const box = val
-    ? `<div class="image-fit-preview" style="aspect-ratio:${ratio};"><img src="../${val}" onerror="this.parentElement.style.display='none'"></div>`
+  const prefix = 'field-' + f.name;
+  const overrideSrc = imagePreviewOverride[prefix];
+  const src = overrideSrc || (val ? '../' + val : '');
+  const box = src
+    ? `<div class="image-fit-preview" style="aspect-ratio:${ratio};"><img src="${src}" onerror="this.parentElement.classList.add('is-broken')"></div>`
     : `<div class="image-field-empty" style="aspect-ratio:${ratio};">No image set</div>`;
-  const note = `<div class="image-fit-note">Cropped exactly as it'll appear on the site (${ratio.replace('/', ':')}, filled — not stretched or letterboxed). Anything important near an edge here will be cut off there too.</div>`;
+  const note = `<div class="image-fit-note">Cropped exactly as it'll appear on the site (${ratio.replace('/', ':')}, filled — not stretched or letterboxed). Anything important near an edge here will be cut off there too.${overrideSrc ? ' Showing your local file — the live site can take a minute or two to start serving a freshly uploaded image.' : ''}</div>`;
   let fitTool = '';
-  if (val){
-    const prefix = 'field-' + f.name;
+  if (src){
     imageFitGet[prefix] = () => ({ x: formValues[f.name + '_x'] || 0, y: formValues[f.name + '_y'] || 0, zoom: formValues[f.name + '_zoom'] });
     imageFitSet[prefix] = (x, y, zoom) => { formValues[f.name + '_x'] = x; formValues[f.name + '_y'] = y; formValues[f.name + '_zoom'] = zoom; };
     imageFitRerender[prefix] = renderForm;
-    fitTool = imageFitToolHtml(prefix, ratio, val, formValues[f.name + '_x'], formValues[f.name + '_y'], formValues[f.name + '_zoom']);
+    fitTool = imageFitToolHtml(prefix, ratio, src, formValues[f.name + '_x'], formValues[f.name + '_y'], formValues[f.name + '_zoom']);
   }
   return `<div class="image-field-preview" id="image-preview-${f.name}">${box}${note}</div>
     ${fitTool}
@@ -1595,8 +1640,13 @@ async function onImageSelected(fieldName, uploadDir, slugFromField){
   if (!file) return;
   if (!file.type.startsWith('image/')){ showToast('Please select an image file.', 'error'); return; }
   if (file.size > 12 * 1024 * 1024){ showToast('Image must be under 12MB.', 'error'); return; }
+  // Instant local preview -- see imagePreviewOverride's comment. Shown
+  // right away, before the upload even starts, so picking the wrong
+  // file is obvious immediately rather than after a round trip.
+  setImagePreviewOverride('field-' + fieldName, URL.createObjectURL(file));
+  renderForm();
   const progressEl = document.getElementById('image-progress-' + fieldName);
-  progressEl.textContent = 'Uploading…';
+  if (progressEl) progressEl.textContent = 'Uploading…';
   try {
     const slugHint = slugFromField ? (formValues[slugFromField] || 'image') : 'image';
     const path = await uploadImageFile(file, uploadDir, slugHint);
@@ -1605,12 +1655,12 @@ async function onImageSelected(fieldName, uploadDir, slugFromField){
     formValues[fieldName + '_zoom'] = null;
     formValues[fieldName + '_x'] = null;
     formValues[fieldName + '_y'] = null;
-    progressEl.textContent = '';
-    showToast('Image uploaded.');
+    showToast('Image uploaded. The live site can take a minute or two to start serving it -- the preview keeps showing your local copy until you remove or replace it.');
     renderForm();
   } catch (e) {
-    progressEl.textContent = '';
+    clearImagePreviewOverride('field-' + fieldName);
     showToast('Image upload failed: ' + e.message, 'error');
+    renderForm();
   }
 }
 function clearImageField(fieldName){
@@ -1618,6 +1668,7 @@ function clearImageField(fieldName){
   formValues[fieldName + '_zoom'] = null;
   formValues[fieldName + '_x'] = null;
   formValues[fieldName + '_y'] = null;
+  clearImagePreviewOverride('field-' + fieldName);
   renderForm();
 }
 
