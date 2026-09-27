@@ -121,7 +121,7 @@
   photo_zoom: null
   photo_x: null
   photo_y: null
-  photo_v: 1790540578619
+  photo_v: 1790541001438
   websites: []
   linkedin: null
 - initials: IP
@@ -147,6 +147,11 @@
     - affiliate
   bio: Cody Buntain is an assistant professor at UMD's College of Information, studying how people use online information spaces during crises and political unrest. He is a research affiliate at NYU's Center for Social Media and Politics, and his work has been covered by outlets including the New York Times and WIRED.
   email: null
+  photo: assets/img/people/dr-cody-buntain.png
+  photo_zoom: null
+  photo_x: null
+  photo_y: null
+  photo_v: 1790541135076
   websites: []
   linkedin: null
 - initials: KS
@@ -157,6 +162,11 @@
     - affiliate
   bio: Katie Shilton is a professor at UMD's College of Information studying technology and data ethics. She leads the Ethics & Values in Design (EViD) Lab and co-directs the NSF/NIST-funded TRAILS Institute on trustworthy AI, with recent work spanning content moderation and data ethics education.
   email: null
+  photo: assets/img/people/dr-katie-shilton.jpg
+  photo_zoom: null
+  photo_x: null
+  photo_y: null
+  photo_v: 1790541119417
   websites: []
   linkedin: null
 - initials: LF
@@ -167,6 +177,11 @@
     - affiliate
   bio: Laura Fichtner is a postdoctoral researcher with the TRAILS Institute, researching how artificial intelligence, particularly generative AI, can be developed and governed in a participatory, democratic manner. She earned her doctorate from the University of Hamburg with a thesis on platform governance and content moderation regulation in Germany.
   email: null
+  photo: assets/img/people/dr-laura-fichtner.jpg
+  photo_zoom: null
+  photo_x: null
+  photo_y: null
+  photo_v: 1790541106635
   websites: []
   linkedin: null
 - initials: AW
@@ -177,5 +192,10 @@
     - affiliate
   bio: Amy Winecoff is a Senior Technologist in the AI Governance Lab at the Center for Democracy & Technology, developing technically informed strategies for AI governance and measurement. She previously worked as a data scientist building recommendation systems and was a research fellow at Princeton's Center for Information Technology Policy.
   email: null
+  photo: assets/img/people/dr-amy-winecoff.jpg
+  photo_zoom: null
+  photo_x: null
+  photo_y: null
+  photo_v: 1790541088467
   websites: []
   linkedin: null
