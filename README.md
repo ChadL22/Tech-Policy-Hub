@@ -4,26 +4,6 @@ Website for the University of Maryland Tech Policy Hub, a project of the
 [Center for Governance of Technology and Systems (GoTech)](https://gotech.umd.edu/)
 at the UMD School of Public Policy. The new site replaces
 techpolicy.info.umd.edu and complements (does not replace) gotech.umd.edu.
-It showcases the Hub's research, events, people, and courses, and — via the
-homepage's News, Research Spotlight, "What We're Reading," and Field Pulse
-sections — keeps that content current with minimal manual upkeep.
-
-This repo contains everything needed to build, edit, and publish that site:
-
-- **`docs/`** — the live static site itself (what GitHub Pages actually
-  serves; see **Publishing** below), including a small self-contained
-  content manager at `docs/admin/` (served at `/admin`) for editing the
-  site's content without touching code or git — see **Content
-  management**.
-- **`build/`** — the Python generator (`generate.py` + `build_all.py`)
-  that assembles every page in `docs/` from shared header/footer/nav plus
-  the YAML content files in `build/data/`, and two scheduled scripts
-  (`refresh_ticker.py`, `refresh_reading.py`) that keep the homepage's
-  signal ticker and reading list current on their own — see **Editing
-  content** and **Site capabilities**.
-- **`.github/workflows/`** — automation that reruns the generator and
-  republishes `docs/` whenever content changes (by hand, via the content
-  manager, or on the scripts' own schedule) — see **Content management**.
 
 The redesign keeps UMD/GoTech brand continuity (Terrapin red, SPP/UMD seal)
 and draws its design language primarily from financial/legal news
@@ -58,7 +38,7 @@ build/    Python generator that produces the pages in docs/
 
 `docs/` is a static site (no server or build step required to view it).
 Each page shares the same header, footer, and nav, assembled by the
-generator in `build/` so those stay consistent across every page. It's
+generator in `build/` so those stay consistent across all 12 pages. It's
 named `docs/` (not `site/`) specifically so GitHub Pages can serve it
 directly — see **Publishing** below.
 
@@ -70,39 +50,21 @@ including rewriting internal links, so page content in `build/build_all.py`
 can just use plain `href="events.html"`-style references.
 
 Pages: `index.html` (home), `research/` (research hub — projects,
-publications, teaching), `courses/`, `speaker-series/`, `annual-event/`,
-`events/`, `people/` — 7 HTML pages in all. Alongside those, the build
-also writes one non-HTML file to the site root — `docs/events.ics`, a
-generated calendar feed (see **Site capabilities** below). There's no
-standalone About page or news page: About & Contact is the "What We Do"
-section on the homepage (`index.html#about`, see below), and the
-homepage's "Hub News" rail is the site's one news listing (see **Site
-capabilities** below). Separately, `docs/admin/` is the content manager
-(see **Content management**) — a tool for editing the site, not a page
-of it, and marked `noindex, nofollow` accordingly.
+publications, teaching), `topic-cybersecurity/`, `topic-privacy/`,
+`topic-integrity/`, `topic-ml/`, `courses/`, `speaker-series/`,
+`annual-event/`, `events/`, `people/`, `about/`. Alongside those
+12 HTML pages, the build also writes one non-HTML file to the site
+root — `docs/events.ics`, a generated calendar feed (see **Site
+capabilities** below). There is no standalone news page — the homepage's
+"Hub News" rail is the site's one news listing (see **Site capabilities**
+below).
 
-The primary nav is a flat **Home / Research / Events / People** — plain
-links, no dropdowns. `courses/`, `speaker-series/`, and `annual-event/`
-aren't in the top nav. `speaker-series/` and `annual-event/` are still
-real, live pages -- every Speaker Series/Annual Event entry on the
-calendar (`events.yml`/`past_events.yml`) links out to one of them, and
-the footer's "Events" column also offers a "Calendar" link straight to
-`events/` (direct user request: replaced two separate Speaker Series/
-Annual Event footer links, which were only ever a second path to the
-same two pages). `courses/` has no inbound link anywhere on the live
-site as of the same request (its footer "Teaching" entry was removed) --
-the page itself is left in place rather than deleted, just currently
-unreachable through normal navigation; update this note if that changes.
-Each section page already offers the finer navigation a dropdown would
-have (research.html/events.html's own filter pills), so there's no
-separate "All Research"/"All Events" entry either; the section page
-itself is the "view everything" destination, filterable in place (see
-below). About isn't in the top-level nav, but stays reachable via the
-footer's "Connect" column ("About & Contact", linking to
-`index.html#about`, which now targets the homepage's "What We Do" band
-specifically rather than the Guiding Questions section further down --
-also a direct user request, since the mission copy and "email our
-founder" line are what actually answer "About & Contact").
+The primary nav is **Home / Research (dropdown) / Events (dropdown) /
+People**. Each dropdown's parent label is itself a real link to that
+page's index (Research/Events), so there's no separate "All Research"/"All
+Events" entry — the page itself is the "view everything" destination, and
+both are filterable in place (see below). About isn't in the top-level
+nav, but stays reachable via the footer's "Connect" column.
 
 ## Publishing (GitHub Pages)
 
@@ -143,7 +105,7 @@ files (see **Content management** below for where that stands).
 | `build/data/events.yml` / `past_events.yml` | `EVENTS_ITEMS` / `PAST_EVENTS_ITEMS` |
 | `build/data/news_items.yml` | Homepage "Hub News" rail |
 | `build/data/spotlight_items.yml` | Homepage "Research Spotlight" slideshow |
-| `build/data/reading_items.yml` | "What we're reading" cards -- regenerated by `refresh_reading.py`, see below, not hand-edited |
+| `build/data/reading_items.yml` | "What we're reading" cards |
 | `build/data/questions.yml` | "Guiding Questions" |
 | `build/data/topic_detail.yml` | Research page's per-area projects/publications/people |
 | `build/data/topics.yml` | The 4 research areas (name/blurb/index) |
@@ -171,10 +133,6 @@ rest of the generator already used — nothing about how the site is
 - `build/refresh_ticker.py` — regenerates `build/data/ticker.json` from
   the Tech Policy Tracker; run on a schedule by
   `.github/workflows/refresh-ticker.yml`, or by hand
-- `build/refresh_reading.py` — regenerates `build/data/reading_items.yml`
-  from phronesisresearch.org's own public content JSON; run on a schedule
-  (weekly, Sundays) by `.github/workflows/refresh-reading.yml`, or by
-  hand
 
 The script writes directly into `docs/` — HTML pages via `write()` (which
 also rewrites internal links to the clean-URL folder scheme), and the
@@ -185,60 +143,52 @@ of a stale cache.
 
 ## Content management
 
-The site's content (the `build/data/*.yml` files above) is editable without
-writing Python or touching git, through a content manager at `/admin` on
-this site (`docs/admin/index.html`). It's a small self-contained tool
-(modeled on the one already used for the Phronesis site) that reads and
-writes those YAML files directly through the GitHub API, using a personal
-access token instead of an OAuth login — so there's no Cloudflare Worker or
-OAuth App to register or maintain.
+The site's content (the `build/data/*.yml` files above) is editable
+without writing Python through a git-based headless CMS admin UI at
+`/admin` on this site, once the one remaining manual setup step below is
+done. This is [Sveltia CMS](https://github.com/sveltia/sveltia-cms) (the
+current maintained successor to Decap/Netlify CMS), editing the
+`build/data/*.yml` files directly and committing straight to this repo.
+Three pieces, in the order they were built:
 
-**Covers:** People, Events (upcoming + past), homepage content (Hub News,
-Research Spotlight, What We're Reading, Guiding Questions), and Research
-Areas in full — under their own "Research Areas" sidebar item, areas
-themselves can be added, renamed, recolored, reordered, and deleted (kept
-in sync across `topics.yml` + `area_meta.yml`), and each area's projects,
-publications, and people (`topic_detail.yml`) are editable from its own
-page. Deleting or renaming an area doesn't update any Research Spotlight
-items or Guiding Questions still tagged with its old name — the tool
-warns about this on delete; check those collections separately after
-publishing. Not covered: the remaining small taxonomy files
-(`event_categories.yml`, `role_types.yml`, `reading_types.yml`,
-`reading_type_labels.yml` — each tied to a hardcoded CSS color/class
-elsewhere in the site, so adding a key through a form without a matching
-code change would silently render wrong). Those stay a deliberate
-hand/code edit.
+1. **The CMS config** (`docs/admin/index.html` + `docs/admin/config.yml`)
+   — done. Covers the flat, frequently-edited collections: People,
+   Events (upcoming + past), and homepage content (Hub News, Research
+   Spotlight, What We're Reading, Guiding Questions). Deliberately NOT
+   covered yet: `topic_detail.yml` (nested per-research-area data, not a
+   flat list -- needs a more involved config) and the small taxonomy
+   files (`area_meta.yml`, `event_categories.yml`, `role_types.yml`,
+   `reading_types.yml`, `reading_type_labels.yml` -- each tied to a
+   hardcoded CSS color/class elsewhere in the site, so adding a key
+   through a form without a matching code change would silently render
+   wrong; these stay a deliberate hand/code edit). `config.yml`'s own
+   comments explain each collection's fields.
+2. **Auto-rebuild on content change**
+   (`.github/workflows/rebuild-on-content-change.yml`) — done. Runs
+   `build/build_all.py` and commits the regenerated `docs/` whenever
+   `build/data/**` changes on `main`, so a CMS commit goes live without
+   anyone running the build script by hand.
+3. **GitHub OAuth, so Hub members can log in with their own GitHub
+   account** — the one piece that needs a person to act, not something
+   that can be scripted from outside: it means registering a GitHub
+   OAuth App and deploying a small token-exchange proxy, both under this
+   repo's/org's own accounts. **Someone with admin access to this GitHub
+   repo/org** should:
+   1. Deploy [sveltia-cms-auth](https://github.com/sveltia/sveltia-cms-auth)
+      (a small Cloudflare Worker — free tier is enough) following that
+      project's own README; it needs a Cloudflare account.
+   2. Register a new OAuth App at
+      github.com/organizations/**ChadL22**/settings/applications (or
+      github.com/settings/developers if this repo isn't under an org) —
+      Homepage URL `https://chadl22.github.io/Tech-Policy-Hub/`,
+      Authorization callback URL is the Worker's own URL from step 1
+      (its README shows the exact path).
+   3. Put that OAuth App's Client ID and Secret into the Worker's
+      environment (again, per sveltia-cms-auth's README).
 
-**To use it:**
-
-1. Go to `/admin` on the live site (or open `docs/admin/index.html`
-   locally).
-2. Generate a GitHub personal access token with `repo` scope (GitHub →
-   Settings → Developer settings → Personal access tokens → Fine-grained
-   or classic; scope it to just this repo if using fine-grained) and paste
-   it in. The token stays in your browser only — it's never sent anywhere
-   but the GitHub API.
-3. Edit, add, reorder, or delete entries in any collection, then click
-   **Publish changes**. Each publish commits straight to `main`.
-
-Publishing automatically triggers the rebuild workflow below, so changes
-go live within a couple minutes with nothing further to do by hand.
-
-**Avoiding conflicts:** if a file changed on GitHub after this tool
-loaded it (someone else published, you have it open in two tabs, or you
-edited the YAML by hand) Publish won't silently overwrite that change --
-it checks each file's current version right before writing and refuses
-if it moved, leaving your edit marked unpublished so nothing is lost.
-Click **↻ Reload latest** in the top bar (it'll warn first if you have
-unpublished edits, since reloading discards them) to pick up the current
-content, then redo the edit. Reach for it before starting new edits too,
-if you know something may have published since this page loaded.
-
-**Auto-rebuild on content change**
-(`.github/workflows/rebuild-on-content-change.yml`) runs
-`build/build_all.py` and commits the regenerated `docs/` whenever
-`build/data/**` changes on `main` — including commits made by the content
-manager above.
+   Until this is done, `/admin` loads but sign-in fails — content
+   changes go through editing the YAML files directly and running
+   `build_all.py` by hand, as described above.
 
 ## Site capabilities
 
@@ -262,20 +212,6 @@ CSS/JS (no framework, no build step) in `docs/assets/css/styles.css` and
   `python3 refresh_ticker.py` from `build/`). No API key needed. See that
   script's docstring for the full rationale and exactly what it filters
   for.
-- **"What we're reading"** — the homepage's 6-card grid of outside reading
-  (`READING_ITEMS`), one card per Phronesis content category (Research
-  Papers/Policy Artifacts/Legal Analyses/Essays/Articles/Reports; the
-  "Phronesis Original" and "Canon" categories are deliberately excluded).
-  Also machine-generated: `build/refresh_reading.py` reads the same
-  public, unauthenticated JSON files phronesisresearch.org's own homepage
-  fetches client-side (`phronesisresearch.org/content/<category>.json`)
-  and picks each category's single most recent curated entry, writes the
-  result to `build/data/reading_items.yml`, and
-  `.github/workflows/refresh-reading.yml` runs that + a full rebuild
-  weekly on Sundays (also runnable on demand from the Actions tab, or by
-  hand with `python3 refresh_reading.py` from `build/`). No API key
-  needed. See that script's docstring for the exact filtering/sorting
-  logic and field mapping.
 - **Research Spotlight** — a 5-slide auto-advancing slideshow of curated
   Hub outputs (`SPOTLIGHT_ITEMS`) in the homepage lead grid. Slides are
   stacked in one CSS Grid area so the slideshow's footprint stays fixed
@@ -313,23 +249,18 @@ CSS/JS (no framework, no build step) in `docs/assets/css/styles.css` and
   plain download link.
 - **Newsletter signup** — a homepage section (`#subscribe`) for subscribing
   to the Hub's newsletter.
-- **Join the Hub** — an outreach section within the homepage's About &
-  Contact band (`#about`) inviting new members and pointing prospective
-  affiliates to the Hub's founder, Dr. Sivan-Sevilla, by email.
+- **Join the Hub** — an outreach section on the About page inviting new
+  members and pointing prospective affiliates to the Hub's founder,
+  Dr. Sivan-Sevilla, by email.
 
 ## Branding notes
 
-- The header's top-left mark is a single combined lockup —
-  `docs/assets/img/sopp-tph-lockup.png` — pairing the UMD seal with
-  "School of Public Policy / Tech Policy Hub" type, rather than the seal
-  and a separate Hub wordmark as two images.
+- The header's top-left mark is the official UMD seal
+  (`docs/assets/img/umd-seal.png`); the Hub's own bordered "TECH / POLICY
+  HUB" lockup (`docs/assets/img/tph-mark.png`) sits next to it.
 - The official GoTech (Center for Governance of Technology and Systems)
   logo (`docs/assets/img/gtech-main.svg`, read-only on disk) appears in the
   **footer**, not the header.
-- The browser tab icon (`docs/assets/img/favicon.ico` +
-  `favicon-16.png`/`favicon-32.png`/`apple-touch-icon.png`) is a crop of
-  just the sphere from the UMD seal, generated once and checked in as
-  static files rather than derived at build time.
 - Colors and type live in `docs/assets/css/styles.css` (`:root` variables
   at the top of the file) — UMD red as the dominant accent, gold reserved
   for ticker/banner-style dark elements, squared (not pill-shaped) corners
@@ -342,18 +273,14 @@ Most homepage/news/events content (`NEWS_ITEMS`, `EVENTS_ITEMS`,
 external links — not sample copy. What's still illustrative and should be
 replaced with real material before launch:
 
-- `PEOPLE_ITEMS` (`build/data/people.yml`) — the 15-person roster (founder
-  & director, co-lead, and affiliates), their roles, and their
-  research-area badges (derived from `TOPIC_DETAIL` in
-  `build/build_all.py`) are real, condensed from bios each person/their
-  lab provided. Still pending: `website`/`linkedin` are blank except
-  the founder's and co-lead's personal sites; photos are the
-  initials-avatar placeholder (no headshot files yet — swap in real
-  images via `build/data/people.yml`'s entries once available); and
-  the Publications list under `TOPIC_DETAIL` in `build/build_all.py`
-  still credits a few placeholder co-authors (Jordan Diaz, Amara
-  Mensah, Lee Tiedrich) who aren't part of the current roster — those
-  need reconciling against real publication records.
+- `PEOPLE_ITEMS` (`build/data/people.yml`) — the six people, their roles,
+  and their research-area badges (derived from `TOPIC_DETAIL` in
+  `build/build_all.py`) are real. Still placeholder, pending real
+  material from each person: `bio` is a short paragraph auto-expanded
+  from the existing role/focus fields rather than a bio they wrote;
+  `website`/`linkedin` are blank except the founder's site (already
+  linked from the homepage); and photos are the initials-avatar
+  placeholder (no headshot files yet).
 - `PAST_EVENTS_ITEMS` (`build/data/past_events.yml`) — illustrative past-event
   copy (shared by the Events page's Past Events section, the Speaker
   Series page's "Past sessions," and the Annual Event page's recap card),
@@ -367,21 +294,11 @@ replaced with real material before launch:
   `EVENTS_ITEMS` on every build, so keeping that array current is what
   keeps the calendar subscription accurate. `TICKER_ITEMS` no longer needs
   manual refresh — see **Site capabilities** above.
-- The "External" category (`EVENT_CATEGORIES`, `build/data/event_categories.yml`)
-  is for events the Hub didn't organize but wants visitors to know
-  about -- field-wide conferences, but also smaller things like a local
-  ATIH meetup or a talk hosted by Georgetown -- anything in the area the
-  Hub will be attending or wants to bring attention to, rather than
-  only its own programming. Its one entry so far -- the IAPP Global
-  Summit 2027 -- is a real external conference with dates/venue
-  verified via iapp.org as of Sep 2026, but a 3rd-party listing like
-  this can move; reconfirm before relying on it, and swap/add other
-  external events here the same way.
-- The footer's `.footer-legal` link list -- "Privacy Policy", "Web
-  Accessibility", "Notice of Non-discrimination" -- is gone entirely
-  (direct user request, in two rounds: the first two went first as
-  still-`href="#"` placeholders pending real pages, Web Accessibility
-  followed in a follow-up). The `.footer-legal` CSS rule itself is left
-  in `styles.css` unused, in case a real legal/policy link lands in that
-  footer column again later -- if one does, it needs a real destination
-  this time, not another `href="#"`.
+- The "Conference" category (`EVENT_CATEGORIES`, `build/data/event_categories.yml`)
+  is for field-wide events the Hub didn't organize, listed in support of
+  the tech policy field generally rather than only the Hub's own
+  programming. Its one entry so far -- the IAPP Global Summit 2027 --
+  is a real external conference with dates/venue verified via iapp.org
+  as of Sep 2026, but a 3rd-party listing like this can move; reconfirm
+  before relying on it, and swap/add other field conferences here the
+  same way.
