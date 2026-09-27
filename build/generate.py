@@ -51,20 +51,31 @@ ASSET_VERSION = "2026092701"
 # at a clean, extension-less URL (.../Tech-Policy-Hub/news/) instead of
 # .../Tech-Policy-Hub/news.html. LINK_ATTR_RE finds href/src attributes in
 # the assembled HTML so write() can rewrite them to match, without having
-# to touch every place a link is built.
-LINK_ATTR_RE = re.compile(r'(href|src)="([^"]+)"')
+# to touch every place a link is built. It also matches a bare
+# url('assets/...') -- the only other place a page-relative asset path
+# shows up is the .image-backdrop div's inline background-image style
+# (see image_backdrop_html); an <img src="..."> gets rewritten because it
+# matches the href/src branch, but that inline style doesn't, so without
+# this it silently keeps its un-prefixed path on every page one level
+# deep (people/, research/, ...) and the backdrop image 404s there.
+LINK_ATTR_RE = re.compile(r'(href|src)="([^"]+)"|url\(\'(assets/[^\']+)\'\)')
 
 
 def _rewrite_links(html, prefix):
-    """Rewrite internal href/src values to clean URLs. `prefix` is '' when
-    writing the homepage (root-level, links into sibling folders need no
-    prefix) or '../' when writing any other page (one level deep, needs to
-    climb back up to root first). External links, mailto:, and in-page
-    anchors (#...) are left untouched. Also handles an in-page anchor on
-    the homepage itself, e.g. href="index.html#subscribe" (used by the
-    header's persistent Subscribe button so it works from any page)."""
+    """Rewrite internal href/src values (and url('assets/...') in inline
+    styles) to clean URLs. `prefix` is '' when writing the homepage
+    (root-level, links into sibling folders need no prefix) or '../' when
+    writing any other page (one level deep, needs to climb back up to
+    root first). External links, mailto:, and in-page anchors (#...) are
+    left untouched. Also handles an in-page anchor on the homepage
+    itself, e.g. href="index.html#subscribe" (used by the header's
+    persistent Subscribe button so it works from any page)."""
     def repl(m):
         attr, val = m.group(1), m.group(2)
+        if attr is None:
+            # url('assets/...') branch -- always an asset path, so just
+            # apply the same prefix and rewrap it.
+            return f"url('{prefix}{m.group(3)}')"
         if val.startswith(("http://", "https://", "mailto:", "#", "//")):
             return m.group(0)
         if val == "index.html" or val.startswith("index.html#"):
@@ -681,6 +692,41 @@ def image_version_suffix(item, prefix="image"):
     return f"?v={v}" if v else ""
 
 
+def image_backdrop_html(image_src):
+    """A blurred, scaled-up copy of the same photo, painted behind the
+    sharp <img> itself, filling .rp-tile-photo's box completely no
+    matter how the photo's own crop sits on top of it -- plain
+    object-fit:cover is already full-bleed, so this simply sits
+    invisibly behind it there, but the Reposition & Scale tool's
+    contain mode (see image_fit_style) can leave real gaps at the
+    box's edges once a photo's zoomed/panned to show more of itself
+    than a cover crop would (a portrait headshot inside a wider tile,
+    say). Direct user request: those gaps used to fall through to
+    .rp-tile-photo's placeholder diagonal-stripe pattern -- meant for
+    "no photo yet" -- which read as broken/unfinished behind a REAL
+    photo. Blurring + scaling up the SAME photo instead extends its
+    own edge color into the gap (a plain white-background headshot
+    gets a soft white fill; a warmer-toned one gets a matching warm
+    fill) -- the same "ambient" backdrop treatment music/video players
+    use for letterboxed art -- and it adapts automatically to any
+    photo, with no per-image color to configure by hand.
+
+    Pass the exact same `src` string (cache-busting `?v=` query
+    string, if any, already included -- see image_version_suffix)
+    used for the real <img> right after this, so a re-uploaded photo's
+    backdrop refreshes in lockstep with it rather than serving a
+    stale cached blur of the old one. Call this unconditionally
+    whenever a real photo exists, regardless of which fit mode is
+    active for it right now -- in cover mode the sharp image is
+    already full-bleed and hides this completely, so it costs nothing
+    to render up front, and it's already in place the moment that
+    photo's own crop later changes to contain mode. Never call this
+    for the "no photo yet" placeholder itself -- there's no photo to
+    extend a color from, so the diagonal-stripe placeholder stays
+    exactly as it was."""
+    return f'<div class="image-backdrop" style="background-image:url(\'{image_src}\')" aria-hidden="true"></div>\n          '
+
+
 def lead_media_html(topic_label, image=None, item=None):
     """Homepage Research Spotlight art. Defaults to the abstract editorial
     graphic (brand diagonal + topic label) used since launch, since most
@@ -699,8 +745,10 @@ def lead_media_html(topic_label, image=None, item=None):
     if image:
         fit = image_fit_style(item or {}, "image")
         ver = image_version_suffix(item or {}, "image")
+        src = f"{image}{ver}"
+        backdrop = image_backdrop_html(src)
         return f"""
-        <div class="lead-media"><img src="{image}{ver}" alt=""{fit} loading="lazy"><span class="topic-mark">{topic_label}</span></div>"""
+        <div class="lead-media">{backdrop}<img src="{src}" alt=""{fit} loading="lazy"><span class="topic-mark">{topic_label}</span></div>"""
     return f"""
         <div class="lead-media"><span class="topic-mark">{topic_label}</span></div>"""
 

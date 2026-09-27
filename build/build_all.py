@@ -201,7 +201,9 @@ def _person_photo_html(name):
         # Reposition & Scale control, when a photo's had one used on it.
         fit = g.image_fit_style(person, "photo")
         ver = g.image_version_suffix(person, "photo")
-        return f'<img class="rp-tile-photo-img" src="{photo}{ver}" alt="{name}" loading="lazy"{fit}>'
+        src = f"{photo}{ver}"
+        backdrop = g.image_backdrop_html(src)
+        return f'{backdrop}<img class="rp-tile-photo-img" src="{src}" alt="{name}" loading="lazy"{fit}>'
     return """<svg class="rp-tile-photo-silhouette" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
             <circle cx="50" cy="36" r="18"/>
             <path d="M50 60c-23 0-39 15-39 38h78c0-23-16-38-39-38z"/>
@@ -261,8 +263,9 @@ def _project_tile_html(p, key):
     # used on it.
     fit = g.image_fit_style(p, "image")
     ver = g.image_version_suffix(p, "image")
+    img_src = f"{image}{ver}"
     photo_img_html = (
-        f'<img class="rp-tile-photo-img" src="{image}{ver}" alt="{p["title"]}" loading="lazy"{fit}>\n          '
+        f'{g.image_backdrop_html(img_src)}<img class="rp-tile-photo-img" src="{img_src}" alt="{p["title"]}" loading="lazy"{fit}>\n          '
         if image else ""
     )
     # Direct user request: full project descriptions were rendering

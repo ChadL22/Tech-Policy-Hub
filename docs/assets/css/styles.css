@@ -1160,6 +1160,29 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   position:absolute; left:50%; top:50%; transform: translate(-50%, -50%);
   width:auto; height:58%; fill: rgba(255,255,255,.3);
 }
+/* Direct user report/request ("I want to make sure that we never have
+   this diagonal lined background behind a photo... extend the color
+   of the background in the photo"): sits behind the sharp
+   .rp-tile-photo-img/.lead-media img -- a blurred, scaled-up copy of
+   the exact same photo, see image_backdrop_html in generate.py for
+   the full reasoning -- so any gap the Reposition & Scale tool's
+   contain mode leaves around a real photo (a portrait headshot inside
+   a wider tile, say) gets filled with a soft wash of that photo's own
+   edge color instead of the placeholder diagonal-stripe pattern
+   showing through behind it (a plain white-background headshot gets a
+   soft white fill; a warmer-toned one gets a matching warm fill,
+   automatically, for any photo). Harmless and completely invisible
+   behind a plain object-fit:cover photo, since that's already
+   full-bleed with nothing behind it left to see -- this only actually
+   shows once a photo REALLY doesn't fill the box. `overflow:hidden`
+   on .rp-tile-photo/.lead-media (both set elsewhere) clips the
+   scale(1.2) overscan below to the tile's own edges. */
+.image-backdrop{
+  position:absolute; inset:0;
+  background-size:cover; background-position:center;
+  filter: blur(30px) saturate(1.15);
+  transform: scale(1.2);
+}
 /* Real headshot (people.yml's optional `photo` field, see
    _person_photo_html) -- fills the same fixed-aspect-ratio box the
    silhouette placeholder used, cropped to cover rather than letterboxed,
