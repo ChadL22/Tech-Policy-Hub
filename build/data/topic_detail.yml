@@ -5,8 +5,8 @@ cybersecurity:
       link: ''
       image: assets/img/projects/projects-temporal-aspects-of-cyber-attack-surfaces-measuring-changes-in-us-county-governments-attack-surfaces-over-time-1790502836789.png
       image_zoom: 1
-      image_x: 0
-      image_y: 0
+      image_x: -0.45454545454545453
+      image_y: 2.909090909090909
     - title: Critical Infrastructure Resilience
       description: Working with practitioners to translate attack-surface research into actionable defense priorities.
       link: ''

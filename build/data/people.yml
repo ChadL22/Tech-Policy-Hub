@@ -7,19 +7,27 @@
   bio: Founder and director of the Tech Policy Hub. Ido is an assistant professor in UMD's College of Information and an affiliate professor in the School of Public Policy, studying the governance of digital technologies through novel computational methods to advance evidence-based monitoring and evaluation of tech policy implementations, building adaptive models for tech regulation.
   email: sevilla@umd.edu
   photo: assets/img/people/ido-sivan-sevilla.jpg
+  photo_zoom: 1.55
+  photo_x: -0.9090909090909091
+  photo_y: 12.000213071965055
+  photo_v: null
   websites:
     - label: Personal Website
       url: https://idonibrasco.github.io/
   linkedin: https://www.linkedin.com/in/ido-sivan-sevilla/
 - initials: SL
   name: Sipho C. Langa, M.S.
-  photo: assets/img/people/sipho-langa.jpg
   role: Co-Lead
   focus: Mechanism design, welfare economics, consumer protection, HCI
   role_types:
     - core-member
   bio: Sipho is a research engineer whose professional work focuses on Causal Inference and Artificial Intelligence. His academic work explores topics at the intersection of technology, law, and policy through the lens of mechanism design. He is also the Founder and Executive Director of the <a href="https://phronesisresearch.org/" target="_blank" rel="noopener">Phronesis Institute</a>.
   email: sclanga@proton.me
+  photo: assets/img/people/sipho-langa.jpg
+  photo_zoom: 2.15
+  photo_x: 0.45454545454545453
+  photo_y: 22.90949768284238
+  photo_v: null
   websites:
     - label: Website
       url: https://chadl22.github.io/
@@ -103,9 +111,9 @@
   bio: Patrick Parham is a Ph.D. student at UMD's College of Information studying advertising and media technology, with a focus on proposals for a post-third-party-cookie web. He previously worked in the programmatic advertising industry.
   email: null
   photo: assets/img/people/patrick-parham.jpg
-  photo_zoom: null
-  photo_x: null
-  photo_y: null
+  photo_zoom: 1
+  photo_x: 0
+  photo_y: 0
   photo_v: 1790540528151
   websites: []
   linkedin: null
