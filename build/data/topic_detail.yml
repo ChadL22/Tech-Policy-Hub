@@ -153,14 +153,11 @@ privacy:
     - Sipho C. Langa, M.S.
 integrity:
   projects:
-    - title: Trustworthy Content Classification
-      description: Classifying trustworthy content on the web using third-party site structure.
+    - title: Content-Agnostic Detection of Untrustworthy News Domains from Web Request Structure
+      description: |
+        Most approaches for detecting untrustworthy news websites rely on page content, social context, or both. We ask whether trustworthiness can instead be inferred from runtime Web structure. We present a content-agnostic pipeline that uses browser-based crawling to collect HTTP request traces. Our pipeline reconstructs approximate page-level request graphs from request and referrer data. It then derives several structural features encompassing request volume, third-party dependence, resource composition, and graph complexity. We apply this pipeline to daily crawls of a comprehensive set of 5,713 news sources. To ensure a complete picture of the third-party structure of a news source, our crawler captured request graphs for both the news source's front-page and a random set of internal pages. In our evaluation, a regularized random forest achieves 82.6\% accuracy and 81.2\% macro-$F_1$; under temporal drift evaluation, it achieves 82.4\% accuracy and 80.9\% macro-$F_1$. The most informative features are temporal summaries of request depth, script behavior, third-party entropy, and the number of unique third-party domains. These results show that runtime request structure carries substantial information about domain trustworthiness. Structural Web measurement offers a powerful complement to content-based misinformation detection, especially when content signals are unavailable, costly, or ambiguous.
       link: ''
-      image: ''
-    - title: Platform Transparency Tracker
-      description: Monitoring platform disclosures and their real-world enforcement.
-      link: ''
-      image: ''
+      image: assets/img/projects/projects-content-agnostic-detection-of-untrustworthy-news-domains-from-web-request-structure-1790621468191.png
   pubs:
     - venue: Free and Open Communications on the Internet (FOCI)
       year: 2025
