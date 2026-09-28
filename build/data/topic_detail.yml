@@ -54,6 +54,19 @@ cybersecurity:
     - Parthav Poudel
 privacy:
   projects:
+    - title: 'Context Collapse as a Competitive Advantage: The race for real-time behavioral data on the openWeb'
+      description: |-
+        The open Web is a central arena for competition over users’ data. Third-party trackers persistently identify users across contexts, tracing browsing behavior to target advertising and sell insights to data brokers. Alongside platforms with direct access to user data, they compete for real-time access to sensitive behavioral information.
+        Prior research has measured tracking volumes and techniques, but has paid less attention to trackers’ ability to connect distinct contexts to the same user in real time. We operationalize the Theory of Privacy as Contextual Integrity to trace persistent identification from sensitive to general-purpose contexts, compare tracking across sensitive topics, and identify dominant actors within each topic.
+        We show empirical evidence that sensitive contexts matter for trackers. Three Web-crawling experiments using sites drawn from IAB’s content taxonomy yielded statistically significant results. First, browsing one of 31 sensitive topics before general-purpose sites causes persistent identifiers to travel approximately three times as far as browsing from a neutral source. Second, this amplification largely disappears when the destination is also sensitive. Third, reversing browsing order shows that shared trackers between site pools do not explain identifiers’ wide distribution.
+        The same identity-resolution and real-time-bidding companies dominate across settings; what changes is how far their cookies travel and their opportunities for context collapse within each sensitive topic. Without clear service agreements with users, some actors gain extensive real-time visibility into sensitive browsing across all topics examined. This collapse of contextual boundaries creates an often-overlooked competitive advantage in surveillance advertising markets.
+        Our analysis currently examines cookie IDs. We plan to also include cookie syncing, persistent JavaScript fingerprinting, and sharing IDs via link decoration. This work provides an initial empirical approach to measuring Web privacy through Contextual Integrity, opening avenues for research on contextual privacy and digital competition.
+      link: ''
+      image: assets/img/projects/projects-context-collapse-as-a-competitive-advantage-the-race-for-real-time-behavioral-data-on-the-openweb-1790620735737.png
+    - title: The Nexus between Differential Privacy and Contextual Integrity
+      description: Beyond the formalization of the privacy and fairness problems, the computer science community has neglected an important aspect of algorithms on society - formalizing undesired inference-making applications. Algorithms target individuals based on personal vulnerabilities, or things they prefer hiding. To prevent such undesired application of inference-making, we use the vocabulary of contextual integrity and differential privacy, aiming to address this gap by showing what can be achieved from the intersection of differential privacy and contextual integrity, bridging technical and normative concepts of privacy.
+      link: ''
+      image: assets/img/projects/projects-the-nexus-between-differential-privacy-and-contextual-integrity-1790618801546.png
     - title: 'Privacy Intermediation for/against Accountability: A comparative analysis of accountability powers across formal & informal US privacy watchdogs'
       description: |-
         U.S. private corporations and government agencies consistently harness personal data for financial profit and security objectives, in ways that often conflict with the privacy of data subjects and challenge opportunities for meaningful accountability. Stakeholders engage in regulatory managerialism practices (Cohen & Waldman, 2023), deciding on the terms of their own compliance and taking us further away from accountable data collection and usage.
@@ -70,10 +83,6 @@ privacy:
         With a clear interest to escape meaningful compliance, privacy threat actors across government and corporate settings are impacted by consistent, creative, and under-resourced privacy watchdogs, rather than the formal watchdogs who hold questioning and informational power over their activities. The findings raise important questions on the extent to which formal privacy watchdogs have been captured by privacy threat actors and the extent to which tech policy spaces should invite creative and informal rather than codified and formal accountability holders.
       link: ''
       image: assets/img/projects/projects-privacy-intermediation-foragainst-accountability-a-comparative-analysis-of-accountability-powers-across-formal-informal-us-privacy-watchdogs-1790618203331.png
-    - title: The Nexus between Differential Privacy and Contextual Integrity
-      description: Beyond the formalization of the privacy and fairness problems, the computer science community has neglected an important aspect of algorithms on society - formalizing undesired inference-making applications. Algorithms target individuals based on personal vulnerabilities, or things they prefer hiding. To prevent such undesired application of inference-making, we use the vocabulary of contextual integrity and differential privacy, aiming to address this gap by showing what can be achieved from the intersection of differential privacy and contextual integrity, bridging technical and normative concepts of privacy.
-      link: ''
-      image: assets/img/projects/projects-the-nexus-between-differential-privacy-and-contextual-integrity-1790618801546.png
   pubs:
     - venue: IEEE Security & Privacy
       year: 2026
