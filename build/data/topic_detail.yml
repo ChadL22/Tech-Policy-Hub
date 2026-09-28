@@ -177,14 +177,10 @@ integrity:
     - Parthav Poudel
 ml:
   projects:
-    - title: Algorithmic Accountability Framework
-      description: Developing standards for evaluating machine learning systems used in public decision-making.
+    - title: 'Performance-based AI Regulation: A Neuro-symbolic framework to bound public AI'
+      description: Governments are increasingly using GenAI to complete daunting tasks and improve the pace and efficiency of bureaucratic decision making. In this process, there is an inevitable trust in the probabilistic nature of AI models, assuming they would correctly parse agency requirements and complete their tasks according to the laws that mandated them in the first place. Building on our previous attempt to formalize legal requirements and verify the legal accountability of public algorithmic governance, we introduce formalization methods from computer science to build a neuro-symbolic framework as a policy response to verify GenAI behavior. Instead of the never-ending struggle to understand AI model internals, we suggest an approach that circumvents the ‘black box’ and tests for the legality of agent behavior. We demonstrate the validity of our approach by answering needs that come from specific use cases of GenAI deployment by the Federal Social Security Administration (SSA) agency. Our novel and robust methodology builds on various techniques for creating terminologies of the social security law and takes advantage of flexible, and uncertainty-aware logic to model the required behavior of GenAI in the service of the government. Our approach automatically verifies the compliance of AI agents with social security policies. It flags to government operators when their agents violated required processes to determine social security eligibility, or when social security eligibility requirements are non-deterministic and require careful attention when determined by an AI agent.
       link: ''
-      image: ''
-    - title: AI Governance Roundtables
-      description: Convening researchers and policymakers on the governance of emerging AI systems.
-      link: ''
-      image: ''
+      image: assets/img/projects/projects-performance-based-ai-regulation-a-neuro-symbolic-framework-to-bound-public-ai-1790621065029.png
   pubs:
     - venue: 2026 ACM FAccT
       year: 2026
