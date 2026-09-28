@@ -54,14 +54,26 @@ cybersecurity:
     - Parthav Poudel
 privacy:
   projects:
-    - title: Cookie-less Identification Tracking
-      description: Studying how identification methods are evolving as third-party cookies are phased out, and what it means for privacy.
+    - title: 'Privacy Intermediation for/against Accountability: A comparative analysis of accountability powers across formal & informal US privacy watchdogs'
+      description: |-
+        U.S. private corporations and government agencies consistently harness personal data for financial profit and security objectives, in ways that often conflict with the privacy of data subjects and challenge opportunities for meaningful accountability. Stakeholders engage in regulatory managerialism practices (Cohen & Waldman, 2023), deciding on the terms of their own compliance and taking us further away from accountable data collection and usage.
+
+        In response, various intermediaries in the form of privacy watchdogs are emerging, formally and informally, and have been working to strike a different balance. They question and challenge data collection and processing practices in court, via computational tools, and through public pressure, demanding greater accountability from corporations and government agencies. Some privacy watchdogs are codified in the law, with clear veto powers. Others emerge spontaneously, applying their technical expertise and organizational resources to hold data-hungry companies and government agencies into account.
+
+        Often studied separately, this paper adopts a step-wise comparative approach to examine the efficacy of formal and informal privacy accountability holders vis-à-vis US government surveillance & consumer privacy regimes. The paper asks (1) how formal and informal US privacy watchdogs hold US government agencies and corporations into account? (2) How can we explain different levels of accountability powers across formal vs. informal privacy watchdogs & vis-à-vis public vs. private privacy threat actors? (3) What are the consequences of varying accountability powers to the individual rights of data subjects?
+
+        The paper adopts Bovens and Wille’s (2021) suggested index for assessing accountability powers, systematically assessing formal, organizational, and exercise of powers by U.S. privacy watchdogs. We conduct desk research of publicly available documents from various privacy watchdogs active in the US: privacy NGOs [e.g., EFF, ACLU], journalists & whistleblowers [e.g. The Markup], and formal oversight bodies such as FISA courts and internal intelligence oversight boards. Through thematic analysis, we assess and compare their accountability power to shed light on how intermediaries are more or less effective for accountability in the U.S. privacy regime.
+
+        Evidently, under-funded and private privacy watchdogs, with no formal mandate, are much more effective in advancing privacy accountability than the well-equipped, more traditional, public watchdogs. Preliminary results indicate that official intermediation mechanisms for accountability such as Congressional oversight committees, self-reporting by intelligence agencies, and Foreign Intelligence Surveillance Act (FISA) courts are weak in light of the accountability challenges posed by threat actos. Rule-takers are able to re-organize around them, and rarely held into account. In contrast, informal
+        privacy watchdogs such as computer scientists, tech journalists, whistleblowers, and privacy NGOs apply their technical expertise and demonstrate much more effective accountability efforts, despite the absence of formal powers.
+
+        With a clear interest to escape meaningful compliance, privacy threat actors across government and corporate settings are impacted by consistent, creative, and under-resourced privacy watchdogs, rather than the formal watchdogs who hold questioning and informational power over their activities. The findings raise important questions on the extent to which formal privacy watchdogs have been captured by privacy threat actors and the extent to which tech policy spaces should invite creative and informal rather than codified and formal accountability holders.
       link: ''
-      image: ''
-    - title: Watchdog Accountability
-      description: Assessing the powers of formal and informal U.S. privacy regulators.
+      image: assets/img/projects/projects-privacy-intermediation-foragainst-accountability-a-comparative-analysis-of-accountability-powers-across-formal-informal-us-privacy-watchdogs-1790618203331.png
+    - title: The Nexus between Differential Privacy and Contextual Integrity
+      description: Beyond the formalization of the privacy and fairness problems, the computer science community has neglected an important aspect of algorithms on society - formalizing undesired inference-making applications. Algorithms target individuals based on personal vulnerabilities, or things they prefer hiding. To prevent such undesired application of inference-making, we use the vocabulary of contextual integrity and differential privacy, aiming to address this gap by showing what can be achieved from the intersection of differential privacy and contextual integrity, bridging technical and normative concepts of privacy.
       link: ''
-      image: ''
+      image: assets/img/projects/projects-the-nexus-between-differential-privacy-and-contextual-integrity-1790618801546.png
   pubs:
     - venue: IEEE Security & Privacy
       year: 2026
