@@ -34,7 +34,7 @@ def _slugify(text):
 # overlay painted inside `.rail-scroll` itself would scroll away with the
 # content instead of staying put over whatever's currently at the bottom
 # of the visible box.
-HUB_NEWS_RAIL = g.NEWS_ITEMS
+HUB_NEWS_RAIL = g.news_sorted(g.NEWS_ITEMS)  # newest first, whatever order the CMS saved them in
 EVENTS_RAIL = [dict(tag=f"{e['m']} {e['d']}", title=e['title'], link=e['link']) for e in g.EVENTS_ITEMS[:4]]
 
 home_body = f"""

@@ -1201,17 +1201,67 @@ _MONTH_AP_WITH_DAY = {
 }
 
 
-def ap_date(date_str):
-    """Reformat a NEWS_ITEMS "date" value ("Jun 24, 2025" or "Jul 2025")
-    into AP style for display in the Hub News rail, e.g. "June 24, 2025"
-    or "July 2025"."""
-    parts = date_str.replace(",", "").split()
-    month_num = _MONTH_NUM[parts[0].upper()]
+def parse_news_date(date_str):
+    """(year, month, day-or-None) from a NEWS_ITEMS "date" value, or None
+    if it can't be read.
+
+    Bug fix (direct user report: the rebuild workflow failed with
+    KeyError: 'SEPTEMBER'). The CMS's Hub News date is free text, and
+    this used to accept only a 3-letter month ("Sep 2026") -- an item
+    entered as "September 2026" crashed the whole site build, so no
+    content change after it went live. Now any month spelling works
+    (Sep / Sept / Sept. / September, any case -- matched on the first
+    three letters), with or without a day and comma, plus numeric
+    2026-09-15 and 9/15/2026."""
+    s = str(date_str or "").strip()
+    m = re.fullmatch(r"(\d{4})-(\d{1,2})(?:-(\d{1,2}))?", s)
+    if m:
+        y, mo, d = int(m.group(1)), int(m.group(2)), m.group(3)
+        return (y, mo, int(d) if d else None) if 1 <= mo <= 12 else None
+    m = re.fullmatch(r"(\d{1,2})/(?:(\d{1,2})/)?(\d{4})", s)
+    if m:
+        mo, d, y = int(m.group(1)), m.group(2), int(m.group(3))
+        return (y, mo, int(d) if d else None) if 1 <= mo <= 12 else None
+    parts = s.replace(",", " ").replace(".", " ").split()
+    if len(parts) not in (2, 3):
+        return None
+    month_num = _MONTH_NUM.get(parts[0][:3].upper())
+    if not month_num or not parts[-1].isdigit() or len(parts[-1]) != 4:
+        return None
+    day = None
     if len(parts) == 3:
-        _, day, year = parts
+        if not parts[1].isdigit():
+            return None
+        day = int(parts[1])
+    return (int(parts[-1]), month_num, day)
+
+
+def ap_date(date_str):
+    """Reformat a NEWS_ITEMS "date" value ("Jun 24, 2025", "Jul 2025",
+    "September 2026", ...; see parse_news_date) into AP style for display
+    in the Hub News rail, e.g. "June 24, 2025" or "July 2025". A date
+    that can't be read is shown exactly as typed, with a build warning,
+    rather than failing the build."""
+    parsed = parse_news_date(date_str)
+    if not parsed:
+        print(f"WARNING: couldn't read Hub News date {date_str!r}; showing it as typed.")
+        return str(date_str)
+    year, month_num, day = parsed
+    if day:
         return f"{_MONTH_AP_WITH_DAY[month_num]} {day}, {year}"
-    _, year = parts
     return f"{calendar.month_name[month_num]} {year}"
+
+
+def news_sorted(items):
+    """NEWS_ITEMS newest first. The CMS appends a new item to the END of
+    news_items.yml, so without this a brand-new item would show last in
+    the Hub News rail. Stable: items from the same month (or day) keep
+    their file order, and the existing hand-ordered list comes out
+    unchanged. An item whose date can't be read sorts last."""
+    def key(e):
+        p = parse_news_date(e.get("date"))
+        return (p[0], p[1], p[2] or 0) if p else (0, 0, 0)
+    return sorted(items, key=key, reverse=True)
 
 
 def calendar_legend_html(categories):
