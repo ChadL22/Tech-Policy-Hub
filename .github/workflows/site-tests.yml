@@ -1,0 +1,75 @@
+name: Weekly site check
+
+# Clicks through the whole site in a real browser (Playwright + Chromium)
+# at desktop and phone sizes -- every page, link, filter, pop-up, the
+# newsletter endpoint, and the Content Manager (against a fake GitHub,
+# so it never writes anything) -- and checks the site still builds and
+# that the published pages are up to date. See tests/.
+#
+# Runs every Monday morning, and on demand from the Actions tab ("Run
+# workflow"), where you can also point it at a fresh local build of this
+# branch instead of the live site. A failed scheduled run is emailed to
+# whoever last edited this file's schedule (GitHub's default), with
+# screenshots and traces attached to the run.
+
+on:
+  schedule:
+    - cron: '23 13 * * 1'   # Mondays 13:23 UTC (9:23am ET, 8:23am in winter)
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'What to test'
+        type: choice
+        options: [live, local-build]
+        default: live
+
+permissions:
+  contents: read
+
+concurrency:
+  group: site-tests
+  cancel-in-progress: true
+
+jobs:
+  site-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      TARGET: ${{ github.event.inputs.target || 'live' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r build/requirements.txt -r tests/requirements.txt
+          python -m playwright install --with-deps chromium
+
+      - name: Serve a fresh local build
+        if: env.TARGET == 'local-build'
+        run: |
+          (cd build && python3 build_all.py)
+          (cd docs && nohup python3 -m http.server 8000 >/dev/null 2>&1 &)
+          sleep 2
+          echo "SITE_URL=http://localhost:8000/" >> "$GITHUB_ENV"
+
+      - name: Run site tests
+        run: python -m pytest tests -v --junitxml=test-results/junit.xml
+
+      - name: Summary
+        if: always()
+        run: |
+          if [ -f test-results/junit.xml ]; then
+            python tests/summarize.py test-results/junit.xml "${SITE_URL:-https://techpolicyhub.org/}" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Save screenshots and traces
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: test-results/
+          retention-days: 14
