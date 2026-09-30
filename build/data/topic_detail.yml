@@ -7,10 +7,6 @@ cybersecurity:
       image_zoom: 1
       image_x: -0.45454545454545453
       image_y: 2.909090909090909
-    - title: Critical Infrastructure Resilience
-      description: Working with practitioners to translate attack-surface research into actionable defense priorities.
-      link: ''
-      image: ''
   pubs:
     - venue: Journal of Cybersecurity
       year: 2025
