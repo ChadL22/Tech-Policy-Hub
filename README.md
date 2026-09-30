@@ -190,6 +190,42 @@ Three pieces, in the order they were built:
    changes go through editing the YAML files directly and running
    `build_all.py` by hand, as described above.
 
+## Site tests
+
+`tests/` is a Playwright test suite that clicks through the whole site in
+a real browser, at desktop and phone sizes. It checks:
+
+- **The build:** the site builds without errors, and the published
+  `docs/` matches a fresh build (a mismatch means a rebuild failed and
+  the live site is out of date).
+- **Every page:** each page loads with no script errors, broken images,
+  or sideways scrolling.
+- **Links:** every internal link and `#anchor` resolves, and no outbound
+  link is dead.
+- **Interactive pieces:** header and phone menu, spotlight slideshow,
+  calendar, Hub News order, research-area / year / category filters,
+  search, collapsible sections, carousels, the project pop-up, people
+  photos and the phone bio card, and the events list and calendar feed.
+- **Newsletter:** the service accepts requests from techpolicyhub.org.
+  The check sends no email address, so nobody is subscribed.
+- **Content Manager:** loading, editing, the change counter, and
+  publishing, run against a fake GitHub so nothing is written.
+
+It runs every Monday via `.github/workflows/site-tests.yml`, and on demand
+from the repo's **Actions** tab (**Weekly site check → Run workflow**,
+where you can also test a fresh local build instead of the live site).
+A failed run is emailed to you, with screenshots and a Playwright trace
+of each failure attached to the run.
+
+To run it yourself:
+
+```
+pip install -r build/requirements.txt -r tests/requirements.txt
+python -m playwright install chromium
+python -m pytest tests -v                                    # live site
+SITE_URL=http://localhost:8000/ python -m pytest tests -v    # local build: cd docs && python3 -m http.server 8000
+```
+
 ## Site capabilities
 
 Beyond a standard static brochure site, the homepage and related pages

@@ -537,6 +537,33 @@ document.addEventListener('DOMContentLoaded', function () {
       // via closest() rather than assuming any particular sibling is
       // the heading, so this doesn't care how deep the panel is nested
       // (e.g. Affiliates' extra .rail-scroll-wrap around its rows).
+      // Bug fix (caught by the weekly site test, tests/): on a phone,
+      // people.html's Affiliates section starts collapsed, so searching
+      // "Patrick" matched his row but showed only a closed "Affiliates"
+      // heading -- no result, and no "no people match" message either,
+      // so search looked broken. While any search or filter is active, a
+      // collapsed section holding matches now opens by itself; clearing
+      // the search/filters closes it again, unless the visitor opened or
+      // closed it by hand in the meantime (the .subsection-toggle click
+      // handler below drops the autoOpened flag).
+      var filtering = !!query || selected.size > 0 || selectedYears.size > 0 || selectedRoles.size > 0;
+      document.querySelectorAll('.subsection-toggle').forEach(function (btn) {
+        var sectionPanel = document.getElementById(btn.getAttribute('aria-controls'));
+        if (!sectionPanel) return;
+        if (filtering && btn.getAttribute('aria-expanded') === 'false') {
+          var hasMatch = Array.prototype.slice.call(sectionPanel.querySelectorAll('[data-search-row]'))
+            .some(function (row) { return !row.hidden; });
+          if (hasMatch) {
+            btn.setAttribute('aria-expanded', 'true');
+            sectionPanel.hidden = false;
+            btn.dataset.autoOpened = '1';
+          }
+        } else if (!filtering && btn.dataset.autoOpened) {
+          btn.setAttribute('aria-expanded', 'false');
+          sectionPanel.hidden = true;
+          delete btn.dataset.autoOpened;
+        }
+      });
       document.querySelectorAll('[data-people-group-panel]').forEach(function (panel) {
         var anyVisible = Array.prototype.slice.call(panel.querySelectorAll('[data-search-row]'))
           .some(function (row) { return !row.hidden; });
@@ -648,6 +675,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     btn.addEventListener('click', function () {
       var open = btn.getAttribute('aria-expanded') !== 'true';
+      delete btn.dataset.autoOpened; // the visitor's choice now; see researchExplorer's render()
       btn.setAttribute('aria-expanded', String(open));
       panel.hidden = !open;
       researchExplorer.refresh();
