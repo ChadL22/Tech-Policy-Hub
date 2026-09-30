@@ -35,6 +35,16 @@ CATEGORIES:External
 URL:https://www.stateofthenet.org/sotn-27/
 END:VEVENT
 BEGIN:VEVENT
+UID:20270321-iapp-global-summit-2027@techpolicyhub.umd.edu
+DTSTAMP:20270321T000000Z
+DTSTART;VALUE=DATE:20270321
+DTEND;VALUE=DATE:20270325
+SUMMARY:IAPP Global Summit 2027
+DESCRIPTION:IAPP Global Summit: Privacy | AI Governance | Cybersecurity law is the world’s largest gathering of digital responsibility professionals.
+CATEGORIES:External
+URL:https://iapp.org/conference/iapp-global-summit
+END:VEVENT
+BEGIN:VEVENT
 UID:20270621-acm-conference-on-fairness-accountability-and-transparency@techpolicyhub.umd.edu
 DTSTAMP:20270621T000000Z
 DTSTART;VALUE=DATE:20270621
