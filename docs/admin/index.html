@@ -414,8 +414,9 @@ const COLLECTIONS = {
       { name:'end_d', label:'Ends — day', type:'text', required:false, hint:'Leave both "Ends" fields blank for a one-day event or a range within one month.' },
       { name:'cat', label:'Category', type:'select', options:EVENT_CATS, hint:'Colors/legend come from build/data/event_categories.yml.', required:true },
       { name:'title', label:'Title', type:'text', required:true },
-      { name:'meta', label:'Meta line (time · location)', type:'text' },
-      { name:'link', label:'Link', type:'text' },
+      { name:'location', label:'Location', type:'text', hint:'Where it happens — e.g. "Washington, DC", "Virtual", or "College Park, MD & Virtual". Shown under the title with a map pin, or a video icon for a virtual-only event. Leave blank if not announced yet.' },
+      { name:'meta', label:'Description', type:'text', hint:'Shown as a short preview (about three lines) — visitors click Details for the full story on the event\'s own page.' },
+      { name:'link', label:'Link (Details button)', type:'text' },
     ],
   },
   events_past: {

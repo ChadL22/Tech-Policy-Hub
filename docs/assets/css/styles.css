@@ -1551,6 +1551,15 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    rows show DAY-of-month -- 4 digits needs a touch less size than the
    2-digit day number to sit comfortably in the same 90px date column. */
 .event-row--past .event-date .d{ font-size:1.3rem; }
+/* Event location (event_location_html in generate.py): a short label
+   line between the title and the description preview -- map pin for a
+   place, video icon for a virtual-only event. */
+.event-location{
+  display:flex; align-items:center; gap:6px; margin: 2px 0 6px;
+  font-family: var(--font-nav); font-size:.76rem; font-weight:700; letter-spacing:.03em;
+  text-transform:uppercase; color: var(--ink);
+}
+.event-location-icon{ width:14px; height:14px; flex:none; fill: var(--umd-red); }
 /* Multi-day events ("9–10", "21–24") -- a range needs a smaller number
    to fit the same date column. */
 .event-date--range .d{ font-size:1.3rem; white-space:nowrap; }

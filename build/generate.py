@@ -44,7 +44,7 @@ SITE_URL = "https://techpolicyhub.org/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026093003"
+ASSET_VERSION = "2026093004"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -1422,6 +1422,31 @@ def calendar_widget_html(events, categories):
         </div>"""
 
 
+_LOCATION_PIN_SVG = (
+    '<svg class="event-location-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+    '<path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>'
+)
+_LOCATION_VIDEO_SVG = (
+    '<svg class="event-location-icon event-location-icon--virtual" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+    '<path d="M17 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3.5l4 4v-11l-4 4z"/></svg>'
+)
+_VIRTUAL_ONLY = re.compile(r"\s*(virtual|online|zoom|webinar|livestream|live ?stream)(\s+only)?\s*", re.I)
+
+
+def event_location_html(e):
+    """Direct user request: "add the location to the events as well, some
+    are virtual, some are in DC, and others are elsewhere." Shown under
+    the event's title from its optional `location` field -- a video icon
+    for a purely virtual event ("Virtual", "Online", "Zoom"), a map pin
+    for anything with a place in it ("Washington, DC", "College Park, MD
+    & Virtual"). Nothing is shown for an event with no location yet."""
+    loc = str(e.get("location") or "").strip()
+    if not loc:
+        return ""
+    icon = _LOCATION_VIDEO_SVG if _VIRTUAL_ONLY.fullmatch(loc) else _LOCATION_PIN_SVG
+    return f'<div class="event-location">{icon}<span>{loc}</span></div>'
+
+
 def events_rows_html(items, limit=None, with_btn=True):
     """Each row carries data-filter-target="{category}" so events.html's
     filter_pills_html() bar can show/hide rows by category client-side --
@@ -1453,7 +1478,7 @@ def events_rows_html(items, limit=None, with_btn=True):
         out.append(f"""
         <div class="event-row" data-filter-target="{e['cat']}">
           <div class="event-date{' event-date--range' if '–' in e['day_label'] else ''}"><div class="d">{e['day_label']}</div><div class="m">{e['month_label']}</div></div>
-          <div><h3>{title}</h3><div class="meta">{e.get('meta') or ''}</div></div>
+          <div><h3>{title}</h3>{event_location_html(e)}<div class="meta">{e.get('meta') or ''}</div></div>
           {btn}
         </div>""")
     return "".join(out)
@@ -1548,7 +1573,8 @@ def events_ics(events):
             f"DTSTART;VALUE=DATE:{start.strftime('%Y%m%d')}",
             f"DTEND;VALUE=DATE:{end.strftime('%Y%m%d')}",
             f"SUMMARY:{_ics_escape(e['title'])}",
-            f"DESCRIPTION:{_ics_escape(e['meta'])}",
+        ] + ([f"LOCATION:{_ics_escape(str(e['location']).strip())}"] if str(e.get("location") or "").strip() else []) + [
+            f"DESCRIPTION:{_ics_escape(e.get('meta') or '')}",
             f"CATEGORIES:{_ics_escape(e['cat'])}",
             f"URL:{url}",
             "END:VEVENT",

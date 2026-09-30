@@ -226,6 +226,9 @@ def test_upcoming_events_preview_and_details(site, vp):
         meta = row.locator(".meta")
         lines = meta.evaluate("m => Math.round(m.getBoundingClientRect().height / parseFloat(getComputedStyle(m).lineHeight))")
         assert lines <= 3, f"'{title}': description shows {lines} lines, expected a 3-line preview"
+        loc = row.locator(".event-location")
+        if loc.count():
+            assert loc.inner_text().strip() and loc.is_visible(), f"'{title}': empty or hidden location line"
         link = row.locator("h3 a")
         if link.count():
             href = link.get_attribute("href")

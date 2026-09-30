@@ -100,3 +100,22 @@ def test_event_date_formats():
     for d in ("TBD", "9th", "31", "2-1"):  # unreadable -> listed as typed, never a crash
         with contextlib.redirect_stdout(io.StringIO()):
             assert g.normalize_event({"y": 2027, "m": "SEP", "d": d, "title": "t"})["start"] is None, d
+
+
+def test_event_location():
+    """Location line under the title (pin, or a video icon when virtual
+    only) and in the .ics feed; nothing when blank."""
+    import contextlib, io
+    sys.path.insert(0, str(REPO_ROOT / "build"))
+    with contextlib.redirect_stdout(io.StringIO()):
+        import generate as g
+        dc = g.normalize_event({"y": 2027, "m": "JAN", "d": "9-10", "title": "A", "cat": "External",
+                                "link": "https://example.org/", "meta": "m", "location": "Washington, DC"})
+        virtual = dict(dc, title="B", location="Virtual")
+        blank = dict(dc, title="C", location="")
+    html = g.events_rows_html([dc, virtual, blank])
+    assert html.count('class="event-location"') == 2
+    assert "Washington, DC" in html and html.count("event-location-icon--virtual") == 1
+    ics = g.events_ics([dc, virtual, blank])
+    assert "LOCATION:Washington\\, DC" in ics and "LOCATION:Virtual" in ics
+    assert ics.count("LOCATION:") == 2
