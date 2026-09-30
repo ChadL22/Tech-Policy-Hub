@@ -213,3 +213,14 @@
   photo_v: 1790541088467
   websites: []
   linkedin: null
+- initials: null
+  name: Allen D. Sunny
+  role: Affiliate
+  focus: Allen studies on how to bound public AI through Neuro-symbolic frameworks
+  role_types:
+    - affiliate
+  bio: Allen Sunny is a researcher at UMD's Tech Policy Lab and a Research Fellow at Georgetown University. He studies how to translate legal requirements into precise technical terms so AI systems can be deployed safely and held accountable. Before this, he spent four years building production machine learning systems for Walmart at Kantar Analytics.
+  email: allens@umd.edu
+  photo: assets/img/people/allen-d-sunny.jpg
+  websites: []
+  linkedin: https://www.linkedin.com/in/allen-sunny1242/
