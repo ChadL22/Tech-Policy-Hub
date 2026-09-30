@@ -1162,11 +1162,22 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   // Newsletter signup -- submits to The Phronesis Institute's live subscribe
-  // API (same endpoint their own site uses: POST /api/subscribe on
-  // phronesisresearch.org, which is CORS-open and also syncs to their
-  // Substack). This duplicates their real subscribe functionality here
-  // rather than just linking out.
-  var PHRONESIS_SUBSCRIBE_URL = 'https://phronesisresearch.org/api/subscribe';
+  // API, the same Cloudflare Worker phronesisresearch.org's own form posts
+  // to (same {email} JSON in, same {success, message|error} JSON out), so
+  // signups land in the same list rather than just linking out.
+  //
+  // Bug fix (direct user report: every signup showed "Network error").
+  // This used to point at https://phronesisresearch.org/api/subscribe,
+  // which doesn't exist: phronesisresearch.org is a static GitHub Pages
+  // site (a GET there returns GitHub's 404 page), and a POST to it fails
+  // outright -- GitHub Pages doesn't accept POSTs or answer the CORS
+  // preflight a JSON request needs -- so fetch() rejected and landed in
+  // the catch branch below every time. The real endpoint is the Worker.
+  // It currently accepts requests from techpolicyhub.org; if the
+  // Worker's CORS is ever locked down to phronesisresearch.org only,
+  // https://techpolicyhub.org has to stay on its allowlist or this
+  // breaks the same way again.
+  var PHRONESIS_SUBSCRIBE_URL = 'https://phronesis-newsletter.sclanga315.workers.dev/subscribe';
 
   document.querySelectorAll('.newsletter-form').forEach(function (form) {
     form.addEventListener('submit', function (e) {
@@ -1211,7 +1222,11 @@ document.addEventListener('DOMContentLoaded', function () {
             showMessage(result.data.error || 'Subscription failed. Please try again.', 'error');
           }
         })
-        .catch(function () {
+        .catch(function (err) {
+          // Logged so the real cause (CORS, DNS, a moved endpoint...)
+          // shows in the browser console next time instead of only
+          // this generic message.
+          if (window.console) console.error('Newsletter signup failed:', err);
           showMessage('Network error. Please try again.', 'error');
         })
         .finally(function () {
