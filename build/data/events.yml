@@ -1,1 +1,28 @@
-[]
+- 'y': 2027
+  m: JAN
+  d: 9-10
+  cat: External
+  title: Digital Competition Conference 2027
+  meta: At the Digital Competition Conference 2027, cutting-edge research will meet policy on the most pressing digital market competition issues of our time.
+  link: https://kgi.georgetown.edu/events/digital-competition-conference-2027/
+- 'y': 2027
+  m: FEB
+  d: '9'
+  cat: External
+  title: State of the Net Conference
+  meta: The State of the Net Conference Series is hosted by the Internet Education Foundation, a 501(c)(3) non-profit organization dedicated to educating the public and policymakers about the potential of a decentralized global Internet to promote communications, commerce and democracy. IEF works closely with leaders on Capitol Hill and in the private sector to host the most important debates in Internet policy. IEF’s board of directors is comprised by public interest groups, corporations, and associations representative of the diversity of the Internet community.
+  link: https://www.stateofthenet.org/sotn-27/
+- 'y': 2027
+  m: JUN
+  d: 21-24
+  cat: External
+  title: ACM Conference on Fairness, Accountability, and Transparency
+  meta: A computer science conference with a cross-disciplinary focus that brings together researchers and practitioners interested in fairness, accountability, and transparency in socio-technical systems.
+  link: https://facctconference.org/index.html
+- 'y': 2026
+  m: OCT
+  d: '20'
+  cat: External
+  title: Google Public Sector Summit
+  meta: The Google Public Sector Summit bridges the gap between ambitious innovation and secure, scaled execution. Tailored for leaders, creators, coders, and builders, the event focuses on moving organizations beyond AI pilots and experimentation into fully deployed, mission-ready realities. By leveraging a secure, integrated AI stack—encompassing everything from planet-scale infrastructure to leading models and agentic platforms—attendees will learn how to safely navigate and thrive in the emerging agentic era.
+  link: https://events.govexec.com/google-public-sector-summit/

@@ -1537,10 +1537,23 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 .event-date .m{ font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; color: var(--ink-soft); font-weight:700; font-family: var(--font-nav); }
 .event-row h3{ font-size:1.05rem; margin-bottom:4px; }
 .event-row .meta{ font-size:.82rem; color: var(--ink-soft); }
+/* Direct user request: "make sure that the descriptions get shortened
+   and then users can click the details and be taken to the event for
+   more information." Long descriptions pasted in from an event's own
+   site (the Google Public Sector Summit's ran ~10 lines) are clamped to
+   a 3-line preview with an ellipsis; the row's title and its Details
+   button link to the event's own page for the rest. The full text stays
+   in the markup, so screen readers and the events search still see it. */
+.event-row .meta{
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
 /* Past events (events.html/speaker-series.html) show YEAR where upcoming
    rows show DAY-of-month -- 4 digits needs a touch less size than the
    2-digit day number to sit comfortably in the same 90px date column. */
 .event-row--past .event-date .d{ font-size:1.3rem; }
+/* Multi-day events ("9–10", "21–24") -- a range needs a smaller number
+   to fit the same date column. */
+.event-date--range .d{ font-size:1.3rem; white-space:nowrap; }
 
 /* ---------- People ----------
    Follow-up (direct user request): the old 3-up initials/role/one-liner

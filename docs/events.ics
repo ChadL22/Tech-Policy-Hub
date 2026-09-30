@@ -4,4 +4,44 @@ PRODID:-//UMD Tech Policy Hub//Events//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
 X-WR-CALNAME:Tech Policy Hub Events
+BEGIN:VEVENT
+UID:20261020-google-public-sector-summit@techpolicyhub.umd.edu
+DTSTAMP:20261020T000000Z
+DTSTART;VALUE=DATE:20261020
+DTEND;VALUE=DATE:20261021
+SUMMARY:Google Public Sector Summit
+DESCRIPTION:The Google Public Sector Summit bridges the gap between ambitious innovation and secure\, scaled execution. Tailored for leaders\, creators\, coders\, and builders\, the event focuses on moving organizations beyond AI pilots and experimentation into fully deployed\, mission-ready realities. By leveraging a secure\, integrated AI stack—encompassing everything from planet-scale infrastructure to leading models and agentic platforms—attendees will learn how to safely navigate and thrive in the emerging agentic era.
+CATEGORIES:External
+URL:https://events.govexec.com/google-public-sector-summit/
+END:VEVENT
+BEGIN:VEVENT
+UID:20270109-digital-competition-conference-2027@techpolicyhub.umd.edu
+DTSTAMP:20270109T000000Z
+DTSTART;VALUE=DATE:20270109
+DTEND;VALUE=DATE:20270111
+SUMMARY:Digital Competition Conference 2027
+DESCRIPTION:At the Digital Competition Conference 2027\, cutting-edge research will meet policy on the most pressing digital market competition issues of our time.
+CATEGORIES:External
+URL:https://kgi.georgetown.edu/events/digital-competition-conference-2027/
+END:VEVENT
+BEGIN:VEVENT
+UID:20270209-state-of-the-net-conference@techpolicyhub.umd.edu
+DTSTAMP:20270209T000000Z
+DTSTART;VALUE=DATE:20270209
+DTEND;VALUE=DATE:20270210
+SUMMARY:State of the Net Conference
+DESCRIPTION:The State of the Net Conference Series is hosted by the Internet Education Foundation\, a 501(c)(3) non-profit organization dedicated to educating the public and policymakers about the potential of a decentralized global Internet to promote communications\, commerce and democracy. IEF works closely with leaders on Capitol Hill and in the private sector to host the most important debates in Internet policy. IEF’s board of directors is comprised by public interest groups\, corporations\, and associations representative of the diversity of the Internet community.
+CATEGORIES:External
+URL:https://www.stateofthenet.org/sotn-27/
+END:VEVENT
+BEGIN:VEVENT
+UID:20270621-acm-conference-on-fairness-accountability-and-transparency@techpolicyhub.umd.edu
+DTSTAMP:20270621T000000Z
+DTSTART;VALUE=DATE:20270621
+DTEND;VALUE=DATE:20270625
+SUMMARY:ACM Conference on Fairness\, Accountability\, and Transparency
+DESCRIPTION:A computer science conference with a cross-disciplinary focus that brings together researchers and practitioners interested in fairness\, accountability\, and transparency in socio-technical systems.
+CATEGORIES:External
+URL:https://facctconference.org/index.html
+END:VEVENT
 END:VCALENDAR

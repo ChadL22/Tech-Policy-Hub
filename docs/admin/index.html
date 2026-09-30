@@ -404,11 +404,14 @@ const COLLECTIONS = {
     label: 'Upcoming Events', group: 'Events', file: 'build/data/events.yml',
     newLabel: 'Add upcoming event',
     summaryTitle: e => e.title || 'Untitled',
-    summaryMeta: e => [e.y, e.m, e.d].filter(Boolean).join('-'),
+    summaryMeta: e => [e.m, e.d].filter(Boolean).join(' ') + (e.end_d ? ` – ${e.end_m || e.m} ${e.end_d}` : '') + (e.y ? `, ${e.y}` : ''),
     fields: [
       { name:'y', label:'Year', type:'number', required:true },
       { name:'m', label:'Month', type:'select', options:MONTHS, required:true },
-      { name:'d', label:'Day of month', type:'text', hint:'Two digits, e.g. 09 — kept as text so a leading zero displays correctly.', required:true },
+      { name:'d', label:'Day(s)', type:'text', validate:'eventDate', required:true,
+        hint:'One day, e.g. "09", or a range for a multi-day event, e.g. "9-10". For an event that runs into the next month, use the start day here and fill in "Ends" below.' },
+      { name:'end_m', label:'Ends — month (multi-day events that run into another month only)', type:'select', options:MONTHS, required:false },
+      { name:'end_d', label:'Ends — day', type:'text', required:false, hint:'Leave both "Ends" fields blank for a one-day event or a range within one month.' },
       { name:'cat', label:'Category', type:'select', options:EVENT_CATS, hint:'Colors/legend come from build/data/event_categories.yml.', required:true },
       { name:'title', label:'Title', type:'text', required:true },
       { name:'meta', label:'Meta line (time · location)', type:'text' },
@@ -1983,12 +1986,46 @@ function isValidNewsDate(s){
   return parts.length === 2 || /^\d{1,2}$/.test(parts[1]);
 }
 
+// Mirrors event_dates() in build/generate.py (direct user request: "Some
+// events are multiday" -- an event saved as d: 9-10 crashed the rebuild
+// before the build learned ranges). Returns a plain-language problem, or
+// null if the build will be able to read the date.
+function eventDateProblem(fv){
+  const MON = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  const y = parseInt(fv.y, 10), m = MON.indexOf(String(fv.m || '').slice(0, 3).toUpperCase());
+  if (!y || m < 0) return null; // Year / Month have their own required checks
+  const help = 'Use one day ("09"), a range ("9-10"), or the start day plus the "Ends" fields.';
+  const r = String(fv.d || '').match(/^\s*(\d{1,2})\s*(?:(?:-|–|—|to)\s*(\d{1,2}))?\s*$/);
+  if (!r) return `"${fv.d}" isn't a day the site can read. ${help}`;
+  const mk = (yy, mm, dd) => { const t = new Date(Date.UTC(yy, mm, dd)); return t.getUTCMonth() === mm ? t : null; };
+  const start = mk(y, m, +r[1]);
+  if (!start) return `${MON[m]} ${r[1]}, ${y} isn't a real date.`;
+  let end = start;
+  if (fv.end_d !== undefined && fv.end_d !== null && String(fv.end_d).trim() !== ''){
+    const em = fv.end_m ? MON.indexOf(String(fv.end_m).slice(0, 3).toUpperCase()) : m;
+    if (!/^\s*\d{1,2}\s*$/.test(String(fv.end_d))) return `"Ends — day" should be a number, e.g. "2".`;
+    end = mk(em < m ? y + 1 : y, em, parseInt(fv.end_d, 10));
+    if (!end) return `The end date isn't a real date.`;
+  } else if (r[2]){
+    const ed = +r[2];
+    if (ed >= start.getUTCDate()) end = mk(y, m, ed);
+    else { end = mk(m === 11 ? y + 1 : y, (m + 1) % 12, ed); if (end && (end - start) / 864e5 > 14) end = null; }
+    if (!end) return `"${fv.d}" isn't a date range the site can read. ${help}`;
+  }
+  if (end < start) return 'The event ends before it starts.';
+  return null;
+}
+
 function saveForm(keepAdding){
   const col = COLLECTIONS[activeKey];
   for (const f of col.fields){
     if (f.required && !formValues[f.name]){
       showToast(`"${f.label}" is required.`, 'error');
       return;
+    }
+    if (f.validate === 'eventDate'){
+      const problem = eventDateProblem(formValues);
+      if (problem){ showToast(problem, 'error'); return; }
     }
     if (f.validate === 'newsDate' && formValues[f.name] && !isValidNewsDate(formValues[f.name])){
       showToast(`"${formValues[f.name]}" isn't a date the site can read. Use a month and year, e.g. "Sep 2026", "September 2026", or "Sep 15, 2026".`, 'error');

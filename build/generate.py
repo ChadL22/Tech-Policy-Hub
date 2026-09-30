@@ -44,7 +44,7 @@ SITE_URL = "https://techpolicyhub.org/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026093002"
+ASSET_VERSION = "2026093003"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -455,6 +455,8 @@ NEWS_ITEMS = load_data("news_items")
 EVENT_CATEGORIES = load_data("event_categories")
 
 # Content lives in build/data/events.yml -- see README "Editing content".
+# Normalized (start/end dates, display labels) and sorted by date further
+# down this file, once the date helpers exist -- see event_dates().
 EVENTS_ITEMS = load_data("events")
 
 # Past events -- same fields as EVENTS_ITEMS so both can share
@@ -1264,6 +1266,93 @@ def news_sorted(items):
     return sorted(items, key=key, reverse=True)
 
 
+def event_dates(e):
+    """(start, end) datetime.dates for an EVENTS_ITEMS entry, or None if
+    its date can't be read.
+
+    Direct user request ("Some events are multiday"): the rebuild crashed
+    with ValueError: '9-10' when a two-day conference was entered with
+    d: 9-10, because every event was assumed to be one day. Accepted now:
+      d: 09                        one day
+      d: 9-10   (or 9–10, 9 to 10) several days in the same month
+      d: 30-2                      runs into the next month (end < start;
+                                   up to two weeks, so a typo like "2-1"
+                                   isn't read as a month-long event)
+      d: 30 + end_m: OCT + end_d: 2   the same, spelled out (end_y too,
+                                      for an event that crosses into a
+                                      later year than the month implies)
+    Month names are matched on their first three letters, so JAN, Jan
+    and January all work."""
+    try:
+        year = int(e["y"])
+        month = _MONTH_NUM[str(e["m"]).strip()[:3].upper()]
+        m = re.fullmatch(r"\s*(\d{1,2})\s*(?:(?:-|–|—|to)\s*(\d{1,2}))?\s*", str(e.get("d", "")))
+        if not m:
+            return None
+        start = datetime.date(year, month, int(m.group(1)))
+        if e.get("end_d") not in (None, ""):
+            end_month = _MONTH_NUM[str(e.get("end_m") or e["m"]).strip()[:3].upper()]
+            end_year = int(e.get("end_y") or (year + 1 if end_month < month else year))
+            end = datetime.date(end_year, end_month, int(e["end_d"]))
+        elif m.group(2):
+            end_day = int(m.group(2))
+            if end_day >= start.day:
+                end = datetime.date(year, month, end_day)
+            else:  # "30-2": into the next month -- only for a short run;
+                # "2-1" would otherwise silently become a month-long event
+                ny, nm = (year + 1, 1) if month == 12 else (year, month + 1)
+                end = datetime.date(ny, nm, end_day)
+                if (end - start).days > 14:
+                    return None
+        else:
+            end = start
+    except (KeyError, ValueError, TypeError):
+        return None
+    return (start, end) if end >= start else None
+
+
+def normalize_event(e):
+    """Adds `start`/`end` dates and display labels to an EVENTS_ITEMS
+    entry (see event_dates):
+      day_label    "9", "9–10", or "30–2" (the big number on event rows)
+      month_label  "JAN", or "SEP–OCT" for an event spanning months
+      short_label  "JAN 9–10" / "SEP 30–OCT 2" (homepage events rail)
+    An event whose date can't be read is kept -- listed with its date
+    exactly as typed, left off the calendar and the .ics feed -- with a
+    build warning, instead of failing the whole build."""
+    e = dict(e)
+    dates = event_dates(e)
+    if not dates:
+        print(f"WARNING: couldn't read the date of event {e.get('title')!r} "
+              f"(y={e.get('y')!r} m={e.get('m')!r} d={e.get('d')!r}); listing it as typed, "
+              "without a calendar entry.")
+        e.update(start=None, end=None, day_label=str(e.get("d", "")), month_label=str(e.get("m", "")),
+                 short_label=f"{e.get('m', '')} {e.get('d', '')}".strip())
+        return e
+    start, end = dates
+    mon = lambda d: calendar.month_abbr[d.month].upper()
+    if end == start:
+        day_label, month_label, short_label = f"{start.day}", mon(start), f"{mon(start)} {start.day}"
+    elif (end.year, end.month) == (start.year, start.month):
+        day_label, month_label = f"{start.day}–{end.day}", mon(start)
+        short_label = f"{mon(start)} {start.day}–{end.day}"
+    else:
+        day_label, month_label = f"{start.day}–{end.day}", f"{mon(start)}–{mon(end)}"
+        short_label = f"{mon(start)} {start.day}–{mon(end)} {end.day}"
+    # Keep a leading zero if the editor typed one ("09"), as before.
+    if end == start and str(e.get("d", "")).strip().startswith("0"):
+        day_label = str(e["d"]).strip()
+    e.update(start=start, end=end, day_label=day_label, month_label=month_label, short_label=short_label)
+    return e
+
+
+def sorted_events(items):
+    """Soonest first. The CMS appends a new event to the end of
+    events.yml, so file order isn't date order; undated events go last.
+    Stable, so same-day events keep their file order."""
+    return sorted(items, key=lambda e: (e["start"] is None, e["start"] or datetime.date.max))
+
+
 def calendar_legend_html(categories):
     """Colored-square legend above the homepage calendar, one entry per
     EVENT_CATEGORIES key."""
@@ -1280,21 +1369,23 @@ def calendar_widget_html(events, categories):
     the order those months first appear in `events`; main.js pages
     between panels with prev/next. Event days show a small dot per
     event, color-coded by category and linked to the event."""
-    month_keys = []
+    # Every day an event runs gets its dot (a multi-day event marks each
+    # of its days, in every month it touches -- see event_dates), and
+    # months are shown in date order.
     by_month = {}
     for e in events:
-        key = (e["y"], _MONTH_NUM[e["m"]])
-        if key not in by_month:
-            by_month[key] = []
-            month_keys.append(key)
-        by_month[key].append(e)
+        if not e.get("start"):
+            continue  # unreadable date (already warned about) -- listed, but not on the calendar
+        day = e["start"]
+        while day <= e["end"]:
+            by_month.setdefault((day.year, day.month), {}).setdefault(day.day, []).append(e)
+            day += datetime.timedelta(days=1)
+    month_keys = sorted(by_month)
 
     cal = calendar.Calendar(firstweekday=6)  # weeks start Sunday
     panels = []
     for i, (y, mnum) in enumerate(month_keys):
-        events_by_day = {}
-        for e in by_month[(y, mnum)]:
-            events_by_day.setdefault(int(e["d"]), []).append(e)
+        events_by_day = by_month[(y, mnum)]
         label = f"{calendar.month_name[mnum]} {y}"
         day_cells = []
         for week in cal.monthdayscalendar(y, mnum):
@@ -1306,7 +1397,7 @@ def calendar_widget_html(events, categories):
                 if evs:
                     dots = "".join(
                         f'<a class="dot" style="background:{categories[e["cat"]]}" '
-                        f'href="{e["link"]}"{link_attrs(e["link"])} title="{e["title"]}" aria-label="{e["title"]}"></a>'
+                        f'href="{e["link"]}"{link_attrs(e["link"])} title="{e["title"]} ({e["short_label"].title()})" aria-label="{e["title"]}"></a>'
                         for e in evs
                     )
                     day_cells.append(f'<div class="cal-day has-event"><span class="daynum">{day}</span><span class="dots">{dots}</span></div>')
@@ -1349,12 +1440,20 @@ def events_rows_html(items, limit=None, with_btn=True):
     new tab instead of navigating the visitor away from the Hub."""
     out = []
     for e in (items[:limit] if limit else items):
-        attrs = link_attrs(e["link"])
-        btn = f'<a class="btn btn-ghost" href="{e["link"]}"{attrs} style="padding:8px 16px; font-size:.82rem;">Details</a>' if with_btn else ""
+        link = (e.get("link") or "").strip()
+        attrs = link_attrs(link) if link else ""
+        # The description is clamped to a short preview (see .event-row
+        # .meta in styles.css); the title and Details button carry the
+        # visitor to the event's own page for the rest. An event saved
+        # without a link gets a plain title and no Details button rather
+        # than a dead link.
+        btn = (f'<a class="btn btn-ghost" href="{link}"{attrs} style="padding:8px 16px; font-size:.82rem;" '
+               f'aria-label="Details: {e["title"]}">Details</a>') if (with_btn and link) else ""
+        title = f'<a href="{link}"{attrs}>{e["title"]}</a>' if link else e["title"]
         out.append(f"""
         <div class="event-row" data-filter-target="{e['cat']}">
-          <div class="event-date"><div class="d">{e['d']}</div><div class="m">{e['m']}</div></div>
-          <div><h3><a href="{e['link']}"{attrs}>{e['title']}</a></h3><div class="meta">{e['meta']}</div></div>
+          <div class="event-date{' event-date--range' if '–' in e['day_label'] else ''}"><div class="d">{e['day_label']}</div><div class="m">{e['month_label']}</div></div>
+          <div><h3>{title}</h3><div class="meta">{e.get('meta') or ''}</div></div>
           {btn}
         </div>""")
     return "".join(out)
@@ -1435,10 +1534,10 @@ def events_ics(events):
         "X-WR-CALNAME:Tech Policy Hub Events",
     ]
     for e in events:
-        mnum = _MONTH_NUM[e["m"]]
-        day = int(e["d"])
-        start = datetime.date(e["y"], mnum, day)
-        end = start + datetime.timedelta(days=1)  # DTEND is exclusive for an all-day VEVENT
+        if not e.get("start"):
+            continue  # unreadable date (already warned about)
+        start = e["start"]
+        end = e["end"] + datetime.timedelta(days=1)  # DTEND is exclusive for an all-day VEVENT
         slug = re.sub(r"[^a-z0-9]+", "-", e["title"].lower()).strip("-")
         uid = f'{start.strftime("%Y%m%d")}-{slug}@techpolicyhub.umd.edu'
         url = _absolute_clean_url(e["link"])
@@ -1457,5 +1556,7 @@ def events_ics(events):
     lines.append("END:VCALENDAR")
     return "\r\n".join(lines) + "\r\n"
 
+
+EVENTS_ITEMS = sorted_events([normalize_event(e) for e in EVENTS_ITEMS])
 
 print("Generator module loaded -- run build_all.py to write pages.")

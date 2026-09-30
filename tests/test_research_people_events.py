@@ -213,3 +213,21 @@ def test_event_lists_and_calendar_links(site):
     page = site.open("events/")
     assert page.locator("#upcoming-events-list, #past-events-list").count() == 2
     assert page.locator('a[href$="events.ics"]').count() >= 1, "no 'add to calendar' link"
+
+
+def test_upcoming_events_preview_and_details(site, vp):
+    """Descriptions are a short preview (at most 3 lines), and every event
+    with a link has a Details button to the event's own page."""
+    page = site.open("events/", vp)
+    rows = page.locator("#upcoming-events-list .event-row")
+    for i in range(rows.count()):
+        row = rows.nth(i)
+        title = row.locator("h3").inner_text().strip()
+        meta = row.locator(".meta")
+        lines = meta.evaluate("m => Math.round(m.getBoundingClientRect().height / parseFloat(getComputedStyle(m).lineHeight))")
+        assert lines <= 3, f"'{title}': description shows {lines} lines, expected a 3-line preview"
+        link = row.locator("h3 a")
+        if link.count():
+            href = link.get_attribute("href")
+            details = row.locator("a.btn", has_text="Details")
+            assert details.count() == 1 and details.get_attribute("href") == href, f"'{title}' has no Details button to {href}"

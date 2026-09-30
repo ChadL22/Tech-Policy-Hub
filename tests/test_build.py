@@ -74,3 +74,29 @@ def test_published_site_is_up_to_date(fresh_build):
         "(or check why the 'Rebuild site on content change' workflow "
         "failed):\n\n" + "\n\n".join(stale)
     )
+
+
+def test_event_date_formats():
+    """Every date format the Content Manager accepts for an event (see
+    event_dates in build/generate.py). The Sept. 30, 2026 outage: a
+    two-day event saved as d: 9-10 crashed the rebuild."""
+    import contextlib, io
+    sys.path.insert(0, str(REPO_ROOT / "build"))
+    with contextlib.redirect_stdout(io.StringIO()):
+        import generate as g
+    ok = {
+        "09": ("2027-09-09", "2027-09-09", "SEP 9"),
+        "9-10": ("2027-09-09", "2027-09-10", "SEP 9–10"),
+        "9 – 10": ("2027-09-09", "2027-09-10", "SEP 9–10"),
+        "9 to 10": ("2027-09-09", "2027-09-10", "SEP 9–10"),
+        "30-2": ("2027-09-30", "2027-10-02", "SEP 30–OCT 2"),
+    }
+    for d, (start, end, label) in ok.items():
+        with contextlib.redirect_stdout(io.StringIO()):
+            e = g.normalize_event({"y": 2027, "m": "Sep", "d": d, "title": "t"})
+        assert (str(e["start"]), str(e["end"]), e["short_label"]) == (start, end, label), d
+    spelled_out = g.normalize_event({"y": 2026, "m": "DEC", "d": "30", "end_m": "JAN", "end_d": "2", "title": "t"})
+    assert (str(spelled_out["end"]), spelled_out["short_label"]) == ("2027-01-02", "DEC 30–JAN 2")
+    for d in ("TBD", "9th", "31", "2-1"):  # unreadable -> listed as typed, never a crash
+        with contextlib.redirect_stdout(io.StringIO()):
+            assert g.normalize_event({"y": 2027, "m": "SEP", "d": d, "title": "t"})["start"] is None, d
