@@ -1,45 +1,97 @@
 name: Rebuild site on content change
 
-# Regenerates docs/ whenever the site's content data changes on main --
-# the missing piece that makes a future CMS commit (see README "Content
-# management": Sveltia CMS editing build/data/*.yml and committing
-# straight to this repo) actually go live without anyone running
-# build_all.py by hand. Also covers a hand-edited YAML file pushed
-# directly, so this isn't CMS-specific.
+# The ONE workflow that writes to main and deploys the site. It replaces
+# the old trio (this file + refresh-ticker.yml + refresh-reading.yml),
+# which each pushed to main independently, while GitHub Pages' built-in
+# "pages build and deployment" ran on every push as well. That setup
+# caused the red X's on nearly every Content Manager commit (Oct 2026):
 #
-# Scoped to build/data/** so an unrelated commit (a CSS tweak, a commit
-# that already includes a regenerated docs/) doesn't trigger a redundant
-# rebuild. This can't loop on itself: its own commit only touches
-# docs/**, which isn't in the `paths` filter above, so that commit never
-# re-triggers this workflow -- no [skip ci] or bot-identity workaround
-# needed. (Separately, GitHub also never re-triggers push-triggered
-# workflows from a GITHUB_TOKEN-authored commit at all, which is why
-# refresh-ticker.yml's own build/data/ticker.json commit doesn't ALSO
-# fire this workflow -- that's fine, since refresh-ticker.yml already
-# rebuilds and commits docs/ itself in the same run.)
+#   1. The Content Manager's Publish writes one commit PER FILE, seconds
+#      apart. Each commit started its own rebuild; each rebuild checked
+#      out its own (already stale) commit, so all but the last one had
+#      their push rejected ("Failing after 7s").
+#   2. Every push also started a branch-based Pages deploy, which GitHub
+#      cancelled as soon as the bot's rebuild commit landed a few seconds
+#      later ("3 cancelled checks").
+#
+# The live site was never affected, because the last commit in each
+# burst always built and deployed. The fix:
+#   - `concurrency` queues runs instead of letting them overlap, and each
+#     run builds the NEWEST main, so one run covers a whole burst.
+#   - The push rebases onto anything that landed mid-build and retries.
+#   - Pages is deployed from this job (Settings -> Pages -> Source =
+#     "GitHub Actions"), so a CMS commit no longer starts a deploy that
+#     is guaranteed to be cancelled. The bot's own commit starts nothing,
+#     because GITHUB_TOKEN pushes never trigger workflows.
+#
+# One remaining case: if a single Publish touches 3+ files, GitHub keeps
+# only the newest waiting run, so a middle commit can show one
+# "cancelled" check. That is expected, and its change still ships with
+# the next run.
 
 on:
   push:
     branches: [main]
-    paths:
-      - 'build/data/**'
-  workflow_dispatch: {}
+    # Any push can change what ships: CMS data edits, CMS image uploads
+    # (docs/assets/img/**), or hand edits to build/ code or docs/ assets.
+    # (Previously, image-only and code-only pushes were deployed by the
+    # branch-based Pages build; now this workflow has to cover them.)
+    paths-ignore:
+      - 'tests/**'
+      - 'README.md'
+  schedule:
+    - cron: '0 13 * * 0'   # Sunday 13:00 UTC -- refresh "What we're reading" (was refresh-reading.yml)
+    - cron: '0 13 * * 1'   # Monday 13:00 UTC -- refresh the signal ticker (was refresh-ticker.yml)
+  workflow_dispatch:
+    inputs:
+      refresh_reading:
+        description: 'Also refresh "What we''re reading" from Phronesis'
+        type: boolean
+        default: false
+      refresh_ticker:
+        description: 'Also refresh the signal ticker from the Tech Policy Tracker'
+        type: boolean
+        default: false
 
 permissions:
-  contents: write
+  contents: write   # commit regenerated docs/ (and refreshed data) back to main
+  pages: write      # deploy to GitHub Pages
+  id-token: write   # required by actions/deploy-pages
+
+concurrency:
+  group: site-main
+  cancel-in-progress: false   # never kill a run mid-push/mid-deploy; queue instead
 
 jobs:
-  rebuild:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    env:
+      REFRESH_READING: ${{ (github.event_name == 'schedule' && github.event.schedule == '0 13 * * 0') || inputs.refresh_reading == true }}
+      REFRESH_TICKER: ${{ (github.event_name == 'schedule' && github.event.schedule == '0 13 * * 1') || inputs.refresh_ticker == true }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main   # newest main, not the commit that triggered this (possibly queued) run
 
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.11'   # same as site-tests.yml (Pillow photo colors are version-sensitive)
 
       - name: Install build dependencies
         run: pip install -r requirements.txt
+        working-directory: build
+
+      - name: Fetch fresh "What we're reading" data
+        if: env.REFRESH_READING == 'true'
+        run: python3 refresh_reading.py
+        working-directory: build
+
+      - name: Fetch fresh ticker data
+        if: env.REFRESH_TICKER == 'true'
+        run: python3 refresh_ticker.py
         working-directory: build
 
       - name: Rebuild the site
@@ -47,9 +99,41 @@ jobs:
         working-directory: build
 
       - name: Commit if changed
-        uses: stefanzweifel/git-auto-commit-action@v5
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add docs build/data/ticker.json build/data/reading_items.yml
+          if git diff --cached --quiet; then
+            echo "Build output already matches main -- nothing to commit."
+            exit 0
+          fi
+          if [ "$REFRESH_TICKER" = "true" ]; then
+            msg='Auto-refresh signal ticker from the Tech Policy Tracker'
+          elif [ "$REFRESH_READING" = "true" ]; then
+            msg='Auto-refresh "What we'"'"'re reading" from Phronesis'
+          else
+            msg='Rebuild site from updated content (build/data/**)'
+          fi
+          git commit -m "$msg"
+          # If a CMS save landed while this run was building, replay this
+          # commit on top of it. That save's own run is already queued and
+          # will rebuild again with its change included.
+          for i in 1 2 3; do
+            if git pull --rebase origin main && git push origin HEAD:main; then
+              exit 0
+            fi
+            git rebase --abort 2>/dev/null || true
+            echo "Push rejected (attempt $i of 3) -- retrying..."
+            sleep $((i * 5))
+          done
+          echo "::error::Could not push the rebuilt site after 3 attempts."
+          exit 1
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
         with:
-          commit_message: 'Rebuild site from updated content (build/data/**)'
-          file_pattern: 'docs/**'
-          commit_user_name: 'github-actions[bot]'
-          commit_user_email: 'github-actions[bot]@users.noreply.github.com'
+          path: docs
+
+      - id: deploy
+        uses: actions/deploy-pages@v4

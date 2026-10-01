@@ -68,16 +68,29 @@ nav, but stays reachable via the footer's "Connect" column.
 
 ## Publishing (GitHub Pages)
 
-The site lives in `docs/`, not the repo root, so Pages needs to be pointed
-at that folder:
+The site is deployed by a GitHub Actions workflow,
+`.github/workflows/rebuild-on-content-change.yml`, not by Pages'
+branch-based build:
 
 1. GitHub → repo → **Settings → Pages**
-2. Under **Build and deployment → Source**, choose **Deploy from a branch**
-3. **Branch**: `main`, folder **`/docs`** → **Save**
+2. Under **Build and deployment → Source**, choose **GitHub Actions**
 
-Without this, GitHub Pages defaults to the repo root, finds no `index.html`
-there, and falls back to rendering `README.md` — which is why the site was
-showing the README instead of the actual pages.
+That workflow is the only thing that writes to `main` or deploys. On every
+push (CMS saves, CMS image uploads, hand edits) it rebuilds `docs/` from
+the newest `main`, commits the result if anything changed, and uploads
+`docs/` to Pages. Runs are queued one at a time, so a burst of Content
+Manager saves collapses into one rebuild instead of several racing pushes.
+It also handles the two weekly refreshes: "What we're reading" on Sundays
+and the signal ticker on Mondays, both at 13:00 UTC. All of these can be
+run on demand from **Actions → Rebuild site on content change → Run
+workflow**.
+
+(Until Oct 2026 the site used **Deploy from a branch** (`main` →
+`/docs`), plus separate `refresh-ticker.yml` / `refresh-reading.yml`
+workflows. Every push started a Pages deploy that was immediately cancelled
+by the bot's rebuild commit, and overlapping rebuilds had their pushes
+rejected. The site stayed up, but nearly every commit showed failed checks.
+Don't switch the Pages source back to branch deploys.)
 
 ## Editing content
 
@@ -131,8 +144,8 @@ rest of the generator already used — nothing about how the site is
   to write; also loads `TOPIC_DETAIL` from `build/data/topic_detail.yml`
   the same way
 - `build/refresh_ticker.py` — regenerates `build/data/ticker.json` from
-  the Tech Policy Tracker; run on a schedule by
-  `.github/workflows/refresh-ticker.yml`, or by hand
+  the Tech Policy Tracker; run weekly by
+  `.github/workflows/rebuild-on-content-change.yml`, or by hand
 
 The script writes directly into `docs/` — HTML pages via `write()` (which
 also rewrites internal links to the clean-URL folder scheme), and the
@@ -165,9 +178,9 @@ Three pieces, in the order they were built:
    comments explain each collection's fields.
 2. **Auto-rebuild on content change**
    (`.github/workflows/rebuild-on-content-change.yml`) — done. Runs
-   `build/build_all.py` and commits the regenerated `docs/` whenever
-   `build/data/**` changes on `main`, so a CMS commit goes live without
-   anyone running the build script by hand.
+   `build/build_all.py`, commits the regenerated `docs/`, and deploys
+   the site whenever `main` changes, so a CMS commit goes live without
+   anyone running the build script by hand (see **Publishing** above).
 3. **GitHub OAuth, so Hub members can log in with their own GitHub
    account** — the one piece that needs a person to act, not something
    that can be scripted from outside: it means registering a GitHub
@@ -243,7 +256,7 @@ CSS/JS (no framework, no build step) in `docs/assets/css/styles.css` and
   own (undocumented but public, read-only) search backend directly for
   current bills tagged with themes matching the Hub's four research areas,
   writes the result to `build/data/ticker.json`, and
-  `.github/workflows/refresh-ticker.yml` runs that + a full rebuild weekly
+  `.github/workflows/rebuild-on-content-change.yml` runs that + a full rebuild weekly
   (also runnable on demand from the Actions tab, or by hand with
   `python3 refresh_ticker.py` from `build/`). No API key needed. See that
   script's docstring for the full rationale and exactly what it filters
