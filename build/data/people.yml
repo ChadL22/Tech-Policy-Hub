@@ -224,3 +224,21 @@
   photo: assets/img/people/allen-d-sunny.jpg
   websites: []
   linkedin: https://www.linkedin.com/in/allen-sunny1242/
+- initials: null
+  name: Ritik Roongta
+  role: Affiliate
+  focus: Ritik Roongta (PhD) is a web security researcher at Palo Alto Networks
+  role_types:
+    - affiliate
+  bio: Ritik Roongta (PhD) is a web security researcher at Palo Alto Networks, where he works on the URL Filtering team developing real-time analyzers to detect and block web threats, including threats targeting agentic browsing systems. He recently completed his PhD at New York University, where his research focused on malvertising, ad supply chains, and deceptive advertising. During his PhD, he developed several open-source tools for auditing large-scale advertising platforms and uncovering deceptive ads, contributing to multiple takedowns by Google. He is an active member of the ad-blocking community and is passionate about advancing research and tools that make the web safer and more trustworthy.
+  email: rr3953@nyu.edu
+  photo: assets/img/people/ritik-roongta.jpg
+  photo_zoom: 1
+  photo_x: 0
+  photo_y: 0
+  photo_v: 1790841214587
+  photo_m_zoom: 1
+  photo_m_x: 0
+  photo_m_y: 15.263
+  websites: []
+  linkedin: https://www.linkedin.com/in/ritik-roongta-7baa04157/
