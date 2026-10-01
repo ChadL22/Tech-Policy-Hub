@@ -240,5 +240,7 @@
   photo_m_zoom: 1
   photo_m_x: 0
   photo_m_y: 15.263
-  websites: []
+  websites:
+    - url: https://racro.github.io/
+      label: Personal Website
   linkedin: https://www.linkedin.com/in/ritik-roongta-7baa04157/
