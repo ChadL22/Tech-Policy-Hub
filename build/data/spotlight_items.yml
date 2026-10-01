@@ -4,8 +4,7 @@
   date: Aug 31, 2026
   source: GoTech, UMD School of Public Policy
   title: Graduate Student Spends Summer in Geneva Exploring AI's Global Future
-  summary: A Public Policy graduate student examined AI governance and digital-divide questions at the
-    UN's Graduate Study Programme in Geneva, one of just 56 students selected worldwide.
+  summary: A Public Policy graduate student examined AI governance and digital-divide questions at the UN's Graduate Study Programme in Geneva, one of just 56 students selected worldwide.
   primary_label: Read the Story
   link: https://gotech.umd.edu/news/graduate-student-spends-summer-geneva-exploring-ais-global-future
   image: assets/img/spotlight/spotlight-geneva-ai-un-2026-08.png
@@ -15,8 +14,7 @@
   date: Jun 12, 2026
   source: GoTech, UMD School of Public Policy
   title: New AI Incubation Lab Will Help Maryland Test Ideas Before Committing Resources
-  summary: GoTech faculty helped shape a new Maryland law creating an AI Incubation Lab, letting state
-    agencies test AI applications and weigh risks before committing resources.
+  summary: GoTech faculty helped shape a new Maryland law creating an AI Incubation Lab, letting state agencies test AI applications and weigh risks before committing resources.
   primary_label: Read the Story
   link: https://gotech.umd.edu/news/new-ai-incubation-lab-will-help-maryland-test-ideas-committing-resources
   image: assets/img/spotlight/spotlight-ai-incubation-lab-2026-06.png
@@ -26,8 +24,7 @@
   date: May 19, 2026
   source: GoTech, UMD School of Public Policy
   title: MPM Student Bridges Diplomacy and Data
-  summary: A former Ukrainian diplomat turned Public Policy student is studying how AI is reshaping who
-    makes decisions and how governments stay accountable.
+  summary: A former Ukrainian diplomat turned Public Policy student is studying how AI is reshaping who makes decisions and how governments stay accountable.
   primary_label: Read the Story
   link: https://gotech.umd.edu/news/mpm-student-bridges-diplomacy-and-data
   image: assets/img/spotlight/spotlight-mpm-diplomacy-data-2026-05.png
@@ -37,8 +34,7 @@
   date: May 15, 2026
   source: GoTech, UMD School of Public Policy
   title: Two Public Policy Doctoral Students Named P.E.O. International Peace Scholars
-  summary: Two Public Policy doctoral students, including a GoTech researcher studying disinformation
-    and algorithmic amplification online, were named P.E.O. International Peace Scholars.
+  summary: Two Public Policy doctoral students, including a GoTech researcher studying disinformation and algorithmic amplification online, were named P.E.O. International Peace Scholars.
   primary_label: Read the Story
   link: https://gotech.umd.edu/news/two-public-policy-doctoral-students-named-peo-international-peace-scholars
   image: assets/img/spotlight/spotlight-peo-scholars-2026-05.png
@@ -48,8 +44,21 @@
   date: Apr 22, 2026
   source: GoTech, UMD School of Public Policy
   title: GoTech Launches Cyber Events Database 2.0 Web Platform
-  summary: GoTech's Cyber Events Database 2.0 launched as a public platform with over 16,700 coded cyber
-    incidents across 178 countries, now used by central banks and federal agencies alike.
+  summary: GoTech's Cyber Events Database 2.0 launched as a public platform with over 16,700 coded cyber incidents across 178 countries, now used by central banks and federal agencies alike.
   primary_label: Read the Story
   link: https://gotech.umd.edu/news/gotech-launches-cyber-events-database-20-web-platform
   image: assets/img/spotlight/spotlight-cyber-events-database-2026-04.png
+- tag: null
+  topic: Consumer Privacy
+  topic_file: research.html#area-panel-privacy
+  date: May 19, 2026
+  source: null
+  title: 'Protecting the Neglected: Measuring County Cyber Risk with Dr. Ido Sivan Sevilla'
+  summary: Dr. Ido Sivan Sevilla joins host Caleb Tolin to break down battlefield stories from a massive analysis of over 3,000 local government entities. Dr. Sivan Sevilla, who serves as an Assistant Professor at the UMD College of Information and holds joint positions at the Hebrew University School of Public Policy & Governance and the School of Computer Science and Engineering, brings a multidisciplinary lens to the alarming reality of risk clusters. Their discussion moves past theory to explore how hundreds of counties share identical IP addresses and third-party service providers, creating centralized points of failure that attackers can identify using data.
+  primary_label: Full Podcast
+  link: https://www.youtube.com/watch?v=MHD7DGiWA1A
+  image: assets/img/spotlight/spotlight-image-1790865387703.png
+  image_zoom: 1
+  image_x: -0.9090909090909091
+  image_y: -3.116883116883117
+  image_v: 1790865387703
