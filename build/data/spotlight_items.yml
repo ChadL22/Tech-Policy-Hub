@@ -42,3 +42,17 @@
   image_x: -0.9090909090909091
   image_y: -3.116883116883117
   image_v: 1790865387703
+- tag: Magazine
+  topic: Cybersecurity
+  topic_file: research.html#area-panel-cybersecurity
+  date: Oct 01, 2025
+  source: null
+  title: A Crucial First Look at the Nation’s Cyber Attack Surfaces
+  summary: Never before has there been a holistic view of the nation’s cyber attack surface, by county. Thanks to researchers at the University of Maryland, counties can assess how vulnerable their IP addresses, public-facing nodes and databases are, and compare that to other counties, says Ido Sivan-Sevilla, an assistant professor at the university’s College of Information.
+  primary_label: Read
+  link: https://www.afcea.org/signal-media/cyber-edge/crucial-first-look-nations-cyber-attack-surfaces
+  image: assets/img/spotlight/spotlight-a-crucial-first-look-at-the-nations-cyber-attack-surfaces-1791460399537.png
+  image_zoom: null
+  image_x: null
+  image_y: null
+  image_v: 1791460399537
