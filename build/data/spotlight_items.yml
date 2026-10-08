@@ -5,7 +5,7 @@
   source: null
   title: Why is tech regulation so hard?
   summary: Dr. Ido Sivan-Sevilla, in his essay for The Regulatory Review,  surveys the difficulties of regulating technology across issues and policy requirements.  He details six factors that contribute to the problem, arguing that the people who work for tech companies are not malicious, but they work in a structure that rewards societal harm. The pressing question is whether regulators can change that structure and create a convergence in corporate and social interests for tech usage and development.
-  primary_label: null
+  primary_label: Read
   link: https://www.theregreview.org/2026/08/03/sivan-sevilla-why-is-tech-regulation-so-hard/
   image: assets/img/spotlight/spotlight-httpswwwtheregrevieworg20260803sivan-sevilla-why-is-tech-regulation-so-hard-1791459715167.jpg
   image_zoom: null
@@ -21,7 +21,7 @@
   summary: |-
     Authors: Allen Daniel Sunny, Ido Sivan-Sevilla
     Abstract: Automated decision-making systems are increasingly used by public agencies to govern access to welfare. Accountability in these settings is not achieved through access to model internals, but by the explanations provided to applicants i.e documents that function as legal justifications and sites of contestation. Little work has been done to examine whether such explanations are legally valid. This paper examines explanation-level accountability in public-sector AI systems by designing and implementing a neuro-symbolic framework to assess automated welfare eligibility determinations. We deploy a Large Language Model (LLM) to encode statutory eligibility rules into a formal ontology and use satisfiability-based verification to assess whether benefits explanations comply with the governing law. Applying this approach to California's CalFresh program, we analyze explanations and observe if our system detects legal mismatches. Our findings show that formal verification reveals violations of statutory requirements even when explanations appear reasonable or complete to human readers. We argue that explanation-level verification offers a distinct and necessary complement to existing approaches of algorithmic auditing and accountability, shifting attention from model behavior to the legal integrity of justificatory artifacts. We call for a shift from interpretability to auditability of public algorithms, as government explanations must do more than reveal statistical associations; they should articulate the legal basis for a decision so that affected individuals, oversight bodies, and administrative reviewers can assess whether the justification satisfies statutory criteria and procedural norms.
-  primary_label: null
+  primary_label: Watch on YouTube
   link: https://www.youtube.com/watch?v=0qK2quhHANo
   image: assets/img/spotlight/spotlight-a-neuro-symbolic-framework-for-legal-accountability-in-public-sector-ai-1791459949315.png
   image_zoom: null
