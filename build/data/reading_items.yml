@@ -7,34 +7,37 @@
     in foundation model services.
   meta: Oct 6
   link: https://arxiv.org/abs/2606.24616v1
-- source: Consumer Reports
+- source: Stanford HAI
   type: Policy Artifacts
-  title: New Jersey becomes third state to curb personalized pricing
-  summary: New Jersey Governor signs the Fair Price Protection Act, enabling consumers to directly
-    enforce rights against personalized pricing in grocery sales.
-  meta: Jul 23
-  link: https://advocacy.consumerreports.org/press_release/new-jersey-becomes-third-state-to-curb-personalized-pricing/?EXTKEY=YSOCIAL_TW
-- source: Bradley Arant Boult Cummings LLP
+  title: 'Making Local Law Legible: LLM-Assisted Detection of Discrimination'
+  summary: A policy brief demonstrating the use of large language models to identify discriminatory
+    provisions in local legal codes across 9,623 U.S. jurisdictions.
+  meta: Sep 8
+  link: https://hai.stanford.edu/policy/making-local-law-legible-llm-assisted-detection-of-discrimination
+- source: Cornell Law School Legal Information Institute
   type: Legal Analyses
-  title: Alabama's New AI Ethical Guidance and Its Impact on Legal Departments
-  summary: Analysis of the Alabama State Bar's updated guidance on ethical AI use and its implications
-    for legal practice and organizational risk management.
-  meta: Jul 21
-  link: https://natlawreview.com/article/alabamas-new-ai-ethical-guidance-and-its-impact-legal-departments
-- source: Americans for Responsible Innovation (ARI)
+  title: '17 U.S. Code § 107 - Limitations on exclusive rights: Fair use'
+  summary: Federal statutory provision defining fair use doctrine and establishing four-factor test
+    for determining non-infringing uses of copyrighted works.
+  meta: Oct 19
+  link: https://www.law.cornell.edu/uscode/text/17/107
+- source: International Center for Law & Economics
   type: Essays
-  title: The Path for Federal Frontier AI Governance
-  summary: An argument for minimum conditions that federal AI legislation must satisfy to protect
-    the public interest while enabling innovation.
-  meta: Jul 27
-  link: https://ari.us/policy-bytes/the-path-for-federal-frontier-ai-governance/
-- source: Bloomberg Law
+  title: 'Personalized Pricing: Who Wins, Who Pays?'
+  summary: An analysis of the empirical effects of personalized pricing on consumers and competition,
+    examining regulatory proposals and market contexts.
+  meta: Sep 29
+  link: https://laweconcenter.org/resources/personalized-pricing-who-wins-who-pays/
+- source: Tom's Hardware
   type: Articles
-  title: Geofence Ruling Brings New Risks for Sensitive Data Collection
-  summary: A Supreme Court decision requiring warrants for location data access has broader implications
-    for how companies handle sensitive consumer information and comply with government demands.
-  meta: Jul 29
-  link: https://news.bloomberglaw.com/litigation/geofence-ruling-brings-new-risks-for-sensitive-data-collection?taid=6a6a613271891d00011429bd
+  title: AI agents use 5x more tokens than humans as cached prompts explode, headed for 10x — agents
+    are mostly rereading what they've already seen, skyrocketing KV cache demand threatens already-worsening
+    RAM shortages
+  summary: AI agent token consumption is accelerating at 5-14x the rate of human usage, driven primarily
+    by cached prompt reuse, creating mounting pressure on memory infrastructure and exacerbating
+    hardware supply constraints.
+  meta: Oct 3
+  link: https://www.tomshardware.com/tech-industry/artificial-intelligence/futurum-ceo-says-agents-use-ai-5x-more-than-humans-number-will-eventually-hit-10x-but-agents-are-mostly-rereading-what-theyve-already-seen
 - source: Concordia AI
   type: Reports
   title: 'State of AI Safety in China: Annual Report (July 2025 - June 2026)'
