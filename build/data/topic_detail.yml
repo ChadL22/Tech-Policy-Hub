@@ -79,6 +79,23 @@ privacy:
         With a clear interest to escape meaningful compliance, privacy threat actors across government and corporate settings are impacted by consistent, creative, and under-resourced privacy watchdogs, rather than the formal watchdogs who hold questioning and informational power over their activities. The findings raise important questions on the extent to which formal privacy watchdogs have been captured by privacy threat actors and the extent to which tech policy spaces should invite creative and informal rather than codified and formal accountability holders.
       link: ''
       image: assets/img/projects/projects-privacy-intermediation-foragainst-accountability-a-comparative-analysis-of-accountability-powers-across-formal-informal-us-privacy-watchdogs-1790618203331.png
+    - title: Location Technology and the U.S. Fourth Amendment
+      description: |-
+        Modern technologies have transformed how information about an individual’s location is collected, stored, and inferred. From GPS and cellular networks to ride-sharing applications, social media platforms, and artificial intelligence, these technologies can reveal similar information about an individual’s whereabouts despite relying on substantially different technical mechanisms. These differences raise important questions about how existing Fourth Amendment protections apply when law enforcement seeks access to that information.
+
+        Building on the legal questions raised in United States v. Chatrie, this project examines the extent to which Fourth Amendment reasoning applies to technologies that generate, collect, or infer location information through different technical mechanisms. Through an interdisciplinary analysis of legal precedent and technological systems, the research explores how differences in data collection, precision, retention, user involvement, and inference might influence judicial interpretations of privacy protections.
+
+        Ultimately, this project seeks to identify the technological distinctions most relevant to Fourth Amendment analysis and contribute to a broader understanding of how constitutional protections can be interpreted as technology continues to evolve.
+
+        Research Milestones
+        EAAMO 2026: Accepted poster at the ACM Conference on Equity and Access in Algorithms, Mechanisms, and Optimization.
+        ACM FAccT 2027: Research paper in preparation for submission to the ACM Conference on Fairness, Accountability, and Transparency.
+      link: ''
+      image: assets/img/projects/projects-project-1791473568978.png
+      image_v: 1791473568978
+      image_zoom: null
+      image_x: null
+      image_y: null
   pubs:
     - venue: IEEE Security & Privacy
       year: 2026

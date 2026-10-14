@@ -1,56 +1,36 @@
-- tag: Student Feature
-  topic: Trustworthy ML
-  topic_file: research.html#area-panel-ml
-  date: Aug 31, 2026
-  source: GoTech, UMD School of Public Policy
-  title: Graduate Student Spends Summer in Geneva Exploring AI's Global Future
-  summary: A Public Policy graduate student examined AI governance and digital-divide questions at the UN's Graduate Study Programme in Geneva, one of just 56 students selected worldwide.
-  primary_label: Read the Story
-  link: https://gotech.umd.edu/news/graduate-student-spends-summer-geneva-exploring-ais-global-future
-  image: assets/img/spotlight/spotlight-geneva-ai-un-2026-08.png
-- tag: Policy
-  topic: Trustworthy ML
-  topic_file: research.html#area-panel-ml
-  date: Jun 12, 2026
-  source: GoTech, UMD School of Public Policy
-  title: New AI Incubation Lab Will Help Maryland Test Ideas Before Committing Resources
-  summary: GoTech faculty helped shape a new Maryland law creating an AI Incubation Lab, letting state agencies test AI applications and weigh risks before committing resources.
-  primary_label: Read the Story
-  link: https://gotech.umd.edu/news/new-ai-incubation-lab-will-help-maryland-test-ideas-committing-resources
-  image: assets/img/spotlight/spotlight-ai-incubation-lab-2026-06.png
-- tag: Student Feature
-  topic: Trustworthy ML
-  topic_file: research.html#area-panel-ml
-  date: May 19, 2026
-  source: GoTech, UMD School of Public Policy
-  title: MPM Student Bridges Diplomacy and Data
-  summary: A former Ukrainian diplomat turned Public Policy student is studying how AI is reshaping who makes decisions and how governments stay accountable.
-  primary_label: Read the Story
-  link: https://gotech.umd.edu/news/mpm-student-bridges-diplomacy-and-data
-  image: assets/img/spotlight/spotlight-mpm-diplomacy-data-2026-05.png
-- tag: Award
-  topic: Information Integrity
-  topic_file: research.html#area-panel-integrity
-  date: May 15, 2026
-  source: GoTech, UMD School of Public Policy
-  title: Two Public Policy Doctoral Students Named P.E.O. International Peace Scholars
-  summary: Two Public Policy doctoral students, including a GoTech researcher studying disinformation and algorithmic amplification online, were named P.E.O. International Peace Scholars.
-  primary_label: Read the Story
-  link: https://gotech.umd.edu/news/two-public-policy-doctoral-students-named-peo-international-peace-scholars
-  image: assets/img/spotlight/spotlight-peo-scholars-2026-05.png
-- tag: Platform Launch
+- tag: Media
   topic: Cybersecurity
   topic_file: research.html#area-panel-cybersecurity
-  date: Apr 22, 2026
-  source: GoTech, UMD School of Public Policy
-  title: GoTech Launches Cyber Events Database 2.0 Web Platform
-  summary: GoTech's Cyber Events Database 2.0 launched as a public platform with over 16,700 coded cyber incidents across 178 countries, now used by central banks and federal agencies alike.
-  primary_label: Read the Story
-  link: https://gotech.umd.edu/news/gotech-launches-cyber-events-database-20-web-platform
-  image: assets/img/spotlight/spotlight-cyber-events-database-2026-04.png
-- tag: null
-  topic: Consumer Privacy
-  topic_file: research.html#area-panel-privacy
+  date: Aug 3, 2026
+  source: null
+  title: Why is Tech Regulation so Hard?
+  summary: Dr. Ido Sivan-Sevilla, in his essay for The Regulatory Review,  surveys the difficulties of regulating technology across issues and policy requirements.  He details six factors that contribute to the problem, arguing that the people who work for tech companies are not malicious, but they work in a structure that rewards societal harm. The pressing question is whether regulators can change that structure and create a convergence in corporate and social interests for tech usage and development.
+  primary_label: Read
+  link: https://www.theregreview.org/2026/08/03/sivan-sevilla-why-is-tech-regulation-so-hard/
+  image: assets/img/spotlight/spotlight-httpswwwtheregrevieworg20260803sivan-sevilla-why-is-tech-regulation-so-hard-1791459715167.jpg
+  image_zoom: null
+  image_x: null
+  image_y: null
+  image_v: 1791459715167
+- tag: Conference Talk
+  topic: Trustworthy AI
+  topic_file: research.html#area-panel-ml
+  date: June 2026
+  source: ACM's FAccT
+  title: A Neuro-Symbolic Framework for Legal Accountability in Public-Sector AI
+  summary: |-
+    Authors: Allen Daniel Sunny, Ido Sivan-Sevilla
+    Abstract: Automated decision-making systems are increasingly used by public agencies to govern access to welfare. Accountability in these settings is not achieved through access to model internals, but by the explanations provided to applicants i.e documents that function as legal justifications and sites of contestation. Little work has been done to examine whether such explanations are legally valid. This paper examines explanation-level accountability in public-sector AI systems by designing and implementing a neuro-symbolic framework to assess automated welfare eligibility determinations. We deploy a Large Language Model (LLM) to encode statutory eligibility rules into a formal ontology and use satisfiability-based verification to assess whether benefits explanations comply with the governing law. Applying this approach to California's CalFresh program, we analyze explanations and observe if our system detects legal mismatches. Our findings show that formal verification reveals violations of statutory requirements even when explanations appear reasonable or complete to human readers. We argue that explanation-level verification offers a distinct and necessary complement to existing approaches of algorithmic auditing and accountability, shifting attention from model behavior to the legal integrity of justificatory artifacts. We call for a shift from interpretability to auditability of public algorithms, as government explanations must do more than reveal statistical associations; they should articulate the legal basis for a decision so that affected individuals, oversight bodies, and administrative reviewers can assess whether the justification satisfies statutory criteria and procedural norms.
+  primary_label: Watch on YouTube
+  link: https://www.youtube.com/watch?v=0qK2quhHANo
+  image: assets/img/spotlight/spotlight-a-neuro-symbolic-framework-for-legal-accountability-in-public-sector-ai-1791459949315.png
+  image_zoom: null
+  image_x: null
+  image_y: null
+  image_v: 1791459949315
+- tag: Podcast
+  topic: Cybersecurity
+  topic_file: research.html#area-panel-cybersecurity
   date: May 19, 2026
   source: null
   title: 'Protecting the Neglected: Measuring County Cyber Risk with Dr. Ido Sivan Sevilla'
@@ -62,3 +42,31 @@
   image_x: -0.9090909090909091
   image_y: -3.116883116883117
   image_v: 1790865387703
+- tag: Magazine
+  topic: Cybersecurity
+  topic_file: research.html#area-panel-cybersecurity
+  date: Oct 01, 2025
+  source: null
+  title: A Crucial First Look at the Nation’s Cyber Attack Surfaces
+  summary: Never before has there been a holistic view of the nation’s cyber attack surface, by county. Thanks to researchers at the University of Maryland, counties can assess how vulnerable their IP addresses, public-facing nodes and databases are, and compare that to other counties, says Ido Sivan-Sevilla, an assistant professor at the university’s College of Information.
+  primary_label: Read
+  link: https://www.afcea.org/signal-media/cyber-edge/crucial-first-look-nations-cyber-attack-surfaces
+  image: assets/img/spotlight/spotlight-a-crucial-first-look-at-the-nations-cyber-attack-surfaces-1791460399537.png
+  image_zoom: null
+  image_x: null
+  image_y: null
+  image_v: 1791460399537
+- tag: Publication
+  topic: Consumer Privacy
+  topic_file: research.html#area-panel-privacy
+  date: Aug 06, 2025
+  source: null
+  title: ‘Cookie-less’ identification for/against privacy?
+  summary: The advertising industry’s anticipated shift away from third-party cookies led to the proliferation and normalisation of first-party identification architectures online. Marketed as ‘privacy-friendly,’ the new technologies promise to deliver the efficiencies that advertisers have become accustomed to, while addressing privacy concerns from third-party cookies. Such tension calls for a better understanding of the privacy implications from first-party online identification architectures. We evaluate first-party user identification mechanisms by (1) surveying the literature to create a typology that synthesises existing privacy concerns in third-party cookie-based identification, and (2) applying our typology to evaluate the privacy of prime examples in what we frame as three distinct types of first-party ID architectures — Universal IDs, Onboarding ID, and Walled Garden ID. We analyse technical documentation and code repositories from each architecture type and show how first-party ID solutions still enable cross-site tracking over longer periods of time and encourage sensitive user targeting. First-party ID solutions do create mechanisms to ease opting out from tracking, but the implementation of those mechanisms is questionable. Our findings demonstrate how the advertising industry is trying to maintain its existing structure and replicate the tracking functionalities on which it has grown reliant.
+  primary_label: Read [open access]
+  link: https://policyreview.info/articles/analysis/cookie-less-identification-foragainst-privacy
+  image: assets/img/spotlight/spotlight-cookie-less-identification-foragainst-privacy-1791460554637.jpg
+  image_zoom: null
+  image_x: null
+  image_y: null
+  image_v: 1791460554637

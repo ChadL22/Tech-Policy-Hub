@@ -15,10 +15,10 @@ CATEGORIES:External
 URL:https://events.govexec.com/google-public-sector-summit/
 END:VEVENT
 BEGIN:VEVENT
-UID:20270109-digital-competition-conference-2027@techpolicyhub.umd.edu
-DTSTAMP:20270109T000000Z
-DTSTART;VALUE=DATE:20270109
-DTEND;VALUE=DATE:20270111
+UID:20270209-digital-competition-conference-2027@techpolicyhub.umd.edu
+DTSTAMP:20270209T000000Z
+DTSTART;VALUE=DATE:20270209
+DTEND;VALUE=DATE:20270211
 SUMMARY:Digital Competition Conference 2027
 DESCRIPTION:At the Digital Competition Conference 2027\, cutting-edge research will meet policy on the most pressing digital market competition issues of our time.
 CATEGORIES:External
