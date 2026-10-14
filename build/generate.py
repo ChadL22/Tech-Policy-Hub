@@ -103,8 +103,8 @@ def clean_stale_pages():
             os.remove(os.path.join(ROOT, fname))
             print("removed stale", fname)
 
-# NAV -- top-level tabs per follow-up 33: Home / Research / Events /
-# People (News and About dropped from the primary nav -- both are still
+# NAV -- top-level tabs per follow-up 33: Home / Research / People /
+# Events (News and About dropped from the primary nav -- both are still
 # reachable via the footer's link list, see footer() below, so nothing
 # is orphaned). Follow-up (direct user request): Research and Events no
 # longer have dropdown submenus -- each is now a plain link straight to
@@ -118,8 +118,9 @@ def clean_stale_pages():
 NAV = [
     ("Home", "index.html", None),
     ("Research", "research.html", None),
-    ("Events", "events.html", None),
+    # Follow-up (direct user request): People now comes before Events.
     ("People", "people.html", None),
+    ("Events", "events.html", None),
 ]
 
 
