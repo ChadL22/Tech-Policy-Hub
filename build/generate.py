@@ -142,14 +142,27 @@ def nav_html(active):
     return "".join(items)
 
 
+SITE_NAME = "Tech Policy Hub"
+
+
 def head(title, description):
+    # Direct user request: the homepage's name in browsers -- tab title,
+    # bookmarks, phone browsers' shortcut tiles, search results -- should
+    # read just "Tech Policy Hub", not "Home | Tech Policy Hub". Every
+    # other page keeps "<Page> | Tech Policy Hub". The three meta tags
+    # below give the site's own name to "Add to Home Screen", installed
+    # web apps, and link previews (og:site_name) on any page.
+    full_title = SITE_NAME if title in (None, "", "Home") else f"{title} | {SITE_NAME}"
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{title} | Tech Policy Hub</title>
+<title>{full_title}</title>
 <meta name="description" content="{description}">
+<meta name="application-name" content="{SITE_NAME}">
+<meta name="apple-mobile-web-app-title" content="{SITE_NAME}">
+<meta property="og:site_name" content="{SITE_NAME}">
 <link rel="icon" href="assets/img/favicon.ico?v={ASSET_VERSION}" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png?v={ASSET_VERSION}">
 <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon-16.png?v={ASSET_VERSION}">
