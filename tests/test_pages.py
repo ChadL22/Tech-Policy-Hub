@@ -86,7 +86,10 @@ def test_internal_links_and_anchors_resolve(browser, all_links):
             if not resp.ok:
                 problems.append(f"HTTP {resp.status}: {link} (linked from {', '.join(sorted(set(pages)))})")
         body = html_cache[target]
-        if fragment and body is not None and not re.search(r'\bid="%s"' % re.escape(fragment), body):
+        # "#:~:text=..." is a browser scroll-to-text link (it highlights
+        # matching text), not a named anchor -- there's no id to check.
+        if fragment and not fragment.startswith(":~:") and body is not None \
+                and not re.search(r'\bid="%s"' % re.escape(fragment), body):
             problems.append(f"missing anchor #{fragment} on {target} (linked from {', '.join(sorted(set(pages)))})")
     ctx.close()
     assert not problems, "Broken internal links:\n  " + "\n  ".join(problems)

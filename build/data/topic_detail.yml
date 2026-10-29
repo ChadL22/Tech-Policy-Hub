@@ -96,6 +96,8 @@ privacy:
       image_zoom: null
       image_x: null
       image_y: null
+      pdf: assets/files/projects/projects-location-technology-and-the-us-fourth-amendment-poster-1793232000000.pdf
+      pdf_v: 1793232000000
   pubs:
     - venue: IEEE Security & Privacy
       year: 2026

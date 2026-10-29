@@ -299,14 +299,38 @@ def _project_tile_html(p, key):
     # descriptions and any punctuation/quotes in them need no JS-side
     # escaping, and Python stays the one source of truth for a
     # project's content, same as everywhere else on this site.
+    # Direct user request: the Fourth Amendment poster looked lower-res
+    # on the site than the PDF itself. The card/pop-up image is a
+    # flattened PNG (Canva's 96-dpi export), so its small text blurs
+    # once zoomed -- and inside the pop-up a 48-inch poster can't be
+    # zoomed at all. A project can now also carry its original PDF
+    # (topic_detail.yml's optional `pdf`, uploaded in the CMS): the
+    # pop-up's image opens it, and a "View full PDF" button does too, so
+    # visitors read it as crisp vector text at any zoom. Without a PDF,
+    # clicking the image opens the full-size image in a new tab instead.
+    pdf = (p.get("pdf") or "").strip()
+    pdf_href = f'{pdf}?v={p["pdf_v"]}' if pdf and p.get("pdf_v") else pdf
+    full_href = pdf_href or img_src
+    open_title = "Open the full PDF" if pdf else "Open the full-size image"
+    open_hint = "Click to open the full PDF" if pdf else "Click to view full size"
     modal_media_html = (
-        f'<div class="project-modal-media"><img src="{img_src}" alt="{p["title"]}"></div>'
+        f'<div class="project-modal-media"><a class="project-modal-media-link" href="{full_href}" '
+        f'target="_blank" rel="noopener" title="{open_title}"><img src="{img_src}" alt="{p["title"]}"></a>'
+        f'<span class="project-modal-media-hint">{open_hint}</span></div>'
         if image else ""
     )
-    modal_link_html = (
-        f'\n          <a class="project-modal-link" href="{link}"{g.link_attrs(link)}>Visit project site &nearr;</a>'
-        if link else ""
-    )
+    modal_link_html = ""
+    if pdf:
+        size = g.file_size_label(pdf)
+        size_text = f" ({size})" if size else ""
+        modal_link_html += (
+            f'\n          <a class="project-modal-link project-modal-pdf" href="{pdf_href}" '
+            f'target="_blank" rel="noopener">View full PDF{size_text} &nearr;</a>'
+        )
+    if link:
+        modal_link_html += (
+            f'\n          <a class="project-modal-link" href="{link}"{g.link_attrs(link)}>Visit project site &nearr;</a>'
+        )
     detail_template = f"""<template class="project-detail-template">{modal_media_html}
         <div class="project-modal-text" style="--area-color:{m['color']}">
           <span class="area-tag">{m['code']}</span>

@@ -44,7 +44,7 @@ SITE_URL = "https://techpolicyhub.org/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026093004"
+ASSET_VERSION = "2026102901"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -780,6 +780,17 @@ def person_photo_fit_style(item, prefix="photo"):
     if mzoom != 1 or mx or my:
         parts.append(f"--fit-m-t:translate({mx}%,{my}%) scale({mzoom});")
     return f' style="{"".join(parts)}"' if parts else ""
+
+
+def file_size_label(path):
+    """"9.1 MB" / "640 KB" for a file under docs/ (e.g. a project's PDF,
+    shown on its "View full PDF" button so phone visitors know what
+    they're opening), or "" if it can't be read."""
+    try:
+        n = os.path.getsize(os.path.join(ROOT, str(path).split("?", 1)[0]))
+    except OSError:
+        return ""
+    return f"{n / 1_048_576:.1f} MB" if n >= 1_048_576 else f"{max(1, round(n / 1024))} KB"
 
 
 def image_version_suffix(item, prefix="image"):

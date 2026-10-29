@@ -234,3 +234,20 @@ def test_upcoming_events_preview_and_details(site, vp):
             href = link.get_attribute("href")
             details = row.locator("a.btn", has_text="Details")
             assert details.count() == 1 and details.get_attribute("href") == href, f"'{title}' has no Details button to {href}"
+
+
+def test_project_pdfs_and_full_size_links(site):
+    """Every project pop-up's "View full PDF" button and clickable image
+    point at a file that actually loads (a project's PDF is the full-
+    resolution original of its poster/paper -- see _project_tile_html)."""
+    page = site.open("research/")
+    hrefs = page.evaluate("""() => Array.from(document.querySelectorAll('.project-detail-template'))
+        .flatMap(t => Array.from(t.content.querySelectorAll('.project-modal-pdf, .project-modal-media-link'))
+        .map(a => ({ href: new URL(a.getAttribute('href'), location.href).href, pdf: a.classList.contains('project-modal-pdf') })))""")
+    bad = []
+    for h in {x["href"]: x for x in hrefs}.values():
+        r = page.request.get(h["href"])
+        kind = r.headers.get("content-type", "")
+        if r.status != 200 or (h["pdf"] and "pdf" not in kind):
+            bad.append(f'{h["href"]} -> {r.status} {kind}')
+    assert not bad, "Broken project PDF/full-size links:\n  " + "\n  ".join(bad)

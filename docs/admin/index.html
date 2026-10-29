@@ -1268,7 +1268,7 @@ function renderTopicAreaMain(){
           <input type="text" value="${escapeHtml(p.title||'')}" oninput="onProjectInput(${i},'title',this.value)"></div>
         <div class="field"><label class="field-label">Description</label>
           <textarea oninput="onProjectInput(${i},'description',this.value)">${escapeHtml(p.description||'')}</textarea></div>
-        <div class="field"><label class="field-label">Link <span class="opt">(optional — makes the whole tile clickable on the Research page)</span></label>
+        <div class="field"><label class="field-label">Link <span class="opt">(optional — shown as a "Visit project site" button in the project's pop-up)</span></label>
           <input type="text" value="${escapeHtml(p.link||'')}" oninput="onProjectInput(${i},'link',this.value)" placeholder="https://…"></div>
         <div class="field"><label class="field-label">Image <span class="opt">(optional — falls back to a colored placeholder if left blank)</span></label>
           <div class="image-field-preview" id="image-preview-project-${i}">${imgBox}${imgNote}</div>
@@ -1276,6 +1276,13 @@ function renderTopicAreaMain(){
           <input type="file" accept="image/*" id="image-input-project-${i}" onchange="onProjectImageSelected(${i})">
           ${imgVal ? `<button type="button" class="btn small ghost" style="margin-top:6px;" onclick="clearProjectImage(${i})">Remove image</button>` : ''}
           <div class="image-upload-progress" id="image-progress-project-${i}"></div>
+        </div>
+        <div class="field"><label class="field-label">PDF <span class="opt">(optional — e.g. the full poster or paper)</span></label>
+          ${p.pdf ? `<div class="pdf-current"><a href="../${escapeHtml(p.pdf)}${p.pdf_v ? '?v=' + p.pdf_v : ''}" target="_blank" rel="noopener">${escapeHtml(p.pdf.split('/').pop())}</a></div>` : ''}
+          <input type="file" accept="application/pdf,.pdf" id="pdf-input-project-${i}" onchange="onProjectPdfSelected(${i})">
+          ${p.pdf ? `<button type="button" class="btn small ghost" style="margin-top:6px;" onclick="clearProjectPdf(${i})">Remove PDF</button>` : ''}
+          <div class="image-upload-progress" id="pdf-progress-project-${i}"></div>
+          <div class="field-hint">Visitors open it from the project's pop-up (clicking the image or a "View full PDF" button) and can zoom in without losing sharpness. Upload the PDF straight from Canva/PowerPoint rather than an image export, so text stays crisp. The image above is still used for the tile.</div>
         </div>
       </div>
       <div class="topic-card-actions"><button class="btn small danger" onclick="removeProject(${i})">Delete</button></div>
@@ -1429,6 +1436,56 @@ function clearProjectImage(i){
   project.image_y = null;
   project.image_v = null;
   clearImagePreviewOverride('project-' + i);
+  markDirty('topic_detail');
+  renderMain();
+}
+
+// Direct user request: a poster exported as an image looked lower-res on
+// the site than the PDF itself (an image export flattens the text to a
+// fixed resolution). Projects can carry the original PDF too, uploaded
+// to docs/assets/files/projects/ -- see _project_tile_html in
+// build_all.py for how the pop-up offers it.
+async function uploadPdfFile(file, uploadDir, slugHint){
+  const version = Date.now();
+  const filename = `${uploadDir}-${slugify(slugHint) || 'document'}-${version}.pdf`;
+  const path = `docs/assets/files/${uploadDir}/${filename}`;
+  const dataUrl = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+  await ghFetch('/repos/' + REPO + '/contents/' + path, {
+    method: 'PUT',
+    body: JSON.stringify({ message: 'content: add PDF ' + filename, content: dataUrl.split(',')[1], branch: BRANCH }),
+  });
+  return { path: `assets/files/${uploadDir}/${filename}`, version };
+}
+async function onProjectPdfSelected(i){
+  const input = document.getElementById('pdf-input-project-' + i);
+  const file = input.files[0];
+  if (!file) return;
+  if (file.type !== 'application/pdf' && !/\.pdf$/i.test(file.name)){ showToast('Please select a PDF file.', 'error'); return; }
+  if (file.size > 40 * 1024 * 1024){ showToast('PDF must be under 40MB.', 'error'); return; }
+  const progressEl = document.getElementById('pdf-progress-project-' + i);
+  if (progressEl) progressEl.textContent = 'Uploading…';
+  try {
+    const project = store.topic_detail.data[activeTopicKey].projects[i];
+    const { path, version } = await uploadPdfFile(file, 'projects', project.title || 'project');
+    project.pdf = path;
+    project.pdf_v = version;
+    markDirty('topic_detail');
+    showToast('PDF uploaded. Publish to add it to the project\'s pop-up -- the live site can take a minute or two to start serving it.');
+    renderMain();
+  } catch (e) {
+    showToast('PDF upload failed: ' + e.message, 'error');
+    if (progressEl) progressEl.textContent = '';
+  }
+}
+function clearProjectPdf(i){
+  const project = store.topic_detail.data[activeTopicKey].projects[i];
+  project.pdf = '';
+  project.pdf_v = null;
   markDirty('topic_detail');
   renderMain();
 }
