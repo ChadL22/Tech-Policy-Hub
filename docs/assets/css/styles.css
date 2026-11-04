@@ -1437,7 +1437,10 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   font-size:1.6rem; line-height:1; display:inline-flex; align-items:center; justify-content:center; padding:0 0 3px;
   cursor:pointer; transition: background .15s ease, color .15s ease, opacity .15s ease;
 }
-.trend-arrow:hover:not(:disabled){ background: var(--umd-red); border-color: var(--umd-red); color:#fff; }
+@media (hover: hover){
+  .trend-arrow:hover:not(:disabled){ background: var(--umd-red); border-color: var(--umd-red); color:#fff; }
+}
+.trend-arrow:active:not(:disabled){ background: var(--umd-red); border-color: var(--umd-red); color:#fff; }
 .trend-arrow:disabled{ opacity:.25; cursor:default; }
 .trend-scroll-wrap{ position:relative; }
 .trend-scroll-wrap::after{
@@ -1464,7 +1467,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 @media (max-width: 900px){ .trend-item{ flex-basis: calc((100% - 24px) / 2.3); } }
 @media (max-width: 560px){
   .trend-item{ flex-basis: 78%; min-width:0; }
-  .trend-arrows{ display:none; }
+  .trend-arrow{ width:36px; height:36px; font-size:1.45rem; }
   .trend-num{ font-size:3.2rem; }
 }
 
@@ -2487,9 +2490,11 @@ footer.site-footer{ background: #1B1B1B; color:#fff; padding-top: 44px; }
     width: min(320px, 85vw);
     background:#fff; flex-direction:column; align-items:stretch;
     padding: 16px 20px 20px; transform: translateX(100%); transition: transform .2s ease;
-    overflow-y:auto; z-index: 150; box-shadow: -12px 0 32px rgba(15,15,20,.18);
+    overflow-y:auto; z-index: 150;
+    /* shadow only while open -- when closed the drawer sits just past the
+       right edge and its shadow was bleeding a gray band onto the page */
   }
-  nav.primary-nav.open{ transform: translateX(0); }
+  nav.primary-nav.open{ transform: translateX(0); box-shadow: -12px 0 32px rgba(15,15,20,.18); }
   .nav-panel-head{ display:flex; justify-content:flex-end; margin-bottom:8px; }
   .nav-close{
     display:flex; align-items:center; justify-content:center; width:36px; height:36px;
