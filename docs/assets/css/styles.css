@@ -2320,6 +2320,11 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 .cal-day.has-event .daynum{ color: var(--ink); font-weight:700; }
 .cal-day .dots{ display:flex; gap:3px; justify-content:center; flex-wrap:wrap; }
 .cal-day .dot{ width:9px; height:9px; flex:none; }
+/* Today's date (set by main.js) -- small UMD-red circle behind the number. */
+.cal-day.cal-today .daynum{
+  display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+  border-radius:50%; background: var(--umd-red); color:#fff; font-weight:700;
+}
 .sidebar-box{
   border-top: 10px solid var(--umd-red);
   background: var(--sidebar-band);

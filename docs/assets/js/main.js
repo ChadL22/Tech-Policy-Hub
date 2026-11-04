@@ -1167,21 +1167,34 @@ document.addEventListener('DOMContentLoaded', function () {
     capToRows('past-events-list', 5);
   })();
 
-  // Homepage calendar -- pages between pre-rendered month panels (one
-  // per month that actually has an event; see calendar_widget_html() in
-  // generate.py) with prev/next, wrapping around at either end.
+  // Calendar -- pages between pre-rendered month panels (a continuous
+  // run of months, empty ones included; see calendar_widget_html() in
+  // generate.py) with prev/next, wrapping around at either end. Opens on
+  // the visitor's current month (direct user request) and marks today.
   document.querySelectorAll('.cal-widget').forEach(function (widget) {
     var panels = Array.prototype.slice.call(widget.querySelectorAll('.cal-month'));
     var title = widget.querySelector('.cal-title');
     if (!panels.length) return;
     var current = panels.findIndex(function (p) { return p.classList.contains('active'); });
     if (current < 0) current = 0;
+    var now = new Date();
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
+    var ym = now.getFullYear() + '-' + pad(now.getMonth() + 1);
+    var todayCell = widget.querySelector('.cal-day[data-day="' + ym + '-' + pad(now.getDate()) + '"]');
+    if (todayCell) todayCell.classList.add('cal-today');
+    var thisMonth = panels.findIndex(function (p) { return p.dataset.ym === ym; });
+    if (thisMonth < 0) {
+      // Visitor's month is past the built range -- open on the latest
+      // month instead of one long gone.
+      if (panels[panels.length - 1].dataset.ym < ym) thisMonth = panels.length - 1;
+    }
     function show(i) {
       panels[current].classList.remove('active');
       current = (i % panels.length + panels.length) % panels.length;
       panels[current].classList.add('active');
       if (title) title.textContent = panels[current].dataset.label;
     }
+    if (thisMonth >= 0 && thisMonth !== current) show(thisMonth);
     widget.querySelectorAll('.cal-nav').forEach(function (btn) {
       btn.addEventListener('click', function () {
         show(current + parseInt(btn.dataset.dir, 10));

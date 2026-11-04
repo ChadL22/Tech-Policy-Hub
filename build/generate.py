@@ -44,7 +44,7 @@ SITE_URL = "https://techpolicyhub.org/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026110404"
+ASSET_VERSION = "2026110405"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -1357,12 +1357,32 @@ def calendar_widget_html(events, categories):
         while day <= e["end"]:
             by_month.setdefault((day.year, day.month), {}).setdefault(day.day, []).append(e)
             day += datetime.timedelta(days=1)
-    month_keys = sorted(by_month)
+    # Direct user request: the calendar should open on the CURRENT month
+    # even when it has no events. So panels are now every month in one
+    # continuous run -- from whichever is earlier, the first event month
+    # or the month this build ran, through whichever is later, the last
+    # event month or 3 months past the build -- empty months included,
+    # like a real wall calendar. main.js then switches to the visitor's
+    # actual month on load (data-ym), so a page built a while ago still
+    # opens on today's month as long as it's in range.
+    today = datetime.date.today()
+    this_month = (today.year, today.month)
+    def add_months(ym, n):
+        idx = ym[0] * 12 + (ym[1] - 1) + n
+        return (idx // 12, idx % 12 + 1)
+    first = min([this_month] + list(by_month))
+    last = max([add_months(this_month, 3)] + list(by_month))
+    month_keys = []
+    ym = first
+    while ym <= last:
+        month_keys.append(ym)
+        ym = add_months(ym, 1)
+    active_i = month_keys.index(this_month)
 
     cal = calendar.Calendar(firstweekday=6)  # weeks start Sunday
     panels = []
     for i, (y, mnum) in enumerate(month_keys):
-        events_by_day = by_month[(y, mnum)]
+        events_by_day = by_month.get((y, mnum), {})
         label = f"{calendar.month_name[mnum]} {y}"
         day_cells = []
         for week in cal.monthdayscalendar(y, mnum):
@@ -1371,23 +1391,24 @@ def calendar_widget_html(events, categories):
                     day_cells.append('<div class="cal-day empty"></div>')
                     continue
                 evs = events_by_day.get(day)
+                daynum_attr = f' data-day="{y:04d}-{mnum:02d}-{day:02d}"'
                 if evs:
                     dots = "".join(
                         f'<a class="dot" style="background:{categories[e["cat"]]}" '
                         f'href="{e["link"]}"{link_attrs(e["link"])} title="{e["title"]} ({e["short_label"].title()})" aria-label="{e["title"]}"></a>'
                         for e in evs
                     )
-                    day_cells.append(f'<div class="cal-day has-event"><span class="daynum">{day}</span><span class="dots">{dots}</span></div>')
+                    day_cells.append(f'<div class="cal-day has-event"{daynum_attr}><span class="daynum">{day}</span><span class="dots">{dots}</span></div>')
                 else:
-                    day_cells.append(f'<div class="cal-day"><span class="daynum">{day}</span></div>')
-        active = " active" if i == 0 else ""
+                    day_cells.append(f'<div class="cal-day"{daynum_attr}><span class="daynum">{day}</span></div>')
+        active = " active" if i == active_i else ""
         panels.append(f"""
-        <div class="cal-month{active}" data-label="{label}">
+        <div class="cal-month{active}" data-label="{label}" data-ym="{y:04d}-{mnum:02d}">
           <div class="cal-weekdays"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
           <div class="cal-days">{''.join(day_cells)}</div>
         </div>""")
 
-    first_label = f"{calendar.month_name[month_keys[0][1]]} {month_keys[0][0]}" if month_keys else ""
+    first_label = f"{calendar.month_name[this_month[1]]} {this_month[0]}"
     return f"""
         <div class="cal-widget">
           <div class="cal-head">
