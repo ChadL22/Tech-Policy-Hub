@@ -44,7 +44,7 @@ SITE_URL = "https://techpolicyhub.org/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026110409"
+ASSET_VERSION = "2026110410"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -1046,8 +1046,11 @@ def rail_html(entries):
     out = []
     for e in entries:
         date_bit = f'<span class="date">{ap_date(e["date"])}</span>' if e.get("date") else ""
+        # an entry saved with no tag (null in the YAML) used to render the
+        # literal word "None" -- skip the tag instead
+        tag_bit = f'<span class="tag">{e["tag"]}</span>' if e.get("tag") else ""
         out.append(f"""
-        <a class="rail-item" href="{e['link']}"{link_attrs(e['link'])}><span class="tag">{e['tag']}</span>{date_bit}<h4>{e['title']}</h4></a>""")
+        <a class="rail-item" href="{e['link']}"{link_attrs(e['link'])}>{tag_bit}{date_bit}<h4>{e['title']}</h4></a>""")
     return "".join(out)
 
 

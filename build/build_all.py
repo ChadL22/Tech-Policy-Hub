@@ -82,7 +82,7 @@ home_body = f"""
            button), replacing the old gray/gold panel. -->
       <div class="section-head">
         <div>
-          <h2>What we're reading</h2>
+          <h2>What We&rsquo;re Reading</h2>
         </div>
         <a href="https://phronesisresearch.org/#:~:text=on%20specific%20topics-,Recently%20Added,-PHRONESIS%20ORIGINAL" target="_blank" rel="noopener" class="btn btn-ghost btn-arrow">More</a>
       </div>

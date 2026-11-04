@@ -647,7 +647,26 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
 }
 .reading-panel .card .meta{ font-family: var(--font-nav); font-size: .74rem; letter-spacing: .02em; margin-top: 2px; }
-.grid.reading-grid{ row-gap: 40px; }
+.grid.reading-grid{ row-gap: 16px; }
+/* Direct user request: hovering a reading card fills it with the same
+   light gray as the calendar's empty days (--paper-soft). Every card gets
+   even padding so the fill has room around the text; the grid's negative
+   side margins keep the text itself aligned with the section title above.
+   The headline link is stretched over the whole card (::after), so the
+   entire highlighted area is clickable; the type label stays its own link
+   on top. */
+.grid.reading-grid{ margin-left: -24px; margin-right: -24px; }
+.grid.reading-grid > .card,
+.grid.grid-3.reading-grid > .card:nth-child(3n+1){
+  position: relative; padding: 20px 24px; transition: background .15s ease;
+}
+.reading-grid > .card:hover{ background: var(--paper-soft); }
+.reading-grid > .card:hover h3 a{ color: var(--umd-red); }
+.reading-grid > .card h3 a::after{ content:""; position:absolute; inset:0; }
+.reading-grid > .card .reading-type{ position: relative; z-index: 1; }
+@media (max-width: 720px){
+  .grid.reading-grid > .card, .grid.reading-grid > .card:first-child{ padding: 20px 24px !important; }
+}
 /* Paired with .reading-section's trimmed bottom padding above -- see the
    follow-up 51 comment there. Scoped to .calendar-section specifically
    (only used once, on the homepage) so this doesn't touch events.html's
@@ -2247,6 +2266,8 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   display:inline-block; margin-bottom: 4px; margin-left: 6px;
 }
 .rail-item .date::before{ content:"\00b7 "; }
+.rail-item .date:first-child{ margin-left:0; }
+.rail-item .date:first-child::before{ content:none; }
 .rail-item h4{ font-size:.92rem; margin:0; line-height:1.35; color: var(--ink); font-weight:700; }
 .rail-item:hover h4{ color: var(--umd-red); }
 .rail-more{
