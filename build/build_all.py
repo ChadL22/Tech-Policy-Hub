@@ -35,7 +35,7 @@ def _slugify(text):
 # content instead of staying put over whatever's currently at the bottom
 # of the visible box.
 HUB_NEWS_RAIL = g.news_sorted(g.NEWS_ITEMS)  # newest first, whatever order the CMS saved them in
-EVENTS_RAIL = [dict(tag=e['short_label'], title=e['title'], link=e['link']) for e in g.EVENTS_ITEMS[:4]]
+EVENTS_RAIL = [dict(tag=e['short_label'], title=e['title'], link=e['link']) for e in g.EVENTS_ITEMS]  # all upcoming -- the rail scrolls inside a box sized to the calendar (see .cal-rail in styles.css)
 
 home_body = f"""
 <section class="lead-section">
@@ -100,9 +100,11 @@ home_body = f"""
     <div class="cal-legend">{g.calendar_legend_html(g.EVENT_CATEGORIES)}</div>
     <div class="with-sidebar rail-wrap cal-wrap">
       {g.calendar_widget_html(g.EVENTS_ITEMS, g.EVENT_CATEGORIES)}
-      <div class="rail-panel">
+      <div class="rail-panel cal-rail">
         <div class="rail-head">Upcoming Events</div>
-        {g.rail_html(EVENTS_RAIL)}
+        <div class="rail-scroll-wrap">
+          <div class="rail-scroll">{g.rail_html(EVENTS_RAIL)}</div>
+        </div>
         <a href="events.html" class="text-link rail-more">See All Events</a>
       </div>
     </div>

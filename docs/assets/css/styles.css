@@ -1425,10 +1425,9 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   content:""; position:absolute; left:0; top:-5px; width:150px; height:8px;
   background: linear-gradient(to right, var(--umd-red) 0 104px, #fff 104px 110px, var(--umd-gold) 110px);
 }
-.trend-head h2{
-  margin:0; font-family: var(--font-nav); font-weight:700; text-transform:uppercase;
-  letter-spacing:.01em; font-size: clamp(1.7rem, 3vw, 2.5rem); line-height:1; color: var(--ink);
-}
+/* Same size/font as every other section title (e.g. "Events" just
+   above) -- direct user request; inherits the global h2 rule. */
+.trend-head h2{ margin:0; }
 .trend-arrows{ display:flex; gap:8px; }
 .trend-arrow{
   width:40px; height:40px; border-radius:50%; border:1.5px solid var(--ink); background:#fff; color:var(--ink);
@@ -2609,4 +2608,17 @@ body.project-modal-open{ overflow:hidden; }
   .signal-card{ padding:0 14px; }
   .ticker-live{ padding:0 10px; }
   .ticker-live .label{ display:none; }
+}
+
+/* Homepage Upcoming Events rail -- direct user request: same height as
+   the calendar beside it. height:0 + min-height:100% keeps the rail
+   from adding to the grid row's height (so the calendar alone sets it),
+   then stretches it to fill that row; the list scrolls inside if there
+   are more events than fit, and See All Events pins to the bottom. */
+@media (min-width: 1151px){
+  .cal-wrap{ align-items: stretch; }
+  .cal-rail{ display:flex; flex-direction:column; height:0; min-height:100%; }
+  .cal-rail .rail-scroll-wrap{ flex: 1 1 auto; min-height:0; display:flex; flex-direction:column; }
+  .cal-rail .rail-scroll{ flex: 1 1 auto; max-height:none; min-height:0; }
+  .cal-rail .rail-more{ margin-top: auto; padding-top: 14px; }
 }
