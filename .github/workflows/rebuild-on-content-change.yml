@@ -131,9 +131,16 @@ jobs:
 
       - uses: actions/configure-pages@v5
 
+      # Artifact name includes the run attempt: a re-run of a failed
+      # deploy otherwise finds the first attempt's "github-pages"
+      # artifact too and fails with "Multiple artifacts named
+      # github-pages were unexpectedly found".
       - uses: actions/upload-pages-artifact@v3
         with:
           path: docs
+          name: github-pages-${{ github.run_attempt }}
 
       - id: deploy
         uses: actions/deploy-pages@v4
+        with:
+          artifact_name: github-pages-${{ github.run_attempt }}

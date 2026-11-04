@@ -77,8 +77,13 @@ home_body = f"""
 <section class="reading-section">
   <div class="container carousel-wrap">
     <div class="reading-panel">
-      <div class="carousel-head">
-        <h2>What we're reading</h2>
+      <!-- Direct user request: same header as the Events and Guiding
+           Questions sections (eyebrow + h2 + 2px ink rule + ghost
+           button), replacing the old gray/gold panel. -->
+      <div class="section-head">
+        <div>
+          <h2>What we're reading</h2>
+        </div>
         <a href="https://phronesisresearch.org/#:~:text=on%20specific%20topics-,Recently%20Added,-PHRONESIS%20ORIGINAL" target="_blank" rel="noopener" class="btn btn-ghost btn-arrow">More</a>
       </div>
       <div class="grid grid-3 reading-grid">
@@ -92,7 +97,6 @@ home_body = f"""
   <div class="container">
     <div class="section-head">
       <div>
-        <span class="eyebrow">Calendar</span>
         <h2>Events</h2>
       </div>
       <a href="events.html" class="btn btn-ghost btn-arrow">Full Calendar</a>
@@ -118,11 +122,13 @@ home_body = f"""
      .trend-* in styles.css and the trend-strip block in main.js). -->
 <section class="trend-section" aria-labelledby="guiding-questions-title">
   <div class="container">
-    <div class="trend-head">
-      <h2 id="guiding-questions-title">Guiding Questions</h2>
+    <div class="section-head trend-head">
+      <div>
+        <h2 id="guiding-questions-title">Guiding Questions</h2>
+      </div>
       <div class="trend-arrows">
-        <button type="button" class="trend-arrow" data-dir="-1" aria-label="Previous questions" disabled>&#8249;</button>
-        <button type="button" class="trend-arrow" data-dir="1" aria-label="Next questions">&#8250;</button>
+        <button type="button" class="trend-arrow trend-prev" data-dir="-1" aria-label="Previous questions" disabled></button>
+        <button type="button" class="trend-arrow trend-next" data-dir="1" aria-label="Next questions"></button>
       </div>
     </div>
     <div class="trend-scroll-wrap">

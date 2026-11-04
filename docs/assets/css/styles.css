@@ -627,9 +627,27 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
    the-panel structure from follow-up 48 is unaffected -- only WHERE the
    off-white color lives moved back to the panel. */
 .grid.reading-grid{ row-gap: 56px; }
-.reading-panel{ background: var(--sidebar-band); border-top: 4px solid var(--umd-gold); padding: 32px; }
-.reading-panel .card{ padding-bottom: 0; }
-.reading-panel .carousel-head{ margin-bottom: 6px; }
+/* Direct user request: no more gray fill / gold-topped panel -- the
+   section now sits on the page like Events/Guiding Questions, under the
+   shared .section-head. */
+.reading-panel .card{ padding-bottom: 0; gap: 6px; }
+/* Direct user request: the reading cards' type styles (italic serif
+   labels, oversized headlines) didn't match anything else on the site.
+   Re-based on the homepage's own Hub News rail (.rail-item): Roboto
+   Condensed red uppercase tag, compact bold headline, condensed gray
+   source/date line; the dek is clamped to 3 lines like the Spotlight's
+   summary so uneven blurbs don't stretch rows. */
+.reading-panel .card .reading-type{
+  font-family: var(--font-nav); font-style: normal; font-weight: 700; font-size: .74rem;
+  letter-spacing: .03em; text-transform: uppercase; color: var(--umd-red);
+}
+.reading-panel .card h3{ font-size: 1.05rem; line-height: 1.35; margin: 0; }
+.reading-panel .card p{
+  font-size: .9rem; line-height: 1.5; margin: 0;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.reading-panel .card .meta{ font-family: var(--font-nav); font-size: .74rem; letter-spacing: .02em; margin-top: 2px; }
+.grid.reading-grid{ row-gap: 40px; }
 /* Paired with .reading-section's trimmed bottom padding above -- see the
    follow-up 51 comment there. Scoped to .calendar-section specifically
    (only used once, on the homepage) so this doesn't touch events.html's
@@ -1411,64 +1429,59 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
 .section-head{ display:flex; align-items:flex-end; justify-content:space-between; margin-bottom: 28px; gap: 16px; flex-wrap:wrap; padding-bottom: 16px; border-bottom: 2px solid var(--ink); }
 .section-head h2{ margin-bottom:0; }
 
-/* ---------- Guiding Questions (homepage) -- CNBC "Trending Now" ----------
-   Direct user request: the dark full-bleed band is gone. A white section
-   with CNBC's header treatment (short accent bar sitting on a thin full-
-   width rule, big bold uppercase title), then one horizontally
-   scrollable row: oversized light-gray numeral above each question, a
-   thin vertical divider on each item's left. Arrows + scroll-snap are
-   wired in main.js (trend strip block); the right-edge fade hides once
-   the row is scrolled to its end (.trend-at-end). */
-.trend-section{ background:#fff; padding: 48px 0 56px; }
-.trend-head{
-  position:relative; display:flex; align-items:center; justify-content:space-between; gap:16px;
-  border-top: 2px solid var(--line); padding-top: 28px; margin-bottom: 30px;
-}
-.trend-head::before{
-  content:""; position:absolute; left:0; top:-5px; width:150px; height:8px;
-  background: linear-gradient(to right, var(--umd-red) 0 104px, #fff 104px 110px, var(--umd-gold) 110px);
-}
-/* Same size/font as every other section title (e.g. "Events" just
-   above) -- direct user request; inherits the global h2 rule. */
-.trend-head h2{ margin:0; }
+/* ---------- Guiding Questions (homepage) ----------
+   Horizontally scrollable row (CNBC "Trending Now" behavior), but built
+   from the site's own parts so it matches the rest of the homepage
+   (direct user request): the standard .section-head (eyebrow + h2 + 2px
+   ink rule, same as Events), ruled cells like .research-matrix with the
+   same red Roboto Condensed index numbers, the calendar's 3px gold top
+   border, and square bordered arrow buttons like the site's other
+   buttons. Arrows + right-edge fade are wired in main.js. */
+.trend-section{ padding-top: 0; }
+.trend-head{ align-items: flex-end; }
 .trend-arrows{ display:flex; gap:8px; }
+/* Same circular CSS-drawn chevrons as the Research Spotlight's
+   .spotlight-arrow and research.html's .rp-carousel-arrow. */
 .trend-arrow{
-  width:40px; height:40px; border-radius:50%; border:1.5px solid var(--ink); background:#fff; color:var(--ink);
-  font-size:1.6rem; line-height:1; display:inline-flex; align-items:center; justify-content:center; padding:0 0 3px;
-  cursor:pointer; transition: background .15s ease, color .15s ease, opacity .15s ease;
+  width:32px; height:32px; padding:0; border-radius:50%;
+  border: 1.5px solid var(--ink-soft); background: transparent;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition: border-color .15s ease, background .15s ease, opacity .15s ease;
 }
+.trend-arrow::before{
+  content:''; width:8px; height:8px;
+  border-right:2px solid var(--ink-soft); border-top:2px solid var(--ink-soft);
+  transition: border-color .15s ease;
+}
+.trend-prev::before{ transform: rotate(-135deg); margin-left: 4px; }
+.trend-next::before{ transform: rotate(45deg); margin-right: 4px; }
 @media (hover: hover){
-  .trend-arrow:hover:not(:disabled){ background: var(--umd-red); border-color: var(--umd-red); color:#fff; }
+  .trend-arrow:hover:not(:disabled){ border-color: var(--umd-red); background: var(--paper); }
+  .trend-arrow:hover:not(:disabled)::before{ border-color: var(--umd-red); }
 }
-.trend-arrow:active:not(:disabled){ background: var(--umd-red); border-color: var(--umd-red); color:#fff; }
-.trend-arrow:disabled{ opacity:.25; cursor:default; }
-.trend-scroll-wrap{ position:relative; }
+.trend-arrow:disabled{ opacity:.35; cursor:default; }
+.trend-scroll-wrap{ position:relative; border-top: 3px solid var(--umd-gold); border-left: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .trend-scroll-wrap::after{
-  content:""; position:absolute; top:0; right:0; bottom:0; width:72px; pointer-events:none;
+  content:""; position:absolute; top:0; right:0; bottom:0; width:64px; pointer-events:none;
   background: linear-gradient(to right, rgba(255,255,255,0), #fff); transition: opacity .2s ease;
 }
 .trend-scroll-wrap.trend-at-end::after{ opacity:0; }
 .trend-scroll{
-  list-style:none; margin:0; padding:0; display:flex; gap:24px;
+  list-style:none; margin:0; padding:0; display:flex;
   overflow-x:auto; scroll-snap-type: x mandatory; scroll-behavior:smooth;
   scrollbar-width:none; -webkit-overflow-scrolling: touch;
 }
 .trend-scroll::-webkit-scrollbar{ display:none; }
-.trend-scroll:focus-visible{ outline: 2px solid var(--umd-red); outline-offset: 6px; }
+.trend-scroll:focus-visible{ outline: 2px solid var(--umd-red); outline-offset: 4px; }
 .trend-item{
-  flex: 0 0 calc((100% - 4 * 24px) / 4.5); min-width: 230px; scroll-snap-align:start;
-  border-left: 4px solid var(--umd-gold); padding: 2px 20px 6px 26px;
+  flex: 0 0 calc(100% / 4.4); min-width: 230px; scroll-snap-align:start;
+  border-right: 1px solid var(--line); padding: 24px 28px;
 }
-.trend-num{
-  display:block; font-family: var(--font-nav); font-weight:700; font-size: 4rem; line-height:.9;
-  color: var(--umd-red); margin-bottom: 18px;
-}
-.trend-text{ margin:0; font-size:1.08rem; line-height:1.4; font-weight:600; color: var(--ink); }
-@media (max-width: 900px){ .trend-item{ flex-basis: calc((100% - 24px) / 2.3); } }
+.trend-num{ font-family: var(--font-nav); font-weight:700; font-size:.9rem; color: var(--umd-red); display:block; margin-bottom: 8px; }
+.trend-text{ margin:0; font-size:1.05rem; line-height:1.4; font-weight:700; color: var(--ink); }
+@media (max-width: 900px){ .trend-item{ flex-basis: calc(100% / 2.3); } }
 @media (max-width: 560px){
-  .trend-item{ flex-basis: 78%; min-width:0; }
-  .trend-arrow{ width:36px; height:36px; font-size:1.45rem; }
-  .trend-num{ font-size:3.2rem; }
+  .trend-item{ flex-basis: 80%; min-width:0; padding: 20px 22px; }
 }
 
 /* ---------- Shared search box + "no results" message ----------

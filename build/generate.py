@@ -44,7 +44,7 @@ SITE_URL = "https://techpolicyhub.org/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026110406"
+ASSET_VERSION = "2026110409"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -619,7 +619,7 @@ def guiding_questions_html(items):
     track. Not clickable (see follow-up 34)."""
     return "".join(f"""
         <li class="trend-item">
-          <span class="trend-num" aria-hidden="true">{i}</span>
+          <span class="trend-num" aria-hidden="true">{i:02d}</span>
           <p class="trend-text">{q['text']}</p>
         </li>""" for i, q in enumerate(items, start=1))
 
@@ -943,7 +943,7 @@ def spotlight_html(items):
         <div class="spotlight-slide{active}" data-slide="{i}">
           <h1><a href="{it['link']}"{link_attrs(it['link'])}>{it['title']}</a></h1>
           <div class="meta"><span class="meta-tag">{it['tag']}</span> {it['date']}</div>
-          <div class="spotlight-credit">{it['source']}</div>
+          {f'<div class="spotlight-credit">{it["source"]}</div>' if it.get('source') else ''}
           <p class="lede">{it['summary']}</p>
           <div class="hero-actions">
             <a href="{it['link']}"{link_attrs(it['link'])} class="btn btn-primary btn-arrow">{it['primary_label']}</a>
