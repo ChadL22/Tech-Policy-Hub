@@ -1263,4 +1263,34 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
   });
+
+  // Guiding Questions strip (CNBC "Trending Now" style, see .trend-* in
+  // styles.css): prev/next arrows page the row by ~one visible width,
+  // disable themselves at either end, and the right-edge fade hides
+  // once there's nothing left to scroll to.
+  document.querySelectorAll('.trend-section').forEach(function (section) {
+    var scroller = section.querySelector('.trend-scroll');
+    var wrap = section.querySelector('.trend-scroll-wrap');
+    if (!scroller) return;
+    var prev = section.querySelector('.trend-arrow[data-dir="-1"]');
+    var next = section.querySelector('.trend-arrow[data-dir="1"]');
+    function update() {
+      var max = scroller.scrollWidth - scroller.clientWidth;
+      var atStart = scroller.scrollLeft <= 2;
+      var atEnd = scroller.scrollLeft >= max - 2;
+      if (prev) prev.disabled = atStart;
+      if (next) next.disabled = atEnd;
+      if (wrap) wrap.classList.toggle('trend-at-end', atEnd);
+    }
+    [prev, next].forEach(function (btn) {
+      if (!btn) return;
+      btn.addEventListener('click', function () {
+        var dir = parseInt(btn.getAttribute('data-dir'), 10);
+        scroller.scrollBy({ left: dir * scroller.clientWidth * 0.85, behavior: 'smooth' });
+      });
+    });
+    scroller.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  });
 });
