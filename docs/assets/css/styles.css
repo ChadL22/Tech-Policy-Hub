@@ -1422,7 +1422,8 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   border-top: 2px solid var(--line); padding-top: 28px; margin-bottom: 30px;
 }
 .trend-head::before{
-  content:""; position:absolute; left:0; top:-5px; width:132px; height:8px; background: var(--umd-gold);
+  content:""; position:absolute; left:0; top:-5px; width:150px; height:8px;
+  background: linear-gradient(to right, var(--umd-red) 0 104px, #fff 104px 110px, var(--umd-gold) 110px);
 }
 .trend-head h2{
   margin:0; font-family: var(--font-nav); font-weight:700; text-transform:uppercase;
@@ -1434,7 +1435,7 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   font-size:1.6rem; line-height:1; display:inline-flex; align-items:center; justify-content:center; padding:0 0 3px;
   cursor:pointer; transition: background .15s ease, color .15s ease, opacity .15s ease;
 }
-.trend-arrow:hover:not(:disabled){ background: var(--umd-gold); border-color: var(--umd-gold); color: var(--ink); }
+.trend-arrow:hover:not(:disabled){ background: var(--umd-red); border-color: var(--umd-red); color:#fff; }
 .trend-arrow:disabled{ opacity:.25; cursor:default; }
 .trend-scroll-wrap{ position:relative; }
 .trend-scroll-wrap::after{
@@ -1448,14 +1449,14 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   scrollbar-width:none; -webkit-overflow-scrolling: touch;
 }
 .trend-scroll::-webkit-scrollbar{ display:none; }
-.trend-scroll:focus-visible{ outline: 2px solid var(--umd-gold); outline-offset: 6px; }
+.trend-scroll:focus-visible{ outline: 2px solid var(--umd-red); outline-offset: 6px; }
 .trend-item{
   flex: 0 0 calc((100% - 4 * 24px) / 4.5); min-width: 230px; scroll-snap-align:start;
-  border-left: 4px solid #FFF0A8; padding: 2px 20px 6px 26px;
+  border-left: 4px solid var(--umd-gold); padding: 2px 20px 6px 26px;
 }
 .trend-num{
   display:block; font-family: var(--font-nav); font-weight:700; font-size: 4rem; line-height:.9;
-  color: var(--umd-gold); margin-bottom: 18px;
+  color: var(--umd-red); margin-bottom: 18px;
 }
 .trend-text{ margin:0; font-size:1.08rem; line-height:1.4; font-weight:600; color: var(--ink); }
 @media (max-width: 900px){ .trend-item{ flex-basis: calc((100% - 24px) / 2.3); } }
