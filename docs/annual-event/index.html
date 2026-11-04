@@ -8,11 +8,11 @@
 <meta name="application-name" content="Tech Policy Hub">
 <meta name="apple-mobile-web-app-title" content="Tech Policy Hub">
 <meta property="og:site_name" content="Tech Policy Hub">
-<link rel="icon" href="../assets/img/favicon.ico?v=2026102901" sizes="any">
-<link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32.png?v=2026102901">
-<link rel="icon" type="image/png" sizes="16x16" href="../assets/img/favicon-16.png?v=2026102901">
-<link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png?v=2026102901">
-<link rel="stylesheet" href="../assets/css/styles.css?v=2026102901">
+<link rel="icon" href="../assets/img/favicon.ico?v=2026110401" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32.png?v=2026110401">
+<link rel="icon" type="image/png" sizes="16x16" href="../assets/img/favicon-16.png?v=2026110401">
+<link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png?v=2026110401">
+<link rel="stylesheet" href="../assets/css/styles.css?v=2026110401">
 </head>
 <body>
 
@@ -20,7 +20,7 @@
   <div class="container header-inner">
     <div class="brand-lockup">
       <a href="../" class="brand" aria-label="Tech Policy Hub, University of Maryland School of Public Policy">
-        <img src="../assets/img/sopp-tph-lockup.png?v=2026102901" alt="University of Maryland School of Public Policy &ndash; Tech Policy Hub" class="brand-mark">
+        <img src="../assets/img/sopp-tph-lockup.png?v=2026110401" alt="University of Maryland School of Public Policy &ndash; Tech Policy Hub" class="brand-mark">
       </a>
     </div>
     <nav class="primary-nav" aria-label="Primary">
@@ -33,7 +33,7 @@
     </nav>
     <div class="nav-backdrop"></div>
     <div class="header-actions">
-      <a href="../#subscribe" class="btn btn-primary">Subscribe</a>
+      <a href="#subscribe" class="btn btn-primary">Subscribe</a>
       <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
@@ -88,75 +88,57 @@
 
 <footer class="site-footer">
   <div class="container">
-    <!-- Follow-up (direct user request, same as footer_social_html's
-         comment above): .footer-grid drops from 4 columns to 3 here
-         (see its rule in styles.css) now that the social icons' old
-         first column has nothing left in it -- an empty grid column
-         would just be blank space. The two mobile breakpoints that
-         collapse this to 2 columns (max-width:900px/720px) need no
-         change: a plain 1fr 1fr grid wraps 3 items into 2-then-1 on its
-         own, it was never hardcoded to expect exactly 4. -->
-    <div class="footer-grid">
-      <div>
-        <h4>Research</h4>
-        <ul>
-          <li><a href="../research/#area-panel-cybersecurity">Cybersecurity</a></li><li><a href="../research/#area-panel-privacy">Consumer Privacy</a></li><li><a href="../research/#area-panel-integrity">Information Integrity</a></li><li><a href="../research/#area-panel-ml">Trustworthy AI</a></li>
-        </ul>
-      </div>
-      <div>
-        <!-- Follow-up (direct user request): Speaker Series and Annual
-             Event replaced with a single Calendar link to events.html.
-             Both pages themselves are untouched and still reachable --
-             every Speaker Series/Annual Event entry on the calendar
-             (see events.yml/past_events.yml) still links out to them,
-             this was only ever a second, redundant path to the same
-             two pages sitting alongside the actual calendar. courses.html
-             (was linked here as "Teaching", also direct-request removed
-             above) has no other inbound link now and is effectively
-             retired, but the page itself is left in place rather than
-             deleted, matching how Speaker Series/Annual Event keep
-             existing after losing their own footer entry. -->
-        <h4>Events</h4>
-        <ul>
-          <li><a href="../events/">Calendar</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Connect</h4>
-        <ul>
-          <li><a href="../events/">Events</a></li>
-          <li><a href="../people/">People</a></li>
-          <li><a href="../#about">About &amp; Contact</a></li>
-        </ul>
-        <div class="footer-social">
-          <a href="https://sclanga.substack.com/" target="_blank" rel="noopener" aria-label="Substack">
-            <img src="../assets/img/social/substack.png?v=2026102901" alt="" loading="lazy">
-          </a>
-          <a href="https://x.com/phronesisres" target="_blank" rel="noopener" aria-label="X">
-            <img src="../assets/img/social/x.png?v=2026102901" alt="" loading="lazy">
-          </a>
-          <a href="https://www.instagram.com/phronesisres" target="_blank" rel="noopener" aria-label="Instagram">
-            <img src="../assets/img/social/instagram.png?v=2026102901" alt="" loading="lazy">
-          </a>
-          <a href="https://www.threads.com/@phronesisres" target="_blank" rel="noopener" aria-label="Threads">
-            <img src="../assets/img/social/threads.png?v=2026102901" alt="" loading="lazy">
-          </a>
-          <a href="https://www.tiktok.com/@phronesis.research" target="_blank" rel="noopener" aria-label="TikTok">
-            <img src="../assets/img/social/tiktok.png?v=2026102901" alt="" loading="lazy">
-          </a>
+    <div class="footer-top">
+      <a href="../" class="footer-wordmark" aria-label="Tech Policy Hub home">
+        <span class="footer-wordmark-main">Tech Policy Hub</span>
+        <span class="footer-wordmark-sub">University of Maryland School of Public Policy</span>
+      </a>
+      <div class="footer-social"><a href="https://sclanga.substack.com/" target="_blank" rel="noopener" aria-label="Substack"><img src="../assets/img/social/substack.png?v=2026110401" alt="" loading="lazy"></a><a href="https://x.com/phronesisres" target="_blank" rel="noopener" aria-label="X"><img src="../assets/img/social/x.png?v=2026110401" alt="" loading="lazy"></a><a href="https://www.instagram.com/phronesisres" target="_blank" rel="noopener" aria-label="Instagram"><img src="../assets/img/social/instagram.png?v=2026110401" alt="" loading="lazy"></a><a href="https://www.threads.com/@phronesisres" target="_blank" rel="noopener" aria-label="Threads"><img src="../assets/img/social/threads.png?v=2026110401" alt="" loading="lazy"></a><a href="https://www.tiktok.com/@phronesis.research" target="_blank" rel="noopener" aria-label="TikTok"><img src="../assets/img/social/tiktok.png?v=2026110401" alt="" loading="lazy"></a></div>
+    </div>
+    <div class="footer-main">
+      <div class="footer-links">
+        <div>
+          <h4>Research</h4>
+          <ul>
+            <li><a href="../research/#area-panel-cybersecurity">Cybersecurity</a></li><li><a href="../research/#area-panel-privacy">Consumer Privacy</a></li><li><a href="../research/#area-panel-integrity">Information Integrity</a></li><li><a href="../research/#area-panel-ml">Trustworthy AI</a></li>
+          </ul>
         </div>
+        <div>
+          <h4>Events</h4>
+          <ul>
+            <li><a href="../events/">Calendar</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="../events/">Events</a></li>
+            <li><a href="../people/">People</a></li>
+            <li><a href="../#about">About &amp; Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-feature">
+        <h3>Get Involved</h3>
+        <p>Interested in becoming affiliated with the Hub? We want to hear from you.</p>
+        <a href="https://idonibrasco.github.io/" target="_blank" rel="noopener" class="footer-btn">Get in Touch</a>
+      </div>
+      <div class="footer-feature footer-newsletter" id="subscribe">
+        <h3><svg class="footer-mail-icon" viewBox="0 0 32 22" aria-hidden="true"><rect x="1" y="1" width="30" height="20" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M1.5 2l14.5 11L30.5 2" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Newsletter</h3>
+        <p>A monthly briefing on developments at the intersection of technology, law, and policy.</p>
+        <form class="newsletter-form">
+          <input type="email" placeholder="Email Address" aria-label="Email address" required>
+          <button type="submit" class="footer-btn">Sign Up</button>
+        </form>
       </div>
     </div>
     <div class="footer-bottom">
-      <div class="footer-bottom-brand">
-        <img src="../assets/img/gtech-main.svg" alt="Center for Governance of Technology and Systems (GoTech), University of Maryland">
-        <span>University of Maryland School of Public Policy</span>
-      </div>
+      <div class="footer-bottom-brand">A project of <a href="https://gotech.umd.edu/" target="_blank" rel="noopener">GoTech</a>, UMD&rsquo;s Center for Governance of Technology and Systems</div>
       <div class="footer-bottom-partner">Newsletters, social, and events produced in partnership with <a href="https://phronesisresearch.org" target="_blank" rel="noopener">The Phronesis Institute</a></div>
       <div class="footer-bottom-copyright">&copy; 2026 Tech Policy Research and Education Hub</div>
     </div>
   </div>
 </footer>
-<script src="../assets/js/main.js?v=2026102901"></script>
+<script src="../assets/js/main.js?v=2026110401"></script>
 </body>
 </html>

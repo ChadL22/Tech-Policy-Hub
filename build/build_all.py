@@ -109,16 +109,27 @@ home_body = f"""
   </div>
 </section>
 
-<section class="guiding-section">
+<!-- Direct user request: Guiding Questions rebuilt after CNBC's
+     "Trending Now" strip -- white section (no more dark band), a short
+     red accent bar over a thin rule, oversized light-gray numerals, and
+     one horizontally scrollable row with prev/next arrows (see
+     .trend-* in styles.css and the trend-strip block in main.js). -->
+<section class="trend-section" aria-labelledby="guiding-questions-title">
   <div class="container">
-    <h3 class="guiding-head">Guiding Questions</h3>
-    <div class="guide-q-list">
-      {g.guiding_questions_html(g.QUESTIONS)}
+    <div class="trend-head">
+      <h2 id="guiding-questions-title">Guiding Questions</h2>
+      <div class="trend-arrows">
+        <button type="button" class="trend-arrow" data-dir="-1" aria-label="Previous questions" disabled>&#8249;</button>
+        <button type="button" class="trend-arrow" data-dir="1" aria-label="Next questions">&#8250;</button>
+      </div>
+    </div>
+    <div class="trend-scroll-wrap">
+      <ol class="trend-scroll" tabindex="0" aria-label="Guiding Questions">
+        {g.guiding_questions_html(g.QUESTIONS)}
+      </ol>
     </div>
   </div>
 </section>
-
-{g.newsletter_band_html()}
 """
 g.write("index.html", g.page("index.html", "Home", "The University of Maryland Tech Policy Hub studies the bridge between computer science and public policy.", home_body))
 
@@ -581,7 +592,6 @@ research_body = f"""
   </button>
   <div class="project-modal-body"></div>
 </div>
-{g.newsletter_band_html()}
 """
 g.write("research.html", g.page("research.html", "Research", "Cybersecurity, consumer privacy, information integrity, and trustworthy ML research from the Tech Policy Hub.", research_body))
 
@@ -779,7 +789,6 @@ events_body = f"""
     </div>
   </div>
 </section>
-{g.newsletter_band_html()}
 """
 g.write("events.html", g.page("events.html", "Events", "Search and browse upcoming and past Tech Policy Hub events.", events_body))
 g.write_raw("events.ics", g.events_ics(g.EVENTS_ITEMS))
@@ -1071,7 +1080,6 @@ people_body = f"""
     <p class="list-empty" data-empty-for="people-list" hidden>No people match your filters.</p>
   </div>
 </section>
-{g.newsletter_band_html()}
 """
 g.write("people.html", g.page("people.html", "People", "Faculty, affiliates, and fellows of the Tech Policy Hub.", people_body))
 

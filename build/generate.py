@@ -44,7 +44,7 @@ SITE_URL = "https://techpolicyhub.org/"
 # (and GitHub Pages' CDN) can keep serving a stale cached copy of the CSS/JS
 # against a freshly-deployed HTML file -- which is what produced the
 # broken/unstyled ticker a user saw right after a previous deploy.
-ASSET_VERSION = "2026102901"
+ASSET_VERSION = "2026110401"
 
 # Every generated page (other than the homepage) is written into its own
 # folder as an index.html, e.g. news.html -> news/index.html, so it serves
@@ -173,18 +173,6 @@ def head(title, description):
 """
 
 
-# Pages that render their own newsletter_band_html() (see build_all.py) --
-# i.e. have a real #subscribe section to scroll to on that same page.
-# header()'s persistent Subscribe button used to always point at
-# "index.html#subscribe", so clicking it from e.g. research.html or
-# people.html navigated you away to the homepage instead of just
-# scrolling down to the section already sitting right there on the page
-# you were on (direct user request to fix this). courses.html,
-# speaker-series.html, and annual-event.html have no newsletter band of
-# their own, so those still fall back to index.html#subscribe.
-PAGES_WITH_SUBSCRIBE_SECTION = {"index.html", "research.html", "events.html", "people.html"}
-
-
 def header(active):
     # Follow-up (direct user request, after seeing the mobile/narrow-
     # screen nav take over the entire viewport with no visible way out):
@@ -206,7 +194,11 @@ def header(active):
     # _rewrite_links' "index.html#subscribe" handling, which correctly
     # prefixes it back up to the real homepage from wherever this page
     # lives.
-    subscribe_href = "#subscribe" if active in PAGES_WITH_SUBSCRIBE_SECTION else "index.html#subscribe"
+    # The newsletter signup now lives in the shared footer (direct user
+    # request: CNBC-style footer replacing the old per-page "Stay in the
+    # Loop" band), so EVERY page has its own #subscribe target and the
+    # button never needs to navigate away to the homepage.
+    subscribe_href = "#subscribe"
     return f"""
 <header class="site-header">
   <div class="container header-inner">
@@ -284,87 +276,75 @@ def ticker_section():
 
 
 def footer():
-    # Follow-up (direct user request): "move the collection of social
-    # media platforms, as is, below About & Contact." footer_social_html
-    # is the exact same markup that used to open the footer's first grid
-    # column (untouched, hence "as is") -- factored into its own small
-    # function purely so it can be dropped into the Connect column below
-    # instead, without duplicating the 5 platform links. Its old column
-    # is gone rather than left empty: that column had already lost its
-    # other content (.footer-legal, removed by an earlier direct
-    # request) so it had nothing left in it once the icons moved out --
-    # see footer_html's own comment on .footer-grid going 4 columns ->
-    # 3 below.
-    def footer_social_html():
-        return f"""<div class="footer-social">
-          <a href="https://sclanga.substack.com/" target="_blank" rel="noopener" aria-label="Substack">
-            <img src="assets/img/social/substack.png?v={ASSET_VERSION}" alt="" loading="lazy">
-          </a>
-          <a href="https://x.com/phronesisres" target="_blank" rel="noopener" aria-label="X">
-            <img src="assets/img/social/x.png?v={ASSET_VERSION}" alt="" loading="lazy">
-          </a>
-          <a href="https://www.instagram.com/phronesisres" target="_blank" rel="noopener" aria-label="Instagram">
-            <img src="assets/img/social/instagram.png?v={ASSET_VERSION}" alt="" loading="lazy">
-          </a>
-          <a href="https://www.threads.com/@phronesisres" target="_blank" rel="noopener" aria-label="Threads">
-            <img src="assets/img/social/threads.png?v={ASSET_VERSION}" alt="" loading="lazy">
-          </a>
-          <a href="https://www.tiktok.com/@phronesis.research" target="_blank" rel="noopener" aria-label="TikTok">
-            <img src="assets/img/social/tiktok.png?v={ASSET_VERSION}" alt="" loading="lazy">
-          </a>
-        </div>"""
-
+    """Shared site footer, rebuilt after CNBC's footer (direct user
+    request): a dark band with the wordmark + social icons on top, a
+    hairline rule, then the Research/Events/Connect link columns beside
+    two feature blocks -- "Get Involved" (CNBC's "News Tips" slot) and
+    the newsletter signup (CNBC's "Newsletters" slot), which replaces the
+    old standalone "Stay in the Loop" band that used to sit above the
+    footer on four pages. The signup form keeps id="subscribe" and the
+    .newsletter-form class so main.js's submit handler and the header's
+    Subscribe button both keep working on every page."""
+    social = [
+        ("https://sclanga.substack.com/", "Substack", "substack"),
+        ("https://x.com/phronesisres", "X", "x"),
+        ("https://www.instagram.com/phronesisres", "Instagram", "instagram"),
+        ("https://www.threads.com/@phronesisres", "Threads", "threads"),
+        ("https://www.tiktok.com/@phronesis.research", "TikTok", "tiktok"),
+    ]
+    social_html = "".join(
+        f'<a href="{url}" target="_blank" rel="noopener" aria-label="{label}">'
+        f'<img src="assets/img/social/{img}.png?v={ASSET_VERSION}" alt="" loading="lazy"></a>'
+        for url, label, img in social)
     return f"""
 <footer class="site-footer">
   <div class="container">
-    <!-- Follow-up (direct user request, same as footer_social_html's
-         comment above): .footer-grid drops from 4 columns to 3 here
-         (see its rule in styles.css) now that the social icons' old
-         first column has nothing left in it -- an empty grid column
-         would just be blank space. The two mobile breakpoints that
-         collapse this to 2 columns (max-width:900px/720px) need no
-         change: a plain 1fr 1fr grid wraps 3 items into 2-then-1 on its
-         own, it was never hardcoded to expect exactly 4. -->
-    <div class="footer-grid">
-      <div>
-        <h4>Research</h4>
-        <ul>
-          {"".join(f'<li><a href="{t["file"]}">{t["name"]}</a></li>' for t in TOPICS)}
-        </ul>
+    <div class="footer-top">
+      <a href="index.html" class="footer-wordmark" aria-label="Tech Policy Hub home">
+        <span class="footer-wordmark-main">Tech Policy Hub</span>
+        <span class="footer-wordmark-sub">University of Maryland School of Public Policy</span>
+      </a>
+      <div class="footer-social">{social_html}</div>
+    </div>
+    <div class="footer-main">
+      <div class="footer-links">
+        <div>
+          <h4>Research</h4>
+          <ul>
+            {"".join(f'<li><a href="{t["file"]}">{t["name"]}</a></li>' for t in TOPICS)}
+          </ul>
+        </div>
+        <div>
+          <h4>Events</h4>
+          <ul>
+            <li><a href="events.html">Calendar</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="events.html">Events</a></li>
+            <li><a href="people.html">People</a></li>
+            <li><a href="index.html#about">About &amp; Contact</a></li>
+          </ul>
+        </div>
       </div>
-      <div>
-        <!-- Follow-up (direct user request): Speaker Series and Annual
-             Event replaced with a single Calendar link to events.html.
-             Both pages themselves are untouched and still reachable --
-             every Speaker Series/Annual Event entry on the calendar
-             (see events.yml/past_events.yml) still links out to them,
-             this was only ever a second, redundant path to the same
-             two pages sitting alongside the actual calendar. courses.html
-             (was linked here as "Teaching", also direct-request removed
-             above) has no other inbound link now and is effectively
-             retired, but the page itself is left in place rather than
-             deleted, matching how Speaker Series/Annual Event keep
-             existing after losing their own footer entry. -->
-        <h4>Events</h4>
-        <ul>
-          <li><a href="events.html">Calendar</a></li>
-        </ul>
+      <div class="footer-feature">
+        <h3>Get Involved</h3>
+        <p>Interested in becoming affiliated with the Hub? We want to hear from you.</p>
+        <a href="https://idonibrasco.github.io/" target="_blank" rel="noopener" class="footer-btn">Get in Touch</a>
       </div>
-      <div>
-        <h4>Connect</h4>
-        <ul>
-          <li><a href="events.html">Events</a></li>
-          <li><a href="people.html">People</a></li>
-          <li><a href="index.html#about">About &amp; Contact</a></li>
-        </ul>
-        {footer_social_html()}
+      <div class="footer-feature footer-newsletter" id="subscribe">
+        <h3><svg class="footer-mail-icon" viewBox="0 0 32 22" aria-hidden="true"><rect x="1" y="1" width="30" height="20" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M1.5 2l14.5 11L30.5 2" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Newsletter</h3>
+        <p>A monthly briefing on developments at the intersection of technology, law, and policy.</p>
+        <form class="newsletter-form">
+          <input type="email" placeholder="Email Address" aria-label="Email address" required>
+          <button type="submit" class="footer-btn">Sign Up</button>
+        </form>
       </div>
     </div>
     <div class="footer-bottom">
-      <div class="footer-bottom-brand">
-        <img src="assets/img/gtech-main.svg" alt="Center for Governance of Technology and Systems (GoTech), University of Maryland">
-        <span>University of Maryland School of Public Policy</span>
-      </div>
+      <div class="footer-bottom-brand">A project of <a href="https://gotech.umd.edu/" target="_blank" rel="noopener">GoTech</a>, UMD&rsquo;s Center for Governance of Technology and Systems</div>
       <div class="footer-bottom-partner">Newsletters, social, and events produced in partnership with <a href="https://phronesisresearch.org" target="_blank" rel="noopener">The Phronesis Institute</a></div>
       <div class="footer-bottom-copyright">&copy; 2026 Tech Policy Research and Education Hub</div>
     </div>
@@ -632,24 +612,16 @@ def question_list_html(items):
 
 
 def guiding_questions_html(items):
-    """Rounded-rectangle card grid for the homepage's Guiding Questions
-    section -- one .guide-q card per question, laid out via
-    .guide-q-list's CSS grid (4 cols desktop, responsive down to 1).
-    Modeled on a Bloomberg reference the user provided: bordered white
-    cards like Bloomberg's "Odd Lots" row, under a plain bold section
-    title positioned like Bloomberg's "How To" label (see .guiding-head
-    in styles.css) -- replacing the previous dark full-bleed band with a
-    numbered text list. Not clickable (see follow-up 34) -- each item's
-    per-topic link was dropped on request, and no hover highlight (follow-
-    up 54) since these don't navigate anywhere."""
-    out = []
-    for i, q in enumerate(items, start=1):
-        out.append(f"""
-        <div class="guide-q">
-          <span class="num">{i:02d}</span>
-          <span class="qtext">{q['text']}</span>
-        </div>""")
-    return "".join(out)
+    """One <li class="trend-item"> per question for the homepage's
+    Guiding Questions strip -- styled after CNBC's "Trending Now" row
+    (direct user request): big light-gray numeral above the question,
+    thin left divider, all in one horizontally scrollable .trend-scroll
+    track. Not clickable (see follow-up 34)."""
+    return "".join(f"""
+        <li class="trend-item">
+          <span class="trend-num" aria-hidden="true">{i}</span>
+          <p class="trend-text">{q['text']}</p>
+        </li>""" for i, q in enumerate(items, start=1))
 
 
 def image_fit_style(item, prefix="image"):
@@ -1140,26 +1112,6 @@ def search_box_html(placeholder, aria_label):
         </svg>
         <input type="text" class="search-box-input filter-search-input" placeholder="{placeholder}" aria-label="{aria_label}">
       </div>"""
-
-
-def newsletter_band_html():
-    """Shared "Stay in the Loop" newsletter subscribe band. Originally
-    home.html-only; direct follow-up request put the same band on
-    research.html, events.html, and people.html too, so it's a function
-    now instead of markup inlined once in build_all.py's home_body."""
-    return """
-<section id="subscribe" class="newsletter-band">
-  <div class="container inner">
-    <span class="eyebrow">Stay in the Loop</span>
-    <h2>Subscribe to our newsletter</h2>
-    <p>A monthly briefing on developments at the intersection of technology, law, and policy.</p>
-    <form class="newsletter-form">
-      <input type="email" placeholder="Email Address" required>
-      <button type="submit" class="btn btn-primary">Subscribe</button>
-    </form>
-    <p class="newsletter-partner">Produced in partnership with <a href="https://phronesisresearch.org" target="_blank" rel="noopener">The Phronesis Institute</a></p>
-  </div>
-</section>"""
 
 
 def filter_pills_html(values, group):
