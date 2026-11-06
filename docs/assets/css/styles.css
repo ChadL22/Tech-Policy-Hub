@@ -1131,8 +1131,19 @@ nav.primary-nav.open ~ .header-actions .nav-toggle span:nth-child(3){ transform:
   background: var(--paper-soft); border: 1.5px solid var(--ink-soft);
   border-radius: var(--radius-lg); padding: 20px;
 }
-.rp-carousel-viewport{ overflow: hidden; cursor: grab; }
-.rp-carousel-viewport.dragging{ cursor: grabbing; user-select: none; }
+/* Native swipe scrolling, same approach as the homepage's Guiding
+   Questions row (.trend-scroll): touch and trackpad swipes scroll the
+   row and scroll-snap brings it to rest on a tile edge, so no tile is
+   left half-cut-off. The scrollbar is hidden; the arrows below page it. */
+.rp-carousel-viewport{
+  overflow-x: auto; overflow-y: hidden;
+  scroll-snap-type: x mandatory; scroll-behavior: smooth;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none; -webkit-overflow-scrolling: touch;
+}
+.rp-carousel-viewport::-webkit-scrollbar{ display:none; }
+.rp-carousel-viewport:focus-visible{ outline: 2px solid var(--umd-red); outline-offset: 4px; }
+.rp-grid > .rp-tile{ scroll-snap-align: start; }
 .rp-grid{ display:flex; flex-wrap:nowrap; align-items:stretch; gap: 20px; }
 /* Follow-up (direct user request): "the cards/tiles on the research
    page should have rounded corners like the container they sit in" --

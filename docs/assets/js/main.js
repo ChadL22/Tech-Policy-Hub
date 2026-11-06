@@ -76,23 +76,18 @@ document.addEventListener('DOMContentLoaded', function () {
     // how much wider the row itself is).
     var maxPerPage = parseInt(root.getAttribute('data-max-per-page'), 10) || 0;
 
-    var page = 0;
-
-    // Follow-up (direct user request -- "get rid of that [gap], it is
-    // on the left/right of the row"): a page used to always show
-    // `perPage` tiles at their fixed CSS width, which left a leftover
-    // strip of empty panel whenever perPage*tileWidth didn't happen to
-    // equal the available width exactly (routine for Projects' wider
-    // tiles). This now stretches every tile so a full page fills the
-    // row edge-to-edge -- but only when there are enough tiles to fill
-    // one (tiles.length >= perPage); when a filter/search leaves fewer
-    // than that, they're left at their natural width and the row is
-    // allowed to fall short, since the user explicitly said that
-    // shortfall is fine ("if there are less tiles... the open space is
-    // fine"). Resets each tile's inline width back to '' before
-    // measuring so `nominal` always reflects the real CSS value (people/
-    // projects/mobile breakpoints) rather than a stale stretched one
-    // from the last time this ran.
+    // Swiping now works the same way as the homepage's Guiding Questions
+    // row (direct user request: "The Guiding Questions section on the
+    // homepage works well and we can use a similar approach on the
+    // research page"): the viewport is a native horizontal scroller with
+    // CSS scroll-snap (see .rp-carousel-viewport in styles.css), so touch
+    // swipes, two-finger trackpad swipes and momentum are all handled by
+    // the browser itself and always come to rest on a tile edge. The
+    // earlier hand-rolled swipe/drag code (custom touch, mouse-drag and
+    // wheel handlers) glitched -- skipping pages on a trackpad, sliding
+    // under the finger -- and is gone. The arrows still page one full
+    // screenful, and measure() below still sizes tiles so a page shows
+    // only whole tiles.
     function measure() {
       var tiles = Array.prototype.slice.call(grid.children).filter(function (t) { return !t.hidden; });
       if (!tiles.length) return { gap: 0, step: 0, perPage: 0, pages: 1, tiles: tiles };
@@ -125,138 +120,47 @@ document.addEventListener('DOMContentLoaded', function () {
       return { gap: gap, step: tileWidth + gap, perPage: perPage, pages: pages, tiles: tiles };
     }
 
-    function updateArrows(m) {
-      if (prevBtn) prevBtn.disabled = page <= 0;
-      if (nextBtn) nextBtn.disabled = page >= m.pages - 1;
-    }
+    var metrics = null;
 
-    function goTo(idx) {
-      var m = measure();
-      page = Math.max(0, Math.min(idx, m.pages - 1));
-      if (m.step > 0) viewport.scrollTo({ left: page * m.perPage * m.step, behavior: 'smooth' });
-      updateArrows(m);
+    function updateArrows() {
+      var max = viewport.scrollWidth - viewport.clientWidth;
+      if (prevBtn) prevBtn.disabled = viewport.scrollLeft <= 2;
+      if (nextBtn) nextBtn.disabled = viewport.scrollLeft >= max - 2;
     }
 
     function refresh() {
+      // Remember which tile is first in view so a re-layout (resize,
+      // filtering) keeps the row on the same tiles.
+      var first = metrics && metrics.step > 0 ? Math.round(viewport.scrollLeft / metrics.step) : 0;
       var m = measure();
+      metrics = m;
       viewport.style.width = m.step > 0 ? (m.perPage * m.step - m.gap) + 'px' : '';
-      if (page > m.pages - 1) page = Math.max(0, m.pages - 1);
-      if (m.step > 0) viewport.scrollLeft = page * m.perPage * m.step;
-      updateArrows(m);
+      if (m.step > 0) {
+        viewport.style.scrollBehavior = 'auto';
+        viewport.scrollLeft = Math.min(first, Math.max(0, m.tiles.length - m.perPage)) * m.step;
+        viewport.style.scrollBehavior = '';
+      }
+      updateArrows();
+      return m;
     }
 
-    if (prevBtn) prevBtn.addEventListener('click', function () { goTo(page - 1); });
-    if (nextBtn) nextBtn.addEventListener('click', function () { goTo(page + 1); });
-    window.addEventListener('resize', refresh);
-
-    // Swiping (direct user request: "make the projects and people on the
-    // research page swipe throughable"). The row now FOLLOWS the finger
-    // (touch) or mouse (click-and-drag) while you drag, then snaps to the
-    // nearest whole page on release -- a long enough drag (40px) moves one
-    // page in that direction, a short one springs back. A two-finger
-    // trackpad swipe (horizontal wheel events) pages too. The viewport
-    // stays overflow:hidden with no free native scrolling (see styles.css),
-    // so it always comes to rest on whole tiles, never half-cut-off.
-    function pageOffset() {
-      var m = measure();
-      return { m: m, left: page * m.perPage * m.step };
-    }
-    function settle(dx) {
-      if (Math.abs(dx) >= 40) goTo(page + (dx < 0 ? 1 : -1));
-      else goTo(page);  // spring back to the current page
+    function page(dir) {
+      var m = metrics || refresh();
+      if (!m.step) return;
+      viewport.scrollBy({ left: dir * m.perPage * m.step, behavior: 'smooth' });
     }
 
-    // Touch: only takes over once the gesture reads as horizontal, so a
-    // mostly-vertical touch (scrolling the page past this row) scrolls
-    // the page normally.
-    var touchStartX = 0, touchStartY = 0, touchTracking = false, touchHorizontal = false, dragBase = 0;
-    viewport.addEventListener('touchstart', function (e) {
-      if (e.touches.length !== 1) return;
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
-      touchTracking = true;
-      touchHorizontal = false;
-      dragBase = pageOffset().left;
-    }, { passive: true });
-    viewport.addEventListener('touchmove', function (e) {
-      if (!touchTracking || e.touches.length !== 1) return;
-      var dx = e.touches[0].clientX - touchStartX;
-      var dy = e.touches[0].clientY - touchStartY;
-      if (!touchHorizontal && Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) touchHorizontal = true;
-      if (touchHorizontal) {
-        e.preventDefault();
-        viewport.scrollLeft = dragBase - dx;
-      }
-    }, { passive: false });
-    viewport.addEventListener('touchend', function (e) {
-      if (!touchTracking) return;
-      touchTracking = false;
-      if (!touchHorizontal) return;
-      settle(e.changedTouches[0].clientX - touchStartX);
+    if (prevBtn) prevBtn.addEventListener('click', function () { page(-1); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { page(1); });
+    viewport.addEventListener('scroll', updateArrows, { passive: true });
+    // Phones fire `resize` when the address bar shows/hides during a
+    // vertical scroll; only a real width change needs a re-layout.
+    var lastWidth = window.innerWidth;
+    window.addEventListener('resize', function () {
+      if (window.innerWidth === lastWidth) return;
+      lastWidth = window.innerWidth;
+      refresh();
     });
-    viewport.addEventListener('touchcancel', function () {
-      if (touchTracking && touchHorizontal) goTo(page);
-      touchTracking = false;
-    });
-
-    // Mouse click-and-drag on desktop. Left button only; a 5px threshold
-    // tells a drag from a click so a tile still opens on a plain click,
-    // and a click right after a drag is swallowed (capture phase) so
-    // letting go over a tile doesn't open it. preventDefault() on
-    // mousedown blocks the browser's native image/link drag, which would
-    // otherwise swallow the mouseup. Move/up are tracked on window so the
-    // drag keeps working if the pointer leaves the row mid-drag.
-    var mouseStartX = 0, mouseDown = false, mouseDragged = false;
-    viewport.addEventListener('mousedown', function (e) {
-      if (e.button !== 0) return;
-      e.preventDefault();
-      mouseDown = true;
-      mouseDragged = false;
-      mouseStartX = e.clientX;
-      dragBase = pageOffset().left;
-      viewport.classList.add('dragging');
-    });
-    window.addEventListener('mousemove', function (e) {
-      if (!mouseDown) return;
-      var dx = e.clientX - mouseStartX;
-      if (!mouseDragged && Math.abs(dx) > 5) mouseDragged = true;
-      if (mouseDragged) {
-        e.preventDefault();
-        viewport.scrollLeft = dragBase - dx;
-      }
-    });
-    window.addEventListener('mouseup', function (e) {
-      if (!mouseDown) return;
-      mouseDown = false;
-      viewport.classList.remove('dragging');
-      if (mouseDragged) settle(e.clientX - mouseStartX);
-    });
-    viewport.addEventListener('click', function (e) {
-      if (mouseDragged) { e.preventDefault(); e.stopPropagation(); mouseDragged = false; }
-    }, true);
-
-    // Two-finger trackpad swipe (and shift+wheel). Sideways wheel deltas
-    // add up until they pass a threshold, then page once; a short
-    // cooldown absorbs the trackpad's momentum events so one swipe moves
-    // one page. Vertical wheel/scroll is left alone for the page.
-    var wheelSum = 0, wheelLockUntil = 0, wheelResetTimer = null;
-    viewport.addEventListener('wheel', function (e) {
-      var dx = e.deltaX || (e.shiftKey ? e.deltaY : 0);
-      if (!dx || Math.abs(dx) < Math.abs(e.shiftKey ? 0 : e.deltaY)) return;
-      var m = measure();
-      if (m.pages <= 1) return;
-      e.preventDefault();
-      var now = Date.now();
-      clearTimeout(wheelResetTimer);
-      wheelResetTimer = setTimeout(function () { wheelSum = 0; }, 180);
-      if (now < wheelLockUntil) return;
-      wheelSum += dx;
-      if (Math.abs(wheelSum) >= 50) {
-        goTo(page + (wheelSum > 0 ? 1 : -1));
-        wheelSum = 0;
-        wheelLockUntil = now + 550;
-      }
-    }, { passive: false });
 
     refresh();
 
