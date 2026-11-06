@@ -139,6 +139,8 @@ h1,h2,h3{ margin:0; font-family: var(--font-body); }
 .entry-form{ background:#fff; border:1.5px solid var(--line); border-radius: var(--radius-lg); padding: 22px 26px; max-width: 720px; }
 .field{ margin-bottom: 18px; }
 .field-label{ display:block; font-weight:700; font-size:.8rem; margin-bottom:5px; }
+.project-link-row{ display:grid; grid-template-columns: minmax(0,1fr) minmax(0,1.4fr) auto; gap:6px; margin-bottom:6px; }
+@media (max-width:640px){ .project-link-row{ grid-template-columns: 1fr auto; } .project-link-row input:first-child{ grid-column: 1 / -1; } }
 .field-label .opt{ font-weight:400; color: var(--ink-soft); text-transform:none; letter-spacing:0; }
 .field-hint{ font-size:.76rem; color: var(--ink-soft); margin-top:4px; }
 .field input[type=text], .field input[type=email], .field input[type=url], .field input[type=number],
@@ -761,6 +763,16 @@ async function loadTopicDetail(){
     d.projects = d.projects.map(p => Array.isArray(p)
       ? { title: p[0] || '', description: p[1] || '', link: '', image: '' }
       : { title: '', description: '', link: '', image: '', ...p });
+    // Projects can now carry several outbound links (direct user request:
+    // "there will be instances when we need to add multiple sites for a
+    // project"). Upgrade the old single `link` string into the `links`
+    // list of {label, url} rows in place; build_all.py still reads an old
+    // `link` too, so a hand-edited YAML file keeps working either way.
+    d.projects.forEach(p => {
+      if (!Array.isArray(p.links)) p.links = p.link ? [{ label: '', url: p.link }] : [];
+      p.links = p.links.map(l => typeof l === 'string' ? { label: '', url: l } : { label: l.label || '', url: l.url || '' });
+      delete p.link;
+    });
     if (!Array.isArray(d.pubs)) d.pubs = [];
     if (!Array.isArray(d.people)) d.people = [];
   }
@@ -774,6 +786,12 @@ async function saveTopicDetail(){
   const current = await ghFetch('/repos/' + REPO + '/contents/' + TOPIC_DETAIL_FILE + '?ref=' + BRANCH);
   if (current.sha !== store.topic_detail.sha){
     throw new Error('changed on GitHub since you loaded it — click "↻ Reload latest" to get the current version, then redo this edit (nothing was overwritten)');
+  }
+  // Drop half-filled link rows (no URL) so they never reach the site.
+  for (const d of Object.values(store.topic_detail.data)){
+    (d.projects || []).forEach(p => {
+      if (Array.isArray(p.links)) p.links = p.links.filter(l => (l.url || '').trim());
+    });
   }
   const yamlText = jsyaml.dump(store.topic_detail.data, { lineWidth: -1, noRefs: true, sortKeys: false });
   const encoded = b64EncodeUtf8(yamlText);
@@ -1268,8 +1286,13 @@ function renderTopicAreaMain(){
           <input type="text" value="${escapeHtml(p.title||'')}" oninput="onProjectInput(${i},'title',this.value)"></div>
         <div class="field"><label class="field-label">Description</label>
           <textarea oninput="onProjectInput(${i},'description',this.value)">${escapeHtml(p.description||'')}</textarea></div>
-        <div class="field"><label class="field-label">Link <span class="opt">(optional — shown as a "Visit project site" button in the project's pop-up)</span></label>
-          <input type="text" value="${escapeHtml(p.link||'')}" oninput="onProjectInput(${i},'link',this.value)" placeholder="https://…"></div>
+        <div class="field"><label class="field-label">Links <span class="opt">(optional — each one becomes a button in the project's pop-up; add as many as the project needs)</span></label>
+          ${(p.links||[]).map((l, j) => `<div class="project-link-row">
+            <input type="text" value="${escapeHtml(l.label||'')}" oninput="onProjectLinkInput(${i},${j},'label',this.value)" placeholder="Button text, e.g. Overview (blank = Visit project site)">
+            <input type="text" value="${escapeHtml(l.url||'')}" oninput="onProjectLinkInput(${i},${j},'url',this.value)" placeholder="https://…">
+            <button type="button" class="btn small ghost" onclick="removeProjectLink(${i},${j})" title="Remove this link">✕</button>
+          </div>`).join('')}
+          <button type="button" class="btn small ghost" style="margin-top:4px;" onclick="addProjectLink(${i})">+ Add link</button></div>
         <div class="field"><label class="field-label">Image <span class="opt">(optional — falls back to a colored placeholder if left blank)</span></label>
           <div class="image-field-preview" id="image-preview-project-${i}">${imgBox}${imgNote}</div>
           ${imgFitTool}
@@ -1372,8 +1395,24 @@ function onProjectInput(i, field, value){
   store.topic_detail.data[activeTopicKey].projects[i][field] = value;
   markDirty('topic_detail');
 }
+function onProjectLinkInput(i, j, field, value){
+  store.topic_detail.data[activeTopicKey].projects[i].links[j][field] = value;
+  markDirty('topic_detail');
+}
+function addProjectLink(i){
+  const p = store.topic_detail.data[activeTopicKey].projects[i];
+  if (!Array.isArray(p.links)) p.links = [];
+  p.links.push({ label:'', url:'' });
+  markDirty('topic_detail');
+  renderMain();
+}
+function removeProjectLink(i, j){
+  store.topic_detail.data[activeTopicKey].projects[i].links.splice(j, 1);
+  markDirty('topic_detail');
+  renderMain();
+}
 function addProject(){
-  store.topic_detail.data[activeTopicKey].projects.push({ title:'', description:'', link:'', image:'' });
+  store.topic_detail.data[activeTopicKey].projects.push({ title:'', description:'', links:[], image:'' });
   markDirty('topic_detail');
   renderMain();
 }

@@ -102,3 +102,33 @@ def test_cms_photo_tool_desktop_and_phone(cms):
     phone = cms.locator(".image-fit-box.phone img")
     phone.wait_for()
     cms.wait_for_function("(() => { const i = document.querySelector('.image-fit-box.phone img'); return i && i.complete && i.naturalWidth > 0; })()")
+
+
+def test_cms_project_multiple_links(cms):
+    """A project can carry several outbound links, each its own pop-up button.
+    An old single `link` loads as the first row and publishes as `links`."""
+    data = yaml.safe_load((REPO_ROOT / "build/data/topic_detail.yml").read_text())
+    key, idx = next((k, i) for k, v in data.items()
+                    for i, p in enumerate((v or {}).get("projects") or []) if p.get("link"))
+    legacy_url = data[key]["projects"][idx]["link"]
+    cms.evaluate(f"selectTopicArea({json.dumps(key)})")
+    assert cms.evaluate(f"store.topic_detail.data[{json.dumps(key)}].projects[{idx}].links") == \
+        [{"label": "", "url": legacy_url}]
+    assert publish_label(cms) == "Publish changes", "upgrading old `link` data counted as an edit"
+
+    cms.evaluate(f"addProjectLink({idx})")
+    rows = cms.locator(".project-link-row")
+    new_row = cms.evaluate(f"store.topic_detail.data[{json.dumps(key)}].projects[{idx}].links.length") - 1
+    cms.evaluate(f"addProjectLink({idx})")  # a blank row that should be dropped on publish
+    target = cms.locator(f".topic-card").nth(idx).locator(".project-link-row").nth(new_row)
+    target.locator("input").nth(0).fill("Second site")
+    target.locator("input").nth(1).fill("https://example.org/second")
+    assert rows.count() >= 3
+
+    cms.locator("#publish-btn").click()
+    cms.wait_for_function("document.getElementById('publish-btn').textContent.trim() === 'Publish changes'")
+    saved = yaml.safe_load(dict(cms.published)["build/data/topic_detail.yml"])
+    proj = saved[key]["projects"][idx]
+    assert "link" not in proj
+    assert proj["links"] == [{"label": "", "url": legacy_url},
+                             {"label": "Second site", "url": "https://example.org/second"}]

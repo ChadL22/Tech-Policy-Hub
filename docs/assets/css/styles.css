@@ -2600,7 +2600,8 @@ body.nav-open{ overflow:hidden; }
   display:block; margin-top:8px; font-family: var(--font-nav); font-size:.72rem; font-weight:700;
   letter-spacing:.03em; text-transform:uppercase; color: var(--ink-soft);
 }
-.project-modal-pdf + .project-modal-link{ margin-left: 18px; }
+.project-modal-links{ display:flex; flex-wrap:wrap; column-gap:22px; row-gap:6px; margin-top:18px; }
+.project-modal-links .project-modal-link{ margin-top:0; }
 .project-modal-text .area-tag{ margin-bottom:10px; }
 .project-modal-title{ font-size:1.4rem; line-height:1.25; margin:0 0 12px; }
 .project-modal-desc{ font-size:1rem; color: var(--ink-soft); line-height:1.6; margin:0; white-space:pre-line; }

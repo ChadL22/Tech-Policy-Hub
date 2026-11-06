@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import html
 import re
 import generate as g
 
@@ -280,7 +281,18 @@ def _project_tile_html(p, key):
     # _person_photo_html.
     m = g.AREA_META[key]
     image = p.get("image")
-    link = p.get("link")
+    # Outbound links: a list of {label, url} (topic_detail.yml `links`,
+    # edited as repeatable rows in the CMS) so a project can point to
+    # several sites. An old single `link` string still works.
+    links = []
+    for l in (p.get("links") or []):
+        if isinstance(l, str):
+            l = {"url": l}
+        url = (l.get("url") or "").strip()
+        if url:
+            links.append((html.escape((l.get("label") or "").strip() or "Visit project site"), url))
+    if not links and (p.get("link") or "").strip():
+        links.append(("Visit project site", p["link"].strip()))
     # See generate.py's image_fit_style -- reproduces the CMS's
     # Reposition & Scale control, when this project's image has had one
     # used on it. Only affects the small card thumbnail below -- the
@@ -346,10 +358,12 @@ def _project_tile_html(p, key):
             f'\n          <a class="project-modal-link project-modal-pdf" href="{pdf_href}" '
             f'target="_blank" rel="noopener">View full PDF{size_text} &nearr;</a>'
         )
-    if link:
+    for label, url in links:
         modal_link_html += (
-            f'\n          <a class="project-modal-link" href="{link}"{g.link_attrs(link)}>Visit project site &nearr;</a>'
+            f'\n          <a class="project-modal-link" href="{url}"{g.link_attrs(url)}>{label} &nearr;</a>'
         )
+    if modal_link_html:
+        modal_link_html = f'\n          <div class="project-modal-links">{modal_link_html}\n          </div>'
     detail_template = f"""<template class="project-detail-template">{modal_media_html}
         <div class="project-modal-text" style="--area-color:{m['color']}">
           <span class="area-tag">{m['code']}</span>
