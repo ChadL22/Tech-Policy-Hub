@@ -194,6 +194,17 @@ ml:
       description: Governments are increasingly using GenAI to complete daunting tasks and improve the pace and efficiency of bureaucratic decision making. In this process, there is an inevitable trust in the probabilistic nature of AI models, assuming they would correctly parse agency requirements and complete their tasks according to the laws that mandated them in the first place. Building on our previous attempt to formalize legal requirements and verify the legal accountability of public algorithmic governance, we introduce formalization methods from computer science to build a neuro-symbolic framework as a policy response to verify GenAI behavior. Instead of the never-ending struggle to understand AI model internals, we suggest an approach that circumvents the ‘black box’ and tests for the legality of agent behavior. We demonstrate the validity of our approach by answering needs that come from specific use cases of GenAI deployment by the Federal Social Security Administration (SSA) agency. Our novel and robust methodology builds on various techniques for creating terminologies of the social security law and takes advantage of flexible, and uncertainty-aware logic to model the required behavior of GenAI in the service of the government. Our approach automatically verifies the compliance of AI agents with social security policies. It flags to government operators when their agents violated required processes to determine social security eligibility, or when social security eligibility requirements are non-deterministic and require careful attention when determined by an AI agent.
       link: ''
       image: assets/img/projects/projects-performance-based-ai-regulation-a-neuro-symbolic-framework-to-bound-public-ai-1790621065029.png
+    - title: AI Opportunity Inventory
+      description: |-
+        The AI Opportunity Inventory is a cross-institutional initiative based at the University of Texas at Austin School of Law. Professor Kevin Frazier founded it in October 2025 in collaboration with colleagues at U.S. law schools and other educational institutions. After an initial pilot supported by Texas Law’s AI Innovation and the Law Program, members of the program’s AI Wranglers student cohort expanded the initiative to bring together undergraduate and graduate students across institutions.
+
+        Contributors identify a public problem, describe who it affects, and explain how an AI system could help. Their research memos examine the closest existing example, available evidence, legal and policy barriers, and potential risks. The Inventory Assistant guides contributors as they develop their drafts, and Inventory editors review and publish final memos in a public, searchable collection. Policymakers, researchers, and the public can use the collection to assess which AI applications warrant further investigation.
+      link: https://ai-opportunity-inventory.vercel.app/
+      image: assets/img/projects/projects-ai-opportunity-inventory-1793988379692.png
+      image_v: 1793988379692
+      image_zoom: null
+      image_x: null
+      image_y: null
   pubs:
     - venue: 2026 ACM FAccT
       year: 2026
