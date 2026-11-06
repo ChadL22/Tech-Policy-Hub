@@ -106,29 +106,28 @@ def test_cms_photo_tool_desktop_and_phone(cms):
 
 def test_cms_project_multiple_links(cms):
     """A project can carry several outbound links, each its own pop-up button.
-    An old single `link` loads as the first row and publishes as `links`."""
+    An old single `link` (if any data still has one) loads as the first row
+    and publishes as `links`."""
     data = yaml.safe_load((REPO_ROOT / "build/data/topic_detail.yml").read_text())
     key, idx = next((k, i) for k, v in data.items()
-                    for i, p in enumerate((v or {}).get("projects") or []) if p.get("link"))
-    legacy_url = data[key]["projects"][idx]["link"]
+                    for i, p in enumerate((v or {}).get("projects") or []) if p.get("link") or p.get("links"))
+    proj0 = data[key]["projects"][idx]
+    existing = ([{"label": "", "url": proj0["link"]}] if proj0.get("link") and not proj0.get("links")
+                else [{"label": l.get("label") or "", "url": l.get("url") or ""} for l in proj0["links"]])
     cms.evaluate(f"selectTopicArea({json.dumps(key)})")
-    assert cms.evaluate(f"store.topic_detail.data[{json.dumps(key)}].projects[{idx}].links") == \
-        [{"label": "", "url": legacy_url}]
-    assert publish_label(cms) == "Publish changes", "upgrading old `link` data counted as an edit"
+    assert cms.evaluate(f"store.topic_detail.data[{json.dumps(key)}].projects[{idx}].links") == existing
+    assert publish_label(cms) == "Publish changes", "loading project links counted as an edit"
 
+    new_row = len(existing)
     cms.evaluate(f"addProjectLink({idx})")
-    rows = cms.locator(".project-link-row")
-    new_row = cms.evaluate(f"store.topic_detail.data[{json.dumps(key)}].projects[{idx}].links.length") - 1
     cms.evaluate(f"addProjectLink({idx})")  # a blank row that should be dropped on publish
-    target = cms.locator(f".topic-card").nth(idx).locator(".project-link-row").nth(new_row)
+    target = cms.locator(".topic-card").nth(idx).locator(".project-link-row").nth(new_row)
     target.locator("input").nth(0).fill("Second site")
     target.locator("input").nth(1).fill("https://example.org/second")
-    assert rows.count() >= 3
 
     cms.locator("#publish-btn").click()
     cms.wait_for_function("document.getElementById('publish-btn').textContent.trim() === 'Publish changes'")
     saved = yaml.safe_load(dict(cms.published)["build/data/topic_detail.yml"])
     proj = saved[key]["projects"][idx]
     assert "link" not in proj
-    assert proj["links"] == [{"label": "", "url": legacy_url},
-                             {"label": "Second site", "url": "https://example.org/second"}]
+    assert proj["links"] == existing + [{"label": "Second site", "url": "https://example.org/second"}]

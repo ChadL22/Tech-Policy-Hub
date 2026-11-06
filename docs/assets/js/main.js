@@ -149,54 +149,63 @@ document.addEventListener('DOMContentLoaded', function () {
     if (nextBtn) nextBtn.addEventListener('click', function () { goTo(page + 1); });
     window.addEventListener('resize', refresh);
 
-    // Direct user request: swipe through People/Projects on mobile.
-    // .rp-carousel-viewport is overflow:hidden with no native
-    // touch-scroll -- a deliberate choice (see the comment above
-    // .rp-carousel-viewport in styles.css) so a tile is never left
-    // half-cut-off mid-scroll. So a swipe is detected manually here and
-    // mapped onto the same whole-page goTo() the arrows use, rather
-    // than becoming a free drag -- keeps the "no partial tile" rule
-    // intact while still letting a finger-swipe page the row. touchmove
-    // only preventDefault()s once the gesture reads as horizontal, so a
-    // mostly-vertical touch (the user just scrolling the page over this
-    // row) is left alone to scroll the page normally.
-    var touchStartX = 0, touchStartY = 0, touchTracking = false, touchHorizontal = false;
+    // Swiping (direct user request: "make the projects and people on the
+    // research page swipe throughable"). The row now FOLLOWS the finger
+    // (touch) or mouse (click-and-drag) while you drag, then snaps to the
+    // nearest whole page on release -- a long enough drag (40px) moves one
+    // page in that direction, a short one springs back. A two-finger
+    // trackpad swipe (horizontal wheel events) pages too. The viewport
+    // stays overflow:hidden with no free native scrolling (see styles.css),
+    // so it always comes to rest on whole tiles, never half-cut-off.
+    function pageOffset() {
+      var m = measure();
+      return { m: m, left: page * m.perPage * m.step };
+    }
+    function settle(dx) {
+      if (Math.abs(dx) >= 40) goTo(page + (dx < 0 ? 1 : -1));
+      else goTo(page);  // spring back to the current page
+    }
+
+    // Touch: only takes over once the gesture reads as horizontal, so a
+    // mostly-vertical touch (scrolling the page past this row) scrolls
+    // the page normally.
+    var touchStartX = 0, touchStartY = 0, touchTracking = false, touchHorizontal = false, dragBase = 0;
     viewport.addEventListener('touchstart', function (e) {
       if (e.touches.length !== 1) return;
       touchStartX = e.touches[0].clientX;
       touchStartY = e.touches[0].clientY;
       touchTracking = true;
       touchHorizontal = false;
+      dragBase = pageOffset().left;
     }, { passive: true });
     viewport.addEventListener('touchmove', function (e) {
       if (!touchTracking || e.touches.length !== 1) return;
       var dx = e.touches[0].clientX - touchStartX;
       var dy = e.touches[0].clientY - touchStartY;
       if (!touchHorizontal && Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) touchHorizontal = true;
-      if (touchHorizontal) e.preventDefault();
+      if (touchHorizontal) {
+        e.preventDefault();
+        viewport.scrollLeft = dragBase - dx;
+      }
     }, { passive: false });
     viewport.addEventListener('touchend', function (e) {
       if (!touchTracking) return;
       touchTracking = false;
       if (!touchHorizontal) return;
-      var dx = e.changedTouches[0].clientX - touchStartX;
-      if (Math.abs(dx) < 40) return;
-      goTo(page + (dx < 0 ? 1 : -1));
+      settle(e.changedTouches[0].clientX - touchStartX);
     });
-    viewport.addEventListener('touchcancel', function () { touchTracking = false; });
+    viewport.addEventListener('touchcancel', function () {
+      if (touchTracking && touchHorizontal) goTo(page);
+      touchTracking = false;
+    });
 
-    // Direct user request: the same paging swipe should also work with a
-    // mouse click-and-drag on desktop, not just touch. Mirrors the touch
-    // handler above -- a discrete whole-page goTo() snap, not the ticker's
-    // continuous free-drag style, so tiles never end up half-cut-off.
-    // Left button only; a 5px move threshold distinguishes an intentional
-    // drag from a click so a tile's link still opens on a plain click.
-    // mouseDragged also suppresses that click (capture phase) once a drag
-    // has happened, so releasing the mouse over a tile after dragging
-    // doesn't accidentally follow its link. preventDefault() on mousedown
-    // blocks the browser's native "drag this image/link" gesture -- tiles
-    // contain an <img>, and without this the native drag swallows the
-    // mouseup before it ever reaches us, leaving the carousel stuck mid-drag.
+    // Mouse click-and-drag on desktop. Left button only; a 5px threshold
+    // tells a drag from a click so a tile still opens on a plain click,
+    // and a click right after a drag is swallowed (capture phase) so
+    // letting go over a tile doesn't open it. preventDefault() on
+    // mousedown blocks the browser's native image/link drag, which would
+    // otherwise swallow the mouseup. Move/up are tracked on window so the
+    // drag keeps working if the pointer leaves the row mid-drag.
     var mouseStartX = 0, mouseDown = false, mouseDragged = false;
     viewport.addEventListener('mousedown', function (e) {
       if (e.button !== 0) return;
@@ -204,31 +213,50 @@ document.addEventListener('DOMContentLoaded', function () {
       mouseDown = true;
       mouseDragged = false;
       mouseStartX = e.clientX;
+      dragBase = pageOffset().left;
       viewport.classList.add('dragging');
     });
-    viewport.addEventListener('mousemove', function (e) {
+    window.addEventListener('mousemove', function (e) {
       if (!mouseDown) return;
       var dx = e.clientX - mouseStartX;
       if (!mouseDragged && Math.abs(dx) > 5) mouseDragged = true;
-      if (mouseDragged) e.preventDefault();
+      if (mouseDragged) {
+        e.preventDefault();
+        viewport.scrollLeft = dragBase - dx;
+      }
     });
-    function endMouseDrag(e) {
+    window.addEventListener('mouseup', function (e) {
       if (!mouseDown) return;
       mouseDown = false;
       viewport.classList.remove('dragging');
-      if (!mouseDragged) return;
-      var dx = e.clientX - mouseStartX;
-      if (Math.abs(dx) >= 40) goTo(page + (dx < 0 ? 1 : -1));
-    }
-    viewport.addEventListener('mouseup', endMouseDrag);
-    viewport.addEventListener('mouseleave', function () {
-      mouseDown = false;
-      mouseDragged = false;
-      viewport.classList.remove('dragging');
+      if (mouseDragged) settle(e.clientX - mouseStartX);
     });
     viewport.addEventListener('click', function (e) {
-      if (mouseDragged) { e.preventDefault(); e.stopPropagation(); }
+      if (mouseDragged) { e.preventDefault(); e.stopPropagation(); mouseDragged = false; }
     }, true);
+
+    // Two-finger trackpad swipe (and shift+wheel). Sideways wheel deltas
+    // add up until they pass a threshold, then page once; a short
+    // cooldown absorbs the trackpad's momentum events so one swipe moves
+    // one page. Vertical wheel/scroll is left alone for the page.
+    var wheelSum = 0, wheelLockUntil = 0, wheelResetTimer = null;
+    viewport.addEventListener('wheel', function (e) {
+      var dx = e.deltaX || (e.shiftKey ? e.deltaY : 0);
+      if (!dx || Math.abs(dx) < Math.abs(e.shiftKey ? 0 : e.deltaY)) return;
+      var m = measure();
+      if (m.pages <= 1) return;
+      e.preventDefault();
+      var now = Date.now();
+      clearTimeout(wheelResetTimer);
+      wheelResetTimer = setTimeout(function () { wheelSum = 0; }, 180);
+      if (now < wheelLockUntil) return;
+      wheelSum += dx;
+      if (Math.abs(wheelSum) >= 50) {
+        goTo(page + (wheelSum > 0 ? 1 : -1));
+        wheelSum = 0;
+        wheelLockUntil = now + 550;
+      }
+    }, { passive: false });
 
     refresh();
 
