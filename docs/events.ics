@@ -15,6 +15,17 @@ CATEGORIES:External
 URL:https://events.govexec.com/google-public-sector-summit/
 END:VEVENT
 BEGIN:VEVENT
+UID:20261111-cybersecurity-in-the-age-of-agents@techpolicyhub.umd.edu
+DTSTAMP:20261111T000000Z
+DTSTART;VALUE=DATE:20261111
+DTEND;VALUE=DATE:20261112
+SUMMARY:Cybersecurity in the age of Agents
+LOCATION:Virtual
+DESCRIPTION:​AI agents are changing the cybersecurity playbook. How might they shift the balance between attackers and defenders\, and what will that mean for the institutions and communities they target?  ​Join the University of Maryland’s Tech Policy Hub for Cybersecurity in the Age of AI\, a virtual conversation hosted by Dr. Ido Sivan-Sevilla\, featuring:  ​Dr. Charlie Harry\, a UMD cybersecurity researcher and director of the Center for Governance of Technology and Systems\, whose experience includes a 14-year career at the National Security Agency.  ​Netta Squires\, an attorney\, cybersecurity and emergency management expert\, and founder of Open District Solutions\, who has led statewide cybersecurity initiatives in Maryland.  ​This installment of the Tech Policy Hub Speaker Series will explore how AI agents are reshaping cyberattacks and defense\, what these changes mean for organizations with limited resources\, and how policy can help communities prepare. Bring your questions for a discussion connecting technical developments with the practical challenges of protecting people\, systems\, and public infrastructure.
+CATEGORIES:Speaker Series
+URL:https://luma.com/gspdecq1
+END:VEVENT
+BEGIN:VEVENT
 UID:20270209-digital-competition-conference-2027@techpolicyhub.umd.edu
 DTSTAMP:20270209T000000Z
 DTSTART;VALUE=DATE:20270209
