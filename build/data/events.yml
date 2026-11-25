@@ -43,3 +43,13 @@
   location: Virtual
   meta: '​AI agents are changing the cybersecurity playbook. How might they shift the balance between attackers and defenders, and what will that mean for the institutions and communities they target?  ​Join the University of Maryland’s Tech Policy Hub for Cybersecurity in the Age of AI, a virtual conversation hosted by Dr. Ido Sivan-Sevilla, featuring:  ​Dr. Charlie Harry, a UMD cybersecurity researcher and director of the Center for Governance of Technology and Systems, whose experience includes a 14-year career at the National Security Agency.  ​Netta Squires, an attorney, cybersecurity and emergency management expert, and founder of Open District Solutions, who has led statewide cybersecurity initiatives in Maryland.  ​This installment of the Tech Policy Hub Speaker Series will explore how AI agents are reshaping cyberattacks and defense, what these changes mean for organizations with limited resources, and how policy can help communities prepare. Bring your questions for a discussion connecting technical developments with the practical challenges of protecting people, systems, and public infrastructure.'
   link: https://luma.com/gspdecq1
+- 'y': 2026
+  m: DEC
+  d: '9'
+  end_m: DEC
+  end_d: '9'
+  cat: Speaker Series
+  title: Can AI Agents Understand Context?
+  location: Virtual
+  meta: 'AI agents increasingly act on our behalf. They handle personal information, use tools, and delegate tasks. How should an agent decide whether it’s appropriate to share information or take an action on someone’s behalf?  Drawing on their co-authored report, Open and Emergent Problems in Agentic Privacy and Security: A Contextual Angle, Eugene Bagdasarian and Yan Shvartzshnaider explore how AI agents can respect the privacy norms people rely on in everyday life. Using Contextual Integrity as a framework, they ask what information an agent should share, with whom, for what purpose, and under what conditions.  Those judgments become harder as tasks change or agents delegate work to one another. The discussion will examine how agents can reason about context, how system safeguards can enforce boundaries on what agents do, and when people should step in.'
+  link: https://umd.zoom.us/j/2910890395
