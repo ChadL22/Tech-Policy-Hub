@@ -67,7 +67,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
+      url: ${{ steps.deploy.outputs.page_url || steps.deploy-retry-1.outputs.page_url || steps.deploy-retry-2.outputs.page_url }}
     env:
       REFRESH_READING: ${{ (github.event_name == 'schedule' && github.event.schedule == '0 13 * * 0') || inputs.refresh_reading == true }}
       REFRESH_TICKER: ${{ (github.event_name == 'schedule' && github.event.schedule == '0 13 * * 1') || inputs.refresh_ticker == true }}
@@ -140,7 +140,37 @@ jobs:
           path: docs
           name: github-pages-${{ github.run_attempt }}
 
+      # deploy-pages looks the artifact up through GitHub's artifact
+      # service a second or two after the upload above, and that listing
+      # intermittently comes back empty ("No artifacts named
+      # github-pages-N were found" / "Found 0 artifact(s)") even though
+      # the artifact exists -- it failed every CMS save on Nov 25, 2026
+      # (and in bursts since Nov 4) while the artifact sat right there on
+      # the run. So: try, and if it fails wait and try again, twice. Only
+      # the last attempt can fail the run.
       - id: deploy
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+        with:
+          artifact_name: github-pages-${{ github.run_attempt }}
+
+      - name: Wait before retrying the deploy (1 of 2)
+        if: steps.deploy.outcome == 'failure'
+        run: sleep 30
+
+      - id: deploy-retry-1
+        if: steps.deploy.outcome == 'failure'
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+        with:
+          artifact_name: github-pages-${{ github.run_attempt }}
+
+      - name: Wait before retrying the deploy (2 of 2)
+        if: steps.deploy.outcome == 'failure' && steps.deploy-retry-1.outcome == 'failure'
+        run: sleep 60
+
+      - id: deploy-retry-2
+        if: steps.deploy.outcome == 'failure' && steps.deploy-retry-1.outcome == 'failure'
         uses: actions/deploy-pages@v4
         with:
           artifact_name: github-pages-${{ github.run_attempt }}
